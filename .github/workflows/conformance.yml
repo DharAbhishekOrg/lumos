@@ -75,8 +75,25 @@ jobs:
         run: go run ./tools/constantsgen -check
       - name: vector gate (determinism + staleness)
         run: go run ./tools/vectorgen -check
+      # Written to RUNNER_TEMP, never into the working tree: repolint's drift
+      # check inspects the repository root, and a test artefact dropped there
+      # would be flagged by the very run that produced it.
       - name: go test
-        run: go test -count=1 ./...
+        shell: bash
+        run: |
+          set -o pipefail
+          if ! go test -count=1 -json ./... > "$RUNNER_TEMP/go-test.json"; then
+            echo "--- failing tests ---"
+            grep -oE '"Output":"[^"]*(FAIL|panic)[^"]*"' "$RUNNER_TEMP/go-test.json" | head -40
+            exit 1
+          fi
+      - name: upload go test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results-go
+          path: ${{ runner.temp }}/go-test.json
+          retention-days: 7
 
   java:
     name: java conformance (pure JVM)
@@ -90,6 +107,13 @@ jobs:
       - uses: gradle/actions/setup-gradle@v4
       - name: protocol-conformance test
         run: ./gradlew :protocol-conformance:test --no-daemon --console=plain
+      - name: upload java test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results-java
+          path: android-app/protocol-conformance/build/test-results/test
+          retention-days: 7
       - name: upload reports on failure
         if: failure()
         uses: actions/upload-artifact@v4
@@ -108,7 +132,70 @@ jobs:
       - name: swift version
         run: swift --version
       - name: LumosProtocolConformance test
-        run: swift test --package-path . 2>&1
+        run: |
+          mkdir -p swift-test-results
+          # --parallel is REQUIRED: without it SwiftPM runs XCTest in one process
+          # and writes no xUnit report, leaving the traceability gate blind to
+          # Swift while still reporting success.
+          swift test --package-path . --parallel \
+            --xunit-output swift-test-results/results.xml 2>&1
+      - name: upload swift test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results-swift
+          path: swift-test-results
+          retention-days: 7
+
+  # The TRS Sec. 19.3 traceability gate. It runs AFTER the three runners so it
+  # can prove that every 'tested' status rests on a test which executed in THIS
+  # pipeline run - the rule's actual wording, and the one part of the matrix a
+  # reviewer cannot verify by reading.
+  trace:
+    name: traceability gate
+    runs-on: ubuntu-latest
+    needs: [go, java, swift]
+    if: always() && needs.go.result == 'success' && needs.java.result == 'success'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+          cache: true
+      - name: download test results
+        uses: actions/download-artifact@v4
+        with:
+          pattern: test-results-*
+          path: test-results
+      - name: collect executed tests
+        shell: bash
+        run: |
+          set -euo pipefail
+          junit="java=protocol-conformance=test-results/test-results-java"
+          if [ -d test-results/test-results-swift ]; then
+            junit="$junit,swift=LumosProtocolConformance=test-results/test-results-swift"
+          else
+            echo "swift results absent (job skipped by the path filter); its tests are not counted as executed this run"
+          fi
+          go run ./tools/tracecheck -collect evidence/ci/executed-tests.json \
+            -run-id "${{ github.run_id }}" \
+            -go-json test-results/test-results-go/go-test.json \
+            -junit "$junit"
+      - name: traceability gate
+        run: |
+          go run ./tools/tracecheck \
+            -base "${{ github.event.pull_request.base.sha || github.event.before }}" \
+            -head HEAD \
+            -executed evidence/ci/executed-tests.json
+      - name: upload executed-test set
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: executed-tests
+          path: evidence/ci/executed-tests.json
+          retention-days: 7
 
   # A single required check that stays green when the Swift job is deliberately
   # skipped by the path filter, so branch protection does not have to encode the
@@ -116,16 +203,20 @@ jobs:
   conformance-gate:
     name: conformance gate
     runs-on: ubuntu-latest
-    needs: [go, java, swift]
+    needs: [go, java, swift, trace]
     if: always()
     steps:
       - name: assess
         shell: bash
         run: |
           set -euo pipefail
-          echo "go=${{ needs.go.result }} java=${{ needs.java.result }} swift=${{ needs.swift.result }}"
+          echo "go=${{ needs.go.result }} java=${{ needs.java.result }} swift=${{ needs.swift.result }} trace=${{ needs.trace.result }}"
           if [ "${{ needs.go.result }}" != "success" ] || [ "${{ needs.java.result }}" != "success" ]; then
             echo "Go and Java conformance are always required."
+            exit 1
+          fi
+          if [ "${{ needs.trace.result }}" != "success" ]; then
+            echo "The traceability gate is always required (TRS Sec. 19.3)."
             exit 1
           fi
           case "${{ needs.swift.result }}" in
