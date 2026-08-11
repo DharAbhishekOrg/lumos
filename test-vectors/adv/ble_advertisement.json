@@ -1,0 +1,108 @@
+{
+  "schema_version": 1,
+  "generator": "tools/vectorgen",
+  "constants_hash": "sha256:99beeffb52f9b5b65afd53bb875175171e0e920e802b0927dd4f34db9cffc23c",
+  "implements": [
+    "TRS-PROTO-009",
+    "TRS-PROTO-017",
+    "TRS-PROTO-018",
+    "SRS-IDN-004"
+  ],
+  "key_provenance": "TESTONLY-lumos-vectors-v1",
+  "notes": "adv_v1 EID rotation schedule and authTag derivation per ADR-002. THE ADVERTISEMENT CARRIES NO TRUST: a matching authTag means 'worth connecting to', never 'authenticated peer' (TRS-PROTO-017). Consumers derive each epoch's EID and tag from k_adv and must reproduce adv_v1_hex exactly. iOS advertises the service UUID only and produces no adv_v1 at all; a consumer without service-data support asserts the negatives and skips the schedule.",
+  "k_adv_hex": "40cb99985c14a7dc663f41e9a15d31e5dba008a8af201ecd900042ae307a6ce5",
+  "eid_rotation_sec": 600,
+  "capability_bits": 3,
+  "venue_hint": 3735928559,
+  "schedule": [
+    {
+      "epoch": 2833333,
+      "unix_seconds": 1699999800,
+      "mode_flags": 0,
+      "eid_hex": "0e195e9f3d9c1d339f3a964d",
+      "auth_tag_hex": "ed0b1a8e",
+      "adv_v1_hex": "01000e195e9f3d9c1d339f3a964ded0b1a8e",
+      "scan_response_hex": "0003deadbeef"
+    },
+    {
+      "epoch": 2833334,
+      "unix_seconds": 1700000400,
+      "mode_flags": 1,
+      "eid_hex": "22cf1db2face6248f3eaf59d",
+      "auth_tag_hex": "95cfbfe0",
+      "adv_v1_hex": "010122cf1db2face6248f3eaf59d95cfbfe0",
+      "scan_response_hex": "0003deadbeef"
+    },
+    {
+      "epoch": 2833335,
+      "unix_seconds": 1700001000,
+      "mode_flags": 0,
+      "eid_hex": "9d72fd62107e51345ff5ace9",
+      "auth_tag_hex": "5d3c7dcc",
+      "adv_v1_hex": "01009d72fd62107e51345ff5ace95d3c7dcc",
+      "scan_response_hex": "0003deadbeef"
+    },
+    {
+      "epoch": 2833336,
+      "unix_seconds": 1700001600,
+      "mode_flags": 1,
+      "eid_hex": "d033e0be9dbd1cbfa4b7e976",
+      "auth_tag_hex": "db1fa39c",
+      "adv_v1_hex": "0101d033e0be9dbd1cbfa4b7e976db1fa39c",
+      "scan_response_hex": "0003deadbeef"
+    },
+    {
+      "epoch": 2833433,
+      "unix_seconds": 1700059800,
+      "mode_flags": 0,
+      "eid_hex": "89b0230697764760734bb311",
+      "auth_tag_hex": "0c7add7a",
+      "adv_v1_hex": "010089b0230697764760734bb3110c7add7a",
+      "scan_response_hex": "0003deadbeef"
+    }
+  ],
+  "negatives": [
+    {
+      "name": "wrong_epoch",
+      "description": "A payload from the previous epoch presented at the current epoch; the tag no longer matches.",
+      "adv_v1_hex": "01000e195e9f3d9c1d339f3a964ded0b1a8e",
+      "epoch": 2833334,
+      "expected_error": "ERR_ADV_AUTH_TAG_MISMATCH"
+    },
+    {
+      "name": "tampered_auth_tag",
+      "description": "One authTag byte flipped.",
+      "adv_v1_hex": "01000e195e9f3d9c1d339f3a964ded0b1a8f",
+      "epoch": 2833333,
+      "expected_error": "ERR_ADV_AUTH_TAG_MISMATCH"
+    },
+    {
+      "name": "tampered_eid",
+      "description": "One EID byte flipped; the tag covers the EID.",
+      "adv_v1_hex": "01000e195e9e3d9c1d339f3a964ded0b1a8e",
+      "epoch": 2833333,
+      "expected_error": "ERR_ADV_AUTH_TAG_MISMATCH"
+    },
+    {
+      "name": "reserved_mode_flag",
+      "description": "A reserved mode-flag bit set; decode fails before the tag is even compared.",
+      "adv_v1_hex": "01020e195e9f3d9c1d339f3a964ded0b1a8e",
+      "epoch": 2833333,
+      "expected_error": "ERR_ADV_AUTH_TAG_MISMATCH"
+    },
+    {
+      "name": "unsupported_version",
+      "description": "Advertisement version 2 is not understood by this build.",
+      "adv_v1_hex": "02000e195e9f3d9c1d339f3a964ded0b1a8e",
+      "epoch": 2833333,
+      "expected_error": "ERR_ADV_AUTH_TAG_MISMATCH"
+    },
+    {
+      "name": "truncated",
+      "description": "17 bytes instead of the fixed 18.",
+      "adv_v1_hex": "01000e195e9f3d9c1d339f3a964ded0b1a",
+      "epoch": 2833333,
+      "expected_error": "ERR_ADV_AUTH_TAG_MISMATCH"
+    }
+  ]
+}

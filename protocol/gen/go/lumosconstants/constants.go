@@ -6,7 +6,7 @@
 // GENERATED - DO NOT EDIT. Generator: tools/constantsgen
 // Source register: protocol/constants/lumos_constants.json
 // Baseline: TRS v1.1 Sec. 23 / EDP v1.0 Sec. 4 (ADR-004)
-// constants_hash: sha256:3e979bd0561766daee1280ca0a7b2d793532573266d01f10a79c2c18009074a4
+// constants_hash: sha256:99beeffb52f9b5b65afd53bb875175171e0e920e802b0927dd4f34db9cffc23c
 
 package lumosconstants
 
@@ -14,7 +14,7 @@ package lumosconstants
 const ServiceUUID = "E853EB6A-775C-4A49-A6BF-320E6A5CC609"
 
 // ConstantsHash binds generated code to the register that produced it (TRS-CONST-005).
-const ConstantsHash = "sha256:3e979bd0561766daee1280ca0a7b2d793532573266d01f10a79c2c18009074a4"
+const ConstantsHash = "sha256:99beeffb52f9b5b65afd53bb875175171e0e920e802b0927dd4f34db9cffc23c"
 
 // SchemaVersion is the register schema version.
 const SchemaVersion = 1
@@ -80,6 +80,24 @@ const ProtocolVersionOverridable = false
 
 // Crypto protocol
 
+// AdvAuthTagInfoOverridable is crypto_protocol.ADV_AUTH_TAG_INFO.overridable.
+const AdvAuthTagInfoOverridable = false
+
+// AdvAuthTagInfoValue is crypto_protocol.ADV_AUTH_TAG_INFO.value.
+const AdvAuthTagInfoValue = "lumos/adv/auth-tag/v1"
+
+// AdvEIDKdfInfoOverridable is crypto_protocol.ADV_EID_KDF_INFO.overridable.
+const AdvEIDKdfInfoOverridable = false
+
+// AdvEIDKdfInfoValue is crypto_protocol.ADV_EID_KDF_INFO.value.
+const AdvEIDKdfInfoValue = "lumos/adv/eid/v1"
+
+// AdvKeyKdfInfoOverridable is crypto_protocol.ADV_KEY_KDF_INFO.overridable.
+const AdvKeyKdfInfoOverridable = false
+
+// AdvKeyKdfInfoValue is crypto_protocol.ADV_KEY_KDF_INFO.value.
+const AdvKeyKdfInfoValue = "lumos/adv/k-adv/v1"
+
 // ChainKeySeedsMessage is crypto_protocol.CHAIN_KEY_SEEDS.message.
 const ChainKeySeedsMessage = 1
 
@@ -88,6 +106,24 @@ const ChainKeySeedsNext = 2
 
 // ChainKeySeedsOverridable is crypto_protocol.CHAIN_KEY_SEEDS.overridable.
 const ChainKeySeedsOverridable = false
+
+// ConfigSigningInfoOverridable is crypto_protocol.CONFIG_SIGNING_INFO.overridable.
+const ConfigSigningInfoOverridable = false
+
+// ConfigSigningInfoValue is crypto_protocol.CONFIG_SIGNING_INFO.value.
+const ConfigSigningInfoValue = "lumos/config/signed-package/v1"
+
+// MediaObjectKeyInfoOverridable is crypto_protocol.MEDIA_OBJECT_KEY_INFO.overridable.
+const MediaObjectKeyInfoOverridable = false
+
+// MediaObjectKeyInfoValue is crypto_protocol.MEDIA_OBJECT_KEY_INFO.value.
+const MediaObjectKeyInfoValue = "lumos/media/object-key/v1"
+
+// MediaObjectKeyWrapInfoOverridable is crypto_protocol.MEDIA_OBJECT_KEY_WRAP_INFO.overridable.
+const MediaObjectKeyWrapInfoOverridable = false
+
+// MediaObjectKeyWrapInfoValue is crypto_protocol.MEDIA_OBJECT_KEY_WRAP_INFO.value.
+const MediaObjectKeyWrapInfoValue = "lumos/media/object-key-wrap/v1"
 
 // RatchetHeaderLayoutDhLen is crypto_protocol.RATCHET_HEADER_LAYOUT.dh_len.
 const RatchetHeaderLayoutDhLen = 32
@@ -130,6 +166,12 @@ const SafetyNumberKdfInfoOverridable = false
 
 // SafetyNumberKdfInfoValue is crypto_protocol.SAFETY_NUMBER_KDF_INFO.value.
 const SafetyNumberKdfInfoValue = "lumos/safety-number/v1"
+
+// VoucherSigningInfoOverridable is crypto_protocol.VOUCHER_SIGNING_INFO.overridable.
+const VoucherSigningInfoOverridable = false
+
+// VoucherSigningInfoValue is crypto_protocol.VOUCHER_SIGNING_INFO.value.
+const VoucherSigningInfoValue = "lumos/voucher/token/v1"
 
 // X3dhFPrefixFillByte is crypto_protocol.X3DH_F_PREFIX.fill_byte.
 const X3dhFPrefixFillByte = 255

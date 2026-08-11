@@ -384,13 +384,23 @@
   },
   {
    "req_id": "SRS-IDN-004",
-   "status": "not_started",
-   "code": [],
-   "tests": [],
+   "status": "implemented",
+   "code": [
+    "protocol/adv/adv.go",
+    "test-vectors/adv/ble_advertisement.json",
+    "tools/vectorgen/close.go"
+   ],
+   "tests": [
+    "go:protocol/adv:TestConformanceAdvSchedule",
+    "go:protocol/adv:TestEIDIsUnlinkableAcrossEpochs",
+    "go:protocol/adv:TestEpochUsesRegisterCadence"
+   ],
    "evidence": [],
-   "adr": [],
-   "last_commit": null,
-   "updated": null
+   "adr": [
+    "ADR-002"
+   ],
+   "last_commit": "a9f1686",
+   "updated": "2026-08-12"
   },
   {
    "req_id": "SRS-IDN-005",
@@ -4576,13 +4586,27 @@
   },
   {
    "req_id": "TRS-CFG-001",
-   "status": "not_started",
-   "code": [],
-   "tests": [],
+   "status": "implemented",
+   "code": [
+    "protocol/config/config.go",
+    "test-vectors/config/package_invalid.json",
+    "test-vectors/config/package_valid.json",
+    "test-vectors/voucher/voucher_tokens.json",
+    "tools/vectorgen/close.go"
+   ],
+   "tests": [
+    "go:protocol/config:TestConformanceConfigInvalid",
+    "go:protocol/config:TestConformanceConfigValid",
+    "go:protocol/config:TestNegativeGates",
+    "go:protocol/config:TestValidPackageAccepted",
+    "go:protocol/config:TestValidationOrderIsDeterministic"
+   ],
    "evidence": [],
-   "adr": [],
-   "last_commit": null,
-   "updated": null
+   "adr": [
+    "ADR-004"
+   ],
+   "last_commit": "a9f1686",
+   "updated": "2026-08-12"
   },
   {
    "req_id": "TRS-CFG-002",
@@ -4656,13 +4680,22 @@
   },
   {
    "req_id": "TRS-CFG-009",
-   "status": "not_started",
-   "code": [],
-   "tests": [],
+   "status": "implemented",
+   "code": [
+    "protocol/config/config.go",
+    "test-vectors/config/package_invalid.json",
+    "test-vectors/config/package_valid.json",
+    "test-vectors/voucher/voucher_tokens.json",
+    "tools/vectorgen/close.go"
+   ],
+   "tests": [
+    "go:protocol/config:TestConformanceVoucherTokens",
+    "go:protocol/config:TestVoucherLifecycle"
+   ],
    "evidence": [],
    "adr": [],
-   "last_commit": null,
-   "updated": null
+   "last_commit": "a9f1686",
+   "updated": "2026-08-12"
   },
   {
    "req_id": "TRS-CFG-010",
@@ -4976,8 +5009,8 @@
     "ADR-005",
     "ADR-006"
    ],
-   "last_commit": "d3e505f",
-   "updated": "2026-08-11"
+   "last_commit": "a9f1686",
+   "updated": "2026-08-12"
   },
   {
    "req_id": "TRS-CONST-002",
@@ -5000,8 +5033,8 @@
     "ADR-004",
     "ADR-006"
    ],
-   "last_commit": "ab21e9a",
-   "updated": "2026-08-11"
+   "last_commit": "a9f1686",
+   "updated": "2026-08-12"
   },
   {
    "req_id": "TRS-CONST-003",
@@ -5021,8 +5054,8 @@
    "adr": [
     "ADR-004"
    ],
-   "last_commit": "d3e505f",
-   "updated": "2026-08-11"
+   "last_commit": "a9f1686",
+   "updated": "2026-08-12"
   },
   {
    "req_id": "TRS-CONST-004",
@@ -5055,8 +5088,8 @@
    "adr": [
     "ADR-004"
    ],
-   "last_commit": "d3e505f",
-   "updated": "2026-08-11"
+   "last_commit": "a9f1686",
+   "updated": "2026-08-12"
   },
   {
    "req_id": "TRS-CONST-006",
@@ -5211,23 +5244,48 @@
   },
   {
    "req_id": "TRS-CRY-008",
-   "status": "not_started",
-   "code": [],
-   "tests": [],
+   "status": "tested",
+   "code": [
+    "protocol/media/media.go",
+    "test-vectors/media/object_pipeline.json",
+    "tools/vectorgen/close.go"
+   ],
+   "tests": [
+    "go:protocol/media:TestConformanceMediaPipeline",
+    "go:protocol/media:TestObjectKeyIsBoundToItsSession",
+    "go:protocol/media:TestSealChunkReassembleOpen",
+    "go:protocol/media:TestWholeObjectEncryptionPrecedesChunking"
+   ],
    "evidence": [],
-   "adr": [],
-   "last_commit": null,
-   "updated": null
+   "adr": [
+    "ADR-001"
+   ],
+   "last_commit": "a9f1686",
+   "updated": "2026-08-12"
   },
   {
    "req_id": "TRS-CRY-009",
-   "status": "not_started",
-   "code": [],
-   "tests": [],
+   "status": "tested",
+   "code": [
+    "protocol/config/config.go",
+    "test-vectors/config/package_invalid.json",
+    "test-vectors/config/package_valid.json",
+    "test-vectors/voucher/voucher_tokens.json",
+    "tools/vectorgen/close.go"
+   ],
+   "tests": [
+    "go:protocol/config:TestCanonicalBytesAreDeterministicAndSorted",
+    "go:protocol/config:TestConformanceConfigValid",
+    "go:protocol/config:TestConformanceVoucherTokens",
+    "go:protocol/config:TestEveryFieldIsSigned",
+    "go:protocol/config:TestVoucherAndConfigSignaturesAreNotInterchangeable"
+   ],
    "evidence": [],
-   "adr": [],
-   "last_commit": null,
-   "updated": null
+   "adr": [
+    "ADR-001"
+   ],
+   "last_commit": "a9f1686",
+   "updated": "2026-08-12"
   },
   {
    "req_id": "TRS-CRY-010",
@@ -5328,8 +5386,8 @@
    "adr": [
     "ADR-001"
    ],
-   "last_commit": "9b06f88",
-   "updated": "2026-08-11"
+   "last_commit": "a9f1686",
+   "updated": "2026-08-12"
   },
   {
    "req_id": "TRS-CRY-016",
@@ -5713,13 +5771,21 @@
   },
   {
    "req_id": "TRS-MED-002",
-   "status": "not_started",
-   "code": [],
-   "tests": [],
+   "status": "implemented",
+   "code": [
+    "protocol/media/media.go",
+    "test-vectors/media/object_pipeline.json",
+    "tools/vectorgen/close.go"
+   ],
+   "tests": [
+    "go:protocol/media:TestConformanceMediaNegatives",
+    "go:protocol/media:TestDigestMismatchOnCleanDecrypt",
+    "go:protocol/media:TestTruncatedReassemblyRejected"
+   ],
    "evidence": [],
    "adr": [],
-   "last_commit": null,
-   "updated": null
+   "last_commit": "a9f1686",
+   "updated": "2026-08-12"
   },
   {
    "req_id": "TRS-MED-003",
@@ -6203,13 +6269,26 @@
   },
   {
    "req_id": "TRS-PROTO-009",
-   "status": "not_started",
-   "code": [],
-   "tests": [],
+   "status": "implemented",
+   "code": [
+    "protocol/adv/adv.go",
+    "test-vectors/adv/ble_advertisement.json",
+    "tools/vectorgen/close.go"
+   ],
+   "tests": [
+    "go:protocol/adv:TestConformanceAdvNegatives",
+    "go:protocol/adv:TestConformanceAdvSchedule",
+    "go:protocol/adv:TestLayoutMatchesADR002",
+    "go:protocol/adv:TestNoProhibitedContentCapacity",
+    "go:protocol/adv:TestRoundtripVerify",
+    "go:protocol/adv:TestVerifyRejectsWrongEpochAndTamper"
+   ],
    "evidence": [],
-   "adr": [],
-   "last_commit": null,
-   "updated": null
+   "adr": [
+    "ADR-002"
+   ],
+   "last_commit": "a9f1686",
+   "updated": "2026-08-12"
   },
   {
    "req_id": "TRS-PROTO-010",
@@ -6218,18 +6297,25 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": null,
-   "updated": null
+   "last_commit": "a9f1686",
+   "updated": "2026-08-12"
   },
   {
    "req_id": "TRS-PROTO-011",
-   "status": "not_started",
-   "code": [],
-   "tests": [],
+   "status": "tested",
+   "code": [
+    "protocol/media/media.go",
+    "test-vectors/media/object_pipeline.json",
+    "tools/vectorgen/close.go"
+   ],
+   "tests": [
+    "go:protocol/media:TestConformanceMediaAckCases",
+    "go:protocol/media:TestSelectiveAckBitmapAndRanges"
+   ],
    "evidence": [],
    "adr": [],
-   "last_commit": null,
-   "updated": null
+   "last_commit": "a9f1686",
+   "updated": "2026-08-12"
   },
   {
    "req_id": "TRS-PROTO-012",
@@ -6260,8 +6346,8 @@
    ],
    "evidence": [],
    "adr": [],
-   "last_commit": "d3e505f",
-   "updated": "2026-08-11"
+   "last_commit": "a9f1686",
+   "updated": "2026-08-12"
   },
   {
    "req_id": "TRS-PROTO-014",
@@ -6280,18 +6366,27 @@
    ],
    "evidence": [],
    "adr": [],
-   "last_commit": "d3e505f",
-   "updated": "2026-08-11"
+   "last_commit": "a9f1686",
+   "updated": "2026-08-12"
   },
   {
    "req_id": "TRS-PROTO-015",
-   "status": "not_started",
-   "code": [],
-   "tests": [],
+   "status": "implemented",
+   "code": [
+    "tools/vectorgen/gen.go",
+    "tools/vectorgen/suite.go"
+   ],
+   "tests": [
+    "go:tools/vectorgen:TestEveryPrescribedFileIsCommitted",
+    "go:tools/vectorgen:TestGateFailsOnMissingFile",
+    "go:tools/vectorgen:TestGateFailsOnUnexpectedFile",
+    "go:tools/vectorgen:TestManifestListsTheWholeSuite",
+    "go:tools/vectorgen:TestSuiteFilesMatchTRS184"
+   ],
    "evidence": [],
    "adr": [],
-   "last_commit": null,
-   "updated": null
+   "last_commit": "a9f1686",
+   "updated": "2026-08-12"
   },
   {
    "req_id": "TRS-PROTO-016",

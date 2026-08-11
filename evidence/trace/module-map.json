@@ -76,6 +76,21 @@
   "protocol/crypto/": [
    "TRS-CRY",
    "SRS-IDN-005"
+  ],
+  "protocol/adv/": [
+   "TRS-PROTO-009",
+   "TRS-PROTO-017",
+   "TRS-PROTO-018",
+   "SRS-IDN-004"
+  ],
+  "protocol/media/": [
+   "TRS-CRY-008",
+   "TRS-PROTO-011",
+   "TRS-MED"
+  ],
+  "protocol/config/": [
+   "TRS-CFG",
+   "TRS-CRY-009"
   ]
  }
 }

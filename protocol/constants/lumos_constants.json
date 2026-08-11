@@ -5,7 +5,7 @@
  "$generator": "tools/constantsgen",
  "service_uuid": "E853EB6A-775C-4A49-A6BF-320E6A5CC609",
  "$service_uuid_provenance": "One fixed 128-bit GATT service UUID per ADR-002 / TRS Sec. 9.3, generated once from a CSPRNG as an RFC 4122 version-4 UUID in WP-01 slice S2 and frozen here. Advertised by both platforms and used for scan filtering. No 16-bit alias is registered for flagship. Regenerating this value is a breaking protocol change.",
- "constants_hash": "sha256:3e979bd0561766daee1280ca0a7b2d793532573266d01f10a79c2c18009074a4",
+ "constants_hash": "sha256:99beeffb52f9b5b65afd53bb875175171e0e920e802b0927dd4f34db9cffc23c",
  "constants_hash_algorithm": {
   "digest": "SHA-256",
   "encoding": "lowercase hex, prefixed 'sha256:'",
@@ -415,6 +415,41 @@
    "dh_len": 32, "pn_len": 4, "n_len": 4, "total_len": 40, "overridable": false,
    "notes": "Ratchet message header: dh_public(32) | pn(4,BE) | n(4,BE). Rides at the head of the frame payload; the AEAD associated data is frame_header(58) || ratchet_header(40), satisfying TRS-PROTO-003 and authenticated ratchet headers simultaneously.",
    "anchors": ["TRS-CRY-002", "TRS-PROTO-003"], "source": "Signal Double Ratchet Sec. 4"
+  },
+  "ADV_KEY_KDF_INFO": {
+   "value": "lumos/adv/k-adv/v1", "overridable": false,
+   "notes": "HKDF-SHA-256 info deriving K_adv from the peer's long-term advertisement secret. K_adv is per-identity and never leaves the device.",
+   "anchors": ["TRS-PROTO-009"], "adr": ["ADR-002"], "source": "TRS 9.3"
+  },
+  "ADV_EID_KDF_INFO": {
+   "value": "lumos/adv/eid/v1", "overridable": false,
+   "notes": "HKDF-SHA-256 info deriving the rotating ephemeral identifier for an epoch: EID = HKDF(K_adv, info | epoch_be64)[0:eid_len]. Rotation cadence is identity_discovery.EID_ROTATION_SEC, so epoch = floor(unix_seconds / EID_ROTATION_SEC) and the payload is uncorrelatable across epochs (SRS-IDN-004).",
+   "anchors": ["SRS-IDN-004", "TRS-PROTO-009"], "adr": ["ADR-002"], "source": "TRS 9.3"
+  },
+  "ADV_AUTH_TAG_INFO": {
+   "value": "lumos/adv/auth-tag/v1", "overridable": false,
+   "notes": "Domain prefix of the advertisement authTag: first ADV_AUTH_TAG_LEN bytes of HMAC-SHA-256(K_adv, info | version | mode_flags | rotating_eid | epoch_be64). Noise rejection only; it confers no trust (TRS-PROTO-017).",
+   "anchors": ["TRS-PROTO-009", "TRS-PROTO-017"], "adr": ["ADR-002"], "source": "TRS 9.3"
+  },
+  "MEDIA_OBJECT_KEY_INFO": {
+   "value": "lumos/media/object-key/v1", "overridable": false,
+   "notes": "HKDF-SHA-256 info deriving the whole-object AEAD key and nonce from the random object key. The object is encrypted in full BEFORE fragmentation (TRS-CRY-008).",
+   "anchors": ["TRS-CRY-008", "TRS-MED-002"], "adr": ["ADR-001"], "source": "TRS 10.3"
+  },
+  "MEDIA_OBJECT_KEY_WRAP_INFO": {
+   "value": "lumos/media/object-key-wrap/v1", "overridable": false,
+   "notes": "HKDF-SHA-256 info deriving the wrapping key that binds an object key to the active match session, so an object key is useless outside its session (TRS-CRY-008).",
+   "anchors": ["TRS-CRY-008"], "adr": ["ADR-001"], "source": "TRS 10.3"
+  },
+  "CONFIG_SIGNING_INFO": {
+   "value": "lumos/config/signed-package/v1", "overridable": false,
+   "notes": "Domain prefix of the Ed25519 signature over a signed configuration package's canonical payload bytes (TRS-CRY-009).",
+   "anchors": ["TRS-CRY-009", "TRS-CFG-001"], "adr": ["ADR-001"], "source": "TRS 10.3"
+  },
+  "VOUCHER_SIGNING_INFO": {
+   "value": "lumos/voucher/token/v1", "overridable": false,
+   "notes": "Domain prefix of the Ed25519 signature over a voucher token's canonical payload bytes (TRS-CRY-009).",
+   "anchors": ["TRS-CRY-009", "TRS-CFG-009"], "adr": ["ADR-001"], "source": "TRS 10.3"
   },
   "SAFETY_NUMBER_KDF_INFO": {
    "value": "lumos/safety-number/v1", "overridable": false,

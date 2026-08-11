@@ -487,6 +487,48 @@ func Build(root, generatorCommit string) ([]VectorFile, error) {
 		return nil, err
 	}
 
+	advFile, err := buildAdvVectors(constantsHash)
+	if err != nil {
+		return nil, err
+	}
+	if err := appendJSON("test-vectors/adv/ble_advertisement.json", advFile.Implements, advFile); err != nil {
+		return nil, err
+	}
+	mediaFile, err := buildMediaVectors(constantsHash)
+	if err != nil {
+		return nil, err
+	}
+	if err := appendJSON("test-vectors/media/object_pipeline.json", mediaFile.Implements, mediaFile); err != nil {
+		return nil, err
+	}
+	cfgValid, err := buildConfigValid(constantsHash)
+	if err != nil {
+		return nil, err
+	}
+	if err := appendJSON("test-vectors/config/package_valid.json", cfgValid.Implements, cfgValid); err != nil {
+		return nil, err
+	}
+	cfgInvalid, err := buildConfigInvalid(constantsHash)
+	if err != nil {
+		return nil, err
+	}
+	if err := appendJSON("test-vectors/config/package_invalid.json", cfgInvalid.Implements, cfgInvalid); err != nil {
+		return nil, err
+	}
+	voucherFile, err := buildVoucherVectors(constantsHash)
+	if err != nil {
+		return nil, err
+	}
+	if err := appendJSON("test-vectors/voucher/voucher_tokens.json", voucherFile.Implements, voucherFile); err != nil {
+		return nil, err
+	}
+
+	// TRS Sec. 18.4 completeness gate: the emitted set must be exactly the
+	// prescribed tree. A missing file is a FAILED GATE, not a smaller suite.
+	if err := assertSuiteComplete(files); err != nil {
+		return nil, err
+	}
+
 	man := manifest{
 		SchemaVersion:   1,
 		Generator:       GeneratorName,
@@ -494,9 +536,9 @@ func Build(root, generatorCommit string) ([]VectorFile, error) {
 		ConstantsHash:   constantsHash,
 		KeyProvenance:   KeyProvenance,
 		Notes: "Golden-vector manifest (TRS Sec. 18.4). generator_commit is the HEAD at " +
-			"generation time, same convention as the trace matrix. The adv, media, config " +
-			"and voucher trees arrive in slice S4c; their absence here is deliberate scope, " +
-			"not an omission.",
+			"generation time, same convention as the trace matrix. The suite is COMPLETE: " +
+			"assertSuiteComplete enforces that the emitted set is exactly the Sec. 18.4 tree, " +
+			"so a missing file fails generation rather than producing a quietly smaller suite.",
 	}
 	for _, f := range files {
 		man.Files = append(man.Files, manifestEntry{Path: f.Path, Implements: f.Implements})
