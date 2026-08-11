@@ -1,7 +1,7 @@
 {
  "work_package": "WP-01",
  "baseline": "SRS v1.1 / TRS v1.1 / EDP v1.0",
- "generated_for_commit": "3a90623",
+ "generated_for_commit": "a2951a2",
  "pipeline": {
   "run_id": "",
   "executed_tests_total": 0,
