@@ -167,6 +167,40 @@ func TestCheckDetectsUnexpectedRootFile(t *testing.T) {
 	}
 }
 
+// TestBuildEntryPointsAreAccepted pins the deliberate allowance for build-system
+// files that must live at the repository root by construction. Without this the
+// allowance could be widened silently into a general escape hatch.
+func TestBuildEntryPointsAreAccepted(t *testing.T) {
+	dir := newConformingFixture(t)
+	for _, name := range []string{"settings.gradle.kts", "gradlew", "gradlew.bat", "Package.swift"} {
+		if err := os.WriteFile(filepath.Join(dir, name), []byte("x"), 0o644); err != nil {
+			t.Fatalf("write %s: %v", name, err)
+		}
+	}
+	if err := os.MkdirAll(filepath.Join(dir, "gradle", "wrapper"), 0o755); err != nil {
+		t.Fatalf("mkdir gradle/wrapper: %v", err)
+	}
+	violations, err := Check(dir)
+	if err != nil {
+		t.Fatalf("Check: %v", err)
+	}
+	if len(violations) != 0 {
+		t.Errorf("build entry points must be accepted, got %v", violations)
+	}
+
+	// The allowance is a fixed list, not a general exemption for build-ish names.
+	if err := os.WriteFile(filepath.Join(dir, "build.sh"), []byte("x"), 0o644); err != nil {
+		t.Fatalf("write build.sh: %v", err)
+	}
+	violations, err = Check(dir)
+	if err != nil {
+		t.Fatalf("Check: %v", err)
+	}
+	if rulesOf(violations)["unexpected-root-file"] != "build.sh" {
+		t.Errorf("an unlisted root file must still be flagged, got %v", violations)
+	}
+}
+
 func TestCheckIgnoresDotEntries(t *testing.T) {
 	dir := newConformingFixture(t)
 	if err := os.MkdirAll(filepath.Join(dir, ".github", "workflows"), 0o755); err != nil {

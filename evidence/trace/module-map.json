@@ -91,6 +91,16 @@
   "protocol/config/": [
    "TRS-CFG",
    "TRS-CRY-009"
+  ],
+  "android-app/protocol-conformance/": [
+   "TRS-TST-001",
+   "TRS-PROTO-015",
+   "SRS-NFR-CMP-004"
+  ],
+  "ios-app/protocol-conformance/": [
+   "TRS-TST-001",
+   "TRS-PROTO-015",
+   "SRS-NFR-CMP-004"
   ]
  }
 }

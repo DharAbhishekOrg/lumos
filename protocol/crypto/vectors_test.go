@@ -13,7 +13,6 @@ package crypto_test
 import (
 	"crypto/ecdh"
 	"crypto/ed25519"
-	"crypto/sha256"
 	"encoding/hex"
 	"encoding/json"
 	"errors"
@@ -97,6 +96,13 @@ func TestConformanceX3DHKAT(t *testing.T) {
 			SPKID            uint32 `json:"signed_prekey_id"`
 			OPKID            uint32 `json:"one_time_prekey_id"`
 			TranscriptADHex  string `json:"transcript_ad_hex"`
+			SharedSecretHex  string `json:"shared_secret_hex"`
+			ResponderSPKHex  string `json:"responder_signed_prekey_pub_hex"`
+			ResponderOPKHex  string `json:"responder_one_time_prekey_pub_hex"`
+			IdentityDHSigHex string `json:"identity_dh_sig_hex"`
+			SPKSigHex        string `json:"signed_prekey_sig_hex"`
+			InitIDDHPriv     string `json:"testonly_initiator_identity_dh_priv_hex"`
+			InitEphPriv      string `json:"testonly_initiator_ephemeral_priv_hex"`
 		} `json:"cases"`
 		Negatives []struct {
 			Name             string `json:"name"`
@@ -163,9 +169,13 @@ func TestConformanceX3DHKAT(t *testing.T) {
 // checks every plaintext, then drives the MAX_SKIP negative to its exact code.
 func TestConformanceRatchetSequences(t *testing.T) {
 	var vf struct {
-		ConstantsHash   string `json:"constants_hash"`
-		SharedSecretHex string `json:"shared_secret_hex"`
-		ADHex           string `json:"associated_data_hex"`
+		ConstantsHash   string   `json:"constants_hash"`
+		SharedSecretHex string   `json:"shared_secret_hex"`
+		ADHex           string   `json:"associated_data_hex"`
+		InitRatchetPriv string   `json:"testonly_initiator_ratchet_priv_hex"`
+		RespRatchetPriv string   `json:"testonly_responder_ratchet_priv_hex"`
+		InitTurnPrivs   []string `json:"testonly_initiator_dh_turn_privs_hex"`
+		RespTurnPrivs   []string `json:"testonly_responder_dh_turn_privs_hex"`
 		Sequences       []struct {
 			Name     string `json:"name"`
 			Messages []struct {
@@ -196,10 +206,15 @@ func TestConformanceRatchetSequences(t *testing.T) {
 			// b2a message is Alice. Single-direction sequences simply never build
 			// Alice's receiving side. Each party keeps its own deterministic KP,
 			// matching the generator's kpA/kpB.
-			alice := newInitiator(t, sk, ad)
-			bob := newResponder(t, sk, ad)
-			kpA := &seededKP{label: "alice"}
-			kpB := &seededKP{label: "bob"}
+			respPriv := privFromHex(t, vf.RespRatchetPriv)
+			alice, err := ratchet.NewInitiator(sk, ad, respPriv.PublicKey(),
+				privFromHex(t, vf.InitRatchetPriv), ratchet.Bounds{})
+			if err != nil {
+				t.Fatalf("NewInitiator: %v", err)
+			}
+			bob := ratchet.NewResponder(sk, ad, respPriv, ratchet.Bounds{})
+			kpA := kpFromHex(t, vf.InitTurnPrivs)
+			kpB := kpFromHex(t, vf.RespTurnPrivs)
 
 			for _, m := range seq.Messages {
 				h, err := ratchet.ParseHeader(hexDecode(t, m.HeaderHex))
@@ -229,7 +244,12 @@ func TestConformanceRatchetSequences(t *testing.T) {
 
 	for _, neg := range vf.Negatives {
 		t.Run(neg.Name, func(t *testing.T) {
-			alice := newInitiator(t, sk, ad)
+			respPriv := privFromHex(t, vf.RespRatchetPriv)
+			alice, err := ratchet.NewInitiator(sk, ad, respPriv.PublicKey(),
+				privFromHex(t, vf.InitRatchetPriv), ratchet.Bounds{})
+			if err != nil {
+				t.Fatalf("NewInitiator: %v", err)
+			}
 			var lastH ratchet.Header
 			var lastCT []byte
 			for i := 0; i <= neg.Gap; i++ {
@@ -239,8 +259,8 @@ func TestConformanceRatchetSequences(t *testing.T) {
 				}
 				lastH, lastCT = h, ct
 			}
-			bob := newResponder(t, sk, ad)
-			_, err := bob.Decrypt(lastH, lastCT, 1_700_000_000, &seededKP{label: "bob"})
+			bob := ratchet.NewResponder(sk, ad, respPriv, ratchet.Bounds{})
+			_, err = bob.Decrypt(lastH, lastCT, 1_700_000_000, kpFromHex(t, vf.RespTurnPrivs))
 			var we *wire.Error
 			if !errors.As(err, &we) || we.Code != neg.ExpectedError {
 				t.Fatalf("gap %d: expected %s, got %v", neg.Gap, neg.ExpectedError, err)
@@ -249,61 +269,40 @@ func TestConformanceRatchetSequences(t *testing.T) {
 	}
 }
 
-// seededKP mirrors the generator's deterministic key provider so the receiver
-// reproduces the same DH turns.
-type seededKP struct {
-	label string
-	n     int
+// listKP replays the RECORDED DH-turn keys from the vector file. Deriving them
+// from the generator's seeds instead would make this consumer agree with itself
+// rather than with the committed bytes - the same reason Java and Swift consume
+// the recorded keys.
+type listKP struct {
+	keys []*ecdh.PrivateKey
+	n    int
 }
 
-func (k *seededKP) GenerateDH() (*ecdh.PrivateKey, error) {
-	seed := sha256.Sum256([]byte(cryptoLabel(k.label, k.n)))
+func (k *listKP) GenerateDH() (*ecdh.PrivateKey, error) {
+	if k.n >= len(k.keys) {
+		return nil, errors.New("recorded turn-key list exhausted")
+	}
+	key := k.keys[k.n]
 	k.n++
-	return ecdh.X25519().NewPrivateKey(seed[:])
+	return key, nil
 }
 
-func cryptoLabel(label string, n int) string {
-	// Must match tools/vectorgen: KeyProvenance|crypto|<label>|ratchet-kp|<n>.
-	return "TESTONLY-lumos-vectors-v1|crypto|" + label + "|ratchet-kp|" + itoa(n)
-}
-
-func itoa(n int) string {
-	if n == 0 {
-		return "0"
-	}
-	var b []byte
-	for n > 0 {
-		b = append([]byte{byte('0' + n%10)}, b...)
-		n /= 10
-	}
-	return string(b)
-}
-
-func newInitiator(t *testing.T, sk, ad []byte) *ratchet.State {
+func privFromHex(t *testing.T, h string) *ecdh.PrivateKey {
 	t.Helper()
-	bob := dhSeed(t, "TESTONLY-lumos-vectors-v1|crypto|ratchet|bob-0")
-	alice := dhSeed(t, "TESTONLY-lumos-vectors-v1|crypto|ratchet|alice-0")
-	s, err := ratchet.NewInitiator(sk, ad, bob.PublicKey(), alice, ratchet.Bounds{})
+	k, err := ecdh.X25519().NewPrivateKey(hexDecode(t, h))
 	if err != nil {
-		t.Fatalf("NewInitiator: %v", err)
-	}
-	return s
-}
-
-func newResponder(t *testing.T, sk, ad []byte) *ratchet.State {
-	t.Helper()
-	bob := dhSeed(t, "TESTONLY-lumos-vectors-v1|crypto|ratchet|bob-0")
-	return ratchet.NewResponder(sk, ad, bob, ratchet.Bounds{})
-}
-
-func dhSeed(t *testing.T, label string) *ecdh.PrivateKey {
-	t.Helper()
-	seed := sha256.Sum256([]byte(label))
-	k, err := ecdh.X25519().NewPrivateKey(seed[:])
-	if err != nil {
-		t.Fatalf("NewPrivateKey: %v", err)
+		t.Fatalf("bad recorded private key: %v", err)
 	}
 	return k
+}
+
+func kpFromHex(t *testing.T, hexes []string) *listKP {
+	t.Helper()
+	kp := &listKP{}
+	for _, h := range hexes {
+		kp.keys = append(kp.keys, privFromHex(t, h))
+	}
+	return kp
 }
 
 func TestConformanceAEADKAT(t *testing.T) {

@@ -393,13 +393,17 @@
    "tests": [
     "go:protocol/adv:TestConformanceAdvSchedule",
     "go:protocol/adv:TestEIDIsUnlinkableAcrossEpochs",
-    "go:protocol/adv:TestEpochUsesRegisterCadence"
+    "go:protocol/adv:TestEpochUsesRegisterCadence",
+    "java:protocol-conformance:CryptoConformanceTest.advertisement",
+    "swift:LumosProtocolConformance:CryptoConformanceTests.testAdvertisementScheduleAndNegatives"
    ],
-   "evidence": [],
+   "evidence": [
+    "ci:conformance#31528127667"
+   ],
    "adr": [
     "ADR-002"
    ],
-   "last_commit": "a9f1686",
+   "last_commit": "fbeaca8",
    "updated": "2026-08-12"
   },
   {
@@ -1416,13 +1420,26 @@
   },
   {
    "req_id": "SRS-NFR-CMP-004",
-   "status": "not_started",
-   "code": [],
-   "tests": [],
-   "evidence": [],
+   "status": "tested",
+   "code": [
+    "android-app/protocol-conformance/src/main/java/com/lumos/protocol/conformance/Frame.java",
+    "android-app/protocol-conformance/src/main/java/com/lumos/protocol/conformance/LumosCrypto.java",
+    "ios-app/protocol-conformance/Sources/LumosProtocol/Frame.swift",
+    "ios-app/protocol-conformance/Sources/LumosProtocol/LumosCrypto.swift"
+   ],
+   "tests": [
+    "java:protocol-conformance:FramingConformanceTest.frameRoundtrip",
+    "java:protocol-conformance:CryptoConformanceTest.aeadKat",
+    "java:protocol-conformance:CryptoConformanceTest.mediaPipeline",
+    "swift:LumosProtocolConformance:FramingConformanceTests.testFrameRoundtripReproducesCommittedBytes",
+    "swift:LumosProtocolConformance:CryptoConformanceTests.testMediaObjectPipeline"
+   ],
+   "evidence": [
+    "ci:conformance#31528127667"
+   ],
    "adr": [],
-   "last_commit": null,
-   "updated": null
+   "last_commit": "fbeaca8",
+   "updated": "2026-08-12"
   },
   {
    "req_id": "SRS-NFR-CMP-005",
@@ -4586,7 +4603,7 @@
   },
   {
    "req_id": "TRS-CFG-001",
-   "status": "implemented",
+   "status": "tested",
    "code": [
     "protocol/config/config.go",
     "test-vectors/config/package_invalid.json",
@@ -4599,13 +4616,17 @@
     "go:protocol/config:TestConformanceConfigValid",
     "go:protocol/config:TestNegativeGates",
     "go:protocol/config:TestValidPackageAccepted",
-    "go:protocol/config:TestValidationOrderIsDeterministic"
+    "go:protocol/config:TestValidationOrderIsDeterministic",
+    "java:protocol-conformance:CryptoConformanceTest.configPackages",
+    "swift:LumosProtocolConformance:CryptoConformanceTests.testConfigPackagesAndVouchers"
    ],
-   "evidence": [],
+   "evidence": [
+    "ci:conformance#31528127667"
+   ],
    "adr": [
     "ADR-004"
    ],
-   "last_commit": "a9f1686",
+   "last_commit": "fbeaca8",
    "updated": "2026-08-12"
   },
   {
@@ -4680,7 +4701,7 @@
   },
   {
    "req_id": "TRS-CFG-009",
-   "status": "implemented",
+   "status": "tested",
    "code": [
     "protocol/config/config.go",
     "test-vectors/config/package_invalid.json",
@@ -4690,11 +4711,15 @@
    ],
    "tests": [
     "go:protocol/config:TestConformanceVoucherTokens",
-    "go:protocol/config:TestVoucherLifecycle"
+    "go:protocol/config:TestVoucherLifecycle",
+    "java:protocol-conformance:CryptoConformanceTest.voucherTokens",
+    "swift:LumosProtocolConformance:CryptoConformanceTests.testConfigPackagesAndVouchers"
    ],
-   "evidence": [],
+   "evidence": [
+    "ci:conformance#31528127667"
+   ],
    "adr": [],
-   "last_commit": "a9f1686",
+   "last_commit": "fbeaca8",
    "updated": "2026-08-12"
   },
   {
@@ -4749,13 +4774,19 @@
   },
   {
    "req_id": "TRS-CICD-001",
-   "status": "not_started",
-   "code": [],
-   "tests": [],
-   "evidence": [],
+   "status": "implemented",
+   "code": [
+    ".github/workflows/conformance.yml"
+   ],
+   "tests": [
+    "ci:conformance#31528127667"
+   ],
+   "evidence": [
+    "ci:conformance#31528127667"
+   ],
    "adr": [],
-   "last_commit": null,
-   "updated": null
+   "last_commit": "fbeaca8",
+   "updated": "2026-08-12"
   },
   {
    "req_id": "TRS-CICD-002",
@@ -4980,7 +5011,7 @@
   },
   {
    "req_id": "TRS-CONST-001",
-   "status": "implemented",
+   "status": "tested",
    "code": [
     "protocol/constants/lumos_constants.json",
     "tools/constantsgen/register.go",
@@ -5001,15 +5032,19 @@
     "go:tools/constantsgen:TestGeneratedSwiftIsStructurallyComplete",
     "go:tools/constantsgen:TestGoldenValues",
     "go:tools/constantsgen:TestRegisterCoversTRSSection23",
-    "go:tools/constantsgen:TestSafetyNumberFormatMatchesADR005"
+    "go:tools/constantsgen:TestSafetyNumberFormatMatchesADR005",
+    "java:protocol-conformance:CryptoConformanceTest.safetyNumber",
+    "swift:LumosProtocolConformance:CryptoConformanceTests.testSafetyNumberReproducesDigitsAndEmoji"
    ],
-   "evidence": [],
+   "evidence": [
+    "ci:conformance#31528127667"
+   ],
    "adr": [
     "ADR-004",
     "ADR-005",
     "ADR-006"
    ],
-   "last_commit": "a9f1686",
+   "last_commit": "fbeaca8",
    "updated": "2026-08-12"
   },
   {
@@ -5082,13 +5117,17 @@
    "tests": [
     "go:protocol/schema:TestGeneratedConfigOverridesAreRegisterDriven",
     "go:protocol/wire:TestConformanceFrameRoundtripVectors",
-    "go:tools/vectorgen:TestEveryVectorFileEmbedsTheRegisterHash"
+    "go:tools/vectorgen:TestEveryVectorFileEmbedsTheRegisterHash",
+    "java:protocol-conformance:FramingConformanceTest.frameRoundtrip",
+    "swift:LumosProtocolConformance:FramingConformanceTests.testFrameRoundtripReproducesCommittedBytes"
    ],
-   "evidence": [],
+   "evidence": [
+    "ci:conformance#31528127667"
+   ],
    "adr": [
     "ADR-004"
    ],
-   "last_commit": "a9f1686",
+   "last_commit": "fbeaca8",
    "updated": "2026-08-12"
   },
   {
@@ -5367,8 +5406,10 @@
   },
   {
    "req_id": "TRS-CRY-015",
-   "status": "implemented",
+   "status": "tested",
    "code": [
+    "android-app/protocol-conformance/src/main/java/com/lumos/protocol/conformance/LumosCrypto.java",
+    "ios-app/protocol-conformance/Sources/LumosProtocol/LumosCrypto.swift",
     "protocol/crypto/vectors_test.go",
     "test-vectors/crypto/aead_kat.json",
     "test-vectors/crypto/ratchet_sequences.json",
@@ -5380,13 +5421,21 @@
     "go:protocol/crypto:TestConformanceAEADKAT",
     "go:protocol/crypto:TestConformanceRatchetSequences",
     "go:protocol/crypto:TestConformanceSafetyNumber",
-    "go:protocol/crypto:TestConformanceX3DHKAT"
+    "go:protocol/crypto:TestConformanceX3DHKAT",
+    "java:protocol-conformance:CryptoConformanceTest.aeadKat",
+    "java:protocol-conformance:CryptoConformanceTest.safetyNumber",
+    "java:protocol-conformance:CryptoConformanceTest.x3dhKat",
+    "swift:LumosProtocolConformance:CryptoConformanceTests.testAEADKnownAnswersAndTampers",
+    "swift:LumosProtocolConformance:CryptoConformanceTests.testSafetyNumberReproducesDigitsAndEmoji",
+    "swift:LumosProtocolConformance:CryptoConformanceTests.testX3DHSharedSecretsAndTranscripts"
    ],
-   "evidence": [],
+   "evidence": [
+    "ci:conformance#31528127667"
+   ],
    "adr": [
     "ADR-001"
    ],
-   "last_commit": "a9f1686",
+   "last_commit": "fbeaca8",
    "updated": "2026-08-12"
   },
   {
@@ -5771,7 +5820,7 @@
   },
   {
    "req_id": "TRS-MED-002",
-   "status": "implemented",
+   "status": "tested",
    "code": [
     "protocol/media/media.go",
     "test-vectors/media/object_pipeline.json",
@@ -5780,11 +5829,15 @@
    "tests": [
     "go:protocol/media:TestConformanceMediaNegatives",
     "go:protocol/media:TestDigestMismatchOnCleanDecrypt",
-    "go:protocol/media:TestTruncatedReassemblyRejected"
+    "go:protocol/media:TestTruncatedReassemblyRejected",
+    "java:protocol-conformance:CryptoConformanceTest.mediaPipeline",
+    "swift:LumosProtocolConformance:CryptoConformanceTests.testMediaObjectPipeline"
    ],
-   "evidence": [],
+   "evidence": [
+    "ci:conformance#31528127667"
+   ],
    "adr": [],
-   "last_commit": "a9f1686",
+   "last_commit": "fbeaca8",
    "updated": "2026-08-12"
   },
   {
@@ -6069,8 +6122,10 @@
   },
   {
    "req_id": "TRS-PROTO-001",
-   "status": "implemented",
+   "status": "tested",
    "code": [
+    "android-app/protocol-conformance/src/main/java/com/lumos/protocol/conformance/Frame.java",
+    "ios-app/protocol-conformance/Sources/LumosProtocol/Frame.swift",
     "protocol/gen/go/lumosconstants/class_limits.go",
     "protocol/gen/go/lumoserrors/error_codes.go",
     "protocol/schema/schema.go",
@@ -6091,19 +6146,27 @@
     "go:protocol/wire:TestConformanceFrameInvalidVectors",
     "go:protocol/wire:TestConformanceFrameRoundtripVectors",
     "go:protocol/wire:TestEncodeMatchesHandComputedBytes",
-    "go:protocol/wire:TestRoundtripEveryKnownClass"
+    "go:protocol/wire:TestRoundtripEveryKnownClass",
+    "java:protocol-conformance:FramingConformanceTest.frameInvalid",
+    "java:protocol-conformance:FramingConformanceTest.frameRoundtrip",
+    "swift:LumosProtocolConformance:FramingConformanceTests.testFrameInvalidFailsWithExactCode",
+    "swift:LumosProtocolConformance:FramingConformanceTests.testFrameRoundtripReproducesCommittedBytes"
    ],
-   "evidence": [],
+   "evidence": [
+    "ci:conformance#31528127667"
+   ],
    "adr": [
     "ADR-007"
    ],
-   "last_commit": "ab21e9a",
-   "updated": "2026-08-11"
+   "last_commit": "fbeaca8",
+   "updated": "2026-08-12"
   },
   {
    "req_id": "TRS-PROTO-002",
-   "status": "implemented",
+   "status": "tested",
    "code": [
+    "android-app/protocol-conformance/src/main/java/com/lumos/protocol/conformance/Frame.java",
+    "ios-app/protocol-conformance/Sources/LumosProtocol/Frame.swift",
     "protocol/gen/go/lumosconstants/class_limits.go",
     "protocol/gen/go/lumoserrors/error_codes.go",
     "protocol/schema/schema.go",
@@ -6122,38 +6185,52 @@
    ],
    "tests": [
     "go:protocol/wire:TestConformanceFrameRoundtripVectors",
-    "go:protocol/wire:TestEncodeMatchesHandComputedBytes"
+    "go:protocol/wire:TestEncodeMatchesHandComputedBytes",
+    "java:protocol-conformance:FramingConformanceTest.frameInvalid",
+    "java:protocol-conformance:FramingConformanceTest.frameRoundtrip",
+    "swift:LumosProtocolConformance:FramingConformanceTests.testFrameInvalidFailsWithExactCode",
+    "swift:LumosProtocolConformance:FramingConformanceTests.testFrameRoundtripReproducesCommittedBytes"
    ],
-   "evidence": [],
+   "evidence": [
+    "ci:conformance#31528127667"
+   ],
    "adr": [
     "ADR-007"
    ],
-   "last_commit": "ab21e9a",
-   "updated": "2026-08-11"
+   "last_commit": "fbeaca8",
+   "updated": "2026-08-12"
   },
   {
    "req_id": "TRS-PROTO-003",
-   "status": "implemented",
+   "status": "tested",
    "code": [
-    "protocol/schemas/frame_header.schema.json",
+    "android-app/protocol-conformance/src/main/java/com/lumos/protocol/conformance/Frame.java",
+    "ios-app/protocol-conformance/Sources/LumosProtocol/Frame.swift",
+    "protocol/schema/schema.go",
     "protocol/schemas/adv_v1.schema.json",
-    "protocol/schemas/message_payloads.schema.json",
     "protocol/schemas/error_codes.schema.json",
-    "protocol/schemas/prekey_bundle.schema.json",
-    "protocol/schema/schema.go"
+    "protocol/schemas/frame_header.schema.json",
+    "protocol/schemas/message_payloads.schema.json",
+    "protocol/schemas/prekey_bundle.schema.json"
    ],
    "tests": [
-    "go:protocol/schema:TestFrameHeaderWidthMatchesRegister"
+    "go:protocol/schema:TestFrameHeaderWidthMatchesRegister",
+    "java:protocol-conformance:FramingConformanceTest.headerBytesIsTheAad",
+    "swift:LumosProtocolConformance:FramingConformanceTests.testAuthenticatedHeaderIsTheLeadingBytes"
    ],
-   "evidence": [],
+   "evidence": [
+    "ci:conformance#31528127667"
+   ],
    "adr": [],
-   "last_commit": "d3e505f",
-   "updated": "2026-08-11"
+   "last_commit": "fbeaca8",
+   "updated": "2026-08-12"
   },
   {
    "req_id": "TRS-PROTO-004",
-   "status": "implemented",
+   "status": "tested",
    "code": [
+    "android-app/protocol-conformance/src/main/java/com/lumos/protocol/conformance/Frame.java",
+    "ios-app/protocol-conformance/Sources/LumosProtocol/Frame.swift",
     "protocol/gen/go/lumosconstants/class_limits.go",
     "protocol/gen/go/lumoserrors/error_codes.go",
     "protocol/schema/schema.go",
@@ -6166,38 +6243,52 @@
    ],
    "tests": [
     "go:protocol/wire:TestConformanceFrameRoundtripVectors",
-    "go:protocol/wire:TestEncodeMatchesHandComputedBytes"
+    "go:protocol/wire:TestEncodeMatchesHandComputedBytes",
+    "java:protocol-conformance:FramingConformanceTest.frameInvalid",
+    "java:protocol-conformance:FramingConformanceTest.frameRoundtrip",
+    "swift:LumosProtocolConformance:FramingConformanceTests.testFrameInvalidFailsWithExactCode",
+    "swift:LumosProtocolConformance:FramingConformanceTests.testFrameRoundtripReproducesCommittedBytes"
    ],
-   "evidence": [],
+   "evidence": [
+    "ci:conformance#31528127667"
+   ],
    "adr": [],
-   "last_commit": "ab21e9a",
-   "updated": "2026-08-11"
+   "last_commit": "fbeaca8",
+   "updated": "2026-08-12"
   },
   {
    "req_id": "TRS-PROTO-005",
-   "status": "implemented",
+   "status": "tested",
    "code": [
-    "protocol/schemas/frame_header.schema.json",
+    "android-app/protocol-conformance/src/main/java/com/lumos/protocol/conformance/Frame.java",
+    "ios-app/protocol-conformance/Sources/LumosProtocol/Frame.swift",
+    "protocol/schema/schema.go",
     "protocol/schemas/adv_v1.schema.json",
-    "protocol/schemas/message_payloads.schema.json",
     "protocol/schemas/error_codes.schema.json",
-    "protocol/schemas/prekey_bundle.schema.json",
-    "protocol/schema/schema.go"
+    "protocol/schemas/frame_header.schema.json",
+    "protocol/schemas/message_payloads.schema.json",
+    "protocol/schemas/prekey_bundle.schema.json"
    ],
    "tests": [
     "go:protocol/schema:TestMessagePayloadsCoverEveryRegisteredClass",
     "go:protocol/schema:TestTextEventEnvelopeMatchesAMD005",
-    "go:tools/constantsgen:TestMessageClassesMatchTRS92"
+    "go:tools/constantsgen:TestMessageClassesMatchTRS92",
+    "java:protocol-conformance:FramingConformanceTest.frameRoundtrip",
+    "swift:LumosProtocolConformance:FramingConformanceTests.testFrameRoundtripReproducesCommittedBytes"
    ],
-   "evidence": [],
+   "evidence": [
+    "ci:conformance#31528127667"
+   ],
    "adr": [],
-   "last_commit": "ab21e9a",
-   "updated": "2026-08-11"
+   "last_commit": "fbeaca8",
+   "updated": "2026-08-12"
   },
   {
    "req_id": "TRS-PROTO-006",
-   "status": "implemented",
+   "status": "tested",
    "code": [
+    "android-app/protocol-conformance/src/main/java/com/lumos/protocol/conformance/Frame.java",
+    "ios-app/protocol-conformance/Sources/LumosProtocol/Frame.swift",
     "protocol/gen/go/lumosconstants/class_limits.go",
     "protocol/gen/go/lumoserrors/error_codes.go",
     "protocol/schema/schema.go",
@@ -6217,19 +6308,27 @@
    "tests": [
     "go:protocol/wire:TestConformanceFrameInvalidVectors",
     "go:protocol/wire:TestDecodeErrorPaths",
-    "go:protocol/wire:TestSkippableConditionsDecode"
+    "go:protocol/wire:TestSkippableConditionsDecode",
+    "java:protocol-conformance:FramingConformanceTest.frameInvalid",
+    "java:protocol-conformance:FramingConformanceTest.frameRoundtrip",
+    "swift:LumosProtocolConformance:FramingConformanceTests.testFrameInvalidFailsWithExactCode",
+    "swift:LumosProtocolConformance:FramingConformanceTests.testFrameRoundtripReproducesCommittedBytes"
    ],
-   "evidence": [],
+   "evidence": [
+    "ci:conformance#31528127667"
+   ],
    "adr": [
     "ADR-007"
    ],
-   "last_commit": "ab21e9a",
-   "updated": "2026-08-11"
+   "last_commit": "fbeaca8",
+   "updated": "2026-08-12"
   },
   {
    "req_id": "TRS-PROTO-007",
-   "status": "implemented",
+   "status": "tested",
    "code": [
+    "android-app/protocol-conformance/src/main/java/com/lumos/protocol/conformance/Frame.java",
+    "ios-app/protocol-conformance/Sources/LumosProtocol/Frame.swift",
     "protocol/gen/go/lumosconstants/class_limits.go",
     "protocol/gen/go/lumoserrors/error_codes.go",
     "protocol/schema/schema.go",
@@ -6250,12 +6349,18 @@
     "go:protocol/wire:TestDecodeErrorPaths",
     "go:protocol/wire:TestEncodeRejectsOversizedAndUnknown",
     "go:tools/constantsgen:TestClassLimitsResolveUnitsCorrectly",
-    "go:tools/constantsgen:TestEveryClassHasAPositiveLimit"
+    "go:tools/constantsgen:TestEveryClassHasAPositiveLimit",
+    "java:protocol-conformance:FramingConformanceTest.frameInvalid",
+    "java:protocol-conformance:FramingConformanceTest.frameRoundtrip",
+    "swift:LumosProtocolConformance:FramingConformanceTests.testFrameInvalidFailsWithExactCode",
+    "swift:LumosProtocolConformance:FramingConformanceTests.testFrameRoundtripReproducesCommittedBytes"
    ],
-   "evidence": [],
+   "evidence": [
+    "ci:conformance#31528127667"
+   ],
    "adr": [],
-   "last_commit": "ab21e9a",
-   "updated": "2026-08-11"
+   "last_commit": "fbeaca8",
+   "updated": "2026-08-12"
   },
   {
    "req_id": "TRS-PROTO-008",
@@ -6281,13 +6386,17 @@
     "go:protocol/adv:TestLayoutMatchesADR002",
     "go:protocol/adv:TestNoProhibitedContentCapacity",
     "go:protocol/adv:TestRoundtripVerify",
-    "go:protocol/adv:TestVerifyRejectsWrongEpochAndTamper"
+    "go:protocol/adv:TestVerifyRejectsWrongEpochAndTamper",
+    "java:protocol-conformance:CryptoConformanceTest.advertisement",
+    "swift:LumosProtocolConformance:CryptoConformanceTests.testAdvertisementScheduleAndNegatives"
    ],
-   "evidence": [],
+   "evidence": [
+    "ci:conformance#31528127667"
+   ],
    "adr": [
     "ADR-002"
    ],
-   "last_commit": "a9f1686",
+   "last_commit": "fbeaca8",
    "updated": "2026-08-12"
   },
   {
@@ -6342,11 +6451,15 @@
     "go:protocol/schema:TestErrorCodesAreStableAndUnique",
     "go:protocol/wire:TestDecodeErrorPaths",
     "go:tools/constantsgen:TestGeneratedErrorCodesCoverRegistry",
-    "go:tools/vectorgen:TestNegativeVectorsUseRegisteredCodesOnly"
+    "go:tools/vectorgen:TestNegativeVectorsUseRegisteredCodesOnly",
+    "java:protocol-conformance:FramingConformanceTest.errorRegistry",
+    "swift:LumosProtocolConformance:FramingConformanceTests.testErrorRegistryMatchesGenerated"
    ],
-   "evidence": [],
+   "evidence": [
+    "ci:conformance#31528127667"
+   ],
    "adr": [],
-   "last_commit": "a9f1686",
+   "last_commit": "fbeaca8",
    "updated": "2026-08-12"
   },
   {
@@ -6371,8 +6484,10 @@
   },
   {
    "req_id": "TRS-PROTO-015",
-   "status": "implemented",
+   "status": "tested",
    "code": [
+    "android-app/protocol-conformance/src/main/java/com/lumos/protocol/conformance/Frame.java",
+    "ios-app/protocol-conformance/Sources/LumosProtocol/Frame.swift",
     "tools/vectorgen/gen.go",
     "tools/vectorgen/suite.go"
    ],
@@ -6381,11 +6496,17 @@
     "go:tools/vectorgen:TestGateFailsOnMissingFile",
     "go:tools/vectorgen:TestGateFailsOnUnexpectedFile",
     "go:tools/vectorgen:TestManifestListsTheWholeSuite",
-    "go:tools/vectorgen:TestSuiteFilesMatchTRS184"
+    "go:tools/vectorgen:TestSuiteFilesMatchTRS184",
+    "java:protocol-conformance:CryptoConformanceTest.x3dhKat",
+    "java:protocol-conformance:FramingConformanceTest.frameRoundtrip",
+    "swift:LumosProtocolConformance:CryptoConformanceTests.testX3DHSharedSecretsAndTranscripts",
+    "swift:LumosProtocolConformance:FramingConformanceTests.testFrameRoundtripReproducesCommittedBytes"
    ],
-   "evidence": [],
+   "evidence": [
+    "ci:conformance#31528127667"
+   ],
    "adr": [],
-   "last_commit": "a9f1686",
+   "last_commit": "fbeaca8",
    "updated": "2026-08-12"
   },
   {
@@ -6436,12 +6557,12 @@
    ],
    "evidence": [],
    "adr": [],
-   "last_commit": "834e08c",
-   "updated": "2026-08-11"
+   "last_commit": "fbeaca8",
+   "updated": "2026-08-12"
   },
   {
    "req_id": "TRS-REP-002",
-   "status": "implemented",
+   "status": "tested",
    "code": [
     "protocol/constants/lumos_constants.json",
     "tools/constantsgen/register.go",
@@ -6456,16 +6577,20 @@
     "protocol/gen/swift/LumosConstants.swift"
    ],
    "tests": [
-    "go:tools/constantsgen:TestGeneratedJavaCompilesAndMatchesRegister",
     "go:tools/constantsgen:TestGeneratedGoValuesMatchRegister",
-    "go:tools/constantsgen:TestIdentifiersAreValidAndDistinct"
+    "go:tools/constantsgen:TestGeneratedJavaCompilesAndMatchesRegister",
+    "go:tools/constantsgen:TestIdentifiersAreValidAndDistinct",
+    "java:protocol-conformance:CryptoConformanceTest.safetyNumber",
+    "swift:LumosProtocolConformance:CryptoConformanceTests.testSafetyNumberReproducesDigitsAndEmoji"
    ],
-   "evidence": [],
+   "evidence": [
+    "ci:conformance#31528127667"
+   ],
    "adr": [
     "ADR-004"
    ],
-   "last_commit": "d3e505f",
-   "updated": "2026-08-11"
+   "last_commit": "fbeaca8",
+   "updated": "2026-08-12"
   },
   {
    "req_id": "TRS-REP-003",
@@ -6474,8 +6599,8 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "d3e505f",
-   "updated": "2026-08-11"
+   "last_commit": "fbeaca8",
+   "updated": "2026-08-12"
   },
   {
    "req_id": "TRS-REP-004",
@@ -6689,13 +6814,35 @@
   },
   {
    "req_id": "TRS-TST-001",
-   "status": "not_started",
-   "code": [],
-   "tests": [],
-   "evidence": [],
-   "adr": [],
-   "last_commit": null,
-   "updated": null
+   "status": "tested",
+   "code": [
+    ".github/workflows/conformance.yml",
+    "Package.swift",
+    "android-app/protocol-conformance/build.gradle.kts",
+    "android-app/protocol-conformance/src/main/java/com/lumos/protocol/conformance/Frame.java",
+    "android-app/protocol-conformance/src/main/java/com/lumos/protocol/conformance/LumosCrypto.java",
+    "ios-app/protocol-conformance/Sources/LumosProtocol/Frame.swift",
+    "ios-app/protocol-conformance/Sources/LumosProtocol/LumosCrypto.swift",
+    "tools/vectorgen/gen.go"
+   ],
+   "tests": [
+    "java:protocol-conformance:FramingConformanceTest.frameRoundtrip",
+    "java:protocol-conformance:FramingConformanceTest.frameInvalid",
+    "java:protocol-conformance:CryptoConformanceTest.aeadKat",
+    "java:protocol-conformance:CryptoConformanceTest.x3dhKat",
+    "swift:LumosProtocolConformance:FramingConformanceTests.testFrameRoundtripReproducesCommittedBytes",
+    "swift:LumosProtocolConformance:CryptoConformanceTests.testAEADKnownAnswersAndTampers",
+    "go:protocol/wire:TestConformanceFrameRoundtripVectors",
+    "go:protocol/crypto:TestConformanceX3DHKAT"
+   ],
+   "evidence": [
+    "ci:conformance#31528127667"
+   ],
+   "adr": [
+    "ADR-004"
+   ],
+   "last_commit": "fbeaca8",
+   "updated": "2026-08-12"
   },
   {
    "req_id": "TRS-TST-002",

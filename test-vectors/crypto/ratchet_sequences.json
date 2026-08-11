@@ -10,7 +10,7 @@
     "TRS-CRY-015"
   ],
   "key_provenance": "TESTONLY-lumos-vectors-v1",
-  "notes": "Double Ratchet sequences. deliver_index is the order in which a consumer feeds messages to its receiver to reproduce out-of-order and skip behaviour; the header carries dh|pn|n. The negative asserts the MAX_SKIP breach fails with its exact stable code.",
+  "notes": "Double Ratchet sequences. deliver_index is the order in which a consumer feeds messages to its receiver to reproduce out-of-order and skip behaviour; the header carries dh|pn|n. The negative asserts the MAX_SKIP breach fails with its exact stable code. Every private key needed to replay both sides is recorded under testonly_* fields: a consumer that instead re-derived the generator's seeds would be agreeing with itself rather than with the protocol.",
   "shared_secret_hex": "97ff8b3b031c63c9c5967189e2bd38a4b4f52f6cf454fbaad3b7b0af64f2fa1a",
   "associated_data_hex": "11a70e5e6f7e0531a0be3aa354e0e22c1eac646ca8c606b64ffb73007f1a31e2",
   "sequences": [
@@ -110,5 +110,27 @@
       "expected_error": "ERR_CRYPTO_MAX_SKIP_EXCEEDED",
       "gap": 513
     }
+  ],
+  "testonly_initiator_ratchet_priv_hex": "8e73d2e64c1c0f6d4d43e70ebe658478a674328bbd328cf896ae3fe8b3622888",
+  "testonly_responder_ratchet_priv_hex": "ce4f296a951569964cdcc0156f4c3504384b8acc7c93c8785fd548b37b773949",
+  "testonly_initiator_dh_turn_privs_hex": [
+    "f1b975474f38feabefdb7e5180e6f8ecb06c74afb16f47efe26162b5e0c6228e",
+    "c0f2fee5a5266e45a8225887280a5820c9d8adc3eceec4ed67660ad80b513943",
+    "7a702bff5e678767c6c6ac1c172e0ddb0b33584537bedc7e5eb634061728c113",
+    "a36801ac1f0138854c3a70b1dbf741110236c696ff39556a738bb8b932d4ed05",
+    "801f48d7b46833ac77484beb67464cfb55542524cbc37956a8ed650bb90a24f8",
+    "f68fac145513190fc00b4a9ce1b4c50ddaa9b6a6ace8cf84c2fcf37439712777",
+    "feaa155d43fac4071fcda0d5bdd715bd5c1cf98a7b48c87b4f32f3c2da26ee5d",
+    "c2760b362c3dfe2ee98c3db327d448140e0b177956b1daf89f6e4b76fb43ed57"
+  ],
+  "testonly_responder_dh_turn_privs_hex": [
+    "cf7fa75c69cf4013345e0a85037b25dae9347b5c25016bfa8d6f68b1bc780234",
+    "7af11edf9b53b975effb0e5bd190cdac8a499f4f3d4d9d91dc0a5a7ae03581bc",
+    "c065b9a44c1528407a19377cc52cdebc1473dc11e8d6b9891813e568cde8f6f3",
+    "394868d52d54c752b483e4375f2e11e88d26e433610d7c0e10c5a9cab315463a",
+    "1f07d794becfd6ba4388133ca0af0d40164eef14a6b929a8a46fa4ecf88e7b43",
+    "9cd87548a5283aac09fc967d3a55fcd1e7631b9121ef16bdabb5aa1058c7c53e",
+    "aee5d5068703f91446eee270b6c2557955af3bd179ada6de04b6cb5397aaac1c",
+    "e29f17ebd8c8e913ea46d415e110c9b90943e45ddb1626317ba1b53e7e6ac924"
   ]
 }

@@ -38,12 +38,27 @@ var RequiredRoots = []string{
 // allowedRootFiles are the only non-dot files permitted at the repository root.
 // Dot-prefixed entries (.git, .github, .gitignore, editor and agent tooling
 // directories) are tooling rather than delivery roots and are never flagged.
+// Build-system entry points must sit at the repository root by construction:
+// Gradle looks for settings.gradle.kts beside the wrapper, and SwiftPM requires
+// Package.swift at its package root. They are tooling, not delivery roots, and
+// TRS Sec. 4.1's containment requirement is unaffected by their presence.
 var allowedRootFiles = map[string]bool{
-	"AGENTS.md": true,
-	"CLAUDE.md": true,
-	"README.md": true,
-	"go.mod":    true,
-	"go.sum":    true,
+	"AGENTS.md":           true,
+	"CLAUDE.md":           true,
+	"README.md":           true,
+	"go.mod":              true,
+	"go.sum":              true,
+	"settings.gradle.kts": true,
+	"gradlew":             true,
+	"gradlew.bat":         true,
+	"Package.swift":       true,
+	"Package.resolved":    true,
+}
+
+// allowedRootDirs are non-delivery directories the build systems place at the
+// root. "gradle" holds only the pinned wrapper.
+var allowedRootDirs = map[string]bool{
+	"gradle": true,
 }
 
 // relocatedArtifacts maps each handover-pack file to the location it must
@@ -171,7 +186,7 @@ func driftingEntries(repoRoot string) ([]Violation, error) {
 			continue
 		}
 		if e.IsDir() {
-			if !required[name] {
+			if !required[name] && !allowedRootDirs[name] {
 				violations = append(violations, Violation{
 					Rule:   "unexpected-root-directory",
 					Path:   name,
