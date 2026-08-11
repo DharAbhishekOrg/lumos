@@ -12,7 +12,7 @@ Go; part of the repository-root Go module `github.com/dharabhishekemail-ops/lumo
 | `toolchain/` | Present — pinned toolchain manifest (WP-01 slice S0) |
 | `vectorgen/` | Present — the single deterministic golden-vector generator (framing + errors in S4a; crypto S4b; adv/media/config/voucher S4c) |
 | `constantsgen/` | Present — tri-language constants codegen + generated error codes, class limits and config-override schema |
-| `tracecheck/` | WP-01 slice S6 — trace-matrix completeness/freshness/honesty validator |
+| `tracecheck/` | Present — trace-matrix completeness / freshness / honesty gate, plus `-stamp` and the executed-test collector |
 
 ## Rules
 

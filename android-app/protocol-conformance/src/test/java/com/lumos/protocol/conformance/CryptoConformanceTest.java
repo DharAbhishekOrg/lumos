@@ -22,7 +22,6 @@ import com.google.gson.JsonObject;
 import com.lumos.protocol.LumosConstants;
 import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
-import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 /** Cross-language conformance for the crypto, adv, media and config vectors. */
@@ -42,7 +41,7 @@ final class CryptoConformanceTest {
     }
 
     @Test
-    @DisplayName("AEAD known-answers reproduce exactly and every tamper case fails")
+    /** AEAD known-answers reproduce exactly and every tamper case fails */
     void aeadKat() throws Exception {
         final JsonObject root = Vectors.load("test-vectors/crypto/aead_kat.json");
 
@@ -84,7 +83,7 @@ final class CryptoConformanceTest {
     }
 
     @Test
-    @DisplayName("safety numbers reproduce 60 digits and 6 emoji from the frozen alphabet")
+    /** safety numbers reproduce 60 digits and 6 emoji from the frozen alphabet */
     void safetyNumber() {
         final JsonObject root = Vectors.load("test-vectors/crypto/safety_number.json");
         assertEquals(64, Vectors.i(root, "alphabet_size"), "alphabet size");
@@ -154,7 +153,7 @@ final class CryptoConformanceTest {
     }
 
     @Test
-    @DisplayName("X3DH shared secrets and transcripts reproduce from the recorded halves")
+    /** X3DH shared secrets and transcripts reproduce from the recorded halves */
     void x3dhKat() throws Exception {
         final JsonObject root = Vectors.load("test-vectors/crypto/x3dh_kat.json");
         final byte[] matchId = Vectors.hex(root, "match_id_hex");
@@ -244,7 +243,7 @@ final class CryptoConformanceTest {
     }
 
     @Test
-    @DisplayName("the advertisement EID schedule and authTag reproduce per epoch")
+    /** the advertisement EID schedule and authTag reproduce per epoch */
     void advertisement() throws Exception {
         final JsonObject root = Vectors.load("test-vectors/adv/ble_advertisement.json");
         final byte[] kAdv = Vectors.hex(root, "k_adv_hex");
@@ -316,7 +315,7 @@ final class CryptoConformanceTest {
     }
 
     @Test
-    @DisplayName("the media object pipeline reproduces the seal, chunks and digest")
+    /** the media object pipeline reproduces the seal, chunks and digest */
     void mediaPipeline() throws Exception {
         final JsonObject root = Vectors.load("test-vectors/media/object_pipeline.json");
         final byte[] sessionKey = Vectors.hex(root, "session_key_hex");
@@ -382,7 +381,7 @@ final class CryptoConformanceTest {
     }
 
     @Test
-    @DisplayName("signed config packages verify, and every negative fails with its code")
+    /** signed config packages verify, and every negative fails with its code */
     void configPackages() {
         final JsonObject valid = Vectors.load("test-vectors/config/package_valid.json");
         final byte[] anchor = Vectors.hex(valid, "trust_anchor_ed25519_pub_hex");
@@ -443,7 +442,7 @@ final class CryptoConformanceTest {
     }
 
     @Test
-    @DisplayName("voucher tokens verify and refuse per their recorded outcome")
+    /** voucher tokens verify and refuse per their recorded outcome */
     void voucherTokens() {
         final JsonObject root = Vectors.load("test-vectors/voucher/voucher_tokens.json");
         final byte[] anchor = Vectors.hex(root, "trust_anchor_ed25519_pub_hex");

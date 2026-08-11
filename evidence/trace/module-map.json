@@ -1,9 +1,5 @@
 {
- "comment": "Map module path prefixes to requirement domains; CI uses this for freshness checks (TRS 19.3). Extend as modules are created in WP-01.",
- "exclude": [
-  "**/README.md"
- ],
- "exclude_rationale": "The EDP Sec. 6.2 freshness rule exists to prove that code and its trace entries are co-edited. A directory README carries no requirement evidence, so requiring it to restamp every mapped ID would generate noise that trains reviewers to ignore the gate. Source, schema, vector and test changes are never excluded. Enforced by the validator delivered in WP-01 slice S6.",
+ "comment": "Map module path prefixes to requirement domains; CI enforces the EDP Sec. 6.2 freshness rule from this map (tools/tracecheck). There is NO exclusion list: slice S2 carried a placeholder **/README.md exclusion only because restamping entries by hand was tedious enough to make the gate feel like noise. Slice S6 replaced it with 'go run ./tools/tracecheck -stamp -auto', which computes exactly the IDs a change requires and rewrites them in one command, so freshness now applies to every file under a mapped module - documentation included.",
  "mappings": {
   "protocol/": [
    "TRS-PROTO",
@@ -60,7 +56,8 @@
    "TRS-REP-002"
   ],
   "tools/tracecheck/": [
-   "TRS-AI-003"
+   "TRS-AI-003",
+   "TRS-CICD-007"
   ],
   "protocol/schemas/": [
    "TRS-PROTO",
@@ -102,5 +99,6 @@
    "TRS-PROTO-015",
    "SRS-NFR-CMP-004"
   ]
- }
+ },
+ "last_commit_convention": "A commit cannot contain its own hash, so last_commit records the HEAD the entry's evidence was produced against - the commit the author stamped from. Freshness proves the field CHANGED between the PR base and head, which is what EDP Sec. 6.2 actually requires ('must also modify those entries' last_commit') and needs no self-referential SHA."
 }

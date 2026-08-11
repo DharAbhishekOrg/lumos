@@ -1438,8 +1438,8 @@
     "ci:conformance#31528127667"
    ],
    "adr": [],
-   "last_commit": "fbeaca8",
-   "updated": "2026-08-12"
+   "last_commit": "692fcee",
+   "updated": "2026-08-11"
   },
   {
    "req_id": "SRS-NFR-CMP-005",
@@ -4023,13 +4023,31 @@
   },
   {
    "req_id": "TRS-AI-003",
-   "status": "not_started",
-   "code": [],
-   "tests": [],
+   "status": "tested",
+   "code": [
+    "tools/tracecheck/matrix.go",
+    "tools/tracecheck/checks.go",
+    "tools/tracecheck/executed.go",
+    "tools/tracecheck/main.go",
+    ".github/workflows/conformance.yml",
+    "evidence/trace/module-map.json"
+   ],
+   "tests": [
+    "go:tools/tracecheck:TestLiveMatrixPassesEveryStructuralRule",
+    "go:tools/tracecheck:TestLiveMatrixIsExactlyTheCatalogue",
+    "go:tools/tracecheck:TestCompletenessDetectsMissingOrphanAndDuplicate",
+    "go:tools/tracecheck:TestFreshnessDetectsStaleEntries",
+    "go:tools/tracecheck:TestHonestyStructuralRules",
+    "go:tools/tracecheck:TestHonestyOwnerGateRules",
+    "go:tools/tracecheck:TestHonestyRequiresATestThatActuallyRan",
+    "go:tools/tracecheck:TestMatrixStructCoversEveryTopLevelField",
+    "go:tools/tracecheck:TestGateRegisterMatchesEDPSection8",
+    "go:tools/tracecheck:TestModuleMapHasNoExclusion"
+   ],
    "evidence": [],
    "adr": [],
-   "last_commit": null,
-   "updated": null
+   "last_commit": "692fcee",
+   "updated": "2026-08-11"
   },
   {
    "req_id": "TRS-AI-004",
@@ -4148,8 +4166,8 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": null,
-   "updated": null
+   "last_commit": "692fcee",
+   "updated": "2026-08-11"
   },
   {
    "req_id": "TRS-AND-002",
@@ -4158,8 +4176,8 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": null,
-   "updated": null
+   "last_commit": "692fcee",
+   "updated": "2026-08-11"
   },
   {
    "req_id": "TRS-AND-003",
@@ -4168,8 +4186,8 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": null,
-   "updated": null
+   "last_commit": "692fcee",
+   "updated": "2026-08-11"
   },
   {
    "req_id": "TRS-AND-004",
@@ -4178,8 +4196,8 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": null,
-   "updated": null
+   "last_commit": "692fcee",
+   "updated": "2026-08-11"
   },
   {
    "req_id": "TRS-AND-005",
@@ -4188,8 +4206,8 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": null,
-   "updated": null
+   "last_commit": "692fcee",
+   "updated": "2026-08-11"
   },
   {
    "req_id": "TRS-AND-006",
@@ -4198,8 +4216,8 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": null,
-   "updated": null
+   "last_commit": "692fcee",
+   "updated": "2026-08-11"
   },
   {
    "req_id": "TRS-AND-007",
@@ -4208,8 +4226,8 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": null,
-   "updated": null
+   "last_commit": "692fcee",
+   "updated": "2026-08-11"
   },
   {
    "req_id": "TRS-AND-008",
@@ -4218,8 +4236,8 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": null,
-   "updated": null
+   "last_commit": "692fcee",
+   "updated": "2026-08-11"
   },
   {
    "req_id": "TRS-AND-009",
@@ -4228,8 +4246,8 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": null,
-   "updated": null
+   "last_commit": "692fcee",
+   "updated": "2026-08-11"
   },
   {
    "req_id": "TRS-AND-010",
@@ -4238,8 +4256,8 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": null,
-   "updated": null
+   "last_commit": "692fcee",
+   "updated": "2026-08-11"
   },
   {
    "req_id": "TRS-AND-011",
@@ -4248,8 +4266,8 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": null,
-   "updated": null
+   "last_commit": "692fcee",
+   "updated": "2026-08-11"
   },
   {
    "req_id": "TRS-AND-012",
@@ -4258,8 +4276,8 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": null,
-   "updated": null
+   "last_commit": "692fcee",
+   "updated": "2026-08-11"
   },
   {
    "req_id": "TRS-ARCH-001",
@@ -4851,13 +4869,19 @@
   },
   {
    "req_id": "TRS-CICD-007",
-   "status": "not_started",
-   "code": [],
-   "tests": [],
+   "status": "implemented",
+   "code": [
+    "tools/tracecheck/checks.go",
+    ".github/workflows/conformance.yml"
+   ],
+   "tests": [
+    "go:tools/tracecheck:TestReleaseCandidateGate",
+    "go:tools/tracecheck:TestGateRegisterRejectsDishonestRows"
+   ],
    "evidence": [],
    "adr": [],
-   "last_commit": null,
-   "updated": null
+   "last_commit": "692fcee",
+   "updated": "2026-08-11"
   },
   {
    "req_id": "TRS-CICD-008",
@@ -6506,8 +6530,8 @@
     "ci:conformance#31528127667"
    ],
    "adr": [],
-   "last_commit": "fbeaca8",
-   "updated": "2026-08-12"
+   "last_commit": "692fcee",
+   "updated": "2026-08-11"
   },
   {
    "req_id": "TRS-PROTO-016",
@@ -6841,8 +6865,8 @@
    "adr": [
     "ADR-004"
    ],
-   "last_commit": "fbeaca8",
-   "updated": "2026-08-12"
+   "last_commit": "692fcee",
+   "updated": "2026-08-11"
   },
   {
    "req_id": "TRS-TST-002",

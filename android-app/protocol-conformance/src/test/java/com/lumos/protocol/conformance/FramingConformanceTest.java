@@ -24,14 +24,13 @@ import com.lumos.protocol.LumosErrors;
 import com.lumos.protocol.MessageClass;
 import java.util.HashSet;
 import java.util.Set;
-import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 /** Framing round-trip, negative and error-registry conformance. */
 final class FramingConformanceTest {
 
     @Test
-    @DisplayName("every positive framing vector re-encodes to the exact committed bytes")
+    /** every positive framing vector re-encodes to the exact committed bytes */
     void frameRoundtrip() throws Exception {
         final JsonObject root = Vectors.load("test-vectors/framing/frame_roundtrip.json");
         final Set<Integer> covered = new HashSet<>();
@@ -88,7 +87,7 @@ final class FramingConformanceTest {
     }
 
     @Test
-    @DisplayName("every negative framing vector fails with its exact stable code")
+    /** every negative framing vector fails with its exact stable code */
     void frameInvalid() {
         final JsonObject root = Vectors.load("test-vectors/framing/frame_invalid.json");
         int cases = 0;
@@ -110,7 +109,7 @@ final class FramingConformanceTest {
     }
 
     @Test
-    @DisplayName("the committed error registry matches the generated Java registry")
+    /** the committed error registry matches the generated Java registry */
     void errorRegistry() {
         final JsonObject root = Vectors.load("test-vectors/errors/error_codes.json");
         int cases = 0;
@@ -127,7 +126,7 @@ final class FramingConformanceTest {
     }
 
     @Test
-    @DisplayName("the authenticated header is exactly the first HEADER_LEN bytes")
+    /** the authenticated header is exactly the first HEADER_LEN bytes */
     void headerBytesIsTheAad() throws Exception {
         final JsonObject root = Vectors.load("test-vectors/framing/frame_roundtrip.json");
         final JsonObject first = Vectors.obj(Vectors.arr(root, "cases").get(0));
@@ -138,7 +137,7 @@ final class FramingConformanceTest {
     }
 
     @Test
-    @DisplayName("unknown non-critical classes decode and are skippable")
+    /** unknown non-critical classes decode and are skippable */
     void unknownNonCriticalIsSkippable() {
         final JsonObject root = Vectors.load("test-vectors/framing/frame_roundtrip.json");
         boolean sawSkippable = false;
