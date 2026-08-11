@@ -1,0 +1,3176 @@
+{
+ "document": "LUMOS-SRS-001",
+ "version": "1.1",
+ "baseline": "2026-08-11",
+ "requirement_count": 396,
+ "requirements": [
+  {
+   "id": "SRS-ONB-001",
+   "domain": "SRS-ONB",
+   "priority": "P0",
+   "requirement": "The application shall present an adult- only age gate before profile creation or access to nearby discovery.",
+   "verification": "Fresh-install black-box test; access is blocked until the user affirms the configured minimum age.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-ONB-002",
+   "domain": "SRS-ONB",
+   "priority": "P0",
+   "requirement": "The application shall display the current Terms of Use, Privacy Notice, Community Rules and local-radio disclosure and shall record the accepted document versions locally.",
+   "verification": "Fresh-install test and local data inspection.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-ONB-003",
+   "domain": "SRS-ONB",
+   "priority": "P0",
+   "requirement": "The application shall explain in plain language that nearby discovery depends on Bluetooth and that remote matched text chat depends on internet connectivity.",
+   "verification": "UX content review against approved copy.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-ONB-004",
+   "domain": "SRS-ONB",
+   "priority": "P0",
+   "requirement": "The application shall request Bluetooth, camera, notification, microphone, local-network and photo- library permissions only when the related feature is first invoked.",
+   "verification": "Permission-flow test on Android and iOS; no unrelated permission is requested at launch.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-ONB-005",
+   "domain": "SRS-ONB",
+   "priority": "P0",
+   "requirement": "The application shall continue with a reduced feature set when any optional permission is denied and shall explain the exact unavailable capability.",
+   "verification": "Deny-each-permission matrix test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-ONB-006",
+   "domain": "SRS-ONB",
+   "priority": "P1",
+   "requirement": "The application shall provide an onboarding mode that creates a local cryptographic identity without requiring a phone number, email address or social login.",
+   "verification": "Offline first-run test with network disabled.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-ONB-007",
+   "domain": "SRS-ONB",
+   "priority": "P1",
+   "requirement": "[Amended v1.1 / ADR-003] The application shall provide an optional content-only recovery setup (RecoveryRecord): a locally generated, passphrase-protected export of profile content, preferences, block list, match roster metadata and locally stored conversation history. It shall contain no private keys, prekeys or session state; restore creates a new cryptographic identity and peers see the standard re-verification notice. The recovery identifier shall not be exposed to nearby or matched users.",
+   "verification": "Functional and privacy inspection.",
+   "origin": "v1.0-amended"
+  },
+  {
+   "id": "SRS-ONB-008",
+   "domain": "SRS-ONB",
+   "priority": "P0",
+   "requirement": "The application shall not enable Visible Nearby automatically after installation, update, reboot or permission grant.",
+   "verification": "Lifecycle test across reinstall, upgrade, reboot and relaunch.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-IDN-001",
+   "domain": "SRS-IDN",
+   "priority": "P0",
+   "requirement": "The application shall generate a device-bound long-term identity key pair on first use and protect the private key with Android Keystore or Apple Keychain/Secure Enclave capabilities where available.",
+   "verification": "Static architecture review plus key- export negative test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-IDN-002",
+   "domain": "SRS-IDN",
+   "priority": "P0",
+   "requirement": "The application shall derive public peer identifiers from cryptographic identity material without exposing hardware MAC addresses, phone numbers or store-account identifiers.",
+   "verification": "Protocol capture and identifier inspection.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-IDN-003",
+   "domain": "SRS-IDN",
+   "priority": "P0",
+   "requirement": "The application shall support explicit identity reset with clear warning that existing matches and encrypted conversation continuity may be lost.",
+   "verification": "Black-box reset test and storage inspection.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-IDN-004",
+   "domain": "SRS-IDN",
+   "priority": "P0",
+   "requirement": "The application shall rotate nearby ephemeral identifiers at a configurable bounded interval and shall prevent correlation through a static advertisement payload.",
+   "verification": "BLE capture over at least 15 minutes; EIDs rotate and no PII appears.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-IDN-005",
+   "domain": "SRS-IDN",
+   "priority": "P1",
+   "requirement": "The application shall provide a human- verifiable safety number, emoji pair or short code after mutual matching.",
+   "verification": "Cross-device comparison test; both users see identical verification material.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-IDN-006",
+   "domain": "SRS-IDN",
+   "priority": "P1",
+   "requirement": "The application shall detect an unexpected long-term identity change for an existing match and display a non-alarming re-verification notice before sensitive actions.",
+   "verification": "Simulated key-change test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-IDN-007",
+   "domain": "SRS-IDN",
+   "priority": "P0",
+   "requirement": "The application shall maintain separate cryptographic contexts for unrelated matches so compromise of one conversation does not expose another.",
+   "verification": "Unit test and key-state inspection.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-IDN-008",
+   "domain": "SRS-IDN",
+   "priority": "P1",
+   "requirement": "[Amended v1.1 / ADR-003] The application shall support revocation of a device identity, defined as backend registry revocation: an authenticated request or owner support workflow marks the device routing identity revoked, withdraws its prekeys and drops its push route, without revealing plaintext profile or chat content to the service. Peers learn of the identity change on next contact via the standard key-change path.",
+   "verification": "API and end-to-end revocation test.",
+   "origin": "v1.0-amended"
+  },
+  {
+   "id": "SRS-PRO-001",
+   "domain": "SRS-PRO",
+   "priority": "P0",
+   "requirement": "The user shall be able to create and edit an alias, age or age band, pronouns, gender identity, orientation, relationship intent, interests, short bio and profile media.",
+   "verification": "Profile CRUD test on both platforms.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-PRO-002",
+   "domain": "SRS-PRO",
+   "priority": "P0",
+   "requirement": "All identity, gender, pronoun and orientation fields shall support inclusive values, self-description and prefer-not-to-say options without assuming binary gender or heterosexual matching.",
+   "verification": "Content-model and UI test with LGBTQ-inclusive cases.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-PRO-003",
+   "domain": "SRS-PRO",
+   "priority": "P0",
+   "requirement": "The user shall control the visibility of each sensitive profile field before it is shared with a nearby requester or match.",
+   "verification": "Field-level visibility matrix test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-PRO-004",
+   "domain": "SRS-PRO",
+   "priority": "P0",
+   "requirement": "Profile records and media shall be encrypted at rest and shall remain on- device unless intentionally shared with a consenting peer.",
+   "verification": "Storage inspection and network capture.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-PRO-005",
+   "domain": "SRS-PRO",
+   "priority": "P0",
+   "requirement": "The application shall remove EXIF location, device and timestamp metadata from profile and chat images before sharing.",
+   "verification": "Known-EXIF image test; receiver file contains no prohibited metadata.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-PRO-006",
+   "domain": "SRS-PRO",
+   "priority": "P0",
+   "requirement": "The application shall validate image type, dimensions, file size and decode safety before storing or rendering profile media.",
+   "verification": "Malformed and oversized media tests.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-PRO-007",
+   "domain": "SRS-PRO",
+   "priority": "P0",
+   "requirement": "The application shall create a small privacy-preserving profile preview distinct from the full profile and shall not broadcast the photo inside BLE advertisement packets.",
+   "verification": "BLE capture and preview-flow test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-PRO-008",
+   "domain": "SRS-PRO",
+   "priority": "P1",
+   "requirement": "The user shall be able to preview exactly what a nearby person, requester, match and venue participant can see.",
+   "verification": "Black-box privacy preview test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-PRO-009",
+   "domain": "SRS-PRO",
+   "priority": "P1",
+   "requirement": "The user shall be able to reorder profile media and choose a primary photo without network access.",
+   "verification": "Offline profile test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-PRO-010",
+   "domain": "SRS-PRO",
+   "priority": "P0",
+   "requirement": "The application shall prevent an empty or policy-incomplete profile from becoming Visible Nearby.",
+   "verification": "Validation test with missing mandatory fields.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-PRO-011",
+   "domain": "SRS-PRO",
+   "priority": "P1",
+   "requirement": "The application shall support profile pause, temporary hide and permanent local deletion.",
+   "verification": "Lifecycle and storage deletion test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-PRO-012",
+   "domain": "SRS-PRO",
+   "priority": "P1",
+   "requirement": "Profile copy and controls shall use respectful, non-objectifying language and shall not implement public hot-or- not voting.",
+   "verification": "UX and policy review.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-PRO-013",
+   "domain": "SRS-PRO",
+   "priority": "P1",
+   "requirement": "The application shall provide broad proximity labels such as Very close, Nearby and Around the venue rather than misleading precise indoor distance.",
+   "verification": "UI and RSSI-boundary test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-PRO-014",
+   "domain": "SRS-PRO",
+   "priority": "P2",
+   "requirement": "The application may support optional verified attributes in a future release, but shall visually distinguish venue verification from legal identity verification.",
+   "verification": "Design review and configuration test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-NBY-001",
+   "domain": "SRS-NBY",
+   "priority": "P0",
+   "requirement": "The user shall explicitly enable Visible Nearby and choose a duration, including a bounded default, custom duration and until venue exit.",
+   "verification": "Visibility timer test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-NBY-002",
+   "domain": "SRS-NBY",
+   "priority": "P0",
+   "requirement": "Visible Nearby shall automatically expire at the selected time and shall not silently renew.",
+   "verification": "Timer and background lifecycle test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-NBY-003",
+   "domain": "SRS-NBY",
+   "priority": "P0",
+   "requirement": "The application shall expose a persistent, understandable indicator while local advertising is active.",
+   "verification": "UI state test in all main tabs.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-NBY-004",
+   "domain": "SRS-NBY",
+   "priority": "P0",
+   "requirement": "Nearby advertisements shall contain only protocol version, rotating EID, capability bits, optional coarse venue hint and an authentication tag.",
+   "verification": "BLE packet inspection.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-NBY-005",
+   "domain": "SRS-NBY",
+   "priority": "P0",
+   "requirement": "The application shall scan in bounded windows with adaptive duty cycling rather than continuously at maximum power.",
+   "verification": "Battery and scan trace review.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-NBY-006",
+   "domain": "SRS-NBY",
+   "priority": "P0",
+   "requirement": "The application shall deduplicate repeated sightings of the same rotating peer without creating duplicate profile cards.",
+   "verification": "Crowded discovery simulation.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-NBY-007",
+   "domain": "SRS-NBY",
+   "priority": "P0",
+   "requirement": "The application shall age out stale nearby cards after a configurable last- seen interval.",
+   "verification": "Peer-disappearance test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-NBY-008",
+   "domain": "SRS-NBY",
+   "priority": "P0",
+   "requirement": "The application shall never display hardware MAC addresses, raw service UUIDs, cryptographic IDs, MTU values or mesh terminology in the production UI.",
+   "verification": "UI inspection.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-NBY-009",
+   "domain": "SRS-NBY",
+   "priority": "P0",
+   "requirement": "The application shall retrieve only the approved preview payload before the user opens or requests the profile.",
+   "verification": "Protocol and data-volume test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-NBY-010",
+   "domain": "SRS-NBY",
+   "priority": "P0",
+   "requirement": "The application shall display a clear local-state message when Bluetooth is off, unavailable, permission-restricted or temporarily busy.",
+   "verification": "Capability/permission matrix.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-NBY-011",
+   "domain": "SRS-NBY",
+   "priority": "P1",
+   "requirement": "The user shall be able to filter locally discovered cards by compatible intent and user-configured preferences without uploading the full profile to the backend.",
+   "verification": "Offline filter test and network capture.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-NBY-012",
+   "domain": "SRS-NBY",
+   "priority": "P1",
+   "requirement": "The user shall be able to hide an individual nearby card without notifying that peer.",
+   "verification": "Black-box hide test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-NBY-013",
+   "domain": "SRS-NBY",
+   "priority": "P0",
+   "requirement": "Blocked identities shall not reappear under ordinary EID rotation.",
+   "verification": "Block + EID-rotation test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-NBY-014",
+   "domain": "SRS-NBY",
+   "priority": "P1",
+   "requirement": "The application shall provide subtle skeleton and empty states without indefinite spinners during discovery.",
+   "verification": "UX timing test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-NBY-015",
+   "domain": "SRS-NBY",
+   "priority": "P1",
+   "requirement": "The discovery view shall remain responsive while at least 100 synthetic peers are processed.",
+   "verification": "Performance test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-NBY-016",
+   "domain": "SRS-NBY",
+   "priority": "P0",
+   "requirement": "The system shall avoid claiming that a person is in a specific direction or exact location unless a future explicitly supported capability is enabled.",
+   "verification": "Content and feature review.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-NBY-017",
+   "domain": "SRS-NBY",
+   "priority": "P1",
+   "requirement": "The user shall be able to stop all nearby advertising and scanning with one visible action.",
+   "verification": "Black-box stop test and radio trace.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-MAT-001",
+   "domain": "SRS-MAT",
+   "priority": "P0",
+   "requirement": "A user shall be able to send an interest request only to a currently or recently discovered eligible peer.",
+   "verification": "Black-box request test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-MAT-002",
+   "domain": "SRS-MAT",
+   "priority": "P0",
+   "requirement": "An interest request shall include only the sender fields explicitly approved for request-stage disclosure.",
+   "verification": "Protocol payload inspection.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-MAT-003",
+   "domain": "SRS-MAT",
+   "priority": "P0",
+   "requirement": "The recipient shall be able to accept, decline, ignore, block or report a request without exposing the chosen action to the sender except for acceptance.",
+   "verification": "Cross-device behavior test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-MAT-004",
+   "domain": "SRS-MAT",
+   "priority": "P0",
+   "requirement": "Declines and ignores shall not generate a rejection notification or public signal.",
+   "verification": "Notification and peer-state test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-MAT-005",
+   "domain": "SRS-MAT",
+   "priority": "P0",
+   "requirement": "Full profile reveal and persistent chat shall require mutual acceptance.",
+   "verification": "State-machine test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-MAT-006",
+   "domain": "SRS-MAT",
+   "priority": "P0",
+   "requirement": "The application shall prevent unsolicited chat or media before mutual acceptance.",
+   "verification": "Negative functional test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-MAT-007",
+   "domain": "SRS-MAT",
+   "priority": "P0",
+   "requirement": "The application shall assign a stable match identifier independent of the temporary nearby EID.",
+   "verification": "Protocol and persistence test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-MAT-008",
+   "domain": "SRS-MAT",
+   "priority": "P1",
+   "requirement": "Both matched users shall receive a shared in-venue verification token such as emoji pair and color pulse.",
+   "verification": "Cross-device comparison.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-MAT-009",
+   "domain": "SRS-MAT",
+   "priority": "P1",
+   "requirement": "The user shall be able to unmatch, block or retain a match as a chat contact according to policy.",
+   "verification": "Lifecycle test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-MAT-010",
+   "domain": "SRS-MAT",
+   "priority": "P0",
+   "requirement": "Unmatching shall stop future remote delivery and local discovery association while preserving required safety evidence only when the reporting user explicitly elects to retain it.",
+   "verification": "Unmatch/report test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-MAT-011",
+   "domain": "SRS-MAT",
+   "priority": "P1",
+   "requirement": "The application shall rate-limit outgoing requests and provide respectful cooldown messaging.",
+   "verification": "Flood and cooldown test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-MAT-012",
+   "domain": "SRS-MAT",
+   "priority": "P1",
+   "requirement": "The application shall support configurable venue-specific match perks without changing consent rules.",
+   "verification": "Signed-config test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-MAT-013",
+   "domain": "SRS-MAT",
+   "priority": "P0",
+   "requirement": "The application shall not expose a list of people who viewed a profile unless the viewed user explicitly opts into a future privacy-reviewed feature.",
+   "verification": "Feature inspection.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-MAT-014",
+   "domain": "SRS-MAT",
+   "priority": "P1",
+   "requirement": "Match state transitions shall be idempotent across duplicate local and relay messages.",
+   "verification": "Duplicate-frame integration test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-RMT-001",
+   "domain": "SRS-RMT",
+   "priority": "P0",
+   "requirement": "Matched users shall be able to exchange end-to-end encrypted text messages after they leave local radio range when internet connectivity is available.",
+   "verification": "Android-iOS remote chat test on separate networks.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-RMT-002",
+   "domain": "SRS-RMT",
+   "priority": "P0",
+   "requirement": "The remote relay shall store only opaque encrypted envelopes, routing identifiers, expiry and delivery metadata and shall not receive plaintext message content.",
+   "verification": "Backend inspection and traffic capture.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-RMT-003",
+   "domain": "SRS-RMT",
+   "priority": "P0",
+   "requirement": "The application shall queue outgoing text messages locally when offline and automatically retry when an approved path returns.",
+   "verification": "Airplane-mode queue and recovery test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-RMT-004",
+   "domain": "SRS-RMT",
+   "priority": "P0",
+   "requirement": "Each message shall have a globally unique message ID and shall be displayed at most once even if delivered through multiple transports.",
+   "verification": "Dual-delivery dedup test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-RMT-005",
+   "domain": "SRS-RMT",
+   "priority": "P0",
+   "requirement": "The chat UI shall show meaningful states including queued, sending, sent, delivered, read, failed and local-only waiting.",
+   "verification": "State transition UI test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-RMT-006",
+   "domain": "SRS-RMT",
+   "priority": "P0",
+   "requirement": "Push notifications shall use generic privacy-preserving text by default and shall not include message content unless the user explicitly chooses a less-private setting.",
+   "verification": "Locked-screen notification test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-RMT-007",
+   "domain": "SRS-RMT",
+   "priority": "P0",
+   "requirement": "Private chat shall use a reviewed asynchronous key-agreement and Double Ratchet-compatible design with unique message keys, replay protection and skipped-key limits.",
+   "verification": "Cryptographic design review and protocol test vectors.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-RMT-008",
+   "domain": "SRS-RMT",
+   "priority": "P0",
+   "requirement": "The application shall handle delayed and out-of-order remote messages within the configured skipped-key window.",
+   "verification": "Reordered-envelope test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-RMT-009",
+   "domain": "SRS-RMT",
+   "priority": "P0",
+   "requirement": "Expired, replayed, malformed or unauthenticated envelopes shall be rejected without crashing or exposing diagnostic details to the user.",
+   "verification": "Negative protocol tests.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-RMT-010",
+   "domain": "SRS-RMT",
+   "priority": "P1",
+   "requirement": "Users shall be able to reply, react, copy permitted text, delete locally and view timestamps.",
+   "verification": "Chat interaction test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-RMT-011",
+   "domain": "SRS-RMT",
+   "priority": "P1",
+   "requirement": "[Amended v1.1 / AMD-005] Message edit, delete-for-everyone and reactions shall be represented as new authenticated events carried in the TEXT_MESSAGE inner event envelope (event_kind with target_message_id), never as server-side plaintext mutation; unknown event kinds are ignored safely by older clients.",
+   "verification": "Protocol and black-box test.",
+   "origin": "v1.0-amended"
+  },
+  {
+   "id": "SRS-RMT-012",
+   "domain": "SRS-RMT",
+   "priority": "P1",
+   "requirement": "Typing and presence indicators shall be opt-in, ephemeral and not retained as behavioral history.",
+   "verification": "Privacy and backend retention test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-RMT-013",
+   "domain": "SRS-RMT",
+   "priority": "P0",
+   "requirement": "The application shall provide an explicit visual distinction between remote-deliverable text and nearby- only media or voice notes.",
+   "verification": "UX test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-RMT-014",
+   "domain": "SRS-RMT",
+   "priority": "P1",
+   "requirement": "The user shall be able to disable read receipts and typing indicators without disabling delivery receipts.",
+   "verification": "Settings matrix test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-RMT-015",
+   "domain": "SRS-RMT",
+   "priority": "P0",
+   "requirement": "Remote text messages shall expire from the relay after successful acknowledgement or configured TTL, whichever occurs first.",
+   "verification": "Backend TTL integration test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-RMT-016",
+   "domain": "SRS-RMT",
+   "priority": "P0",
+   "requirement": "Blocking or unmatching shall prevent new remote envelope delivery from the blocked identity.",
+   "verification": "Cross-device block test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-RMT-017",
+   "domain": "SRS-RMT",
+   "priority": "P1",
+   "requirement": "The application shall restore conversation state after process death without reusing deleted message keys.",
+   "verification": "Process-kill recovery and key-state test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-RMT-018",
+   "domain": "SRS-RMT",
+   "priority": "P1",
+   "requirement": "Remote chat shall remain usable when local nearby transports are disabled.",
+   "verification": "Internet-only chat test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-MED-001",
+   "domain": "SRS-MED",
+   "priority": "P0",
+   "requirement": "Matched users shall be able to send approved photos and files from the chat attachment tray while a local peer path is available.",
+   "verification": "Android-Android, iOS-iOS and Android-iOS local media test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-MED-002",
+   "domain": "SRS-MED",
+   "priority": "P0",
+   "requirement": "The application shall clearly mark photo, file and voice-note actions as Nearby only when the product policy does not permit remote relay.",
+   "verification": "UX inspection.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-MED-003",
+   "domain": "SRS-MED",
+   "priority": "P0",
+   "requirement": "A user shall never receive an unsolicited media object before mutual acceptance and explicit send action.",
+   "verification": "Negative consent test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-MED-004",
+   "domain": "SRS-MED",
+   "priority": "P0",
+   "requirement": "The application shall encrypt the complete media object before fragmentation and shall authenticate metadata and chunks.",
+   "verification": "Protocol capture and cryptographic test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-MED-005",
+   "domain": "SRS-MED",
+   "priority": "P0",
+   "requirement": "The sender shall generate an object ID, MIME type, byte length, SHA-256 digest, thumbnail metadata, chunk plan and expiry.",
+   "verification": "Protocol unit test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-MED-006",
+   "domain": "SRS-MED",
+   "priority": "P0",
+   "requirement": "The receiver shall validate MIME type, maximum size, digest and AEAD authentication before atomically publishing the file to chat.",
+   "verification": "Corruption and malformed-file tests.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-MED-007",
+   "domain": "SRS-MED",
+   "priority": "P0",
+   "requirement": "Image delivery shall be thumbnail-first, followed by preview and optional full object as allowed by policy and available transport.",
+   "verification": "Visual and timing test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-MED-008",
+   "domain": "SRS-MED",
+   "priority": "P0",
+   "requirement": "The transfer protocol shall support selective acknowledgement and resume of missing chunks without retransmitting the complete object.",
+   "verification": "Forced-disconnect resume test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-MED-009",
+   "domain": "SRS-MED",
+   "priority": "P0",
+   "requirement": "Transport migration during a transfer shall not duplicate the resulting chat item.",
+   "verification": "BLE-to-Wi-Fi migration test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-MED-010",
+   "domain": "SRS-MED",
+   "priority": "P0",
+   "requirement": "The user shall see progress, paused, waiting for peer, retry, failed and completed states within the chat bubble.",
+   "verification": "Black-box UI state test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-MED-011",
+   "domain": "SRS-MED",
+   "priority": "P0",
+   "requirement": "Voice-note recording shall use a familiar hold-to-record and slide-to- cancel or lock interaction with waveform, duration and playback controls.",
+   "verification": "UX test on both platforms.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-MED-012",
+   "domain": "SRS-MED",
+   "priority": "P0",
+   "requirement": "Voice notes shall remain local-only in flagship 1.0 and shall queue until the peer is nearby if local delivery cannot complete.",
+   "verification": "Leave-range and return test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-MED-013",
+   "domain": "SRS-MED",
+   "priority": "P0",
+   "requirement": "Voice-note files shall be compressed with the approved codec and bounded by configurable duration and size limits.",
+   "verification": "Codec/file inspection and duration-limit test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-MED-014",
+   "domain": "SRS-MED",
+   "priority": "P1",
+   "requirement": "The application shall allow the user to cancel an in-progress send and delete partial encrypted objects safely.",
+   "verification": "Cancellation test and storage inspection.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-MED-015",
+   "domain": "SRS-MED",
+   "priority": "P1",
+   "requirement": "The application shall prevent executable, dangerous or unsupported file categories according to policy.",
+   "verification": "File allowlist/denylist test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-MED-016",
+   "domain": "SRS-MED",
+   "priority": "P1",
+   "requirement": "The receiver shall be able to save an approved completed object only through an explicit user action.",
+   "verification": "Storage permission and UI test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-MED-017",
+   "domain": "SRS-MED",
+   "priority": "P0",
+   "requirement": "Intermediate mesh peers shall relay opaque chunks only and shall not decrypt object metadata or content.",
+   "verification": "Mesh protocol inspection.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-MED-018",
+   "domain": "SRS-MED",
+   "priority": "P1",
+   "requirement": "Media caches shall enforce quotas, TTL cleanup and secure deletion best effort.",
+   "verification": "Quota and cleanup test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-MSH-001",
+   "domain": "SRS-MSH",
+   "priority": "P0",
+   "requirement": "The system shall support direct local peer-to-peer delivery and may relay eligible encrypted packets through nearby Lumos devices.",
+   "verification": "Three-device relay test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-MSH-002",
+   "domain": "SRS-MSH",
+   "priority": "P0",
+   "requirement": "Every relayed packet shall contain message ID, expiry, hop limit and deduplication material authenticated as associated data.",
+   "verification": "Protocol conformance test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-MSH-003",
+   "domain": "SRS-MSH",
+   "priority": "P0",
+   "requirement": "The default maximum hop limit shall be conservative and configurable, with an absolute client-enforced ceiling.",
+   "verification": "Configuration and malicious-frame test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-MSH-004",
+   "domain": "SRS-MSH",
+   "priority": "P0",
+   "requirement": "A relay shall decrement hop limit and shall not relay expired, duplicate, blocked, oversized, malformed or policy-disallowed packets.",
+   "verification": "Mesh negative test suite.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-MSH-005",
+   "domain": "SRS-MSH",
+   "priority": "P0",
+   "requirement": "Dating profile payloads shall not be indiscriminately flooded through the mesh; only explicitly permitted request, channel or opaque delivery frames may relay.",
+   "verification": "Packet-policy test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-MSH-006",
+   "domain": "SRS-MSH",
+   "priority": "P1",
+   "requirement": "The system shall support best-effort store-and-forward of opaque envelopes with short TTL and strict storage quota.",
+   "verification": "Peer-disappearance/reappearance test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-MSH-007",
+   "domain": "SRS-MSH",
+   "priority": "P0",
+   "requirement": "Store-and-forward delivery shall be described as opportunistic and shall not be represented as guaranteed without an internet relay.",
+   "verification": "UX copy review.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-MSH-008",
+   "domain": "SRS-MSH",
+   "priority": "P1",
+   "requirement": "Venue relay devices shall store only opaque envelopes and shall auto- delete them after acknowledgement or TTL.",
+   "verification": "Venue relay inspection.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-MSH-009",
+   "domain": "SRS-MSH",
+   "priority": "P1",
+   "requirement": "Graphical venue rooms may use mesh relay, but shall provide moderation, rate limits, mute, block and report controls.",
+   "verification": "Venue-room test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-MSH-010",
+   "domain": "SRS-MSH",
+   "priority": "P0",
+   "requirement": "Mesh routing shall use adaptive connection limits and duty cycles to avoid unbounded radio and battery use.",
+   "verification": "Stress and battery test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-MSH-011",
+   "domain": "SRS-MSH",
+   "priority": "P1",
+   "requirement": "Relays shall not receive delivery receipts that reveal more peer metadata than required for routing.",
+   "verification": "Privacy architecture review.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-MSH-012",
+   "domain": "SRS-MSH",
+   "priority": "P0",
+   "requirement": "The app shall not expose IRC commands, relay lists, raw hop counts or network configuration in the mainstream UI.",
+   "verification": "UI inspection.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-TRN-001",
+   "domain": "SRS-TRN",
+   "priority": "P0",
+   "requirement": "The transport orchestrator shall expose one transport-neutral session API to discovery, matching, chat and media domains.",
+   "verification": "Architecture review and adapter tests.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-TRN-002",
+   "domain": "SRS-TRN",
+   "priority": "P0",
+   "requirement": "Standard BLE shall be the universal local baseline and shall not require special accessory hardware.",
+   "verification": "Supported-device matrix test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-TRN-003",
+   "domain": "SRS-TRN",
+   "priority": "P0",
+   "requirement": "Optional Wi-Fi Aware, peer-to-peer Wi- Fi or local-network capabilities shall improve throughput but shall never be required for the core experience.",
+   "verification": "Capability-absence test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-TRN-004",
+   "domain": "SRS-TRN",
+   "priority": "P0",
+   "requirement": "The orchestrator shall select transports according to message policy: nearby control and small payloads locally, nearby media locally, and matched remote text through the relay when needed.",
+   "verification": "Policy-routing integration test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-TRN-005",
+   "domain": "SRS-TRN",
+   "priority": "P0",
+   "requirement": "The orchestrator shall maintain a transport-independent session and message identity during migration.",
+   "verification": "Migration conformance test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-TRN-006",
+   "domain": "SRS-TRN",
+   "priority": "P0",
+   "requirement": "The orchestrator shall suppress duplicate deliveries when the same frame arrives over BLE, local Wi-Fi, mesh and relay.",
+   "verification": "Multi-path duplicate test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-TRN-007",
+   "domain": "SRS-TRN",
+   "priority": "P0",
+   "requirement": "Each transport shall implement bounded retries, jittered exponential backoff, circuit-breaker behavior and explicit timeout budgets.",
+   "verification": "Fault-injection test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-TRN-008",
+   "domain": "SRS-TRN",
+   "priority": "P0",
+   "requirement": "When no route exists, the application shall queue eligible content and present a non-blocking user state instead of a fatal error.",
+   "verification": "All-radios-off test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-TRN-009",
+   "domain": "SRS-TRN",
+   "priority": "P0",
+   "requirement": "Local-only media shall never silently migrate to the internet relay.",
+   "verification": "Network-capture negative test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-TRN-010",
+   "domain": "SRS-TRN",
+   "priority": "P0",
+   "requirement": "Remote text shall never depend on the peer remaining in Bluetooth range.",
+   "verification": "Separate-network test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-TRN-011",
+   "domain": "SRS-TRN",
+   "priority": "P1",
+   "requirement": "The orchestrator shall remember successful capability profiles per device model and session while avoiding persistent cross-user tracking.",
+   "verification": "Capability-cache test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-TRN-012",
+   "domain": "SRS-TRN",
+   "priority": "P0",
+   "requirement": "Android and iOS shall share canonical protocol schemas, byte order, cryptographic test vectors and version- negotiation rules.",
+   "verification": "Cross-platform golden-vector test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-TRN-013",
+   "domain": "SRS-TRN",
+   "priority": "P0",
+   "requirement": "Unknown optional capability bits and message extensions shall be ignored safely when protocol rules permit.",
+   "verification": "Forward-compatibility test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-TRN-014",
+   "domain": "SRS-TRN",
+   "priority": "P0",
+   "requirement": "A manual QR handoff shall be available as the final user-controlled fallback for peer verification, venue entry or small session bootstrap data.",
+   "verification": "QR cross-platform test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-TRN-015",
+   "domain": "SRS-TRN",
+   "priority": "P1",
+   "requirement": "Debug transport diagnostics shall be available only in non-production builds or an authenticated support export.",
+   "verification": "Release build inspection.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-VEN-001",
+   "domain": "SRS-VEN",
+   "priority": "P0",
+   "requirement": "An existing app installation shall activate a venue package through a signed QR token, signed remote configuration or approved venue broadcast without reinstall or binary update.",
+   "verification": "Venue activation test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-VEN-002",
+   "domain": "SRS-VEN",
+   "priority": "P0",
+   "requirement": "Venue packages shall contain version, venue ID, validity period, branding references, room definitions, perk rules, sponsor slots and policy flags.",
+   "verification": "Schema validation test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-VEN-003",
+   "domain": "SRS-VEN",
+   "priority": "P0",
+   "requirement": "The application shall verify venue- package signatures, expiry, intended app environment and rollback protection before activation.",
+   "verification": "Tamper, expiry and replay tests.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-VEN-004",
+   "domain": "SRS-VEN",
+   "priority": "P0",
+   "requirement": "The UI shall clearly show that a venue is verified without implying that individual users have government identity verification.",
+   "verification": "UX review.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-VEN-005",
+   "domain": "SRS-VEN",
+   "priority": "P0",
+   "requirement": "Venue operators shall not receive private dating profiles, match graphs, chat plaintext or local media.",
+   "verification": "Data-flow review and network capture.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-VEN-006",
+   "domain": "SRS-VEN",
+   "priority": "P1",
+   "requirement": "Venue packages shall support event schedule, safety contact, perks, vouchers, venue rooms and co- branded visual accents within global accessibility constraints.",
+   "verification": "Configuration test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-VEN-007",
+   "domain": "SRS-VEN",
+   "priority": "P0",
+   "requirement": "Venue rooms shall use graphical room cards and standard chat controls, not IRC commands.",
+   "verification": "UI inspection.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-VEN-008",
+   "domain": "SRS-VEN",
+   "priority": "P0",
+   "requirement": "Venue rooms shall include mute, block, report, rate limits, moderation state and room closure controls.",
+   "verification": "UGC moderation test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-VEN-009",
+   "domain": "SRS-VEN",
+   "priority": "P1",
+   "requirement": "The app shall exit venue mode automatically when the token expires or the configured presence rule is no longer satisfied.",
+   "verification": "Expiry and exit test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-VEN-010",
+   "domain": "SRS-VEN",
+   "priority": "P1",
+   "requirement": "Venue mode shall support client- isolated networks through local peer- to-peer mechanisms when available and shall fall back gracefully otherwise.",
+   "verification": "Client-isolation venue test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-VEN-011",
+   "domain": "SRS-VEN",
+   "priority": "P1",
+   "requirement": "Venue operators shall receive aggregate campaign and redemption metrics with minimum-threshold privacy controls.",
+   "verification": "Metrics privacy test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-VEN-012",
+   "domain": "SRS-VEN",
+   "priority": "P0",
+   "requirement": "Venue customizations shall not override core consent, safety, privacy, age or ad-separation rules.",
+   "verification": "Malicious-config test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-VEN-013",
+   "domain": "SRS-VEN",
+   "priority": "P1",
+   "requirement": "The owner shall be able to disable or revoke a venue package through a signed kill switch.",
+   "verification": "Revocation test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-VEN-014",
+   "domain": "SRS-VEN",
+   "priority": "P1",
+   "requirement": "Venue package activation and expiry shall be auditable without logging user dating behavior.",
+   "verification": "Audit inspection.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-ADV-001",
+   "domain": "SRS-ADV",
+   "priority": "P0",
+   "requirement": "Sponsored content shall be confined to the Discover tab and approved venue- perk surfaces and shall not cover or interrupt Nearby, Match or Chat workflows.",
+   "verification": "UI navigation test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-ADV-002",
+   "domain": "SRS-ADV",
+   "priority": "P0",
+   "requirement": "The app shall not display forced interstitials, autoplay sound, surprise popups or deceptive profile-like advertisements.",
+   "verification": "Creative policy and UI test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-ADV-003",
+   "domain": "SRS-ADV",
+   "priority": "P0",
+   "requirement": "Every paid placement shall be visibly labeled Sponsored or equivalent.",
+   "verification": "Visual inspection.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-ADV-004",
+   "domain": "SRS-ADV",
+   "priority": "P0",
+   "requirement": "Ad creative, CTA, dates, ordering, targeting rules and asset references shall be managed by signed configuration without code change.",
+   "verification": "Admin publish test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-ADV-005",
+   "domain": "SRS-ADV",
+   "priority": "P0",
+   "requirement": "The ad system shall reject unsigned, expired, oversized, unsupported or inaccessible creative.",
+   "verification": "Negative config/asset test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-ADV-006",
+   "domain": "SRS-ADV",
+   "priority": "P1",
+   "requirement": "The Discover feed shall cache verified creative for offline venue use within a bounded quota.",
+   "verification": "Offline feed test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-ADV-007",
+   "domain": "SRS-ADV",
+   "priority": "P0",
+   "requirement": "The consumer app shall not include a third-party behavioral advertising SDK in flagship 1.0.",
+   "verification": "Dependency and network audit.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-ADV-008",
+   "domain": "SRS-ADV",
+   "priority": "P1",
+   "requirement": "Impression and click analytics shall be aggregate, privacy-minimized and shall not disclose private profile or chat behavior to advertisers.",
+   "verification": "Telemetry schema review.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-ADV-009",
+   "domain": "SRS-ADV",
+   "priority": "P1",
+   "requirement": "Users shall be able to dismiss or hide individual sponsored cards where commercially permitted.",
+   "verification": "UI test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-ADV-010",
+   "domain": "SRS-ADV",
+   "priority": "P1",
+   "requirement": "Ad assets shall meet accessibility, contrast, text alternative and motion guidelines.",
+   "verification": "Accessibility audit.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-ADV-011",
+   "domain": "SRS-ADV",
+   "priority": "P0",
+   "requirement": "A global signed kill switch shall disable all sponsor rendering without app update.",
+   "verification": "Kill-switch test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-MON-001",
+   "domain": "SRS-MON",
+   "priority": "P0",
+   "requirement": "The app shall support a paid-download storefront model controlled through Google Play and App Store pricing.",
+   "verification": "Store configuration checklist.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-MON-002",
+   "domain": "SRS-MON",
+   "priority": "P0",
+   "requirement": "The app shall support StoreKit 2 and Google Play Billing for subscriptions, non-consumables and approved consumables.",
+   "verification": "Sandbox purchase test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-MON-003",
+   "domain": "SRS-MON",
+   "priority": "P0",
+   "requirement": "Store-provided localized price and offer information shall be authoritative in purchase UI.",
+   "verification": "Price consistency test across regions.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-MON-004",
+   "domain": "SRS-MON",
+   "priority": "P0",
+   "requirement": "Signed configuration shall control which prebuilt plans, feature limits, paywall copy, trials and promotional placements are active, but shall not override storefront transaction rules.",
+   "verification": "Config and store integration test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-MON-005",
+   "domain": "SRS-MON",
+   "priority": "P0",
+   "requirement": "The app shall restore eligible purchases after reinstall or device change using platform-supported restore/query mechanisms.",
+   "verification": "Reinstall/restore sandbox test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-MON-006",
+   "domain": "SRS-MON",
+   "priority": "P0",
+   "requirement": "The backend shall verify purchase tokens or signed transactions before granting durable server-recognized entitlements.",
+   "verification": "Billing verification integration test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-MON-007",
+   "domain": "SRS-MON",
+   "priority": "P0",
+   "requirement": "The app shall acknowledge or consume purchases within platform- required flows and handle pending, grace, hold, cancelled and expired states.",
+   "verification": "Billing state matrix.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-MON-008",
+   "domain": "SRS-MON",
+   "priority": "P0",
+   "requirement": "A failed or disconnected billing service shall degrade gracefully and shall not corrupt entitlement state.",
+   "verification": "Fault injection test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-MON-009",
+   "domain": "SRS-MON",
+   "priority": "P1",
+   "requirement": "Plan changes shall preserve user data and shall explain effective timing and benefits.",
+   "verification": "Upgrade/downgrade test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-MON-010",
+   "domain": "SRS-MON",
+   "priority": "P1",
+   "requirement": "Consumable boosts shall be idempotently granted and protected against duplicate callbacks.",
+   "verification": "Duplicate billing callback test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-MON-011",
+   "domain": "SRS-MON",
+   "priority": "P0",
+   "requirement": "The app shall not direct users to prohibited external payment mechanisms for digital features where store rules require in-app billing.",
+   "verification": "Policy review.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-MON-012",
+   "domain": "SRS-MON",
+   "priority": "P1",
+   "requirement": "Venue-funded passes or physical- world perks shall be modeled separately from digital entitlements where applicable.",
+   "verification": "Entitlement model review.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-MON-013",
+   "domain": "SRS-MON",
+   "priority": "P0",
+   "requirement": "The owner shall be able to disable a broken plan or feature through a signed kill switch without revoking legitimately purchased durable rights.",
+   "verification": "Kill-switch and entitlement test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-MON-014",
+   "domain": "SRS-MON",
+   "priority": "P1",
+   "requirement": "The app shall provide a clear purchase history/restore/help entry without exposing internal SKU identifiers.",
+   "verification": "UX test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-ADM-001",
+   "domain": "SRS-ADM",
+   "priority": "P0",
+   "requirement": "The administration console shall require MFA and role-based access control.",
+   "verification": "Security test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-ADM-002",
+   "domain": "SRS-ADM",
+   "priority": "P0",
+   "requirement": "The console shall support separate owner, security, finance, campaign, venue-operator and read-only roles.",
+   "verification": "RBAC matrix test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-ADM-003",
+   "domain": "SRS-ADM",
+   "priority": "P0",
+   "requirement": "Configuration changes shall follow draft, validate, preview, approve, sign, schedule, publish and rollback states.",
+   "verification": "Workflow test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-ADM-004",
+   "domain": "SRS-ADM",
+   "priority": "P0",
+   "requirement": "The console shall validate schema, app-version compatibility, date windows, asset limits, policy constraints and accessibility before signing.",
+   "verification": "Validation suite.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-ADM-005",
+   "domain": "SRS-ADM",
+   "priority": "P0",
+   "requirement": "Production configuration shall be signed by an owner-controlled KMS or HSM key and clients shall trust only configured public keys.",
+   "verification": "Key-management audit.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-ADM-006",
+   "domain": "SRS-ADM",
+   "priority": "P0",
+   "requirement": "The console shall support key rotation using overlapping trust anchors and signed transition metadata.",
+   "verification": "Key rotation rehearsal.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-ADM-007",
+   "domain": "SRS-ADM",
+   "priority": "P0",
+   "requirement": "Every administrative mutation shall create an immutable audit record containing actor, time, reason, before/after hash and approval chain.",
+   "verification": "Audit inspection.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-ADM-008",
+   "domain": "SRS-ADM",
+   "priority": "P1",
+   "requirement": "The console shall preview Android and iOS rendering for compact, medium and expanded layouts.",
+   "verification": "Preview test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-ADM-009",
+   "domain": "SRS-ADM",
+   "priority": "P0",
+   "requirement": "The console shall not permit arbitrary executable code, script or untrusted HTML to be delivered to clients.",
+   "verification": "Security negative test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-ADM-010",
+   "domain": "SRS-ADM",
+   "priority": "P1",
+   "requirement": "Venue partners shall manage only their assigned venue assets, offers and rooms within owner-approved templates.",
+   "verification": "Tenant-isolation test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-ADM-011",
+   "domain": "SRS-ADM",
+   "priority": "P1",
+   "requirement": "The owner shall be able to schedule campaign start/end, pause, emergency disable and rollback without app update.",
+   "verification": "Campaign lifecycle test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-ADM-012",
+   "domain": "SRS-ADM",
+   "priority": "P0",
+   "requirement": "Published packages shall be versioned, content-addressed and retrievable as last-known-good artifacts for rollback.",
+   "verification": "Artifact and rollback test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-SAF-001",
+   "domain": "SRS-SAF",
+   "priority": "P0",
+   "requirement": "The app shall provide block, mute, hide, unmatch and report actions from profile, request, match, chat and venue-room contexts.",
+   "verification": "Safety navigation test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-SAF-002",
+   "domain": "SRS-SAF",
+   "priority": "P0",
+   "requirement": "Blocking shall apply to local discovery, mesh routing, remote relay and venue- room presentation.",
+   "verification": "Cross-path block test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-SAF-003",
+   "domain": "SRS-SAF",
+   "priority": "P0",
+   "requirement": "The user shall be able to report objectionable text, profile, image, voice note, venue room or behavior without leaving the app.",
+   "verification": "UGC report test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-SAF-004",
+   "domain": "SRS-SAF",
+   "priority": "P0",
+   "requirement": "Reporting shall allow the user to choose whether to include a locally generated encrypted evidence bundle and shall clearly explain what is shared.",
+   "verification": "Evidence consent test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-SAF-005",
+   "domain": "SRS-SAF",
+   "priority": "P0",
+   "requirement": "The app shall maintain clear Community Rules and terms governing UGC, harassment, threats, sexual content, impersonation and prohibited conduct.",
+   "verification": "Policy review.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-SAF-006",
+   "domain": "SRS-SAF",
+   "priority": "P0",
+   "requirement": "The app shall rate-limit requests, room posts, relay packets, media sends and failed verification attempts.",
+   "verification": "Abuse/flood test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-SAF-007",
+   "domain": "SRS-SAF",
+   "priority": "P0",
+   "requirement": "Unsolicited media shall be disabled and incoming media shall require match and policy eligibility.",
+   "verification": "Negative media test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-SAF-008",
+   "domain": "SRS-SAF",
+   "priority": "P0",
+   "requirement": "Venue and group rooms shall provide moderation tools sufficient for App Store and Google Play UGC requirements.",
+   "verification": "Policy conformance test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-SAF-009",
+   "domain": "SRS-SAF",
+   "priority": "P0",
+   "requirement": "The app shall provide an emergency wipe action protected against accidental activation and shall describe irreversible consequences.",
+   "verification": "Emergency wipe test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-SAF-010",
+   "domain": "SRS-SAF",
+   "priority": "P0",
+   "requirement": "Emergency wipe shall clear local profile, conversations, cached objects, queued packets, venue tokens and app cryptographic state to the documented platform limit.",
+   "verification": "Storage inspection after wipe.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-SAF-011",
+   "domain": "SRS-SAF",
+   "priority": "P1",
+   "requirement": "The app shall provide a local app lock using device authentication.",
+   "verification": "Biometric/passcode test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-SAF-012",
+   "domain": "SRS-SAF",
+   "priority": "P1",
+   "requirement": "The app shall show venue safety contact and emergency information when supplied by a verified venue package.",
+   "verification": "Venue safety card test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-SAF-013",
+   "domain": "SRS-SAF",
+   "priority": "P0",
+   "requirement": "Notifications, widgets, recent-app snapshots and logs shall not expose sensitive profile or message content by default.",
+   "verification": "Privacy surface audit.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-SAF-014",
+   "domain": "SRS-SAF",
+   "priority": "P0",
+   "requirement": "The app shall reject and safely handle malformed protocol data, decompression bombs, oversized media and path traversal attempts.",
+   "verification": "Security fuzz suite.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-SAF-015",
+   "domain": "SRS-SAF",
+   "priority": "P1",
+   "requirement": "The app shall support owner-operated account/device suspension for severe abuse while preserving E2E content confidentiality.",
+   "verification": "Suspension flow test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-SAF-016",
+   "domain": "SRS-SAF",
+   "priority": "P1",
+   "requirement": "Safety actions shall remain accessible with screen readers and large text.",
+   "verification": "Accessibility test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-SAF-017",
+   "domain": "SRS-SAF",
+   "priority": "P0",
+   "requirement": "The app shall not market venue verification as guaranteeing personal safety or legal identity.",
+   "verification": "Copy review.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-SAF-018",
+   "domain": "SRS-SAF",
+   "priority": "P1",
+   "requirement": "The app shall provide a transparent appeal/help path for moderation actions where operationally applicable.",
+   "verification": "Support workflow test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-DAT-001",
+   "domain": "SRS-DAT",
+   "priority": "P0",
+   "requirement": "Full dating profiles, match media, private chat plaintext and voice-note plaintext shall not be stored in the central backend.",
+   "verification": "Data-flow and backend schema audit.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-DAT-002",
+   "domain": "SRS-DAT",
+   "priority": "P0",
+   "requirement": "Local databases and object stores shall use platform data protection and application-layer encryption for sensitive records.",
+   "verification": "Storage encryption test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-DAT-003",
+   "domain": "SRS-DAT",
+   "priority": "P0",
+   "requirement": "The relay shall enforce per-envelope TTL, per-device quotas and deletion after acknowledgement.",
+   "verification": "Backend retention test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-DAT-004",
+   "domain": "SRS-DAT",
+   "priority": "P0",
+   "requirement": "The app shall support local export of user-owned profile and conversation data in a documented, encrypted or user-protected form.",
+   "verification": "Data export test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-DAT-005",
+   "domain": "SRS-DAT",
+   "priority": "P0",
+   "requirement": "The app shall support deletion of local data and remote routing records consistent with legal and operational retention requirements.",
+   "verification": "Deletion workflow test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-DAT-006",
+   "domain": "SRS-DAT",
+   "priority": "P1",
+   "requirement": "Telemetry shall use pseudonymous rotating installation/session identifiers and shall avoid precise location, orientation, sexual preference, message content and social graph.",
+   "verification": "Telemetry schema audit.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-DAT-007",
+   "domain": "SRS-DAT",
+   "priority": "P0",
+   "requirement": "Crash reports shall scrub message text, profile fields, tokens, keys and media paths before upload.",
+   "verification": "Crash payload inspection.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-DAT-008",
+   "domain": "SRS-DAT",
+   "priority": "P1",
+   "requirement": "The user shall be able to disable optional analytics without disabling core functionality.",
+   "verification": "Settings and network test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-DAT-009",
+   "domain": "SRS-DAT",
+   "priority": "P1",
+   "requirement": "Venue and advertiser metrics shall apply aggregation thresholds to reduce re-identification risk.",
+   "verification": "Metrics test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-DAT-010",
+   "domain": "SRS-DAT",
+   "priority": "P0",
+   "requirement": "Secrets, private signing keys and long- term identity private keys shall never be embedded in distributable client binaries.",
+   "verification": "Binary secret scan.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-DAT-011",
+   "domain": "SRS-DAT",
+   "priority": "P1",
+   "requirement": "Caches shall use bounded quotas and deterministic cleanup under low- storage conditions.",
+   "verification": "Low-storage test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-DAT-012",
+   "domain": "SRS-DAT",
+   "priority": "P0",
+   "requirement": "[Amended v1.1 / ADR-003] OS backups shall exclude all cryptographic state: Android auto-backup is disabled for the database, object store and key-adjacent files via backup rules, and iOS Keychain items use ThisDeviceOnly protection classes with sensitive files marked do-not-back-up. Non-sensitive preferences may back up where harmless.",
+   "verification": "Backup/restore review.",
+   "origin": "v1.0-amended"
+  },
+  {
+   "id": "SRS-NOT-001",
+   "domain": "SRS-NOT",
+   "priority": "P0",
+   "requirement": "The app shall use generic remote notification content by default and decrypt messages only after the app processes the envelope locally.",
+   "verification": "Locked-screen and payload test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-NOT-002",
+   "domain": "SRS-NOT",
+   "priority": "P0",
+   "requirement": "The app shall respect platform background restrictions and shall not promise unrestricted continuous mesh operation on iOS.",
+   "verification": "Background lifecycle test and copy review.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-NOT-003",
+   "domain": "SRS-NOT",
+   "priority": "P0",
+   "requirement": "Android long-running active venue/mesh operation shall use an appropriate foreground service and clear persistent notification when required.",
+   "verification": "Android background test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-NOT-004",
+   "domain": "SRS-NOT",
+   "priority": "P0",
+   "requirement": "Background failure or OS suspension shall preserve queued state and resume safely when the app is awakened or reopened.",
+   "verification": "Suspend/kill/resume test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-NOT-005",
+   "domain": "SRS-NOT",
+   "priority": "P1",
+   "requirement": "Notification preferences shall be configurable per match, venue room and campaign category.",
+   "verification": "Settings test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-NOT-006",
+   "domain": "SRS-NOT",
+   "priority": "P0",
+   "requirement": "Blocked or muted senders shall not generate user-visible notifications.",
+   "verification": "Block/mute notification test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-NOT-007",
+   "domain": "SRS-NOT",
+   "priority": "P1",
+   "requirement": "The app shall avoid notification storms by coalescing high-frequency venue and mesh events.",
+   "verification": "Stress test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-NOT-008",
+   "domain": "SRS-NOT",
+   "priority": "P1",
+   "requirement": "Notification actions shall be safe on a locked device and shall require unlock for sensitive content.",
+   "verification": "Lock-screen action test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-UX-001",
+   "domain": "SRS-UX",
+   "priority": "P0",
+   "requirement": "The production application shall expose no more than five primary destinations: Nearby, Matches, Chat, Discover and Profile.",
+   "verification": "Information architecture review.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-UX-002",
+   "domain": "SRS-UX",
+   "priority": "P0",
+   "requirement": "Networking, cryptography and mesh complexity shall remain invisible during normal use; user-facing states shall describe outcomes, not protocols.",
+   "verification": "UX copy inspection.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-UX-003",
+   "domain": "SRS-UX",
+   "priority": "P0",
+   "requirement": "The visual system shall implement the Midnight Aurora theme with accessible contrast and restrained gradients.",
+   "verification": "Visual QA against token pack.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-UX-004",
+   "domain": "SRS-UX",
+   "priority": "P0",
+   "requirement": "The Android and iOS experiences shall be native, platform-appropriate and functionally equivalent without requiring pixel-identical controls.",
+   "verification": "Cross-platform UX review.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-UX-005",
+   "domain": "SRS-UX",
+   "priority": "P0",
+   "requirement": "Layouts shall adapt to compact phones, large phones, tablets, landscape and foldable window sizes without clipping or stretched-phone presentation.",
+   "verification": "Device/window-size matrix.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-UX-006",
+   "domain": "SRS-UX",
+   "priority": "P0",
+   "requirement": "Foldable and tablet chat shall support master-detail layouts where appropriate.",
+   "verification": "Foldable/tablet test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-UX-007",
+   "domain": "SRS-UX",
+   "priority": "P0",
+   "requirement": "Touch targets, dynamic type, TalkBack, VoiceOver, keyboard navigation where applicable and reduced motion shall be supported.",
+   "verification": "Accessibility audit.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-UX-008",
+   "domain": "SRS-UX",
+   "priority": "P0",
+   "requirement": "Primary navigation and chat scrolling shall remain smooth while radio, crypto and media work occurs off the UI thread.",
+   "verification": "Frame-time and interaction test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-UX-009",
+   "domain": "SRS-UX",
+   "priority": "P1",
+   "requirement": "Mutual match, successful nearby verification and completed media transfer shall use subtle haptics and motion that respect reduced-motion settings.",
+   "verification": "UX test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-UX-010",
+   "domain": "SRS-UX",
+   "priority": "P0",
+   "requirement": "Ads shall not visually imitate people or messages.",
+   "verification": "Visual ad audit.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-UX-011",
+   "domain": "SRS-UX",
+   "priority": "P0",
+   "requirement": "Chat shall provide familiar bubbles, reply gestures, reactions, delivery states, attachment tray, progress rings and voice-note waveform.",
+   "verification": "End-to-end UX test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-UX-012",
+   "domain": "SRS-UX",
+   "priority": "P0",
+   "requirement": "The app shall use skeleton states and inline recovery rather than blocking modal spinners for routine connectivity.",
+   "verification": "Failure-state test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-UX-013",
+   "domain": "SRS-UX",
+   "priority": "P1",
+   "requirement": "The user shall be able to understand why a local-only action is unavailable and what to do next in one concise message.",
+   "verification": "Comprehension review.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-UX-014",
+   "domain": "SRS-UX",
+   "priority": "P1",
+   "requirement": "All user-visible copy shall be localization-ready and shall avoid hard-coded concatenation.",
+   "verification": "Localization lint.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-UX-015",
+   "domain": "SRS-UX",
+   "priority": "P0",
+   "requirement": "Brand assets and photos shall render at correct aspect ratio and density without unintended stretching, blur or crop jumps.",
+   "verification": "Visual golden test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-UX-016",
+   "domain": "SRS-UX",
+   "priority": "P1",
+   "requirement": "The app shall provide privacy- preserving onboarding and empty- state illustrations without requiring large network downloads.",
+   "verification": "Offline visual test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-OPS-001",
+   "domain": "SRS-OPS",
+   "priority": "P0",
+   "requirement": "The app shall maintain a bounded local diagnostic ring buffer with structured events and no sensitive plaintext.",
+   "verification": "Log inspection.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-OPS-002",
+   "domain": "SRS-OPS",
+   "priority": "P0",
+   "requirement": "The user shall be able to export a support bundle voluntarily, with preview and redaction summary.",
+   "verification": "Support export test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-OPS-003",
+   "domain": "SRS-OPS",
+   "priority": "P0",
+   "requirement": "Crash reporting shall be consent- aware, privacy-scrubbed and disableable by signed kill switch.",
+   "verification": "Crash integration test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-OPS-004",
+   "domain": "SRS-OPS",
+   "priority": "P0",
+   "requirement": "The owner shall have global kill switches for nearby discovery, mesh relay, remote relay, media transfer, venue rooms, sponsor rendering and individual monetization features.",
+   "verification": "Kill-switch test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-OPS-005",
+   "domain": "SRS-OPS",
+   "priority": "P0",
+   "requirement": "The app shall preserve a last-known- good configuration and automatically roll back after signature, schema or activation failure.",
+   "verification": "Bad-config rollback test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-OPS-006",
+   "domain": "SRS-OPS",
+   "priority": "P1",
+   "requirement": "Operational status shall distinguish service outage from local permission or radio issues without exposing internal infrastructure.",
+   "verification": "Failure messaging test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-OPS-007",
+   "domain": "SRS-OPS",
+   "priority": "P1",
+   "requirement": "Support diagnostics shall include protocol version, app version, platform, anonymized capability summary and state-machine trace.",
+   "verification": "Support bundle inspection.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-OPS-008",
+   "domain": "SRS-OPS",
+   "priority": "P0",
+   "requirement": "Production builds shall not contain demo accounts, demo signing keys, permissive trust-all networking or hidden debug menus.",
+   "verification": "Release binary audit.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-OPS-009",
+   "domain": "SRS-OPS",
+   "priority": "P1",
+   "requirement": "The app shall support staged rollout and remote disable of a newly released built-in feature.",
+   "verification": "Rollout rehearsal.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-OPS-010",
+   "domain": "SRS-OPS",
+   "priority": "P0",
+   "requirement": "Operational telemetry shall support detection of crash, ANR, handshake failure, transfer failure and billing failure rates without collecting message content.",
+   "verification": "Telemetry dashboard test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-NFR-PERF-001",
+   "domain": "SRS-NFR-PERF",
+   "priority": "P0",
+   "requirement": "Cold launch to interactive home shall be at or below 2.0 seconds at P95 on the defined mid-tier reference devices under normal storage conditions.",
+   "verification": "Automated startup benchmark on supported matrix.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-NFR-PERF-002",
+   "domain": "SRS-NFR-PERF",
+   "priority": "P0",
+   "requirement": "Warm launch shall be at or below 1.0 second at P95 on reference devices.",
+   "verification": "Benchmark.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-NFR-PERF-003",
+   "domain": "SRS-NFR-PERF",
+   "priority": "P0",
+   "requirement": "Primary navigation and chat scrolling shall achieve at least 99% frames within the platform frame budget on reference devices during standard workloads.",
+   "verification": "Android JankStats / iOS Instruments trace.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-NFR-PERF-004",
+   "domain": "SRS-NFR-PERF",
+   "priority": "P0",
+   "requirement": "No cryptography, BLE parsing, media decoding, disk I/O or network operation shall execute synchronously on the main UI thread.",
+   "verification": "Static analysis and runtime strict-mode test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-NFR-PERF-005",
+   "domain": "SRS-NFR-PERF",
+   "priority": "P0",
+   "requirement": "Nearby profile preview shall appear within 3 seconds at P75 when a compatible peer is within strong BLE range and both apps are active.",
+   "verification": "Two-device benchmark.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-NFR-PERF-006",
+   "domain": "SRS-NFR-PERF",
+   "priority": "P0",
+   "requirement": "Matched remote text round-trip shall be below 500 ms at P75 and below 2 seconds at P95 under healthy internet conditions excluding push wake latency.",
+   "verification": "End-to-end benchmark.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-NFR-PERF-007",
+   "domain": "SRS-NFR-PERF",
+   "priority": "P0",
+   "requirement": "A 12 KB thumbnail shall complete locally within 5 seconds at P95 on the baseline BLE path under -75 dBm or better.",
+   "verification": "RF-controlled benchmark.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-NFR-PERF-008",
+   "domain": "SRS-NFR-PERF",
+   "priority": "P1",
+   "requirement": "A 2 MB local image shall prefer an available fast local path and shall expose continuous progress rather than blocking the UI.",
+   "verification": "Media benchmark.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-NFR-PERF-009",
+   "domain": "SRS-NFR-PERF",
+   "priority": "P0",
+   "requirement": "Discovery shall process at least 100 synthetic peer updates without UI stalls greater than 100 ms.",
+   "verification": "Load test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-NFR-PERF-010",
+   "domain": "SRS-NFR-PERF",
+   "priority": "P1",
+   "requirement": "Signed configuration activation shall complete atomically within 500 ms after download and verification for a typical package.",
+   "verification": "Config benchmark.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-NFR-REL-001",
+   "domain": "SRS-NFR-REL",
+   "priority": "P0",
+   "requirement": "Release candidates shall have no known P0 or P1 defects and no unresolved data-loss, privacy or cryptographic correctness defect.",
+   "verification": "Release defect review.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-NFR-REL-002",
+   "domain": "SRS-NFR-REL",
+   "priority": "P0",
+   "requirement": "The app shall achieve at least 99.5% crash-free sessions during closed beta and the launch gate shall be configurable upward after stabilization.",
+   "verification": "Crash analytics gate.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-NFR-REL-003",
+   "domain": "SRS-NFR-REL",
+   "priority": "P0",
+   "requirement": "The Android app shall produce no Application Not Responding event during the acceptance soak and device-farm suites.",
+   "verification": "ANR report.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-NFR-REL-004",
+   "domain": "SRS-NFR-REL",
+   "priority": "P0",
+   "requirement": "State-machine transitions shall be idempotent and resilient to duplicate, delayed and reordered events.",
+   "verification": "Model-based tests.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-NFR-REL-005",
+   "domain": "SRS-NFR-REL",
+   "priority": "P0",
+   "requirement": "All persistent writes that affect identity, match, message, entitlement or transfer state shall be transactional or crash-consistent.",
+   "verification": "Fault-injection and database test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-NFR-REL-006",
+   "domain": "SRS-NFR-REL",
+   "priority": "P0",
+   "requirement": "A process kill or device restart during media transfer shall not corrupt completed data and shall preserve resumable state when policy permits.",
+   "verification": "Kill/restart transfer test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-NFR-REL-007",
+   "domain": "SRS-NFR-REL",
+   "priority": "P0",
+   "requirement": "Authenticated object digest mismatch shall prevent publication and shall trigger bounded recovery rather than silent acceptance.",
+   "verification": "Corruption test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-NFR-REL-008",
+   "domain": "SRS-NFR-REL",
+   "priority": "P0",
+   "requirement": "Transport retries shall be bounded and shall not create infinite loops, retry storms or excessive duplicate network traffic.",
+   "verification": "Fault-injection trace.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-NFR-REL-009",
+   "domain": "SRS-NFR-REL",
+   "priority": "P0",
+   "requirement": "Clients shall preserve last-known-good signed configuration and continue safely when the configuration service is unreachable.",
+   "verification": "Offline config test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-NFR-REL-010",
+   "domain": "SRS-NFR-REL",
+   "priority": "P1",
+   "requirement": "A 24-hour active foreground soak with discovery, chat and periodic media shall complete without crash, unbounded memory growth or stuck state.",
+   "verification": "Soak test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-NFR-REL-011",
+   "domain": "SRS-NFR-REL",
+   "priority": "P1",
+   "requirement": "A 60-minute crowded-venue simulation shall maintain usable discovery and messaging with at least 50 active devices in the test plan.",
+   "verification": "Venue stress test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-NFR-REL-012",
+   "domain": "SRS-NFR-REL",
+   "priority": "P0",
+   "requirement": "Failure of optional Wi-Fi Aware or peer-to-peer Wi-Fi shall not prevent BLE baseline operation.",
+   "verification": "Capability failure test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-NFR-SEC-001",
+   "domain": "SRS-NFR-SEC",
+   "priority": "P0",
+   "requirement": "Security design shall use reviewed standard protocols or libraries and shall not rely on bespoke unaudited cryptography for production.",
+   "verification": "Architecture and dependency review.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-NFR-SEC-002",
+   "domain": "SRS-NFR-SEC",
+   "priority": "P0",
+   "requirement": "Long-term identity keys, signing keys, session secrets and media object keys shall be generated with a cryptographically secure RNG.",
+   "verification": "Static and runtime review.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-NFR-SEC-003",
+   "domain": "SRS-NFR-SEC",
+   "priority": "P0",
+   "requirement": "Private client keys shall be protected by platform keystore/keychain facilities and shall not be exportable through normal application APIs.",
+   "verification": "Key export negative test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-NFR-SEC-004",
+   "domain": "SRS-NFR-SEC",
+   "priority": "P0",
+   "requirement": "Remote matched messaging shall use asynchronous authenticated key agreement and a Double Ratchet- compatible protocol with forward secrecy and break-in recovery goals.",
+   "verification": "Protocol review and test vectors.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-NFR-SEC-005",
+   "domain": "SRS-NFR-SEC",
+   "priority": "P0",
+   "requirement": "AEAD shall authenticate message headers and routing-critical associated data as specified by the protocol.",
+   "verification": "Golden-vector test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-NFR-SEC-006",
+   "domain": "SRS-NFR-SEC",
+   "priority": "P0",
+   "requirement": "The protocol shall define replay windows, duplicate IDs, skipped- message-key limits and maximum chain advancement.",
+   "verification": "Protocol conformance test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-NFR-SEC-007",
+   "domain": "SRS-NFR-SEC",
+   "priority": "P0",
+   "requirement": "Clients shall reject invalid public keys, invalid signatures, unauthenticated ciphertext, malformed lengths and unsupported critical versions.",
+   "verification": "Negative protocol suite.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-NFR-SEC-008",
+   "domain": "SRS-NFR-SEC",
+   "priority": "P0",
+   "requirement": "TLS 1.3 or later supported best practice shall protect client-backend transport in addition to application- layer E2E encryption.",
+   "verification": "TLS scan.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-NFR-SEC-009",
+   "domain": "SRS-NFR-SEC",
+   "priority": "P0",
+   "requirement": "Certificate validation shall use platform trust correctly and shall not contain trust-all or hostname-verification bypasses.",
+   "verification": "Static and dynamic test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-NFR-SEC-010",
+   "domain": "SRS-NFR-SEC",
+   "priority": "P0",
+   "requirement": "Configuration, venue and voucher packages shall be signed with owner- controlled keys and shall enforce version and rollback protection.",
+   "verification": "Signature and rollback test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-NFR-SEC-011",
+   "domain": "SRS-NFR-SEC",
+   "priority": "P0",
+   "requirement": "Admin access shall use MFA, RBAC, least privilege and auditable approvals for production publishing.",
+   "verification": "Security audit.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-NFR-SEC-012",
+   "domain": "SRS-NFR-SEC",
+   "priority": "P0",
+   "requirement": "Secrets shall be injected through approved secret management and shall not be committed to source control or mobile assets.",
+   "verification": "Repository secret scan.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-NFR-SEC-013",
+   "domain": "SRS-NFR-SEC",
+   "priority": "P0",
+   "requirement": "Sensitive local data shall be encrypted and excluded from logs, screenshots, backups and crash payloads according to policy.",
+   "verification": "Privacy/security audit.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-NFR-SEC-014",
+   "domain": "SRS-NFR-SEC",
+   "priority": "P1",
+   "requirement": "The design shall support external penetration testing, mobile application security verification and cryptographic review before public launch.",
+   "verification": "Audit plan and evidence.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-NFR-SEC-015",
+   "domain": "SRS-NFR-SEC",
+   "priority": "P0",
+   "requirement": "Security-sensitive dependencies shall be pinned, monitored and updated under a documented vulnerability response SLA.",
+   "verification": "SBOM and dependency policy review.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-NFR-PRI-001",
+   "domain": "SRS-NFR-PRI",
+   "priority": "P0",
+   "requirement": "The product shall collect the minimum data necessary for the selected feature and shall document purpose, retention and sharing for each field.",
+   "verification": "Data inventory review.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-NFR-PRI-002",
+   "domain": "SRS-NFR-PRI",
+   "priority": "P0",
+   "requirement": "BLE advertisements shall not contain profile photos, alias, gender, orientation, phone number, exact location or persistent store-account identifier.",
+   "verification": "Radio capture.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-NFR-PRI-003",
+   "domain": "SRS-NFR-PRI",
+   "priority": "P0",
+   "requirement": "The backend shall not store plaintext dating profiles, chat messages, local photos, files or voice notes.",
+   "verification": "Backend schema and traffic audit.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-NFR-PRI-004",
+   "domain": "SRS-NFR-PRI",
+   "priority": "P0",
+   "requirement": "Remote routing metadata shall be minimized, access-controlled and retained only for operational delivery and abuse prevention windows.",
+   "verification": "Data retention audit.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-NFR-PRI-005",
+   "domain": "SRS-NFR-PRI",
+   "priority": "P0",
+   "requirement": "Analytics shall exclude message content, exact location, sexual orientation, gender identity and social graph.",
+   "verification": "Telemetry schema audit.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-NFR-PRI-006",
+   "domain": "SRS-NFR-PRI",
+   "priority": "P0",
+   "requirement": "Users shall receive clear controls for visibility, optional analytics, notification privacy, read receipts and local deletion.",
+   "verification": "UX/privacy test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-NFR-PRI-007",
+   "domain": "SRS-NFR-PRI",
+   "priority": "P0",
+   "requirement": "Venue and advertiser reports shall be aggregate and shall not allow a partner to identify individual dating behavior.",
+   "verification": "Partner reporting test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-NFR-PRI-008",
+   "domain": "SRS-NFR-PRI",
+   "priority": "P0",
+   "requirement": "The app shall scrub EXIF and similar metadata from shared media.",
+   "verification": "Media metadata test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-NFR-PRI-009",
+   "domain": "SRS-NFR-PRI",
+   "priority": "P1",
+   "requirement": "The privacy notice shall distinguish local-only nearby data, remote ciphertext relay data, store billing data and optional crash analytics.",
+   "verification": "Legal content review.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-NFR-PRI-010",
+   "domain": "SRS-NFR-PRI",
+   "priority": "P0",
+   "requirement": "The app shall provide an accurate Google Play Data Safety declaration and Apple privacy disclosures based on actual shipping behavior.",
+   "verification": "Store submission review.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-NFR-PRI-011",
+   "domain": "SRS-NFR-PRI",
+   "priority": "P1",
+   "requirement": "The user shall be able to inspect and export locally held personal data.",
+   "verification": "Data access test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-NFR-PRI-012",
+   "domain": "SRS-NFR-PRI",
+   "priority": "P0",
+   "requirement": "Data deletion and emergency wipe shall be verified by automated storage scans for prohibited remnants where technically possible.",
+   "verification": "Deletion test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-NFR-CMP-001",
+   "domain": "SRS-NFR-CMP",
+   "priority": "P0",
+   "requirement": "The Android release shall target the current Google Play-required API level at release time and shall compile with a supported stable toolchain.",
+   "verification": "Build configuration and store preflight.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-NFR-CMP-002",
+   "domain": "SRS-NFR-CMP",
+   "priority": "P0",
+   "requirement": "The iOS release shall be built with the current App Store-required Xcode and SDK at release time while maintaining the approved deployment target.",
+   "verification": "Archive and store preflight.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-NFR-CMP-003",
+   "domain": "SRS-NFR-CMP",
+   "priority": "P0",
+   "requirement": "The baseline local experience shall work without UWB, NFC, Wi-Fi Aware, special accessories or manufacturer- specific APIs.",
+   "verification": "Capability-absence matrix.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-NFR-CMP-004",
+   "domain": "SRS-NFR-CMP",
+   "priority": "P0",
+   "requirement": "Android and iOS shall pass shared protocol test vectors for framing, cryptography, timestamps, IDs, media digests and error codes.",
+   "verification": "Golden-vector CI.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-NFR-CMP-005",
+   "domain": "SRS-NFR-CMP",
+   "priority": "P0",
+   "requirement": "Core nearby, match, remote text and local media flows shall be tested Android-to-Android, iOS-to-iOS and Android-to-iOS.",
+   "verification": "Interop matrix.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-NFR-CMP-006",
+   "domain": "SRS-NFR-CMP",
+   "priority": "P0",
+   "requirement": "Unsupported optional capabilities shall be detected at runtime and hidden or gracefully bypassed.",
+   "verification": "Device capability test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-NFR-CMP-007",
+   "domain": "SRS-NFR-CMP",
+   "priority": "P1",
+   "requirement": "The Android minimum supported OS shall be API 26 unless market analysis and security review approve a later floor.",
+   "verification": "Build/install test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-NFR-CMP-008",
+   "domain": "SRS-NFR-CMP",
+   "priority": "P1",
+   "requirement": "The iOS deployment floor shall be iOS 15 unless market analysis and framework requirements approve a later floor.",
+   "verification": "Build/install test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-NFR-CMP-009",
+   "domain": "SRS-NFR-CMP",
+   "priority": "P0",
+   "requirement": "The app shall support compact, medium and expanded window classes and common iPhone/iPad size classes.",
+   "verification": "Layout test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-NFR-CMP-010",
+   "domain": "SRS-NFR-CMP",
+   "priority": "P1",
+   "requirement": "Protocol evolution shall support backward-compatible optional fields and explicit minimum-compatible- version rules.",
+   "verification": "Version negotiation test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-NFR-BAT-001",
+   "domain": "SRS-NFR-BAT",
+   "priority": "P0",
+   "requirement": "Nearby scanning and advertising shall use bounded, state-dependent duty cycles and stop when no longer required.",
+   "verification": "Radio trace.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-NFR-BAT-002",
+   "domain": "SRS-NFR-BAT",
+   "priority": "P0",
+   "requirement": "The app shall stop high-intensity discovery when the user disables Visible Nearby or leaves the relevant active flow.",
+   "verification": "Lifecycle/battery test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-NFR-BAT-003",
+   "domain": "SRS-NFR-BAT",
+   "priority": "P0",
+   "requirement": "Media transfer shall use backpressure and transport-aware chunking rather than saturating the radio or UI thread.",
+   "verification": "Performance trace.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-NFR-BAT-004",
+   "domain": "SRS-NFR-BAT",
+   "priority": "P1",
+   "requirement": "A 30-minute active venue session on reference mid-tier devices shall remain within the agreed battery-drain and thermal budget defined by the test plan.",
+   "verification": "Battery/thermal benchmark.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-NFR-BAT-005",
+   "domain": "SRS-NFR-BAT",
+   "priority": "P1",
+   "requirement": "Background retry shall respect OS scheduling and shall not hold unrestricted wake locks.",
+   "verification": "Background trace.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-NFR-BAT-006",
+   "domain": "SRS-NFR-BAT",
+   "priority": "P0",
+   "requirement": "Optional fast paths shall be disabled automatically when the OS reports unavailability or excessive failure.",
+   "verification": "Fault test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-NFR-BAT-007",
+   "domain": "SRS-NFR-BAT",
+   "priority": "P1",
+   "requirement": "Animation and image effects shall reduce under low-power or reduced- motion conditions where platform APIs permit.",
+   "verification": "UX/battery test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-NFR-BAT-008",
+   "domain": "SRS-NFR-BAT",
+   "priority": "P0",
+   "requirement": "The app shall expose user- understandable controls to stop venue/mesh activity.",
+   "verification": "UI test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-NFR-A11Y-001",
+   "domain": "SRS-NFR-A11Y",
+   "priority": "P0",
+   "requirement": "All interactive controls shall have accessible labels, roles, state and logical focus order.",
+   "verification": "TalkBack/VoiceOver audit.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-NFR-A11Y-002",
+   "domain": "SRS-NFR-A11Y",
+   "priority": "P0",
+   "requirement": "Text and essential icons shall meet WCAG 2.2 AA contrast targets or approved platform equivalents.",
+   "verification": "Automated/manual contrast audit.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-NFR-A11Y-003",
+   "domain": "SRS-NFR-A11Y",
+   "priority": "P0",
+   "requirement": "Android touch targets shall be at least 48 dp and iOS targets at least 44 pt except documented exceptions.",
+   "verification": "UI audit.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-NFR-A11Y-004",
+   "domain": "SRS-NFR-A11Y",
+   "priority": "P0",
+   "requirement": "The app shall support dynamic text scaling without clipping, overlap or inaccessible off-screen controls.",
+   "verification": "Large-text matrix.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-NFR-A11Y-005",
+   "domain": "SRS-NFR-A11Y",
+   "priority": "P0",
+   "requirement": "Meaning shall not depend solely on color, motion, sound or haptics.",
+   "verification": "Design audit.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-NFR-A11Y-006",
+   "domain": "SRS-NFR-A11Y",
+   "priority": "P0",
+   "requirement": "Reduced motion and reduced transparency preferences shall be honored.",
+   "verification": "Platform setting test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-NFR-A11Y-007",
+   "domain": "SRS-NFR-A11Y",
+   "priority": "P0",
+   "requirement": "Media progress, delivery states and errors shall be announced accessibly.",
+   "verification": "Screen-reader functional test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-NFR-A11Y-008",
+   "domain": "SRS-NFR-A11Y",
+   "priority": "P1",
+   "requirement": "Profile identity fields and pronouns shall be read naturally by assistive technology.",
+   "verification": "Content accessibility test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-NFR-A11Y-009",
+   "domain": "SRS-NFR-A11Y",
+   "priority": "P1",
+   "requirement": "Venue and sponsor creative shall include text alternatives and shall not use unsafe flashing.",
+   "verification": "Asset validation test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-NFR-A11Y-010",
+   "domain": "SRS-NFR-A11Y",
+   "priority": "P0",
+   "requirement": "Safety, block, report and emergency wipe actions shall remain accessible.",
+   "verification": "Safety accessibility test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-NFR-SCL-001",
+   "domain": "SRS-NFR-SCL",
+   "priority": "P0",
+   "requirement": "The remote relay architecture shall scale horizontally and shall not require sticky sessions for message delivery.",
+   "verification": "Architecture/load test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-NFR-SCL-002",
+   "domain": "SRS-NFR-SCL",
+   "priority": "P0",
+   "requirement": "All externally supplied identifiers shall be globally unique and partition-safe.",
+   "verification": "Data model review.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-NFR-SCL-003",
+   "domain": "SRS-NFR-SCL",
+   "priority": "P0",
+   "requirement": "Rate limits and quotas shall be configurable by environment, user risk, venue and message class.",
+   "verification": "Configuration test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-NFR-SCL-004",
+   "domain": "SRS-NFR-SCL",
+   "priority": "P1",
+   "requirement": "The backend shall support at least the launch capacity assumptions documented in the capacity model with 2x headroom.",
+   "verification": "Load test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-NFR-SCL-005",
+   "domain": "SRS-NFR-SCL",
+   "priority": "P1",
+   "requirement": "Configuration and public sponsor assets shall be distributable through cacheable edge delivery.",
+   "verification": "CDN test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-NFR-SCL-006",
+   "domain": "SRS-NFR-SCL",
+   "priority": "P0",
+   "requirement": "A crowded local venue shall not cause unbounded peer connections or memory growth on a handset.",
+   "verification": "Venue stress test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-NFR-SCL-007",
+   "domain": "SRS-NFR-SCL",
+   "priority": "P1",
+   "requirement": "Operational data stores shall support lifecycle partitioning and TTL cleanup.",
+   "verification": "Database test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-NFR-SCL-008",
+   "domain": "SRS-NFR-SCL",
+   "priority": "P0",
+   "requirement": "Admin tenant boundaries shall prevent one venue partner from accessing another venue data.",
+   "verification": "Tenant isolation test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-NFR-MNT-001",
+   "domain": "SRS-NFR-MNT",
+   "priority": "P0",
+   "requirement": "The codebase shall separate presentation, domain, data, transport, protocol, security and platform adapters.",
+   "verification": "Architecture lint/review.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-NFR-MNT-002",
+   "domain": "SRS-NFR-MNT",
+   "priority": "P0",
+   "requirement": "Shared on-wire behavior shall be defined by versioned schemas and test vectors rather than duplicated informal code.",
+   "verification": "Repository inspection.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-NFR-MNT-003",
+   "domain": "SRS-NFR-MNT",
+   "priority": "P0",
+   "requirement": "New transports shall implement the common transport adapter contract without modifying domain behavior.",
+   "verification": "Adapter conformance test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-NFR-MNT-004",
+   "domain": "SRS-NFR-MNT",
+   "priority": "P0",
+   "requirement": "Feature behavior intended for no-code control shall use typed, versioned configuration with safe defaults.",
+   "verification": "Config schema review.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-NFR-MNT-005",
+   "domain": "SRS-NFR-MNT",
+   "priority": "P0",
+   "requirement": "Public interfaces and security-critical functions shall have API documentation and rationale.",
+   "verification": "Documentation coverage.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-NFR-MNT-006",
+   "domain": "SRS-NFR-MNT",
+   "priority": "P1",
+   "requirement": "Architectural decisions shall be recorded as ADRs with alternatives and consequences.",
+   "verification": "ADR review.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-NFR-MNT-007",
+   "domain": "SRS-NFR-MNT",
+   "priority": "P0",
+   "requirement": "The build shall be reproducible in CI from a clean checkout using pinned dependency locks.",
+   "verification": "Clean build test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-NFR-MNT-008",
+   "domain": "SRS-NFR-MNT",
+   "priority": "P0",
+   "requirement": "Deprecated platform APIs shall be tracked and replaced before store or OS deadlines.",
+   "verification": "Dependency/API review.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-NFR-MNT-009",
+   "domain": "SRS-NFR-MNT",
+   "priority": "P1",
+   "requirement": "The repository shall maintain an SBOM and third-party license inventory.",
+   "verification": "SBOM generation.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-NFR-MNT-010",
+   "domain": "SRS-NFR-MNT",
+   "priority": "P0",
+   "requirement": "No milestone shall remove previously accepted functionality without an approved change request and regression update.",
+   "verification": "Change-control audit.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-NFR-TST-001",
+   "domain": "SRS-NFR-TST",
+   "priority": "P0",
+   "requirement": "Every P0 requirement shall map to at least one automated or documented manual acceptance test.",
+   "verification": "Traceability audit.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-NFR-TST-002",
+   "domain": "SRS-NFR-TST",
+   "priority": "P0",
+   "requirement": "Protocol codecs, cryptographic state machines, ratchets, config verification and media reassembly shall have deterministic unit tests and cross- platform golden vectors.",
+   "verification": "CI test report.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-NFR-TST-003",
+   "domain": "SRS-NFR-TST",
+   "priority": "P0",
+   "requirement": "The test suite shall include malformed input, fuzzing, replay, duplication, reordering, truncation and resource- exhaustion cases.",
+   "verification": "Security test report.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-NFR-TST-004",
+   "domain": "SRS-NFR-TST",
+   "priority": "P0",
+   "requirement": "UI screenshot/golden tests shall cover light/dark theme, compact/expanded layouts and large text.",
+   "verification": "Golden test report.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-NFR-TST-005",
+   "domain": "SRS-NFR-TST",
+   "priority": "P0",
+   "requirement": "The release pipeline shall execute Android and iOS build, unit, lint, static analysis and packaging checks from clean environments.",
+   "verification": "CI evidence.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-NFR-TST-006",
+   "domain": "SRS-NFR-TST",
+   "priority": "P0",
+   "requirement": "Real-device tests shall cover a defined Android OEM matrix and iPhone/iPad matrix.",
+   "verification": "Device matrix report.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-NFR-TST-007",
+   "domain": "SRS-NFR-TST",
+   "priority": "P0",
+   "requirement": "Interop tests shall cover Android- Android, iOS-iOS and Android-iOS for every wire-level feature.",
+   "verification": "Interop report.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-NFR-TST-008",
+   "domain": "SRS-NFR-TST",
+   "priority": "P1",
+   "requirement": "A venue stress plan shall cover at least 50 active devices and synthetic scaling beyond physical lab capacity.",
+   "verification": "Stress report.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-NFR-TST-009",
+   "domain": "SRS-NFR-TST",
+   "priority": "P0",
+   "requirement": "A release shall be blocked when critical tests, security scans, signing checks or traceability gates fail.",
+   "verification": "Pipeline policy.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-NFR-TST-010",
+   "domain": "SRS-NFR-TST",
+   "priority": "P1",
+   "requirement": "Automated tests shall verify that signed configuration changes do not require binary update and invalid packages roll back safely.",
+   "verification": "Config regression suite.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-NFR-TST-011",
+   "domain": "SRS-NFR-TST",
+   "priority": "P0",
+   "requirement": "Billing shall be tested with Google and Apple sandbox/test environments including pending, cancelled and restore cases.",
+   "verification": "Billing test report.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-NFR-TST-012",
+   "domain": "SRS-NFR-TST",
+   "priority": "P0",
+   "requirement": "Background, low-storage, low- memory, airplane-mode and process- death scenarios shall be covered.",
+   "verification": "Resilience test report.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-NFR-OBS-001",
+   "domain": "SRS-NFR-OBS",
+   "priority": "P0",
+   "requirement": "Logs shall be structured, bounded and assigned privacy classifications.",
+   "verification": "Log schema review.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-NFR-OBS-002",
+   "domain": "SRS-NFR-OBS",
+   "priority": "P0",
+   "requirement": "Production telemetry shall measure crash, ANR, launch, handshake, delivery, transfer, config, billing and venue activation outcomes without content.",
+   "verification": "Telemetry validation.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-NFR-OBS-003",
+   "domain": "SRS-NFR-OBS",
+   "priority": "P0",
+   "requirement": "Each distributed operation shall carry a random correlation ID that is not a persistent user identifier.",
+   "verification": "Trace inspection.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-NFR-OBS-004",
+   "domain": "SRS-NFR-OBS",
+   "priority": "P0",
+   "requirement": "Operational dashboards shall define SLOs, alert thresholds and runbooks for relay, config, billing and moderation services.",
+   "verification": "Operations review.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-NFR-OBS-005",
+   "domain": "SRS-NFR-OBS",
+   "priority": "P1",
+   "requirement": "The client shall expose an opt-in support bundle with state-machine trace, capability summary and redacted recent errors.",
+   "verification": "Support bundle test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-NFR-OBS-006",
+   "domain": "SRS-NFR-OBS",
+   "priority": "P0",
+   "requirement": "Crash reporting shall be scrubbed and kill-switch controlled.",
+   "verification": "Crash payload test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-NFR-OBS-007",
+   "domain": "SRS-NFR-OBS",
+   "priority": "P1",
+   "requirement": "Config rollout health shall be observable by version without exposing private behavior.",
+   "verification": "Config dashboard test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-NFR-OBS-008",
+   "domain": "SRS-NFR-OBS",
+   "priority": "P0",
+   "requirement": "Administrative actions and signing operations shall be auditable independently of product analytics.",
+   "verification": "Audit log test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-NFR-COM-001",
+   "domain": "SRS-NFR-COM",
+   "priority": "P0",
+   "requirement": "The release shall comply with current Google Play target API and Apple SDK submission requirements at submission time.",
+   "verification": "Store preflight.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-NFR-COM-002",
+   "domain": "SRS-NFR-COM",
+   "priority": "P0",
+   "requirement": "The product shall satisfy Google Play and Apple requirements for UGC reporting, blocking, moderation and prohibited content.",
+   "verification": "Policy checklist.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-NFR-COM-003",
+   "domain": "SRS-NFR-COM",
+   "priority": "P0",
+   "requirement": "The adult age rating, dating purpose, local communication and user- generated content shall be accurately disclosed.",
+   "verification": "Store listing review.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-NFR-COM-004",
+   "domain": "SRS-NFR-COM",
+   "priority": "P0",
+   "requirement": "The app shall provide accessible Terms, Privacy Notice and Community Rules from onboarding and settings.",
+   "verification": "UI/policy review.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-NFR-COM-005",
+   "domain": "SRS-NFR-COM",
+   "priority": "P0",
+   "requirement": "Digital goods shall use the applicable store billing mechanism unless a documented permitted exception applies.",
+   "verification": "Billing policy review.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-NFR-COM-006",
+   "domain": "SRS-NFR-COM",
+   "priority": "P0",
+   "requirement": "Data Safety and Apple privacy disclosures shall match actual SDKs, network flows and retention.",
+   "verification": "Privacy manifest/declaration audit.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-NFR-COM-007",
+   "domain": "SRS-NFR-COM",
+   "priority": "P0",
+   "requirement": "Required reason APIs, privacy manifests, export compliance and encryption declarations shall be completed accurately.",
+   "verification": "App Store archive preflight.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-NFR-COM-008",
+   "domain": "SRS-NFR-COM",
+   "priority": "P0",
+   "requirement": "The product shall not claim guaranteed anonymity, guaranteed safety, exact indoor location or universal background delivery.",
+   "verification": "Marketing copy audit.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-NFR-COM-009",
+   "domain": "SRS-NFR-COM",
+   "priority": "P1",
+   "requirement": "The organization shall obtain jurisdiction-specific legal review for dating, age gating, moderation, encrypted communications, venue partnerships and advertising.",
+   "verification": "Legal review record.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-NFR-COM-010",
+   "domain": "SRS-NFR-COM",
+   "priority": "P0",
+   "requirement": "Third-party open-source use shall comply with licenses and shall not copy incompatible BitChat code into a proprietary distribution without approval.",
+   "verification": "License audit.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-NFR-COM-011",
+   "domain": "SRS-NFR-COM",
+   "priority": "P1",
+   "requirement": "The app shall provide a support/contact and complaint- handling path appropriate to launch markets.",
+   "verification": "Operational checklist.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-NFR-COM-012",
+   "domain": "SRS-NFR-COM",
+   "priority": "P0",
+   "requirement": "The release shall include a vulnerability disclosure and security contact process.",
+   "verification": "Security policy review.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "SRS-NFR-ENV-001",
+   "domain": "SRS-NFR-ENV",
+   "priority": "P0",
+   "requirement": "[New v1.1] Discovery and chat shall remain usable in a crowded venue with at least 100 advertising peers in radio range and at least 50 active devices in the test plan, without crash, duplicate cards or UI stalls greater than 100 ms.",
+   "verification": "Crowded-venue synthetic plus physical stress (AT-004, SRS-NFR-REL-011).",
+   "origin": "v1.1-new"
+  },
+  {
+   "id": "SRS-NFR-ENV-002",
+   "domain": "SRS-NFR-ENV",
+   "priority": "P0",
+   "requirement": "[New v1.1] Zero-false-positive presence: the application shall never render a nearby card, preview or match affordance for a peer that has not completed an authenticated handshake, and stale cards shall age out within the configured bound. A user shall never be shown a person who is not verifiably present.",
+   "verification": "Spoofed/replayed advertisement negative tests and age-out test.",
+   "origin": "v1.1-new"
+  },
+  {
+   "id": "SRS-NFR-ENV-003",
+   "domain": "SRS-NFR-ENV",
+   "priority": "P0",
+   "requirement": "[New v1.1] False-negative bound: with both users foregrounded, visibility enabled, compatible and within strong radio range, a preview shall appear within 3 seconds at P75 and 10 seconds at P95; misses trigger a bounded escalating rescan, and a privacy-safe discovery-success-rate metric shall be recorded.",
+   "verification": "Two-device benchmark plus discovery-success telemetry validation.",
+   "origin": "v1.1-new"
+  },
+  {
+   "id": "SRS-NFR-ENV-004",
+   "domain": "SRS-NFR-ENV",
+   "priority": "P0",
+   "requirement": "[New v1.1] The product shall function under congested 2.4 GHz conditions (dense venue Wi-Fi and many BLE devices) by adaptive pacing and backoff, without retry storms or unbounded duplicate traffic.",
+   "verification": "RF-impairment fault-injection test.",
+   "origin": "v1.1-new"
+  },
+  {
+   "id": "SRS-NFR-ENV-005",
+   "domain": "SRS-NFR-ENV",
+   "priority": "P0",
+   "requirement": "[New v1.1] In closed or metallic environments the application shall present only broad proximity bands from calibrated thresholds and shall never claim direction or precise distance; in open environments long-range sightings shall age out normally so no ghost cards persist.",
+   "verification": "Environment calibration evidence and UI review.",
+   "origin": "v1.1-new"
+  },
+  {
+   "id": "SRS-NFR-ENV-006",
+   "domain": "SRS-NFR-ENV",
+   "priority": "P0",
+   "requirement": "[New v1.1] Android doze, app standby and OEM battery-optimizer regimes shall not cause silent data loss: active modes run under a compliant foreground service, and any reduction of background capability degrades to honest queued states.",
+   "verification": "OEM matrix background tests.",
+   "origin": "v1.1-new"
+  },
+  {
+   "id": "SRS-NFR-ENV-007",
+   "domain": "SRS-NFR-ENV",
+   "priority": "P0",
+   "requirement": "[New v1.1] Thermal pressure and low-battery states shall trigger staged degradation (reduced duty cycles, deferred media, paused mesh) before any feature is disabled, with honest user-visible states and no crash.",
+   "verification": "Thermal and battery-saver scenario tests.",
+   "origin": "v1.1-new"
+  },
+  {
+   "id": "SRS-NFR-ENV-008",
+   "domain": "SRS-NFR-ENV",
+   "priority": "P0",
+   "requirement": "[New v1.1] Mid-session Bluetooth toggling, permission revocation or adapter resets shall transition all activity to queued or recoverable states without crash, corruption or false success indication.",
+   "verification": "Chaos toggle test suite.",
+   "origin": "v1.1-new"
+  },
+  {
+   "id": "SRS-NFR-ENV-009",
+   "domain": "SRS-NFR-ENV",
+   "priority": "P1",
+   "requirement": "[New v1.1] Expiry and validity evaluation shall tolerate device clock skew of at least +/-5 minutes using a server time hint, and durations shall use monotonic clocks.",
+   "verification": "Skew test suite.",
+   "origin": "v1.1-new"
+  },
+  {
+   "id": "SRS-NFR-ENV-010",
+   "domain": "SRS-NFR-ENV",
+   "priority": "P1",
+   "requirement": "[New v1.1] Under storage exhaustion the application shall refuse new media gracefully, protect database integrity transactionally and guide the user, rather than failing unpredictably.",
+   "verification": "Low-storage scenario test.",
+   "origin": "v1.1-new"
+  },
+  {
+   "id": "SRS-NFR-ENV-011",
+   "domain": "SRS-NFR-ENV",
+   "priority": "P1",
+   "requirement": "[New v1.1] Radio calibration values (scan windows, RSSI band thresholds, connect budgets) shall be tuned on reference devices in open, crowded and closed environments within the frozen bounds of TRS Section 23, with evidence retained.",
+   "verification": "Calibration evidence review.",
+   "origin": "v1.1-new"
+  },
+  {
+   "id": "SRS-NFR-ENV-012",
+   "domain": "SRS-NFR-ENV",
+   "priority": "P0",
+   "requirement": "[New v1.1] The Design FMEA of TRS Section 22 shall be reviewed at every release and extended before any new feature ships; a field incident without a corresponding FMEA row is treated as a process defect.",
+   "verification": "Release-review checklist.",
+   "origin": "v1.1-new"
+  },
+  {
+   "id": "SRS-NFR-LEG-001",
+   "domain": "SRS-NFR-LEG",
+   "priority": "P0",
+   "requirement": "[New v1.1] For each processing purpose the organization shall document a GDPR/UK GDPR lawful basis and maintain records of processing activities; privacy-by-design and by-default shall be demonstrable from the architecture (local profiles, opaque relay, minimized metadata).",
+   "verification": "Data inventory and RoPA review.",
+   "origin": "v1.1-new"
+  },
+  {
+   "id": "SRS-NFR-LEG-002",
+   "domain": "SRS-NFR-LEG",
+   "priority": "P0",
+   "requirement": "[New v1.1] Data-subject rights shall be operational end to end: access and portability via local export (SRS-DAT-004), rectification via profile edit, and erasure via local deletion plus backend routing-record deletion (SRS-DAT-005) within documented SLA.",
+   "verification": "Rights-exercise walkthrough test.",
+   "origin": "v1.1-new"
+  },
+  {
+   "id": "SRS-NFR-LEG-003",
+   "domain": "SRS-NFR-LEG",
+   "priority": "P0",
+   "requirement": "[New v1.1] A Data Protection Impact Assessment shall be completed before public launch and refreshed on any major change to data flows, given the sensitivity of dating context data.",
+   "verification": "DPIA record.",
+   "origin": "v1.1-new"
+  },
+  {
+   "id": "SRS-NFR-LEG-004",
+   "domain": "SRS-NFR-LEG",
+   "priority": "P0",
+   "requirement": "[New v1.1] Consent for optional processing (analytics, crash reporting, recovery, safety evidence sharing) shall be granular, freely withdrawable, recorded with document versions, and free of dark patterns; refusal shall not degrade core functionality beyond the refused capability.",
+   "verification": "Consent-flow and UX audit.",
+   "origin": "v1.1-new"
+  },
+  {
+   "id": "SRS-NFR-LEG-005",
+   "domain": "SRS-NFR-LEG",
+   "priority": "P0",
+   "requirement": "[New v1.1] A breach-notification runbook shall exist covering detection, severity classification, 72-hour GDPR supervisory notification where applicable, and user communication.",
+   "verification": "Runbook review and drill.",
+   "origin": "v1.1-new"
+  },
+  {
+   "id": "SRS-NFR-LEG-006",
+   "domain": "SRS-NFR-LEG",
+   "priority": "P0",
+   "requirement": "[New v1.1] Worldwide deployment shall be governed by a launch-market compliance matrix (GDPR/UK GDPR, India DPDP Act 2023, CCPA/CPRA, PIPEDA baseline and market-specific dating/app rules); a market is enabled through signed configuration only after its row carries legal sign-off.",
+   "verification": "Market matrix and enablement audit.",
+   "origin": "v1.1-new"
+  },
+  {
+   "id": "SRS-NFR-LEG-007",
+   "domain": "SRS-NFR-LEG",
+   "priority": "P0",
+   "requirement": "[New v1.1] The adult-only 18+ gate applies globally; jurisdictions imposing stricter age or verification duties for dating services shall be gated per-market via configuration until their requirements are satisfied.",
+   "verification": "Market gating test and policy review.",
+   "origin": "v1.1-new"
+  },
+  {
+   "id": "SRS-NFR-LEG-008",
+   "domain": "SRS-NFR-LEG",
+   "priority": "P0",
+   "requirement": "[New v1.1] Encryption export/import obligations shall be completed accurately, including US EAR self-classification, App Store/Play encryption declarations, and France ANSSI declaration where applicable.",
+   "verification": "Export-compliance record and store preflight.",
+   "origin": "v1.1-new"
+  },
+  {
+   "id": "SRS-NFR-LEG-009",
+   "domain": "SRS-NFR-LEG",
+   "priority": "P1",
+   "requirement": "[New v1.1] International data transfers shall be covered by processor DPAs and Standard Contractual Clauses or equivalent, with regional deployment/data-residency configuration per TRS-BCK-011.",
+   "verification": "Contract and deployment audit.",
+   "origin": "v1.1-new"
+  },
+  {
+   "id": "SRS-NFR-LEG-010",
+   "domain": "SRS-NFR-LEG",
+   "priority": "P0",
+   "requirement": "[New v1.1] The privacy notice shall be localized for each launch market, and Google Play Data Safety plus Apple privacy disclosures shall always match shipped behavior exactly (reinforces SRS-NFR-PRI-010, SRS-NFR-COM-006).",
+   "verification": "Localization and declaration audit.",
+   "origin": "v1.1-new"
+  },
+  {
+   "id": "SRS-NFR-EXT-001",
+   "domain": "SRS-NFR-EXT",
+   "priority": "P0",
+   "requirement": "[New v1.1] Product evolution shall be additive-first across protocol, configuration schemas and data models, with a documented deprecation policy; removing or repurposing existing behavior requires an approved change request.",
+   "verification": "Versioning gate and change-control audit.",
+   "origin": "v1.1-new"
+  },
+  {
+   "id": "SRS-NFR-EXT-002",
+   "domain": "SRS-NFR-EXT",
+   "priority": "P0",
+   "requirement": "[New v1.1] New transports and feature modules shall be integrable without modifying domain logic, via the adapter and extension contracts of TRS Sections 24-25.",
+   "verification": "Adapter conformance suite.",
+   "origin": "v1.1-new"
+  },
+  {
+   "id": "SRS-NFR-EXT-003",
+   "domain": "SRS-NFR-EXT",
+   "priority": "P1",
+   "requirement": "[New v1.1] Anticipated future capabilities (verified attributes, multi-device, post-quantum sessions, expanded rooms) shall have reserved hooks listed in TRS Section 25 and no speculative dead code; activating any of them requires its own ADR, DFMEA rows and privacy review.",
+   "verification": "Hook registry review.",
+   "origin": "v1.1-new"
+  },
+  {
+   "id": "SRS-NFR-EXT-004",
+   "domain": "SRS-NFR-EXT",
+   "priority": "P0",
+   "requirement": "[New v1.1] Signed-configuration schema evolution shall be additive with minAppVersion gating; older clients ignore unknown optional keys and fail closed only on unknown critical schema versions.",
+   "verification": "Forward-compatibility config test.",
+   "origin": "v1.1-new"
+  },
+  {
+   "id": "SRS-NFR-EXT-005",
+   "domain": "SRS-NFR-EXT",
+   "priority": "P1",
+   "requirement": "[New v1.1] Visual themes, premium variants and brand accents shall be extensible through design-token packs without layout code changes.",
+   "verification": "Theme-pack test.",
+   "origin": "v1.1-new"
+  },
+  {
+   "id": "SRS-NFR-EXT-006",
+   "domain": "SRS-NFR-EXT",
+   "priority": "P0",
+   "requirement": "[New v1.1] All user-visible surfaces shall be localization-ready from first release, including resource catalogs, pluralization and bidirectional-layout readiness (reinforces SRS-UX-014).",
+   "verification": "Localization lint and RTL smoke test.",
+   "origin": "v1.1-new"
+  },
+  {
+   "id": "SRS-NFR-EXT-007",
+   "domain": "SRS-NFR-EXT",
+   "priority": "P1",
+   "requirement": "[New v1.1] The telemetry event taxonomy shall be versioned so new measures can be added without breaking dashboards or privacy classifications.",
+   "verification": "Taxonomy versioning review.",
+   "origin": "v1.1-new"
+  },
+  {
+   "id": "SRS-NFR-EXT-008",
+   "domain": "SRS-NFR-EXT",
+   "priority": "P0",
+   "requirement": "[New v1.1] Module public interfaces shall follow semantic versioning; a breaking change requires an ADR, migration notes and regression of all dependents (mirrors TRS-EXT-006).",
+   "verification": "Interface-diff CI check.",
+   "origin": "v1.1-new"
+  }
+ ]
+}

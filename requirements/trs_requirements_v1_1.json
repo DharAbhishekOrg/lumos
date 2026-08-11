@@ -1,0 +1,2024 @@
+{
+ "document": "LUMOS-TRS-001",
+ "version": "1.1",
+ "baseline": "2026-08-11",
+ "requirement_count": 252,
+ "requirements": [
+  {
+   "id": "TRS-ARCH-001",
+   "domain": "TRS-ARCH",
+   "priority": "P0",
+   "requirement": "The implementation shall use a layered architecture separating presentation, domain, data, transport, security and platform adapters.",
+   "verification": "Architecture lint and dependency graph.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "TRS-ARCH-002",
+   "domain": "TRS-ARCH",
+   "priority": "P0",
+   "requirement": "Domain modules shall not import platform Bluetooth, billing, push, camera or key-store APIs directly.",
+   "verification": "Static dependency test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "TRS-ARCH-003",
+   "domain": "TRS-ARCH",
+   "priority": "P0",
+   "requirement": "Transport adapters shall implement one common asynchronous contract for discover, connect, send, receive, pause, resume, close and capability reporting.",
+   "verification": "Adapter contract tests.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "TRS-ARCH-004",
+   "domain": "TRS-ARCH",
+   "priority": "P0",
+   "requirement": "All externally visible state shall be represented by immutable view-state models and one-way event flow.",
+   "verification": "Code review and UI tests.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "TRS-ARCH-005",
+   "domain": "TRS-ARCH",
+   "priority": "P0",
+   "requirement": "Security-sensitive operations shall be isolated behind narrow interfaces and shall not expose raw private keys.",
+   "verification": "API review.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "TRS-ARCH-006",
+   "domain": "TRS-ARCH",
+   "priority": "P0",
+   "requirement": "Configuration shall only alter behavior already implemented and shall never load executable scripts or arbitrary HTML.",
+   "verification": "Config security test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "TRS-ARCH-007",
+   "domain": "TRS-ARCH",
+   "priority": "P0",
+   "requirement": "The backend shall be service-oriented but may begin as a modular monolith if module boundaries, data ownership and scaling seams are preserved.",
+   "verification": "Architecture review.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "TRS-ARCH-008",
+   "domain": "TRS-ARCH",
+   "priority": "P1",
+   "requirement": "Every module shall define public interfaces, ownership, failure modes, telemetry and test strategy in module- level documentation.",
+   "verification": "Documentation audit.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "TRS-ARCH-009",
+   "domain": "TRS-ARCH",
+   "priority": "P0",
+   "requirement": "All network and radio callbacks shall be serialized into deterministic state machines rather than directly mutating UI state.",
+   "verification": "Concurrency test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "TRS-ARCH-010",
+   "domain": "TRS-ARCH",
+   "priority": "P0",
+   "requirement": "Feature flags and kill switches shall fail closed or to a documented safe baseline.",
+   "verification": "Fault test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "TRS-REP-001",
+   "domain": "TRS-REP",
+   "priority": "P0",
+   "requirement": "The delivery shall contain separate android, ios, backend, admin, protocol, schemas, test-vectors, docs and tools roots.",
+   "verification": "Repository inspection.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "TRS-REP-002",
+   "domain": "TRS-REP",
+   "priority": "P0",
+   "requirement": "Android and iOS shall consume generated constants or schemas from the same protocol source rather than manually duplicated numeric definitions.",
+   "verification": "Build/codegen test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "TRS-REP-003",
+   "domain": "TRS-REP",
+   "priority": "P0",
+   "requirement": "Dependency versions and checksums shall be locked and updateable through controlled automation.",
+   "verification": "Clean build and lockfile audit.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "TRS-REP-004",
+   "domain": "TRS-REP",
+   "priority": "P0",
+   "requirement": "Build variants shall separate development, test, staging and production endpoints, keys and logging behavior.",
+   "verification": "Variant inspection.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "TRS-REP-005",
+   "domain": "TRS-REP",
+   "priority": "P0",
+   "requirement": "Production signing material shall not exist in source or CI logs.",
+   "verification": "Secret scan.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "TRS-REP-006",
+   "domain": "TRS-REP",
+   "priority": "P1",
+   "requirement": "The repository shall include local bootstrap scripts and a deterministic sample environment.",
+   "verification": "Fresh-machine setup test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "TRS-REP-007",
+   "domain": "TRS-REP",
+   "priority": "P0",
+   "requirement": "Every release artifact shall include version, protocol version, configuration-key set version and source revision.",
+   "verification": "Artifact inspection.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "TRS-REP-008",
+   "domain": "TRS-REP",
+   "priority": "P1",
+   "requirement": "The repository shall include ADRs, threat model, privacy data map and generated API/protocol documentation.",
+   "verification": "Documentation audit.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "TRS-AND-001",
+   "domain": "TRS-AND",
+   "priority": "P0",
+   "requirement": "The Android app shall be implemented in Java 17 and compile/target the current Play-required API, baseline API 36.",
+   "verification": "Gradle build inspection.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "TRS-AND-002",
+   "domain": "TRS-AND",
+   "priority": "P0",
+   "requirement": "The Android minimum SDK shall be API 26 unless changed by approved compatibility analysis.",
+   "verification": "Install test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "TRS-AND-003",
+   "domain": "TRS-AND",
+   "priority": "P0",
+   "requirement": "The UI shall use Material 3-compatible native Views/XML with WindowManager adaptive-layout support.",
+   "verification": "UI architecture review.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "TRS-AND-004",
+   "domain": "TRS-AND",
+   "priority": "P0",
+   "requirement": "Room shall persist structured local data and application-managed encryption shall protect sensitive payload columns or database files according to the security design.",
+   "verification": "Storage test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "TRS-AND-005",
+   "domain": "TRS-AND",
+   "priority": "P0",
+   "requirement": "BLE scanning/advertising shall use Android runtime permissions appropriate to OS version and shall handle OEM-specific error states.",
+   "verification": "Device matrix.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "TRS-AND-006",
+   "domain": "TRS-AND",
+   "priority": "P0",
+   "requirement": "Active venue/mesh operation requiring continued execution shall use an appropriate foreground service and user-visible notification.",
+   "verification": "Background test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "TRS-AND-007",
+   "domain": "TRS-AND",
+   "priority": "P0",
+   "requirement": "WorkManager shall handle deferrable sync, support upload and cleanup, not real-time radio loops.",
+   "verification": "Code review.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "TRS-AND-008",
+   "domain": "TRS-AND",
+   "priority": "P1",
+   "requirement": "Wi-Fi Aware shall be implemented behind a runtime capability adapter and shall never be assumed present.",
+   "verification": "Capability test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "TRS-AND-009",
+   "domain": "TRS-AND",
+   "priority": "P0",
+   "requirement": "Play Billing shall use Billing Library 9.1.0 or approved successor, query purchases on connection, verify and acknowledge/consume correctly.",
+   "verification": "Sandbox billing test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "TRS-AND-010",
+   "domain": "TRS-AND",
+   "priority": "P0",
+   "requirement": "Android edge-to-edge and system-bar behavior shall be implemented for API 36 without clipping.",
+   "verification": "Visual test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "TRS-AND-011",
+   "domain": "TRS-AND",
+   "priority": "P0",
+   "requirement": "R8 shrinking/obfuscation, resource shrinking, baseline profiles and release mapping retention shall be configured.",
+   "verification": "Release build audit.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "TRS-AND-012",
+   "domain": "TRS-AND",
+   "priority": "P1",
+   "requirement": "Android tests shall include representative Pixel, Samsung, OnePlus, Xiaomi/Redmi and foldable/tablet classes available to the test program.",
+   "verification": "Device report.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "TRS-IOS-001",
+   "domain": "TRS-IOS",
+   "priority": "P0",
+   "requirement": "The Apple app shall be implemented in Swift 6 using SwiftUI with focused UIKit bridges only where platform APIs require.",
+   "verification": "Xcode build and architecture review.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "TRS-IOS-002",
+   "domain": "TRS-IOS",
+   "priority": "P0",
+   "requirement": "The app shall be built with the current App Store-required Xcode/SDK, baseline Xcode 26 and iOS 26 SDK, with approved deployment target iOS 15.",
+   "verification": "Archive inspection.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "TRS-IOS-003",
+   "domain": "TRS-IOS",
+   "priority": "P0",
+   "requirement": "CoreBluetooth shall implement both central and peripheral roles, state restoration and paced writes using canSendWriteWithoutResponse.",
+   "verification": "Two-device BLE test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "TRS-IOS-004",
+   "domain": "TRS-IOS",
+   "priority": "P0",
+   "requirement": "[Amended v1.1 / AMD-006] The fast local Apple path shall use the Network framework peer-to-peer/Bonjour architecture exclusively. Multipeer Connectivity shall not be used in flagship 1.0 in any form, including as a compatibility bridge.",
+   "verification": "Code review.",
+   "origin": "v1.0-amended"
+  },
+  {
+   "id": "TRS-IOS-005",
+   "domain": "TRS-IOS",
+   "priority": "P1",
+   "requirement": "iOS 26 Wi-Fi Aware may be added behind availability checks on supported hardware and shall not affect baseline compatibility.",
+   "verification": "Availability test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "TRS-IOS-006",
+   "domain": "TRS-IOS",
+   "priority": "P0",
+   "requirement": "Local network privacy prompts and Bonjour service declarations shall be accurate and contextual.",
+   "verification": "Permission test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "TRS-IOS-007",
+   "domain": "TRS-IOS",
+   "priority": "P0",
+   "requirement": "[Amended v1.1 / ADR-003] Keychain shall protect long-term identity and session material using ThisDeviceOnly protection classes; Secure Enclave shall be used where the algorithm permits, and X25519/Ed25519 keys the enclave cannot host natively shall be wrapped at rest by a hardware-protected KEK. No recovery mechanism may export private keys; RecoveryRecord content is defined by ADR-003 (content-only).",
+   "verification": "Key storage test.",
+   "origin": "v1.0-amended"
+  },
+  {
+   "id": "TRS-IOS-008",
+   "domain": "TRS-IOS",
+   "priority": "P0",
+   "requirement": "StoreKit 2 shall drive product display, purchase, transaction listening and restore; App Store Server APIs shall verify durable server entitlements.",
+   "verification": "Sandbox test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "TRS-IOS-009",
+   "domain": "TRS-IOS",
+   "priority": "P0",
+   "requirement": "Background BLE behavior shall be best-effort, state-restored and accurately represented in UX; the app shall not rely on unrestricted execution.",
+   "verification": "Background test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "TRS-IOS-010",
+   "domain": "TRS-IOS",
+   "priority": "P0",
+   "requirement": "The app shall support iPhone and iPad size classes, split view, keyboard and Dynamic Type.",
+   "verification": "Layout/accessibility test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "TRS-IOS-011",
+   "domain": "TRS-IOS",
+   "priority": "P0",
+   "requirement": "Release archives shall include privacy manifest, required-reason API declarations and dSYM retention.",
+   "verification": "Archive preflight.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "TRS-IOS-012",
+   "domain": "TRS-IOS",
+   "priority": "P1",
+   "requirement": "Apple tests shall include small iPhone, standard iPhone, large iPhone, recent iPad and at least one iOS 26 Wi-Fi Aware-capable device when available.",
+   "verification": "Device report.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "TRS-BCK-001",
+   "domain": "TRS-BCK",
+   "priority": "P0",
+   "requirement": "The backend shall expose authenticated APIs for device registration, prekeys, ciphertext envelopes, acknowledgements, configuration, venue, voucher, billing and reports.",
+   "verification": "API integration test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "TRS-BCK-002",
+   "domain": "TRS-BCK",
+   "priority": "P0",
+   "requirement": "The relay shall treat envelope payloads as opaque bytes and shall not log or index plaintext message content.",
+   "verification": "Code and log audit.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "TRS-BCK-003",
+   "domain": "TRS-BCK",
+   "priority": "P0",
+   "requirement": "Envelope records shall include message ID, recipient routing ID, sender authorization proof, created time, expiry, size, class and acknowledgement state.",
+   "verification": "Schema inspection.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "TRS-BCK-004",
+   "domain": "TRS-BCK",
+   "priority": "P0",
+   "requirement": "The relay shall enforce TTL deletion, quotas, rate limits, size limits and idempotency.",
+   "verification": "Load and retention tests.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "TRS-BCK-005",
+   "domain": "TRS-BCK",
+   "priority": "P0",
+   "requirement": "The prekey service shall support signed identity key, signed prekey, bounded one-time prekeys and replenishment without private keys.",
+   "verification": "Protocol integration test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "TRS-BCK-006",
+   "domain": "TRS-BCK",
+   "priority": "P0",
+   "requirement": "Push dispatcher payloads shall contain generic wake information and opaque routing references only.",
+   "verification": "Push payload inspection.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "TRS-BCK-007",
+   "domain": "TRS-BCK",
+   "priority": "P0",
+   "requirement": "Backend authentication shall bind an installation/device key to a revocable access credential without requiring public phone/email identity.",
+   "verification": "Auth test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "TRS-BCK-008",
+   "domain": "TRS-BCK",
+   "priority": "P0",
+   "requirement": "PostgreSQL shall store durable registry, venue, billing, campaign and safety records; Redis shall store TTL queues, rate limits and transient coordination.",
+   "verification": "Data architecture review.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "TRS-BCK-009",
+   "domain": "TRS-BCK",
+   "priority": "P0",
+   "requirement": "Public sponsor assets may use object storage/CDN; private chat/media shall not.",
+   "verification": "Storage audit.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "TRS-BCK-010",
+   "domain": "TRS-BCK",
+   "priority": "P0",
+   "requirement": "Backend services shall be horizontally scalable, stateless where practical and protected by gateway rate limiting and WAF controls.",
+   "verification": "Load/architecture test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "TRS-BCK-011",
+   "domain": "TRS-BCK",
+   "priority": "P1",
+   "requirement": "The backend shall support regional deployment and data-residency configuration without changing the mobile protocol.",
+   "verification": "Deployment test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "TRS-BCK-012",
+   "domain": "TRS-BCK",
+   "priority": "P0",
+   "requirement": "Service-to-service access shall use workload identity, least privilege and secret manager/KMS.",
+   "verification": "Cloud security audit.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "TRS-BCK-013",
+   "domain": "TRS-BCK",
+   "priority": "P0",
+   "requirement": "Administrative production changes shall require audited approval and shall not bypass package signing.",
+   "verification": "Admin workflow test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "TRS-BCK-014",
+   "domain": "TRS-BCK",
+   "priority": "P1",
+   "requirement": "Safety report intake shall separate optional user-supplied evidence from product telemetry and use restricted access.",
+   "verification": "Access-control test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "TRS-LOC-001",
+   "domain": "TRS-LOC",
+   "priority": "P0",
+   "requirement": "Local schemas shall cover identity, profile, field visibility, peer presence, match, conversation, message, outbox, media object, chunk state, dedup, venue, voucher, entitlement, block/report and configuration.",
+   "verification": "Schema review.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "TRS-LOC-002",
+   "domain": "TRS-LOC",
+   "priority": "P0",
+   "requirement": "Sensitive values shall be encrypted with per-domain or per-record keys derived from protected root material.",
+   "verification": "Storage cryptography test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "TRS-LOC-003",
+   "domain": "TRS-LOC",
+   "priority": "P0",
+   "requirement": "Database migrations shall be versioned, transactional, backward- tested and crash-recoverable.",
+   "verification": "Migration suite.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "TRS-LOC-004",
+   "domain": "TRS-LOC",
+   "priority": "P0",
+   "requirement": "Outbox and media transfer state shall survive process death and shall be idempotent.",
+   "verification": "Kill/restart test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "TRS-LOC-005",
+   "domain": "TRS-LOC",
+   "priority": "P0",
+   "requirement": "Dedup tables shall have bounded TTL and indexes suitable for high message volume.",
+   "verification": "Database performance test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "TRS-LOC-006",
+   "domain": "TRS-LOC",
+   "priority": "P0",
+   "requirement": "Caches shall implement quotas, LRU/TTL cleanup and low-storage handling.",
+   "verification": "Storage pressure test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "TRS-LOC-007",
+   "domain": "TRS-LOC",
+   "priority": "P0",
+   "requirement": "Emergency wipe shall delete database, object files, key aliases and queued work in the required order.",
+   "verification": "Wipe integration test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "TRS-LOC-008",
+   "domain": "TRS-LOC",
+   "priority": "P1",
+   "requirement": "Support export shall read through a redaction layer and shall never copy key material.",
+   "verification": "Support bundle audit.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "TRS-LOC-009",
+   "domain": "TRS-LOC",
+   "priority": "P0",
+   "requirement": "Cloud backup inclusion/exclusion shall follow the approved recovery model on each platform. [Amended v1.1 / ADR-003] The approved recovery model is content-only: OS backups shall exclude all cryptographic state via Android backup rules and iOS ThisDeviceOnly/do-not-back-up attributes.",
+   "verification": "Backup configuration test.",
+   "origin": "v1.0-amended"
+  },
+  {
+   "id": "TRS-LOC-010",
+   "domain": "TRS-LOC",
+   "priority": "P1",
+   "requirement": "Local data models shall use stable UUIDs and UTC timestamps with monotonic clocks for durations.",
+   "verification": "Data model test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "TRS-PROTO-001",
+   "domain": "TRS-PROTO",
+   "priority": "P0",
+   "requirement": "The protocol shall use a versioned canonical frame with network byte order and explicit length bounds.",
+   "verification": "Golden-vector test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "TRS-PROTO-002",
+   "domain": "TRS-PROTO",
+   "priority": "P0",
+   "requirement": "The base frame header shall include magic, protocol version, message type, flags, header length, session ID, message ID, sequence, acknowledgement base, payload length, expiry and hop limit.",
+   "verification": "Codec test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "TRS-PROTO-003",
+   "domain": "TRS-PROTO",
+   "priority": "P0",
+   "requirement": "The complete immutable header shall be authenticated as AEAD associated data.",
+   "verification": "Cryptographic vector.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "TRS-PROTO-004",
+   "domain": "TRS-PROTO",
+   "priority": "P0",
+   "requirement": "Message IDs and session IDs shall be 128-bit random or collision-resistant identifiers.",
+   "verification": "RNG/statistical review.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "TRS-PROTO-005",
+   "domain": "TRS-PROTO",
+   "priority": "P0",
+   "requirement": "The protocol shall define HELLO, capability, interest, profile, text, receipts, object metadata/chunk/ack/cancel, voice metadata, mesh, venue, voucher, heartbeat and error classes.",
+   "verification": "Schema audit.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "TRS-PROTO-006",
+   "domain": "TRS-PROTO",
+   "priority": "P0",
+   "requirement": "Unknown non-critical optional fields shall be safely skipped; unknown critical versions or types shall fail closed.",
+   "verification": "Forward-compat test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "TRS-PROTO-007",
+   "domain": "TRS-PROTO",
+   "priority": "P0",
+   "requirement": "Every decoder shall validate lengths before allocation and enforce class- specific maximum payload sizes.",
+   "verification": "Fuzz and allocation test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "TRS-PROTO-008",
+   "domain": "TRS-PROTO",
+   "priority": "P0",
+   "requirement": "Protocol compression shall be optional, negotiated and protected against decompression bombs.",
+   "verification": "Security test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "TRS-PROTO-009",
+   "domain": "TRS-PROTO",
+   "priority": "P0",
+   "requirement": "[Amended v1.1 / ADR-002] BLE advertising is asymmetric by platform per Section 9.3: Android primary advertisement carries the 18-byte Service Data hint (version, modeFlags, rotatingEid, authTag) with capabilityBits and venueHint in the scan response; iOS advertises the fixed Lumos 128-bit service UUID only. No advertisement on either platform shall contain PII, and all advertisement content is an unauthenticated routing hint per TRS-PROTO-017.",
+   "verification": "Radio capture.",
+   "origin": "v1.0-amended"
+  },
+  {
+   "id": "TRS-PROTO-010",
+   "domain": "TRS-PROTO",
+   "priority": "P0",
+   "requirement": "Fragmentation shall be independent of semantic message framing and shall support reassembly timeout and duplicate fragment suppression.",
+   "verification": "Fragment test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "TRS-PROTO-011",
+   "domain": "TRS-PROTO",
+   "priority": "P0",
+   "requirement": "Media selective acknowledgements shall use bounded bitmaps or ranges and shall support resume tokens.",
+   "verification": "Media protocol test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "TRS-PROTO-012",
+   "domain": "TRS-PROTO",
+   "priority": "P0",
+   "requirement": "Mesh forwarding shall authenticate TTL, hop and message ID and shall not permit a relay to increase them.",
+   "verification": "Tamper test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "TRS-PROTO-013",
+   "domain": "TRS-PROTO",
+   "priority": "P0",
+   "requirement": "Error codes shall be stable, machine- readable and mapped to non-technical user messages.",
+   "verification": "Error mapping test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "TRS-PROTO-014",
+   "domain": "TRS-PROTO",
+   "priority": "P1",
+   "requirement": "The protocol directory shall include binary examples and JSON descriptions for every message class.",
+   "verification": "Artifact audit.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "TRS-PROTO-015",
+   "domain": "TRS-PROTO",
+   "priority": "P0",
+   "requirement": "Android and iOS parsers shall pass identical golden vectors and fuzz corpora.",
+   "verification": "CI conformance.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "TRS-PROTO-016",
+   "domain": "TRS-PROTO",
+   "priority": "P1",
+   "requirement": "Protocol changes shall follow semantic versioning and compatibility review.",
+   "verification": "Release process audit.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "TRS-CRY-001",
+   "domain": "TRS-CRY",
+   "priority": "P0",
+   "requirement": "[Amended v1.1 / ADR-001] Production remote messaging shall implement the approved suite: libsodium-provided X25519, Ed25519, ChaCha20-Poly1305 (IETF) and HKDF-SHA-256 on Android, iOS and backend, with in-house X3DH-compatible asynchronous session establishment and Double Ratchet state machines written strictly to the published Signal specifications and proven by the cross-language vectors of Section 18.4. libsignal is excluded from the proprietary distribution (AGPL-3.0) unless a commercial license is separately executed.",
+   "verification": "Cryptographic review.",
+   "origin": "v1.0-amended"
+  },
+  {
+   "id": "TRS-CRY-002",
+   "domain": "TRS-CRY",
+   "priority": "P0",
+   "requirement": "Production messaging shall implement a Double Ratchet-compatible algorithm including root, sending and receiving chains, DH ratchet headers, message numbers, previous-chain length and skipped-key storage limits.",
+   "verification": "Golden vectors and review.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "TRS-CRY-003",
+   "domain": "TRS-CRY",
+   "priority": "P0",
+   "requirement": "[Amended v1.1 / ADR-001] X25519 and ChaCha20-Poly1305 are the mandatory cross-platform messaging primitives. Ed25519 is the primary signature algorithm for signed prekeys and config/venue/voucher packages; ECDSA P-256/AES-GCM are permitted only at the owner's KMS/HSM signing boundary, with client trust anchors embedded for both.",
+   "verification": "Architecture decision record.",
+   "origin": "v1.0-amended"
+  },
+  {
+   "id": "TRS-CRY-004",
+   "domain": "TRS-CRY",
+   "priority": "P0",
+   "requirement": "Identity-key changes shall require re- verification and shall not silently reuse prior trust.",
+   "verification": "Key change test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "TRS-CRY-005",
+   "domain": "TRS-CRY",
+   "priority": "P0",
+   "requirement": "One-time prekeys shall not be reused after successful consumption except documented fallback behavior.",
+   "verification": "Prekey test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "TRS-CRY-006",
+   "domain": "TRS-CRY",
+   "priority": "P0",
+   "requirement": "Message keys shall be deleted after use except bounded skipped keys needed for out-of-order delivery.",
+   "verification": "State inspection.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "TRS-CRY-007",
+   "domain": "TRS-CRY",
+   "priority": "P0",
+   "requirement": "MAX_SKIP and skipped-key TTL/quantity shall be bounded against denial-of-service.",
+   "verification": "Abuse test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "TRS-CRY-008",
+   "domain": "TRS-CRY",
+   "priority": "P0",
+   "requirement": "Media shall use random object keys and whole-object encryption before chunking; object keys shall be wrapped to the active match session.",
+   "verification": "Media crypto review.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "TRS-CRY-009",
+   "domain": "TRS-CRY",
+   "priority": "P0",
+   "requirement": "Config, venue and voucher signatures shall use ECDSA P-256 or Ed25519 with deterministic canonical payload encoding and key IDs.",
+   "verification": "Signature vectors.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "TRS-CRY-010",
+   "domain": "TRS-CRY",
+   "priority": "P0",
+   "requirement": "Key rotation shall support active, next and emergency trust anchors with signed transition and rollback protection.",
+   "verification": "Rotation rehearsal.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "TRS-CRY-011",
+   "domain": "TRS-CRY",
+   "priority": "P0",
+   "requirement": "No nonce may repeat under the same AEAD key; nonce derivation rules shall be testable.",
+   "verification": "Nonce uniqueness test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "TRS-CRY-012",
+   "domain": "TRS-CRY",
+   "priority": "P0",
+   "requirement": "All random values shall originate from platform CSPRNGs.",
+   "verification": "Static review.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "TRS-CRY-013",
+   "domain": "TRS-CRY",
+   "priority": "P0",
+   "requirement": "Cryptographic failures shall be non- recoverable for the affected frame and shall not disclose oracle details.",
+   "verification": "Negative test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "TRS-CRY-014",
+   "domain": "TRS-CRY",
+   "priority": "P1",
+   "requirement": "The security design shall include protocol transcript binding, domain separation strings and identity/match context binding.",
+   "verification": "Design review.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "TRS-CRY-015",
+   "domain": "TRS-CRY",
+   "priority": "P0",
+   "requirement": "The implementation shall include cross-language cryptographic test vectors and known-answer tests.",
+   "verification": "CI report.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "TRS-CRY-016",
+   "domain": "TRS-CRY",
+   "priority": "P1",
+   "requirement": "The protocol shall be designed for future post-quantum upgrade without changing the user experience.",
+   "verification": "Architecture review.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "TRS-TRN-001",
+   "domain": "TRS-TRN",
+   "priority": "P0",
+   "requirement": "Transport policy shall classify frames as local-only, relay-eligible, mesh- eligible and control-only before routing.",
+   "verification": "Routing unit tests.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "TRS-TRN-002",
+   "domain": "TRS-TRN",
+   "priority": "P0",
+   "requirement": "BLE shall carry discovery, session bootstrap, control, text and bounded media fragments with negotiated MTU and paced writes.",
+   "verification": "BLE integration test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "TRS-TRN-003",
+   "domain": "TRS-TRN",
+   "priority": "P0",
+   "requirement": "Android BLE shall serialize GATT operations and handle common status failures, stale callbacks and reconnect epochs.",
+   "verification": "Fault injection.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "TRS-TRN-004",
+   "domain": "TRS-TRN",
+   "priority": "P0",
+   "requirement": "iOS BLE shall queue writes and pause when canSendWriteWithoutResponse is false.",
+   "verification": "CoreBluetooth pacing test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "TRS-TRN-005",
+   "domain": "TRS-TRN",
+   "priority": "P1",
+   "requirement": "Android Wi-Fi Aware shall establish a data path only after capability and permission checks and shall bind sockets to the returned Network.",
+   "verification": "Wi-Fi Aware test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "TRS-TRN-006",
+   "domain": "TRS-TRN",
+   "priority": "P0",
+   "requirement": "Apple fast local networking shall use Network framework peer-to-peer/Bonjour and local network privacy-compliant discovery.",
+   "verification": "Apple integration test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "TRS-TRN-007",
+   "domain": "TRS-TRN",
+   "priority": "P0",
+   "requirement": "Local LAN discovery shall use a common Bonjour/NSD service type and authenticated application protocol.",
+   "verification": "Cross-platform LAN test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "TRS-TRN-008",
+   "domain": "TRS-TRN",
+   "priority": "P0",
+   "requirement": "Transport migration shall preserve session ID, message ID, sequence and media object state.",
+   "verification": "Migration test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "TRS-TRN-009",
+   "domain": "TRS-TRN",
+   "priority": "P0",
+   "requirement": "The orchestrator shall maintain per- route health, retry budget, backoff and circuit-breaker state.",
+   "verification": "Model-based test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "TRS-TRN-010",
+   "domain": "TRS-TRN",
+   "priority": "P0",
+   "requirement": "A frame sent on multiple paths shall be deduplicated before domain processing.",
+   "verification": "Multipath test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "TRS-TRN-011",
+   "domain": "TRS-TRN",
+   "priority": "P0",
+   "requirement": "Local-only objects shall be held in the local outbox when all local paths fail.",
+   "verification": "No-route test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "TRS-TRN-012",
+   "domain": "TRS-TRN",
+   "priority": "P0",
+   "requirement": "Relay-eligible text shall upload when internet returns without requiring Bluetooth.",
+   "verification": "Offline/online test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "TRS-TRN-013",
+   "domain": "TRS-TRN",
+   "priority": "P0",
+   "requirement": "Mesh relays shall enforce TTL, hop ceiling, storage quota and policy before forwarding.",
+   "verification": "Mesh test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "TRS-TRN-014",
+   "domain": "TRS-TRN",
+   "priority": "P1",
+   "requirement": "QR bootstrap shall encode only small signed or encrypted session/venue data within practical QR capacity.",
+   "verification": "QR test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "TRS-TRN-015",
+   "domain": "TRS-TRN",
+   "priority": "P0",
+   "requirement": "Transport adapters shall expose privacy-scrubbed metrics and shall never log payload content.",
+   "verification": "Log audit.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "TRS-TRN-016",
+   "domain": "TRS-TRN",
+   "priority": "P1",
+   "requirement": "Capability caches shall be short-lived and scoped to reduce fingerprinting.",
+   "verification": "Privacy review.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "TRS-MED-001",
+   "domain": "TRS-MED",
+   "priority": "P0",
+   "requirement": "Image input shall be decoded in a sandboxed/background path, normalized, EXIF-scrubbed and re- encoded to approved formats.",
+   "verification": "Media security test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "TRS-MED-002",
+   "domain": "TRS-MED",
+   "priority": "P0",
+   "requirement": "The default media limits shall be configurable, with recommended thumbnail <=12 KB, preview <=64 KB and full image <=2 MB.",
+   "verification": "Config/size test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "TRS-MED-003",
+   "domain": "TRS-MED",
+   "priority": "P0",
+   "requirement": "The default image baseline shall be JPEG for universal interoperability; WebP/HEIF may be negotiated only with fallback.",
+   "verification": "Interop test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "TRS-MED-004",
+   "domain": "TRS-MED",
+   "priority": "P0",
+   "requirement": "Voice notes shall use AAC-LC mono M4A at an approved sampling/bitrate profile, recommended 24 kHz and 24- 32 kbps, with maximum 120 seconds by default.",
+   "verification": "Codec inspection.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "TRS-MED-005",
+   "domain": "TRS-MED",
+   "priority": "P0",
+   "requirement": "Media metadata shall include object ID, MIME, total length, chunk size/count, SHA-256, thumbnail relationship, created time and expiry.",
+   "verification": "Protocol vector.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "TRS-MED-006",
+   "domain": "TRS-MED",
+   "priority": "P0",
+   "requirement": "Whole-object encryption shall occur before fragmentation; chunks shall not reveal plaintext metadata beyond authenticated routing fields.",
+   "verification": "Capture review.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "TRS-MED-007",
+   "domain": "TRS-MED",
+   "priority": "P0",
+   "requirement": "Receiver state shall track selective ACK/resume and persist safely across process death.",
+   "verification": "Resume test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "TRS-MED-008",
+   "domain": "TRS-MED",
+   "priority": "P0",
+   "requirement": "Duplicate object IDs shall not create duplicate chat items.",
+   "verification": "Dedup test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "TRS-MED-009",
+   "domain": "TRS-MED",
+   "priority": "P0",
+   "requirement": "Completed objects shall be authenticated and digest-verified before atomic move to visible storage.",
+   "verification": "Corruption test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "TRS-MED-010",
+   "domain": "TRS-MED",
+   "priority": "P0",
+   "requirement": "Dangerous file types and oversized archives shall be rejected before delivery.",
+   "verification": "File policy test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "TRS-MED-011",
+   "domain": "TRS-MED",
+   "priority": "P1",
+   "requirement": "Media rendering shall use exact target dimensions, background decode and bounded caches.",
+   "verification": "Performance test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "TRS-MED-012",
+   "domain": "TRS-MED",
+   "priority": "P1",
+   "requirement": "Object cleanup shall respect chat deletion, TTL, cache quota and emergency wipe.",
+   "verification": "Lifecycle test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "TRS-CFG-001",
+   "domain": "TRS-CFG",
+   "priority": "P0",
+   "requirement": "All remote configuration packages shall conform to a versioned JSON Schema or canonical CBOR schema.",
+   "verification": "Schema validation.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "TRS-CFG-002",
+   "domain": "TRS-CFG",
+   "priority": "P0",
+   "requirement": "Packages shall include package ID, schema version, environment, issued/valid times, minimum/maximum app version, monotonic version and key ID.",
+   "verification": "Schema test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "TRS-CFG-003",
+   "domain": "TRS-CFG",
+   "priority": "P0",
+   "requirement": "Clients shall verify signature, canonical bytes, time window, environment, app compatibility and rollback state before activation.",
+   "verification": "Negative package suite.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "TRS-CFG-004",
+   "domain": "TRS-CFG",
+   "priority": "P0",
+   "requirement": "Activation shall be atomic and shall retain at least one last-known-good package.",
+   "verification": "Rollback test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "TRS-CFG-005",
+   "domain": "TRS-CFG",
+   "priority": "P0",
+   "requirement": "The config system shall support plans, limits, copy, feature flags, kill switches, venue definitions, vouchers, room policy, sponsor cards and asset hashes.",
+   "verification": "Config feature test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "TRS-CFG-006",
+   "domain": "TRS-CFG",
+   "priority": "P0",
+   "requirement": "Configuration shall not contain executable code, arbitrary JavaScript, untrusted HTML or unrestricted external URI schemes.",
+   "verification": "Security test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "TRS-CFG-007",
+   "domain": "TRS-CFG",
+   "priority": "P0",
+   "requirement": "Creative assets shall be hash-pinned, MIME/size validated and accessibility checked.",
+   "verification": "Asset validation.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "TRS-CFG-008",
+   "domain": "TRS-CFG",
+   "priority": "P0",
+   "requirement": "Voucher tokens shall contain issuer, venue, entitlement, validity, nonce, audience and signature.",
+   "verification": "Voucher vector.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "TRS-CFG-009",
+   "domain": "TRS-CFG",
+   "priority": "P0",
+   "requirement": "Voucher replay shall be prevented locally and reconciled server-side when connectivity is available.",
+   "verification": "Replay test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "TRS-CFG-010",
+   "domain": "TRS-CFG",
+   "priority": "P0",
+   "requirement": "Admin publishing shall use KMS/HSM- backed signing and multi-person approval for production.",
+   "verification": "Admin security audit.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "TRS-CFG-011",
+   "domain": "TRS-CFG",
+   "priority": "P0",
+   "requirement": "Key rotation shall support overlapping trust anchors and emergency revocation.",
+   "verification": "Rotation test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "TRS-CFG-012",
+   "domain": "TRS-CFG",
+   "priority": "P1",
+   "requirement": "Config fetch shall use cache validators, CDN and bounded refresh/backoff.",
+   "verification": "Network test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "TRS-CFG-013",
+   "domain": "TRS-CFG",
+   "priority": "P0",
+   "requirement": "Invalid config shall generate a privacy- safe operational event and shall not change active behavior.",
+   "verification": "Fault test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "TRS-CFG-014",
+   "domain": "TRS-CFG",
+   "priority": "P1",
+   "requirement": "The companion pack shall include schema, examples and a signing CLI that never exports the production private key.",
+   "verification": "Tooling test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "TRS-BIL-001",
+   "domain": "TRS-BIL",
+   "priority": "P0",
+   "requirement": "The Android client shall integrate Google Play Billing 9.1.0 or approved successor and keep BillingClient connected while foregrounded.",
+   "verification": "Sandbox test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "TRS-BIL-002",
+   "domain": "TRS-BIL",
+   "priority": "P0",
+   "requirement": "Android shall query purchases after connection and handle purchase callbacks idempotently.",
+   "verification": "Duplicate callback test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "TRS-BIL-003",
+   "domain": "TRS-BIL",
+   "priority": "P0",
+   "requirement": "The iOS client shall use StoreKit 2 product, purchase, current entitlements, updates and restore APIs.",
+   "verification": "StoreKit test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "TRS-BIL-004",
+   "domain": "TRS-BIL",
+   "priority": "P0",
+   "requirement": "Durable entitlements shall be verified by the backend using store server APIs and signed transaction data.",
+   "verification": "Backend integration.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "TRS-BIL-005",
+   "domain": "TRS-BIL",
+   "priority": "P0",
+   "requirement": "Store product identifiers shall be mapped to internal entitlement IDs by signed configuration.",
+   "verification": "Config test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "TRS-BIL-006",
+   "domain": "TRS-BIL",
+   "priority": "P0",
+   "requirement": "The client shall render authoritative localized store price and offer text.",
+   "verification": "Regional test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "TRS-BIL-007",
+   "domain": "TRS-BIL",
+   "priority": "P0",
+   "requirement": "Entitlement grants shall use idempotency keys and an immutable transaction ledger.",
+   "verification": "Ledger test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "TRS-BIL-008",
+   "domain": "TRS-BIL",
+   "priority": "P0",
+   "requirement": "Consumables shall be consumed only after durable grant; subscriptions/non- consumables shall be acknowledged according to platform rules.",
+   "verification": "Billing state test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "TRS-BIL-009",
+   "domain": "TRS-BIL",
+   "priority": "P1",
+   "requirement": "Offline entitlement cache shall have signed/verified state and bounded grace rules.",
+   "verification": "Offline test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "TRS-BIL-010",
+   "domain": "TRS-BIL",
+   "priority": "P0",
+   "requirement": "Refund, revoke, grace, hold, pending, cancelled and expired states shall update access predictably.",
+   "verification": "Lifecycle test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "TRS-UX-001",
+   "domain": "TRS-UX",
+   "priority": "P0",
+   "requirement": "A shared design-token source shall define color, typography, spacing, radius, elevation, motion and breakpoints for both platforms.",
+   "verification": "Token consumption audit.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "TRS-UX-002",
+   "domain": "TRS-UX",
+   "priority": "P0",
+   "requirement": "The Midnight Aurora palette shall use accessible deep navy/graphite surfaces with violet, aqua, coral and amber accents.",
+   "verification": "Visual QA.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "TRS-UX-003",
+   "domain": "TRS-UX",
+   "priority": "P0",
+   "requirement": "Android shall implement compact, medium and expanded window classes; iOS shall implement compact/regular size classes and split view.",
+   "verification": "Layout test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "TRS-UX-004",
+   "domain": "TRS-UX",
+   "priority": "P0",
+   "requirement": "Chat bubbles shall model text, local media, voice note, venue event, sponsor card and system/security event as distinct typed components.",
+   "verification": "Component test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "TRS-UX-005",
+   "domain": "TRS-UX",
+   "priority": "P0",
+   "requirement": "Network states shall be mapped to plain-language UI states and never expose GATT, MTU, EID, relay or ratchet terminology.",
+   "verification": "Copy audit.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "TRS-UX-006",
+   "domain": "TRS-UX",
+   "priority": "P0",
+   "requirement": "Images shall use explicit aspect ratios and density-aware loading; no arbitrary stretching.",
+   "verification": "Golden screenshot test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "TRS-UX-007",
+   "domain": "TRS-UX",
+   "priority": "P0",
+   "requirement": "Motion durations shall use tokenized short/standard/emphasized values and respect reduced motion.",
+   "verification": "Motion test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "TRS-UX-008",
+   "domain": "TRS-UX",
+   "priority": "P0",
+   "requirement": "Design components shall meet minimum touch targets, contrast and screen-reader semantics.",
+   "verification": "Accessibility test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "TRS-UX-009",
+   "domain": "TRS-UX",
+   "priority": "P0",
+   "requirement": "Sponsored components shall be visually distinct from people and messages.",
+   "verification": "Visual audit.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "TRS-UX-010",
+   "domain": "TRS-UX",
+   "priority": "P1",
+   "requirement": "The admin preview shall render representative Android/iOS breakpoints from the same campaign data.",
+   "verification": "Preview test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "TRS-UX-011",
+   "domain": "TRS-UX",
+   "priority": "P0",
+   "requirement": "UI state restoration shall preserve navigation and draft text across process/scene recreation where appropriate.",
+   "verification": "Lifecycle test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "TRS-UX-012",
+   "domain": "TRS-UX",
+   "priority": "P1",
+   "requirement": "Localization shall use resource catalogs, pluralization and bidirectional-layout support.",
+   "verification": "Localization test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "TRS-OBS-001",
+   "domain": "TRS-OBS",
+   "priority": "P0",
+   "requirement": "Structured logs shall use event IDs, severity, correlation ID, state and redacted error codes.",
+   "verification": "Log schema test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "TRS-OBS-002",
+   "domain": "TRS-OBS",
+   "priority": "P0",
+   "requirement": "Logs shall never include profile text, message content, media bytes, keys, tokens or exact location.",
+   "verification": "Automated log scan.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "TRS-OBS-003",
+   "domain": "TRS-OBS",
+   "priority": "P0",
+   "requirement": "Client metrics shall include launch, discovery, handshake, route selection, delivery, transfer, config, billing and crash outcomes.",
+   "verification": "Telemetry test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "TRS-OBS-004",
+   "domain": "TRS-OBS",
+   "priority": "P0",
+   "requirement": "Crash reporting shall use privacy scrubbing, consent/notice and remote kill switch.",
+   "verification": "Crash payload test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "TRS-OBS-005",
+   "domain": "TRS-OBS",
+   "priority": "P0",
+   "requirement": "Support bundles shall include app/protocol/config versions, capability summary and bounded trace.",
+   "verification": "Bundle inspection.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "TRS-OBS-006",
+   "domain": "TRS-OBS",
+   "priority": "P0",
+   "requirement": "Backend metrics shall expose relay depth, delivery latency, TTL expiry, API errors, push success, config activation and billing verification.",
+   "verification": "Dashboard test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "TRS-OBS-007",
+   "domain": "TRS-OBS",
+   "priority": "P1",
+   "requirement": "Distributed traces shall use random per-operation correlation IDs and short retention.",
+   "verification": "Trace audit.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "TRS-OBS-008",
+   "domain": "TRS-OBS",
+   "priority": "P0",
+   "requirement": "Admin signing and publish actions shall go to an immutable audit sink.",
+   "verification": "Audit test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "TRS-OBS-009",
+   "domain": "TRS-OBS",
+   "priority": "P1",
+   "requirement": "SLO alerts and runbooks shall exist for critical services.",
+   "verification": "Operations review.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "TRS-OBS-010",
+   "domain": "TRS-OBS",
+   "priority": "P0",
+   "requirement": "Telemetry sampling and retention shall be configuration controlled and privacy reviewed.",
+   "verification": "Config test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "TRS-CICD-001",
+   "domain": "TRS-CICD",
+   "priority": "P0",
+   "requirement": "Every pull request shall run format, lint, unit, protocol vector, secret scan and dependency checks.",
+   "verification": "Pipeline inspection.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "TRS-CICD-002",
+   "domain": "TRS-CICD",
+   "priority": "P0",
+   "requirement": "Main/release branches shall run clean Android and iOS builds, integration tests, UI tests and package signing checks.",
+   "verification": "CI evidence.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "TRS-CICD-003",
+   "domain": "TRS-CICD",
+   "priority": "P0",
+   "requirement": "Backend/admin builds shall run unit, integration, migration, API contract and container vulnerability scans.",
+   "verification": "CI evidence.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "TRS-CICD-004",
+   "domain": "TRS-CICD",
+   "priority": "P0",
+   "requirement": "Release artifacts shall be signed with controlled keys and accompanied by checksums, SBOM and provenance.",
+   "verification": "Release audit.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "TRS-CICD-005",
+   "domain": "TRS-CICD",
+   "priority": "P0",
+   "requirement": "Protocol and config schemas shall be versioned and compatibility-tested before merge.",
+   "verification": "Schema gate.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "TRS-CICD-006",
+   "domain": "TRS-CICD",
+   "priority": "P0",
+   "requirement": "Dependency update automation shall open reviewed changes and shall not auto-merge security-sensitive libraries.",
+   "verification": "Policy review.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "TRS-CICD-007",
+   "domain": "TRS-CICD",
+   "priority": "P0",
+   "requirement": "No release shall proceed when P0/P1 tests, security scans or traceability gates fail.",
+   "verification": "Pipeline enforcement.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "TRS-CICD-008",
+   "domain": "TRS-CICD",
+   "priority": "P1",
+   "requirement": "Reproducible build instructions shall work from a clean supported macOS environment for both apps and Linux for backend/admin.",
+   "verification": "Fresh build test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "TRS-CICD-009",
+   "domain": "TRS-CICD",
+   "priority": "P0",
+   "requirement": "Store upload shall use staged rollout, internal testing and rollback/kill-switch rehearsal.",
+   "verification": "Release checklist.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "TRS-CICD-010",
+   "domain": "TRS-CICD",
+   "priority": "P1",
+   "requirement": "Binary size, startup, frame and battery budgets shall be regression-tracked.",
+   "verification": "Performance CI.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "TRS-CICD-011",
+   "domain": "TRS-CICD",
+   "priority": "P0",
+   "requirement": "Production configuration keys shall be managed independently from app signing keys.",
+   "verification": "Key management audit.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "TRS-CICD-012",
+   "domain": "TRS-CICD",
+   "priority": "P1",
+   "requirement": "The release process shall retain symbols/mappings for crash diagnosis while protecting access.",
+   "verification": "Artifact retention test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "TRS-TST-001",
+   "domain": "TRS-TST",
+   "priority": "P0",
+   "requirement": "A shared protocol test harness shall encode/decode golden vectors in Java, Swift and backend language.",
+   "verification": "CI test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "TRS-TST-002",
+   "domain": "TRS-TST",
+   "priority": "P0",
+   "requirement": "Cryptographic tests shall cover known- answer, cross-language interoperability, skipped/out-of-order messages, key rotation and failure cases.",
+   "verification": "Security test report.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "TRS-TST-003",
+   "domain": "TRS-TST",
+   "priority": "P0",
+   "requirement": "BLE tests shall cover advertisement, scan, GATT roles, MTU, pacing, disconnect, stale callback and background restoration.",
+   "verification": "Device test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "TRS-TST-004",
+   "domain": "TRS-TST",
+   "priority": "P0",
+   "requirement": "Fast local path tests shall cover supported and unsupported Wi-Fi Aware/Network peer-to-peer cases.",
+   "verification": "Capability matrix.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "TRS-TST-005",
+   "domain": "TRS-TST",
+   "priority": "P0",
+   "requirement": "Media tests shall cover thumbnail-first, full transfer, pause, resume, corruption, duplication, cancel, quota and process kill.",
+   "verification": "Media report.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "TRS-TST-006",
+   "domain": "TRS-TST",
+   "priority": "P0",
+   "requirement": "Relay tests shall cover offline queue, push, duplicate, replay, expiry, acknowledgement and block.",
+   "verification": "Backend/mobile test.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "TRS-TST-007",
+   "domain": "TRS-TST",
+   "priority": "P0",
+   "requirement": "Venue/config tests shall cover signature, expiry, rollback, asset validation, partner isolation and kill switches.",
+   "verification": "Config report.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "TRS-TST-008",
+   "domain": "TRS-TST",
+   "priority": "P0",
+   "requirement": "Billing tests shall cover purchase, pending, cancel, restore, refund, grace, hold and duplicate callback.",
+   "verification": "Billing report.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "TRS-TST-009",
+   "domain": "TRS-TST",
+   "priority": "P0",
+   "requirement": "Safety tests shall cover block, report, evidence consent, moderation, rate limits and emergency wipe.",
+   "verification": "Safety report.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "TRS-TST-010",
+   "domain": "TRS-TST",
+   "priority": "P0",
+   "requirement": "Fuzzing shall target all binary decoders, config parsers, media metadata and decompression paths.",
+   "verification": "Fuzz report.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "TRS-TST-011",
+   "domain": "TRS-TST",
+   "priority": "P0",
+   "requirement": "Real-device interop shall cover Android-Android, iOS-iOS and Android-iOS on every release candidate.",
+   "verification": "Interop evidence.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "TRS-TST-012",
+   "domain": "TRS-TST",
+   "priority": "P1",
+   "requirement": "Venue stress shall combine physical devices with synthetic peers and controlled RF impairment.",
+   "verification": "Stress report.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "TRS-TST-013",
+   "domain": "TRS-TST",
+   "priority": "P0",
+   "requirement": "All acceptance evidence shall be packaged with build hashes and exact app/config/protocol versions.",
+   "verification": "Evidence manifest.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "TRS-TST-014",
+   "domain": "TRS-TST",
+   "priority": "P1",
+   "requirement": "Manual black-box test cards shall be understandable by a non-developer and shall avoid requiring source inspection.",
+   "verification": "Usability review.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "TRS-AI-001",
+   "domain": "TRS-AI",
+   "priority": "P0",
+   "requirement": "An implementation AI shall treat SHALL and MUST requirements as mandatory and shall not silently weaken them.",
+   "verification": "Review checklist.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "TRS-AI-002",
+   "domain": "TRS-AI",
+   "priority": "P0",
+   "requirement": "The AI shall not submit placeholders, stubs, demo keys, hard-coded success, fake telemetry, fake billing or unimplemented buttons as completed work.",
+   "verification": "Repository and black-box audit.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "TRS-AI-003",
+   "domain": "TRS-AI",
+   "priority": "P0",
+   "requirement": "The AI shall map each work item, code change and test to requirement IDs and maintain bidirectional traceability.",
+   "verification": "Traceability audit.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "TRS-AI-004",
+   "domain": "TRS-AI",
+   "priority": "P0",
+   "requirement": "The AI shall preserve all previously accepted behavior unless an approved change request explicitly supersedes it.",
+   "verification": "Regression audit.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "TRS-AI-005",
+   "domain": "TRS-AI",
+   "priority": "P0",
+   "requirement": "The AI shall keep Android, iOS, backend and protocol builds green at each integration checkpoint.",
+   "verification": "CI evidence.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "TRS-AI-006",
+   "domain": "TRS-AI",
+   "priority": "P0",
+   "requirement": "When a requirement is ambiguous, the AI shall record an ADR with assumptions, options, security/privacy impact and chosen decision before implementation.",
+   "verification": "ADR review.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "TRS-AI-007",
+   "domain": "TRS-AI",
+   "priority": "P0",
+   "requirement": "The AI shall use official platform documentation and maintained primary-source libraries for current APIs.",
+   "verification": "Source review.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "TRS-AI-008",
+   "domain": "TRS-AI",
+   "priority": "P0",
+   "requirement": "The AI shall generate real automated tests, execute them and retain machine-readable results; it shall not claim unexecuted tests passed.",
+   "verification": "Test evidence.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "TRS-AI-009",
+   "domain": "TRS-AI",
+   "priority": "P0",
+   "requirement": "The AI shall clearly distinguish simulator/emulator evidence from physical-radio evidence and shall not claim BLE interoperability without physical-device execution.",
+   "verification": "Evidence audit.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "TRS-AI-010",
+   "domain": "TRS-AI",
+   "priority": "P0",
+   "requirement": "The AI shall never invent store approval, legal approval, security certification or production load results.",
+   "verification": "Delivery review.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "TRS-AI-011",
+   "domain": "TRS-AI",
+   "priority": "P0",
+   "requirement": "The AI shall produce complete build/run/test instructions for a clean environment and shall document every external credential or console step.",
+   "verification": "Fresh-machine validation.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "TRS-AI-012",
+   "domain": "TRS-AI",
+   "priority": "P0",
+   "requirement": "The AI shall package source, schemas, tests, SBOM, hashes, changelog, risk log and acceptance evidence for each milestone.",
+   "verification": "Delivery manifest.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "TRS-AI-013",
+   "domain": "TRS-AI",
+   "priority": "P1",
+   "requirement": "The AI shall prioritize small vertical slices that end in working cross- platform behavior rather than disconnected scaffolding.",
+   "verification": "Plan review.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "TRS-AI-014",
+   "domain": "TRS-AI",
+   "priority": "P0",
+   "requirement": "The AI shall stop release and report honestly when a mandatory acceptance gate has not been proven.",
+   "verification": "Release review.",
+   "origin": "v1.0"
+  },
+  {
+   "id": "TRS-PROTO-017",
+   "domain": "TRS-PROTO",
+   "priority": "P0",
+   "requirement": "[New v1.1 / ADR-002] Advertisement content is an unauthenticated routing hint only. Peer EID, capabilities, protocol version and venue context shall be established or re-confirmed inside HELLO/HELLO_ACK, authenticated per session rules, before any presence card, preview retrieval or higher protocol activity. The Android advertisement authTag serves only to cheaply discard non-Lumos noise before connecting.",
+   "verification": "Handshake conformance test and negative spoofed-advertisement test.",
+   "origin": "v1.1-new"
+  },
+  {
+   "id": "TRS-PROTO-018",
+   "domain": "TRS-PROTO",
+   "priority": "P0",
+   "requirement": "[New v1.1 / ADR-002] The implementation shall not assume a backgrounded iOS peer is discoverable through service-data scanning; discovery of backgrounded iOS devices is best-effort via service-UUID scan plus connection-time handshake, and UX/marketing copy shall reflect this honestly.",
+   "verification": "Background discovery test and copy audit.",
+   "origin": "v1.1-new"
+  },
+  {
+   "id": "TRS-CONST-001",
+   "domain": "TRS-CONST",
+   "priority": "P0",
+   "requirement": "[New v1.1] All protocol and policy constants of Section 23 shall be consumed from generated code produced from /protocol/constants/lumos_constants.json (LumosConstants.java, LumosConstants.swift, constants.go); no literal duplication of a registered constant may exist in application code.",
+   "verification": "Codegen audit and grep gate in CI.",
+   "origin": "v1.1-new"
+  },
+  {
+   "id": "TRS-CONST-002",
+   "domain": "TRS-CONST",
+   "priority": "P0",
+   "requirement": "[New v1.1] Signed configuration may override only constants marked overridable in Section 23 and only within their stated bounds; out-of-bounds values shall fail schema validation client-side and shall not activate.",
+   "verification": "Negative config suite.",
+   "origin": "v1.1-new"
+  },
+  {
+   "id": "TRS-CONST-003",
+   "domain": "TRS-CONST",
+   "priority": "P0",
+   "requirement": "[New v1.1] Any change to a frozen constant requires an approved change request, regeneration of affected golden vectors and a full protocol-conformance rerun before merge.",
+   "verification": "Change-control and CI audit.",
+   "origin": "v1.1-new"
+  },
+  {
+   "id": "TRS-CONST-004",
+   "domain": "TRS-CONST",
+   "priority": "P1",
+   "requirement": "[New v1.1] Calibration values (scan/advertise duty cycles, RSSI proximity-band thresholds, connect budgets) shall be tuned on the reference device classes during WP-03/WP-07 within the Section 23 bounds, and the tuning evidence shall be recorded in /evidence with device models and RF conditions.",
+   "verification": "Calibration evidence review.",
+   "origin": "v1.1-new"
+  },
+  {
+   "id": "TRS-CONST-005",
+   "domain": "TRS-CONST",
+   "priority": "P0",
+   "requirement": "[New v1.1] The constants hash shall be embedded in every vector file and in the signed configuration schema so that constant drift is mechanically detectable.",
+   "verification": "Hash cross-check CI job.",
+   "origin": "v1.1-new"
+  },
+  {
+   "id": "TRS-CONST-006",
+   "domain": "TRS-CONST",
+   "priority": "P1",
+   "requirement": "[New v1.1] Signed configuration may select among predefined environment profiles (normal, crowded-venue, battery-saver) whose members are themselves bounded constants; profiles shall not introduce values outside the register.",
+   "verification": "Profile schema test.",
+   "origin": "v1.1-new"
+  },
+  {
+   "id": "TRS-CODE-001",
+   "domain": "TRS-CODE",
+   "priority": "P0",
+   "requirement": "[New v1.1] Every source file shall begin with the standard header of Section 24.1 including 'Author: dhar.abhishek.email@gmail.com', the module purpose, and the primary requirement IDs the file implements.",
+   "verification": "Header lint in CI.",
+   "origin": "v1.1-new"
+  },
+  {
+   "id": "TRS-CODE-002",
+   "domain": "TRS-CODE",
+   "priority": "P0",
+   "requirement": "[New v1.1] Every public type and function shall carry API documentation (Javadoc / Swift DocC / godoc) covering purpose, parameters, return values, error behavior and threading/actor expectations.",
+   "verification": "Documentation-coverage lint.",
+   "origin": "v1.1-new"
+  },
+  {
+   "id": "TRS-CODE-003",
+   "domain": "TRS-CODE",
+   "priority": "P0",
+   "requirement": "[New v1.1] The layering and dependency rules of Section 4.3 shall be enforced by automated architecture lint; a violating import fails the build.",
+   "verification": "Dependency-graph CI gate.",
+   "origin": "v1.1-new"
+  },
+  {
+   "id": "TRS-CODE-004",
+   "domain": "TRS-CODE",
+   "priority": "P0",
+   "requirement": "[New v1.1] Complexity budgets: cyclomatic complexity <= 15 per function, <= 800 lines per file, <= 500 lines per class/type; exceptions require an ADR reference in the file header.",
+   "verification": "Static-analysis thresholds.",
+   "origin": "v1.1-new"
+  },
+  {
+   "id": "TRS-CODE-005",
+   "domain": "TRS-CODE",
+   "priority": "P0",
+   "requirement": "[New v1.1] No commented-out code blocks, no TODO/FIXME without an issue reference, and no magic numbers - every tunable literal resolves to a Section 23 constant or a named local constant with rationale.",
+   "verification": "Lint rules and review checklist.",
+   "origin": "v1.1-new"
+  },
+  {
+   "id": "TRS-CODE-006",
+   "domain": "TRS-CODE",
+   "priority": "P0",
+   "requirement": "[New v1.1] Release builds shall be zero-warning under the pinned static-analysis stack: Checkstyle + SpotBugs + Android Lint (Java), SwiftLint + Swift 6 strict concurrency diagnostics (iOS), golangci-lint (Go), ESLint + tsc strict (admin).",
+   "verification": "CI zero-warning gate.",
+   "origin": "v1.1-new"
+  },
+  {
+   "id": "TRS-CODE-007",
+   "domain": "TRS-CODE",
+   "priority": "P1",
+   "requirement": "[New v1.1] Naming shall follow the platform style guides and use the ubiquitous domain language of Section 4.2 component names; the same concept shall not carry different names across platforms.",
+   "verification": "Cross-platform naming review.",
+   "origin": "v1.1-new"
+  },
+  {
+   "id": "TRS-CODE-008",
+   "domain": "TRS-CODE",
+   "priority": "P0",
+   "requirement": "[New v1.1] Error handling shall be explicit: no swallowed exceptions or ignored error returns; all user-visible failures map to the stable error codes of TRS-PROTO-013.",
+   "verification": "Static analysis and error-mapping test.",
+   "origin": "v1.1-new"
+  },
+  {
+   "id": "TRS-CODE-009",
+   "domain": "TRS-CODE",
+   "priority": "P1",
+   "requirement": "[New v1.1] Non-obvious logic shall carry 'why' comments citing the SRS/TRS/EDP section or ADR that motivates it, so future maintainers inherit intent, not just mechanics.",
+   "verification": "Review checklist.",
+   "origin": "v1.1-new"
+  },
+  {
+   "id": "TRS-CODE-010",
+   "domain": "TRS-CODE",
+   "priority": "P0",
+   "requirement": "[New v1.1] Every merge shall pass the code-review checklist of Section 24.3 including pattern conformance; AI-generated changes are held to the identical standard.",
+   "verification": "Review-gate audit.",
+   "origin": "v1.1-new"
+  },
+  {
+   "id": "TRS-PAT-001",
+   "domain": "TRS-PAT",
+   "priority": "P0",
+   "requirement": "[New v1.1] All transports shall be implemented as Adapters behind the single asynchronous transport contract, selected by Strategy inside the orchestrator; no domain code may branch on transport type.",
+   "verification": "Adapter conformance suite.",
+   "origin": "v1.1-new"
+  },
+  {
+   "id": "TRS-PAT-002",
+   "domain": "TRS-PAT",
+   "priority": "P0",
+   "requirement": "[New v1.1] The orchestrator, match, transfer and config-activation logic shall be explicit State machines with typed events and exhaustive transition handling; boolean-flag state is prohibited for these domains.",
+   "verification": "Model-based state tests.",
+   "origin": "v1.1-new"
+  },
+  {
+   "id": "TRS-PAT-003",
+   "domain": "TRS-PAT",
+   "priority": "P0",
+   "requirement": "[New v1.1] Data access shall use the Repository pattern; UI shall observe immutable view state via unidirectional data flow (Observer), with no view-layer mutation of domain state.",
+   "verification": "Architecture lint and UI tests.",
+   "origin": "v1.1-new"
+  },
+  {
+   "id": "TRS-PAT-004",
+   "domain": "TRS-PAT",
+   "priority": "P0",
+   "requirement": "[New v1.1] The outbox shall model sends as Command objects with idempotency keys, persisted before dispatch, replayable after process death.",
+   "verification": "Kill/restart outbox test.",
+   "origin": "v1.1-new"
+  },
+  {
+   "id": "TRS-PAT-005",
+   "domain": "TRS-PAT",
+   "priority": "P0",
+   "requirement": "[New v1.1] Retry, backoff and circuit-breaker behavior shall be reusable policy objects parameterized from Section 23, not inline loops.",
+   "verification": "Fault-injection tests.",
+   "origin": "v1.1-new"
+  },
+  {
+   "id": "TRS-PAT-006",
+   "domain": "TRS-PAT",
+   "priority": "P1",
+   "requirement": "[New v1.1] Frame and package construction shall use Factory/Builder types generated or derived from /protocol schemas; hand-rolled byte assembly outside the codec layer is prohibited.",
+   "verification": "Codec-layer audit.",
+   "origin": "v1.1-new"
+  },
+  {
+   "id": "TRS-PAT-007",
+   "domain": "TRS-PAT",
+   "priority": "P0",
+   "requirement": "[New v1.1] No mutable global singletons; shared services are provided through composition-root constructor injection with lifecycles owned by the application shell.",
+   "verification": "Static review.",
+   "origin": "v1.1-new"
+  },
+  {
+   "id": "TRS-PAT-008",
+   "domain": "TRS-PAT",
+   "priority": "P1",
+   "requirement": "[New v1.1] Concurrency shall use each platform's structured primitives (serial executors/actors per Section 2.2, Swift actors, Go channels/contexts); raw shared-memory locking requires an ADR.",
+   "verification": "Concurrency review and strict-mode tests.",
+   "origin": "v1.1-new"
+  },
+  {
+   "id": "TRS-EXT-001",
+   "domain": "TRS-EXT",
+   "priority": "P0",
+   "requirement": "[New v1.1] Protocol evolution shall be additive-first: message types 0x60-0x7E and flag bits 10-15 are reserved for future use, unknown optional content follows TRS-PROTO-006, and removal/repurposing of an existing field requires a major protocol version and ADR.",
+   "verification": "Schema versioning gate.",
+   "origin": "v1.1-new"
+  },
+  {
+   "id": "TRS-EXT-002",
+   "domain": "TRS-EXT",
+   "priority": "P0",
+   "requirement": "[New v1.1] A new transport shall be integrable by implementing the adapter contract alone, with zero changes to domain modules; the adapter conformance suite is the acceptance proof.",
+   "verification": "Conformance suite run against a stub adapter.",
+   "origin": "v1.1-new"
+  },
+  {
+   "id": "TRS-EXT-003",
+   "domain": "TRS-EXT",
+   "priority": "P0",
+   "requirement": "[New v1.1] Config schema evolution shall be additive with minAppVersion gating; clients ignore unknown optional keys and fail closed only on unknown critical schema versions.",
+   "verification": "Forward-compat config test.",
+   "origin": "v1.1-new"
+  },
+  {
+   "id": "TRS-EXT-004",
+   "domain": "TRS-EXT",
+   "priority": "P1",
+   "requirement": "[New v1.1] The prekey bundle carries a typed prekey-kind field reserving the post-quantum (KEM) upgrade path without wire redesign (TRS-CRY-016).",
+   "verification": "Schema review.",
+   "origin": "v1.1-new"
+  },
+  {
+   "id": "TRS-EXT-005",
+   "domain": "TRS-EXT",
+   "priority": "P1",
+   "requirement": "[New v1.1] Themes, copy and premium visual variants shall be fully token/config-driven so new variants ship without layout code changes.",
+   "verification": "Theme-pack test.",
+   "origin": "v1.1-new"
+  },
+  {
+   "id": "TRS-EXT-006",
+   "domain": "TRS-EXT",
+   "priority": "P0",
+   "requirement": "[New v1.1] Module public interfaces shall follow semantic versioning; a breaking change requires an ADR, a migration note and a regression run of all dependents.",
+   "verification": "Interface-diff CI check.",
+   "origin": "v1.1-new"
+  },
+  {
+   "id": "TRS-ENV-001",
+   "domain": "TRS-ENV",
+   "priority": "P0",
+   "requirement": "[New v1.1] The discovery pipeline shall remain stable and responsive with at least 100 concurrent advertisers in radio range, applying RSSI-sorted triage and the bounded connect budget of Section 23 instead of unbounded connection attempts.",
+   "verification": "Crowded-venue synthetic + physical stress (AT-004).",
+   "origin": "v1.1-new"
+  },
+  {
+   "id": "TRS-ENV-002",
+   "domain": "TRS-ENV",
+   "priority": "P0",
+   "requirement": "[New v1.1] Zero-false-positive presence: no nearby card, preview or match action may be rendered for a peer that has not completed an authenticated HELLO; stale cards age out within the Section 23 bound.",
+   "verification": "Spoofed/replayed advertisement negative tests.",
+   "origin": "v1.1-new"
+  },
+  {
+   "id": "TRS-ENV-003",
+   "domain": "TRS-ENV",
+   "priority": "P0",
+   "requirement": "[New v1.1] False-negative mitigation: while the user is actively viewing Nearby with visibility on, a bounded escalating rescan ladder shall run, and a privacy-safe discovery-success metric shall be recorded so field false-negative rates are measurable.",
+   "verification": "Discovery-success telemetry test.",
+   "origin": "v1.1-new"
+  },
+  {
+   "id": "TRS-ENV-004",
+   "domain": "TRS-ENV",
+   "priority": "P0",
+   "requirement": "[New v1.1] Under 2.4 GHz congestion (dense venue Wi-Fi), transports shall degrade by adaptive pacing and backoff without retry storms, duplicate floods or UI stalls.",
+   "verification": "RF-impairment fault injection.",
+   "origin": "v1.1-new"
+  },
+  {
+   "id": "TRS-ENV-005",
+   "domain": "TRS-ENV",
+   "priority": "P0",
+   "requirement": "[New v1.1] Android doze, app standby and OEM battery-killer regimes (Samsung, Xiaomi/Redmi, OnePlus) shall be handled per the DFMEA of Section 22: active modes run under a compliant foreground service, losses degrade to honest queued states, and no silent data loss occurs.",
+   "verification": "OEM matrix background tests.",
+   "origin": "v1.1-new"
+  },
+  {
+   "id": "TRS-ENV-006",
+   "domain": "TRS-ENV",
+   "priority": "P0",
+   "requirement": "[New v1.1] Thermal pressure and low-battery states shall trigger staged degradation (reduce duty cycle, defer media, pause mesh) before any feature is disabled, with honest user-visible states.",
+   "verification": "Thermal/battery-sim test.",
+   "origin": "v1.1-new"
+  },
+  {
+   "id": "TRS-ENV-007",
+   "domain": "TRS-ENV",
+   "priority": "P1",
+   "requirement": "[New v1.1] Proximity bands shall be derived from calibrated RSSI thresholds (Section 23) validated in open, crowded and closed/metallic environments; the UI shall never present direction or precise distance.",
+   "verification": "Environment calibration evidence.",
+   "origin": "v1.1-new"
+  },
+  {
+   "id": "TRS-ENV-008",
+   "domain": "TRS-ENV",
+   "priority": "P0",
+   "requirement": "[New v1.1] Mid-session Bluetooth toggle, permission revocation or adapter resets shall transition sessions to queued/recoverable states without crash, corruption or false success.",
+   "verification": "Chaos toggling test.",
+   "origin": "v1.1-new"
+  }
+ ]
+}

@@ -1,0 +1,102 @@
+# AGENTS.md — Lumos Implementation Contract (read every session)
+
+You are implementing **Lumos**, a privacy-first proximity dating and venue-social
+platform: native Android (Java 17), native iOS (Swift 6/SwiftUI), Go backend,
+TypeScript admin console. This file is binding. Where it conflicts with anything
+else except the baselined documents, this file and the documents win.
+
+## 1. Source of truth (reading order)
+
+1. `docs/Lumos_SRS_v1_1.pdf` — behavior (396 requirements, 33 acceptance tests)
+2. `docs/Lumos_TRS_v1_1.pdf` — architecture, protocol, constants (§23), DFMEA (§22),
+   code standard (§24), extensibility (§25) (252 requirements)
+3. `docs/Lumos_EDP_v1_0.pdf` — ADR-001..004 full records, WP-01..WP-11 kickoff
+   briefs (§7), owner-executed gates G-01..G-09 (§8)
+4. Machine-readable equivalents (same content, easier to query):
+   - `requirements/srs_requirements_v1_1.json`
+   - `requirements/trs_requirements_v1_1.json`
+   - `acceptance/acceptance_tests_v1_1.csv`
+   - `protocol/constants/lumos_constants.seed.json`
+
+If prose and a numbered requirement conflict, the stricter privacy/safety/security
+interpretation applies (SRS §2.4).
+
+## 2. Binding decisions — do not re-open
+
+- **ADR-001** Crypto: libsodium X25519 / Ed25519 / ChaCha20-Poly1305 / HKDF-SHA-256
+  on all platforms; in-house X3DH-compatible + Double Ratchet state machines per the
+  Signal specs, vector-proven. **libsignal is prohibited** (AGPL-3.0).
+- **ADR-002** BLE: asymmetric advertising; canonical trust ONLY at authenticated
+  GATT HELLO. Android 18-byte Service Data hint + scan response; iOS service-UUID
+  only. Never attempt service-data advertising on iOS.
+- **ADR-003** Recovery: content-only RecoveryRecord; identity keys hardware-backed,
+  non-exportable, never escrowed; backups exclude all cryptographic state.
+- **ADR-004** Every tunable value comes from generated constants
+  (`/protocol/constants/lumos_constants.json`). No magic numbers anywhere.
+
+## 3. Absolute prohibitions (release-blocking if violated)
+
+- No placeholders, stubs presented as done, demo keys, fake billing, hard-coded
+  success, fake telemetry, or unexecuted tests reported as passed (TRS-AI-002/008).
+- Never claim BLE/radio interoperability, store approval, load results, legal or
+  security sign-off. Physical-radio and third-party gates are **owner-executed**
+  (EDP §8, G-01..G-09): deliver them "ready for execution" and mark the trace
+  matrix `unproven`. The correct final state of such work is *ready, awaiting
+  owner evidence* — say so plainly (TRS-AI-009/010/014).
+- No plaintext profile/chat/media/keys in the backend, logs, analytics, push
+  payloads or crash reports — ever (TRS-BCK-002, TRS-OBS-002).
+- Local-only media/voice notes never touch the internet relay (SRS-TRN-009).
+- No new dependency without stating name, version, license and why; ISC/MIT/Apache-2
+  preferred; any copyleft requires explicit owner approval first.
+- Never touch signing material, production credentials or `.env` secrets; never
+  commit them (TRS-REP-005).
+
+## 4. Per-session workflow
+
+1. State which **work package** you are in. Work strictly by the WP kickoff brief
+   (EDP §7). Do not start a WP whose entry criteria are unmet; do not drift scope.
+2. Before coding, list the requirement IDs the change implements.
+3. Small vertical slices ending in working, tested behavior (TRS-AI-013).
+4. **Same-commit rule:** every code/test change updates
+   `evidence/trace/trace-matrix.json` (status, code paths, tests, last_commit).
+   A stale matrix is a CI failure by design.
+5. Run the relevant tests and the protocol-conformance vectors before claiming
+   anything. `tested` status requires an execution in this session's run.
+6. Full regression of prior WPs at each WP close (TRS-AI-004/005).
+
+## 5. Code standard (TRS §24 — lint-enforced)
+
+Every source file starts with:
+
+```
+/*
+ * Lumos - <module> / <one-line purpose>
+ * Author: dhar.abhishek.email@gmail.com
+ * Implements: <requirement IDs>
+ * ADRs: <IDs or '-'>
+ * Threading: <main-safe | serial-executor | actor | any>
+ * Notes: <non-obvious intent, or '-'>
+ */
+```
+
+Public APIs documented (Javadoc/DocC/godoc). Complexity ≤15/function, ≤800
+lines/file, ≤500/class. Zero analyzer warnings (Checkstyle+SpotBugs+Android Lint /
+SwiftLint+Swift 6 strict / golangci-lint / ESLint+tsc strict). Patterns per TRS
+§24.2: transports = Adapter+Strategy; routing/match/transfer/config = explicit
+State machines with typed events (no boolean-flag state); Repository for data;
+unidirectional immutable view state for UI; Command outbox; Circuit
+Breaker/Backoff as policy objects; constructor injection, no mutable singletons.
+
+## 6. When to stop and ask the owner
+
+Stop — do not improvise — when you hit: a genuine ambiguity not resolved by the
+documents (write an ADR draft first, TRS-AI-006); any need for credentials,
+consoles, cloud resources, physical devices or spending; any temptation to relax
+a P0; a failing gate you cannot fix within the WP's scope. Honesty about a gap
+is success; papering over it is the only real failure mode.
+
+## 7. Current state
+
+- Active WP: **WP-01** (see `prompts/WP-01-kickoff.md`)
+- Trace matrix: seeded, all 648 entries `not_started`
+- Nothing is implemented yet. Do not assume any code exists that you have not read.

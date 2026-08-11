@@ -1,0 +1,34 @@
+test_id,scenario,pass_criterion,priority,origin
+AT-001,Adult gate and legal consent,Fresh install blocks product entry until age affirmation and current legal versions are accepted.,P0,v1.0
+AT-002,Offline no-account onboarding,"With internet disabled, create a local identity and profile without phone/email/social login.",P0,v1.0
+AT-003,Rotating advertisement privacy,Capture BLE advertisements for 15 minutes; rotating IDs change and no PII appears.,P0,v1.0
+AT-004,Crowded discovery,Process 100 synthetic peers and at least 20 real/simulated active peers with no duplicate cards or UI stall.,P0,v1.0
+AT-005,Mutual consent gate,"Full profile, text chat and media actions remain blocked until both users accept.",P0,v1.0
+AT-006,Remote matched text,Android and iOS users on different networks exchange E2E text after leaving local range.,P0,v1.0
+AT-007,Notification privacy,Locked-screen push contains no message or sensitive profile text by default.,P0,v1.0
+AT-008,Nearby photo transfer and resume,"Transfer a photo, interrupt local path, resume missing chunks and publish exactly one verified object.",P0,v1.0
+AT-009,Nearby voice note,"Record, cancel, send, pause and resume Bluetooth-only voice note; verify no remote upload.",P0,v1.0
+AT-010,Three-device mesh relay,A sends eligible opaque packet to C through B; B cannot decrypt and TTL/dedup rules hold.,P1,v1.0
+AT-011,Transport migration,"Begin on BLE, enable/disable fast local path and confirm session/message identity persists with no duplicate.",P0,v1.0
+AT-012,Optional capability absence,Run on devices without Wi-Fi Aware/peer-to-peer acceleration; baseline experience remains available.,P0,v1.0
+AT-013,Venue activation,Activate signed venue package without binary update; invalid/expired package is rejected.,P0,v1.0
+AT-014,Voucher replay prevention,"Redeem a valid voucher once; second redemption, expired and revoked cases fail gracefully.",P0,v1.0
+AT-015,Ad separation,"Sponsored card appears only in Discover/approved venue surface and never overlays Nearby, Match or Chat.",P0,v1.0
+AT-016,Billing purchase and restore,"Complete subscription and consumable tests in both store sandboxes, then restore durable entitlement after reinstall.",P0,v1.0
+AT-017,Signed configuration rollback,"Publish valid config, tamper next version, verify rejection and last- known-good rollback.",P0,v1.0
+AT-018,Cross-path block,"Block peer and verify disappearance from discovery, mesh, relay notifications and venue rooms.",P0,v1.0
+AT-019,Emergency wipe,"Trigger deliberate wipe and verify local profile, messages, cache, queue, venue tokens and keys are removed to specification.",P0,v1.0
+AT-020,Cross-platform protocol conformance,"Run golden vectors and live Android- Android, iOS-iOS and Android-iOS sessions for all message classes.",P0,v1.0
+AT-021,24-hour stability soak,"Continuous discovery, remote text and periodic media completes without crash, ANR or unbounded memory growth.",P0,v1.0
+AT-022,UGC moderation,"Report, mute, block, moderation and room closure flows satisfy policy checklist.",P0,v1.0
+AT-023,Accessibility and form factors,"Pass TalkBack/VoiceOver, large text, reduced motion, compact/expanded, tablet and foldable checks.",P0,v1.0
+AT-024,Telemetry privacy,"Inspect logs, analytics, crash reports and support bundle; no prohibited plaintext or sensitive dimensions are present.",P0,v1.0
+AT-025,Relay physical-boundary behavior,"With no local path and no internet, eligible text/media enters correct queue state; app does not claim delivery.",P0,v1.0
+AT-026,Config kill switches,"Disable nearby, mesh, media, venue room and ads independently using signed config without reinstall.",P0,v1.0
+AT-027,Abuse and resource limits,"Flood requests, room posts, mesh packets and malformed media; limits activate without crash.",P0,v1.0
+AT-028,Store submission preflight,"API/SDK targets, privacy declarations, age rating, billing and UGC materials pass internal store checklist.",P0,v1.0
+AT-029,Protocol conformance vectors,"All golden-vector suites (framing, crypto, media, adv, config, voucher, errors) pass identically in Java, Swift and Go in the release pipeline; negative vectors fail with exact stable error codes.",P0,v1.1
+AT-030,Presence integrity,"Spoofed, replayed and truncated advertisements never produce a nearby card; cards appear only after authenticated HELLO and age out on schedule.",P0,v1.1
+AT-031,Environmental degradation ladder,"Under simulated congestion, thermal pressure and battery saver, duty cycles reduce in stages, honest states show, and no crash, storm or false success occurs.",P0,v1.1
+AT-032,Code and traceability gates,Header/documentation/architecture lints pass with zero warnings; trace matrix is complete and fresh; every P0 is tested or owner-signed UNPROVEN.,P0,v1.1
+AT-033,Compliance readiness,"DPIA, RoPA, market matrix sign-offs, export declarations and store privacy declarations are present and mutually consistent with shipped behavior.",P0,v1.1

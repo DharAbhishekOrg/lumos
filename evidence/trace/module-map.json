@@ -1,0 +1,29 @@
+{
+ "comment": "Map module path prefixes to requirement domains; CI uses this for freshness checks (TRS 19.3). Extend as modules are created in WP-01.",
+ "mappings": {
+  "protocol/": [
+   "TRS-PROTO",
+   "TRS-CONST"
+  ],
+  "test-vectors/": [
+   "TRS-TST-001",
+   "TRS-PROTO-015",
+   "TRS-CRY-015"
+  ],
+  "android-app/": [
+   "TRS-AND"
+  ],
+  "ios-app/": [
+   "TRS-IOS"
+  ],
+  "backend/": [
+   "TRS-BCK"
+  ],
+  "admin-console/": [
+   "SRS-ADM"
+  ],
+  "tools/vectorgen/": [
+   "TRS-TST-001"
+  ]
+ }
+}

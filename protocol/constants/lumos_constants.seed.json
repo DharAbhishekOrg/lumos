@@ -1,0 +1,277 @@
+{
+ "$comment": "Seed of TRS v1.1 Section 23. WP-01 completes this file, adds the Lumos service UUID, and wires codegen. Values marked overridable may be changed by signed config only within [min,max]. constants_hash of the final file is embedded in vectors and config schema (TRS-CONST-005).",
+ "schema_version": 1,
+ "identity_discovery": {
+  "EID_ROTATION_SEC": {
+   "default": 600,
+   "min": 300,
+   "max": 900,
+   "overridable": true
+  },
+  "ADV_AUTH_TAG_LEN": {
+   "default": 4,
+   "overridable": false
+  },
+  "PRESENCE_AGEOUT_SEC": {
+   "default": 90,
+   "min": 30,
+   "max": 300,
+   "overridable": true
+  },
+  "SCAN_WINDOW_FG_MS": {
+   "on": 4000,
+   "off": 6000,
+   "duty_min_pct": 20,
+   "duty_max_pct": 60,
+   "overridable": true,
+   "calibrated": true
+  },
+  "SCAN_WINDOW_VENUE_MS": {
+   "on": 6000,
+   "off": 4000,
+   "duty_max_pct": 70,
+   "overridable": true,
+   "calibrated": true
+  },
+  "RESCAN_LADDER": {
+   "step_pct": 50,
+   "trigger_empty_cycles": 2,
+   "max_steps": 3,
+   "overridable": true,
+   "calibrated": true
+  },
+  "RSSI_BANDS_DBM": {
+   "very_close_gte": -55,
+   "nearby_gte": -75,
+   "overridable": true,
+   "calibrated": true
+  },
+  "MAX_CONCURRENT_GATT_LINKS": {
+   "default": 4,
+   "min": 2,
+   "max": 7,
+   "overridable": true
+  },
+  "INTEREST_RATE_LIMIT_PER_HOUR": {
+   "default": 20,
+   "min": 5,
+   "max": 60,
+   "overridable": true
+  }
+ },
+ "sessions_remote_text": {
+  "ONE_TIME_PREKEYS_UPLOADED": {
+   "default": 100,
+   "min": 50,
+   "max": 200,
+   "overridable": true
+  },
+  "PREKEY_REPLENISH_THRESHOLD": {
+   "default": 20,
+   "min": 10,
+   "max": 50,
+   "overridable": true
+  },
+  "SIGNED_PREKEY_ROTATION_DAYS": {
+   "default": 7,
+   "min": 3,
+   "max": 30,
+   "overridable": true
+  },
+  "MAX_SKIP_PER_CHAIN": {
+   "default": 512,
+   "overridable": false
+  },
+  "SKIPPED_KEYS_PER_SESSION_CAP": {
+   "default": 2000,
+   "overridable": false
+  },
+  "SKIPPED_KEY_TTL_DAYS": {
+   "default": 30,
+   "min": 7,
+   "max": 45,
+   "overridable": true
+  },
+  "RELAY_ENVELOPE_TTL_DAYS": {
+   "default": 30,
+   "min": 1,
+   "max": 45,
+   "overridable": true
+  },
+  "RELAY_TEXT_ENVELOPE_MAX_BYTES": {
+   "default": 32768,
+   "min": 8192,
+   "max": 65536,
+   "overridable": true
+  },
+  "RELAY_MAILBOX_QUOTA": {
+   "envelopes": 1000,
+   "bytes": 8388608,
+   "overridable": true
+  },
+  "MESSAGE_ID_LEN_BYTES": {
+   "default": 16,
+   "overridable": false
+  },
+  "SESSION_ID_LEN_BYTES": {
+   "default": 16,
+   "overridable": false
+  },
+  "DEDUP_CACHE": {
+   "ids": 10000,
+   "days": 7,
+   "overridable": true
+  },
+  "CLOCK_SKEW_TOLERANCE_SEC": {
+   "default": 300,
+   "overridable": false
+  }
+ },
+ "mesh_store_forward": {
+  "MESH_HOP_DEFAULT": {
+   "default": 3,
+   "min": 1,
+   "max": 5,
+   "overridable": true
+  },
+  "MESH_HOP_ABSOLUTE_CEILING": {
+   "default": 5,
+   "overridable": false
+  },
+  "MESH_FRAME_TTL_SEC": {
+   "default": 300,
+   "min": 60,
+   "max": 900,
+   "overridable": true
+  },
+  "STORE_FORWARD_TTL_SEC": {
+   "default": 1800,
+   "min": 300,
+   "max": 7200,
+   "overridable": true
+  },
+  "STORE_FORWARD_QUOTA": {
+   "envelopes": 50,
+   "bytes": 2097152,
+   "overridable": true
+  }
+ },
+ "transport": {
+  "BLE_TARGET_ATT_MTU": {
+   "default": 251,
+   "min": 23,
+   "max": 517,
+   "overridable": false
+  },
+  "BLE_CHUNK_PAYLOAD": {
+   "rule": "negotiated_mtu_minus_7_floor_20",
+   "overridable": false
+  },
+  "LAN_CHUNK_PAYLOAD_BYTES": {
+   "default": 65536,
+   "overridable": false
+  },
+  "REASSEMBLY_TIMEOUT_SEC": {
+   "ble": 120,
+   "lan": 30,
+   "overridable": true
+  },
+  "RETRY_BUDGET_PER_PATH": {
+   "default": 5,
+   "min": 3,
+   "max": 8,
+   "overridable": true
+  },
+  "RETRY_BACKOFF": {
+   "base_ms": 1000,
+   "factor": 2,
+   "jitter": true,
+   "cap_ms": 60000,
+   "overridable": false
+  },
+  "CIRCUIT_BREAKER": {
+   "open_after_fails": 3,
+   "half_open_after_sec": 30,
+   "overridable": false
+  },
+  "QR_BOOTSTRAP_MAX_BYTES": {
+   "default": 1228,
+   "overridable": false
+  }
+ },
+ "media": {
+  "THUMBNAIL_MAX_KB": {
+   "default": 12,
+   "min": 8,
+   "max": 16,
+   "overridable": true
+  },
+  "PREVIEW_MAX_KB": {
+   "default": 64,
+   "min": 32,
+   "max": 128,
+   "overridable": true
+  },
+  "FULL_IMAGE_MAX_MB": {
+   "default": 2,
+   "min": 1,
+   "max": 10,
+   "overridable": true
+  },
+  "FILE_MAX_MB": {
+   "default": 25,
+   "min": 5,
+   "max": 100,
+   "overridable": true
+  },
+  "VOICE_NOTE": {
+   "codec": "AAC-LC mono M4A",
+   "sample_rate_hz": 24000,
+   "bitrate_kbps": [
+    24,
+    32
+   ],
+   "max_sec": 120,
+   "max_kb": 600,
+   "sec_min": 30,
+   "sec_max": 180,
+   "overridable": true
+  },
+  "MEDIA_CACHE_QUOTA_MB": {
+   "default": 512,
+   "ttl_days": 30,
+   "overridable": true
+  }
+ },
+ "config_venue_ops": {
+  "CONFIG_REFRESH_INTERVAL_HOURS": {
+   "default": 6,
+   "min": 1,
+   "max": 24,
+   "jitter": true,
+   "overridable": true
+  },
+  "CONFIG_PACKAGE_MAX_KB": {
+   "default": 512,
+   "overridable": false
+  },
+  "SPONSOR_ASSET_MAX_KB": {
+   "default": 300,
+   "cache_count": 8,
+   "overridable": true
+  },
+  "VENUE_ROOM_POST_RATE_PER_MIN": {
+   "default": 10,
+   "overridable": true
+  },
+  "VOUCHER_NONCE_CACHE": {
+   "count": 5000,
+   "days": 90,
+   "overridable": true
+  },
+  "SUPPORT_RING_BUFFER_MB": {
+   "default": 4,
+   "overridable": true
+  }
+ }
+}
