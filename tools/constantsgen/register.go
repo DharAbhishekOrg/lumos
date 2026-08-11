@@ -32,6 +32,7 @@ var fixedExcludedKeys = map[string]bool{
 	"anchors":                  true,
 	"source":                   true,
 	"notes":                    true,
+	"adr":                      true,
 }
 
 // Register is the parsed master constants file. The raw form is retained so the

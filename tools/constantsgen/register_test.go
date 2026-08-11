@@ -218,44 +218,69 @@ func TestBoundsAreCoherent(t *testing.T) {
 	}
 }
 
-// boundsUnspecified is the exact set of overridable constants for which TRS
-// Sec. 23 gives no numeric range, only the words "bounded" or "calibrated".
-// See docs/adr/ADR-006-draft-unspecified-override-bounds.md. Pinning the set
-// here means a new unbounded overridable constant cannot be added silently.
-var boundsUnspecified = map[string]bool{
-	"identity_discovery.RESCAN_LADDER":              true,
-	"identity_discovery.RSSI_BANDS_DBM":             true,
-	"sessions_remote_text.RELAY_MAILBOX_QUOTA":      true,
-	"sessions_remote_text.DEDUP_CACHE":              true,
-	"mesh_store_forward.STORE_FORWARD_QUOTA":        true,
-	"transport.REASSEMBLY_TIMEOUT_SEC":              true,
-	"media.MEDIA_CACHE_QUOTA_MB":                    true,
-	"config_venue_ops.SPONSOR_ASSET_MAX_KB":         true,
-	"config_venue_ops.VENUE_ROOM_POST_RATE_PER_MIN": true,
-	"config_venue_ops.VOUCHER_NONCE_CACHE":          true,
-	"config_venue_ops.SUPPORT_RING_BUFFER_MB":       true,
+// boundsUnspecified was the set of overridable constants for which TRS Sec. 23
+// gave no numeric range. ADR-006 is Accepted and supplied bounds for all eleven,
+// so the set is now EMPTY and must stay that way. The pin is deliberately kept
+// rather than deleted: it is what stops a twelfth unbounded overridable constant
+// from being introduced silently.
+var boundsUnspecified = map[string]bool{}
+
+// dutyBoundedEntries express their override range as a duty-cycle ceiling rather
+// than per-field minima and maxima, because that is how TRS Sec. 23.1 bounds a
+// scan window. VOICE_NOTE is listed for the same reason: TRS Sec. 23.5 fixes the
+// codec profile and bounds only the duration, via sec_min/sec_max.
+var dutyBoundedEntries = map[string]bool{
+	"identity_discovery.SCAN_WINDOW_FG_MS":    true,
+	"identity_discovery.SCAN_WINDOW_VENUE_MS": true,
+	"media.VOICE_NOTE":                        true,
 }
 
-// hasNumericBounds reports whether an entry states a range a signed config can
-// be validated against. TRS Sec. 23 expresses ranges three ways: min/max on a
-// scalar, duty-cycle percentages on a scan window, and sec_min/sec_max on the
-// voice-note duration.
-func hasNumericBounds(fields map[string]any) bool {
-	for _, pair := range [][2]string{
-		{"min", "max"},
-		{"duty_min_pct", "duty_max_pct"},
-		{"sec_min", "sec_max"},
-	} {
-		_, lo := intField(fields, pair[0])
-		_, hi := intField(fields, pair[1])
-		if lo && hi {
-			return true
+// isBoundField reports whether a field name states a bound rather than a value.
+func isBoundField(name string) bool {
+	switch name {
+	case "min", "max", "duty_min_pct", "duty_max_pct", "sec_min", "sec_max":
+		return true
+	}
+	return strings.HasSuffix(name, "_min") || strings.HasSuffix(name, "_max")
+}
+
+// metaFields describe a constant rather than carrying a tunable value.
+var metaFields = map[string]bool{
+	"overridable": true, "calibrated": true, "budget": true,
+	"test_only": true, "jitter": true,
+}
+
+// unboundedValueFields returns the tunable numeric fields of an entry that state
+// no range a signed config could be validated against (TRS-CONST-002).
+func unboundedValueFields(path string, fields map[string]any) []string {
+	if dutyBoundedEntries[path] {
+		return nil
+	}
+	var missing []string
+	for name := range fields {
+		if excluded(name) || metaFields[name] || isBoundField(name) {
+			continue
+		}
+		if _, numeric := intField(fields, name); !numeric {
+			continue // strings and arrays are profile identity, not tunables
+		}
+		if name == "default" {
+			_, lo := intField(fields, "min")
+			_, hi := intField(fields, "max")
+			if lo && hi {
+				continue
+			}
+			missing = append(missing, name)
+			continue
+		}
+		_, lo := intField(fields, name+"_min")
+		_, hi := intField(fields, name+"_max")
+		if !lo || !hi {
+			missing = append(missing, name)
 		}
 	}
-	if _, only := intField(fields, "duty_max_pct"); only {
-		return true // SCAN_WINDOW_VENUE states a ceiling only
-	}
-	return false
+	sort.Strings(missing)
+	return missing
 }
 
 // TestEveryOverridableEntryDeclaresBoundsOrTheGap enforces TRS-CONST-002. An
@@ -291,27 +316,165 @@ func TestEveryOverridableEntryDeclaresBoundsOrTheGap(t *testing.T) {
 				}
 				continue
 			}
-			if hasNumericBounds(fields) {
+			missing := unboundedValueFields(path, fields)
+			if len(missing) == 0 {
 				if flagged {
-					t.Errorf("%s declares numeric bounds and must not also claim bounds_unspecified", path)
+					t.Errorf("%s declares complete bounds and must not also claim bounds_unspecified", path)
 				}
 				continue
 			}
 			if !flagged {
-				t.Errorf("%s is overridable but declares neither numeric bounds nor bounds_unspecified (TRS-CONST-002; see ADR-006 draft)", path)
+				t.Errorf("%s is overridable but fields %v state no range a signed config can be validated against (TRS-CONST-002; ADR-006)", path, missing)
 			}
 		}
 	}
 
 	for path := range boundsUnspecified {
 		if !gotFlagged[path] {
-			t.Errorf("%s is expected to carry bounds_unspecified per ADR-006 draft but does not", path)
+			t.Errorf("%s is expected to carry bounds_unspecified but does not", path)
 		}
 	}
 	for path := range gotFlagged {
 		if !boundsUnspecified[path] {
-			t.Errorf("%s newly claims bounds_unspecified; supply real bounds or extend ADR-006 deliberately", path)
+			t.Errorf("%s newly claims bounds_unspecified; ADR-006 is Accepted and every overridable constant must state real bounds", path)
 		}
+	}
+}
+
+// adr006Bounds transcribes the bounds the owner accepted in ADR-006, by hand,
+// from the decision itself rather than from the register they were written into.
+var adr006Bounds = map[string][2]int64{
+	"identity_discovery.RESCAN_LADDER.step_pct":             {25, 100},
+	"identity_discovery.RESCAN_LADDER.trigger_empty_cycles": {1, 4},
+	"identity_discovery.RESCAN_LADDER.max_steps":            {1, 5},
+	"identity_discovery.RSSI_BANDS_DBM.very_close_gte":      {-60, -45},
+	"identity_discovery.RSSI_BANDS_DBM.nearby_gte":          {-85, -65},
+	"transport.REASSEMBLY_TIMEOUT_SEC.ble":                  {60, 300},
+	"transport.REASSEMBLY_TIMEOUT_SEC.lan":                  {15, 120},
+	"sessions_remote_text.RELAY_MAILBOX_QUOTA.envelopes":    {200, 5000},
+	"sessions_remote_text.RELAY_MAILBOX_QUOTA.bytes":        {2097152, 33554432},
+	"sessions_remote_text.DEDUP_CACHE.ids":                  {5000, 50000},
+	"sessions_remote_text.DEDUP_CACHE.days":                 {3, 30},
+	"mesh_store_forward.STORE_FORWARD_QUOTA.envelopes":      {10, 200},
+	"mesh_store_forward.STORE_FORWARD_QUOTA.bytes":          {524288, 8388608},
+	"media.MEDIA_CACHE_QUOTA_MB.default":                    {128, 2048},
+	"media.MEDIA_CACHE_QUOTA_MB.ttl_days":                   {7, 90},
+	"config_venue_ops.SPONSOR_ASSET_MAX_KB.default":         {100, 512},
+	"config_venue_ops.SPONSOR_ASSET_MAX_KB.cache_count":     {4, 16},
+	"config_venue_ops.VENUE_ROOM_POST_RATE_PER_MIN.default": {3, 30},
+	"config_venue_ops.VOUCHER_NONCE_CACHE.count":            {1000, 20000},
+	"config_venue_ops.VOUCHER_NONCE_CACHE.days":             {30, 365},
+	"config_venue_ops.SUPPORT_RING_BUFFER_MB.default":       {1, 16},
+}
+
+// TestADR006BoundsWereAppliedExactly checks each accepted bound landed with the
+// value the owner specified, and that the shipped default sits inside it.
+func TestADR006BoundsWereAppliedExactly(t *testing.T) {
+	r := loadRegister(t)
+	for valuePath, want := range adr006Bounds {
+		cut := strings.LastIndex(valuePath, ".")
+		entry, field := valuePath[:cut], valuePath[cut+1:]
+
+		minPath, maxPath := entry+"."+field+"_min", entry+"."+field+"_max"
+		if field == "default" {
+			minPath, maxPath = entry+".min", entry+".max"
+		}
+
+		gotMin, err := lookupInt(r, minPath)
+		if err != nil {
+			t.Errorf("%s: %v", minPath, err)
+			continue
+		}
+		gotMax, err := lookupInt(r, maxPath)
+		if err != nil {
+			t.Errorf("%s: %v", maxPath, err)
+			continue
+		}
+		if gotMin != want[0] || gotMax != want[1] {
+			t.Errorf("%s bounds = %d..%d, ADR-006 accepted %d..%d", valuePath, gotMin, gotMax, want[0], want[1])
+		}
+
+		value, err := lookupInt(r, valuePath)
+		if err != nil {
+			t.Errorf("%s: %v", valuePath, err)
+			continue
+		}
+		if value < gotMin || value > gotMax {
+			t.Errorf("%s default %d falls outside its accepted bounds %d..%d", valuePath, value, gotMin, gotMax)
+		}
+	}
+}
+
+// TestSafetyNumberFormatMatchesADR005 pins the accepted resolution: 6 emoji in
+// total, not 6 pairs, from a 64-emoji alphabet.
+func TestSafetyNumberFormatMatchesADR005(t *testing.T) {
+	r := loadRegister(t)
+	for path, want := range map[string]int64{
+		"sessions_remote_text.SAFETY_NUMBER_FORMAT.digits":              60,
+		"sessions_remote_text.SAFETY_NUMBER_FORMAT.emoji_count":         6,
+		"sessions_remote_text.SAFETY_NUMBER_FORMAT.emoji_alphabet_size": 64,
+	} {
+		got, err := lookupInt(r, path)
+		if err != nil {
+			t.Errorf("%s: %v", path, err)
+			continue
+		}
+		if got != want {
+			t.Errorf("%s = %d, ADR-005 accepted %d", path, got, want)
+		}
+	}
+}
+
+// boundValueField maps a bound prefix to the value field it constrains. TRS
+// Sec. 23.5 names the voice-note duration bounds sec_min/sec_max while the value
+// itself is max_sec, so the prefix and the value field do not coincide there.
+func boundValueField(base string) string {
+	if base == "sec" {
+		return "max_sec"
+	}
+	return base
+}
+
+// TestEveryBoundTripleIsCoherent enforces min <= value <= max for every
+// per-field bound triple, not just the default/min/max form.
+func TestEveryBoundTripleIsCoherent(t *testing.T) {
+	r := loadRegister(t)
+	checked := 0
+	for _, group := range GroupOrder {
+		entries := r.Decode[group].(map[string]any)
+		for name, raw := range entries {
+			if excluded(name) {
+				continue
+			}
+			fields := raw.(map[string]any)
+			for field := range fields {
+				if !strings.HasSuffix(field, "_min") {
+					continue
+				}
+				base := strings.TrimSuffix(field, "_min")
+				lo, okLo := intField(fields, field)
+				hi, okHi := intField(fields, base+"_max")
+				val, okVal := intField(fields, boundValueField(base))
+				if !okLo || !okHi {
+					t.Errorf("%s.%s.%s has no matching _max", group, name, base)
+					continue
+				}
+				if !okVal {
+					t.Errorf("%s.%s.%s declares bounds but has no value", group, name, base)
+					continue
+				}
+				if lo > hi {
+					t.Errorf("%s.%s.%s: min %d > max %d", group, name, base, lo, hi)
+				}
+				if val < lo || val > hi {
+					t.Errorf("%s.%s.%s: value %d outside %d..%d", group, name, base, val, lo, hi)
+				}
+				checked++
+			}
+		}
+	}
+	if checked < 15 {
+		t.Errorf("only %d per-field bound triples checked; ADR-006 introduced more", checked)
 	}
 }
 

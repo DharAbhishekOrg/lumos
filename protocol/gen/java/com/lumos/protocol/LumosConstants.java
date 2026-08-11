@@ -7,7 +7,7 @@
  * GENERATED - DO NOT EDIT. Generator: tools/constantsgen
  * Source register: protocol/constants/lumos_constants.json
  * Baseline: TRS v1.1 Sec. 23 / EDP v1.0 Sec. 4 (ADR-004)
- * constants_hash: sha256:83f32e68c912a8df9a6392194ac6691a45c6e8ae62fc6d60640424df45cbdc91
+ * constants_hash: sha256:12510455720dcc2ff72291f6a428f31930434d3dcb95a8b871ed305edb159855
  */
 package com.lumos.protocol;
 
@@ -24,7 +24,7 @@ public final class LumosConstants {
     public static final String SERVICE_UUID = "E853EB6A-775C-4A49-A6BF-320E6A5CC609";
 
     /** Binds generated code to the register that produced it (TRS-CONST-005). */
-    public static final String CONSTANTS_HASH = "sha256:83f32e68c912a8df9a6392194ac6691a45c6e8ae62fc6d60640424df45cbdc91";
+    public static final String CONSTANTS_HASH = "sha256:12510455720dcc2ff72291f6a428f31930434d3dcb95a8b871ed305edb159855";
 
     /** Register schema version. */
     public static final int SCHEMA_VERSION = 1;
@@ -97,14 +97,17 @@ public final class LumosConstants {
     /** identity_discovery.PRESENCE_AGEOUT_SEC.overridable */
     public static final boolean PRESENCE_AGEOUT_SEC_OVERRIDABLE = true;
 
-    /** identity_discovery.RESCAN_LADDER.bounds_unspecified */
-    public static final boolean RESCAN_LADDER_BOUNDS_UNSPECIFIED = true;
-
     /** identity_discovery.RESCAN_LADDER.calibrated */
     public static final boolean RESCAN_LADDER_CALIBRATED = true;
 
     /** identity_discovery.RESCAN_LADDER.max_steps */
     public static final int RESCAN_LADDER_MAX_STEPS = 3;
+
+    /** identity_discovery.RESCAN_LADDER.max_steps_max */
+    public static final int RESCAN_LADDER_MAX_STEPS_MAX = 5;
+
+    /** identity_discovery.RESCAN_LADDER.max_steps_min */
+    public static final int RESCAN_LADDER_MAX_STEPS_MIN = 1;
 
     /** identity_discovery.RESCAN_LADDER.overridable */
     public static final boolean RESCAN_LADDER_OVERRIDABLE = true;
@@ -112,11 +115,20 @@ public final class LumosConstants {
     /** identity_discovery.RESCAN_LADDER.step_pct */
     public static final int RESCAN_LADDER_STEP_PCT = 50;
 
+    /** identity_discovery.RESCAN_LADDER.step_pct_max */
+    public static final int RESCAN_LADDER_STEP_PCT_MAX = 100;
+
+    /** identity_discovery.RESCAN_LADDER.step_pct_min */
+    public static final int RESCAN_LADDER_STEP_PCT_MIN = 25;
+
     /** identity_discovery.RESCAN_LADDER.trigger_empty_cycles */
     public static final int RESCAN_LADDER_TRIGGER_EMPTY_CYCLES = 2;
 
-    /** identity_discovery.RSSI_BANDS_DBM.bounds_unspecified */
-    public static final boolean RSSI_BANDS_DBM_BOUNDS_UNSPECIFIED = true;
+    /** identity_discovery.RESCAN_LADDER.trigger_empty_cycles_max */
+    public static final int RESCAN_LADDER_TRIGGER_EMPTY_CYCLES_MAX = 4;
+
+    /** identity_discovery.RESCAN_LADDER.trigger_empty_cycles_min */
+    public static final int RESCAN_LADDER_TRIGGER_EMPTY_CYCLES_MIN = 1;
 
     /** identity_discovery.RSSI_BANDS_DBM.calibrated */
     public static final boolean RSSI_BANDS_DBM_CALIBRATED = true;
@@ -124,11 +136,23 @@ public final class LumosConstants {
     /** identity_discovery.RSSI_BANDS_DBM.nearby_gte */
     public static final int RSSI_BANDS_DBM_NEARBY_GTE = -75;
 
+    /** identity_discovery.RSSI_BANDS_DBM.nearby_gte_max */
+    public static final int RSSI_BANDS_DBM_NEARBY_GTE_MAX = -65;
+
+    /** identity_discovery.RSSI_BANDS_DBM.nearby_gte_min */
+    public static final int RSSI_BANDS_DBM_NEARBY_GTE_MIN = -85;
+
     /** identity_discovery.RSSI_BANDS_DBM.overridable */
     public static final boolean RSSI_BANDS_DBM_OVERRIDABLE = true;
 
     /** identity_discovery.RSSI_BANDS_DBM.very_close_gte */
     public static final int RSSI_BANDS_DBM_VERY_CLOSE_GTE = -55;
+
+    /** identity_discovery.RSSI_BANDS_DBM.very_close_gte_max */
+    public static final int RSSI_BANDS_DBM_VERY_CLOSE_GTE_MAX = -45;
+
+    /** identity_discovery.RSSI_BANDS_DBM.very_close_gte_min */
+    public static final int RSSI_BANDS_DBM_VERY_CLOSE_GTE_MIN = -60;
 
     /** identity_discovery.SCAN_WINDOW_FG_MS.calibrated */
     public static final boolean SCAN_WINDOW_FG_MS_CALIBRATED = true;
@@ -171,14 +195,23 @@ public final class LumosConstants {
     /** sessions_remote_text.CLOCK_SKEW_TOLERANCE_SEC.overridable */
     public static final boolean CLOCK_SKEW_TOLERANCE_SEC_OVERRIDABLE = false;
 
-    /** sessions_remote_text.DEDUP_CACHE.bounds_unspecified */
-    public static final boolean DEDUP_CACHE_BOUNDS_UNSPECIFIED = true;
-
     /** sessions_remote_text.DEDUP_CACHE.days */
     public static final int DEDUP_CACHE_DAYS = 7;
 
+    /** sessions_remote_text.DEDUP_CACHE.days_max */
+    public static final int DEDUP_CACHE_DAYS_MAX = 30;
+
+    /** sessions_remote_text.DEDUP_CACHE.days_min */
+    public static final int DEDUP_CACHE_DAYS_MIN = 3;
+
     /** sessions_remote_text.DEDUP_CACHE.ids */
     public static final int DEDUP_CACHE_IDS = 10000;
+
+    /** sessions_remote_text.DEDUP_CACHE.ids_max */
+    public static final int DEDUP_CACHE_IDS_MAX = 50000;
+
+    /** sessions_remote_text.DEDUP_CACHE.ids_min */
+    public static final int DEDUP_CACHE_IDS_MIN = 5000;
 
     /** sessions_remote_text.DEDUP_CACHE.overridable */
     public static final boolean DEDUP_CACHE_OVERRIDABLE = true;
@@ -231,14 +264,23 @@ public final class LumosConstants {
     /** sessions_remote_text.RELAY_ENVELOPE_TTL_DAYS.overridable */
     public static final boolean RELAY_ENVELOPE_TTL_DAYS_OVERRIDABLE = true;
 
-    /** sessions_remote_text.RELAY_MAILBOX_QUOTA.bounds_unspecified */
-    public static final boolean RELAY_MAILBOX_QUOTA_BOUNDS_UNSPECIFIED = true;
-
     /** sessions_remote_text.RELAY_MAILBOX_QUOTA.bytes */
     public static final int RELAY_MAILBOX_QUOTA_BYTES = 8388608;
 
+    /** sessions_remote_text.RELAY_MAILBOX_QUOTA.bytes_max */
+    public static final int RELAY_MAILBOX_QUOTA_BYTES_MAX = 33554432;
+
+    /** sessions_remote_text.RELAY_MAILBOX_QUOTA.bytes_min */
+    public static final int RELAY_MAILBOX_QUOTA_BYTES_MIN = 2097152;
+
     /** sessions_remote_text.RELAY_MAILBOX_QUOTA.envelopes */
     public static final int RELAY_MAILBOX_QUOTA_ENVELOPES = 1000;
+
+    /** sessions_remote_text.RELAY_MAILBOX_QUOTA.envelopes_max */
+    public static final int RELAY_MAILBOX_QUOTA_ENVELOPES_MAX = 5000;
+
+    /** sessions_remote_text.RELAY_MAILBOX_QUOTA.envelopes_min */
+    public static final int RELAY_MAILBOX_QUOTA_ENVELOPES_MIN = 200;
 
     /** sessions_remote_text.RELAY_MAILBOX_QUOTA.overridable */
     public static final boolean RELAY_MAILBOX_QUOTA_OVERRIDABLE = true;
@@ -257,6 +299,9 @@ public final class LumosConstants {
 
     /** sessions_remote_text.SAFETY_NUMBER_FORMAT.digits */
     public static final int SAFETY_NUMBER_FORMAT_DIGITS = 60;
+
+    /** sessions_remote_text.SAFETY_NUMBER_FORMAT.emoji_alphabet_size */
+    public static final int SAFETY_NUMBER_FORMAT_EMOJI_ALPHABET_SIZE = 64;
 
     /** sessions_remote_text.SAFETY_NUMBER_FORMAT.emoji_count */
     public static final int SAFETY_NUMBER_FORMAT_EMOJI_COUNT = 6;
@@ -332,14 +377,23 @@ public final class LumosConstants {
     /** mesh_store_forward.MESH_HOP_DEFAULT.overridable */
     public static final boolean MESH_HOP_DEFAULT_OVERRIDABLE = true;
 
-    /** mesh_store_forward.STORE_FORWARD_QUOTA.bounds_unspecified */
-    public static final boolean STORE_FORWARD_QUOTA_BOUNDS_UNSPECIFIED = true;
-
     /** mesh_store_forward.STORE_FORWARD_QUOTA.bytes */
     public static final int STORE_FORWARD_QUOTA_BYTES = 2097152;
 
+    /** mesh_store_forward.STORE_FORWARD_QUOTA.bytes_max */
+    public static final int STORE_FORWARD_QUOTA_BYTES_MAX = 8388608;
+
+    /** mesh_store_forward.STORE_FORWARD_QUOTA.bytes_min */
+    public static final int STORE_FORWARD_QUOTA_BYTES_MIN = 524288;
+
     /** mesh_store_forward.STORE_FORWARD_QUOTA.envelopes */
     public static final int STORE_FORWARD_QUOTA_ENVELOPES = 50;
+
+    /** mesh_store_forward.STORE_FORWARD_QUOTA.envelopes_max */
+    public static final int STORE_FORWARD_QUOTA_ENVELOPES_MAX = 200;
+
+    /** mesh_store_forward.STORE_FORWARD_QUOTA.envelopes_min */
+    public static final int STORE_FORWARD_QUOTA_ENVELOPES_MIN = 10;
 
     /** mesh_store_forward.STORE_FORWARD_QUOTA.overridable */
     public static final boolean STORE_FORWARD_QUOTA_OVERRIDABLE = true;
@@ -406,11 +460,20 @@ public final class LumosConstants {
     /** transport.REASSEMBLY_TIMEOUT_SEC.ble */
     public static final int REASSEMBLY_TIMEOUT_SEC_BLE = 120;
 
-    /** transport.REASSEMBLY_TIMEOUT_SEC.bounds_unspecified */
-    public static final boolean REASSEMBLY_TIMEOUT_SEC_BOUNDS_UNSPECIFIED = true;
+    /** transport.REASSEMBLY_TIMEOUT_SEC.ble_max */
+    public static final int REASSEMBLY_TIMEOUT_SEC_BLE_MAX = 300;
+
+    /** transport.REASSEMBLY_TIMEOUT_SEC.ble_min */
+    public static final int REASSEMBLY_TIMEOUT_SEC_BLE_MIN = 60;
 
     /** transport.REASSEMBLY_TIMEOUT_SEC.lan */
     public static final int REASSEMBLY_TIMEOUT_SEC_LAN = 30;
+
+    /** transport.REASSEMBLY_TIMEOUT_SEC.lan_max */
+    public static final int REASSEMBLY_TIMEOUT_SEC_LAN_MAX = 120;
+
+    /** transport.REASSEMBLY_TIMEOUT_SEC.lan_min */
+    public static final int REASSEMBLY_TIMEOUT_SEC_LAN_MIN = 15;
 
     /** transport.REASSEMBLY_TIMEOUT_SEC.overridable */
     public static final boolean REASSEMBLY_TIMEOUT_SEC_OVERRIDABLE = true;
@@ -468,17 +531,26 @@ public final class LumosConstants {
     /** media.FULL_IMAGE_MAX_MB.overridable */
     public static final boolean FULL_IMAGE_MAX_MB_OVERRIDABLE = true;
 
-    /** media.MEDIA_CACHE_QUOTA_MB.bounds_unspecified */
-    public static final boolean MEDIA_CACHE_QUOTA_MB_BOUNDS_UNSPECIFIED = true;
-
     /** media.MEDIA_CACHE_QUOTA_MB.default */
     public static final int MEDIA_CACHE_QUOTA_MB_DEFAULT = 512;
+
+    /** media.MEDIA_CACHE_QUOTA_MB.max */
+    public static final int MEDIA_CACHE_QUOTA_MB_MAX = 2048;
+
+    /** media.MEDIA_CACHE_QUOTA_MB.min */
+    public static final int MEDIA_CACHE_QUOTA_MB_MIN = 128;
 
     /** media.MEDIA_CACHE_QUOTA_MB.overridable */
     public static final boolean MEDIA_CACHE_QUOTA_MB_OVERRIDABLE = true;
 
     /** media.MEDIA_CACHE_QUOTA_MB.ttl_days */
     public static final int MEDIA_CACHE_QUOTA_MB_TTL_DAYS = 30;
+
+    /** media.MEDIA_CACHE_QUOTA_MB.ttl_days_max */
+    public static final int MEDIA_CACHE_QUOTA_MB_TTL_DAYS_MAX = 90;
+
+    /** media.MEDIA_CACHE_QUOTA_MB.ttl_days_min */
+    public static final int MEDIA_CACHE_QUOTA_MB_TTL_DAYS_MIN = 7;
 
     /** media.PREVIEW_MAX_KB.default */
     public static final int PREVIEW_MAX_KB_DEFAULT = 64;
@@ -551,44 +623,68 @@ public final class LumosConstants {
     /** config_venue_ops.CONFIG_REFRESH_INTERVAL_HOURS.overridable */
     public static final boolean CONFIG_REFRESH_INTERVAL_HOURS_OVERRIDABLE = true;
 
-    /** config_venue_ops.SPONSOR_ASSET_MAX_KB.bounds_unspecified */
-    public static final boolean SPONSOR_ASSET_MAX_KB_BOUNDS_UNSPECIFIED = true;
-
     /** config_venue_ops.SPONSOR_ASSET_MAX_KB.cache_count */
     public static final int SPONSOR_ASSET_MAX_KB_CACHE_COUNT = 8;
+
+    /** config_venue_ops.SPONSOR_ASSET_MAX_KB.cache_count_max */
+    public static final int SPONSOR_ASSET_MAX_KB_CACHE_COUNT_MAX = 16;
+
+    /** config_venue_ops.SPONSOR_ASSET_MAX_KB.cache_count_min */
+    public static final int SPONSOR_ASSET_MAX_KB_CACHE_COUNT_MIN = 4;
 
     /** config_venue_ops.SPONSOR_ASSET_MAX_KB.default */
     public static final int SPONSOR_ASSET_MAX_KB_DEFAULT = 300;
 
+    /** config_venue_ops.SPONSOR_ASSET_MAX_KB.max */
+    public static final int SPONSOR_ASSET_MAX_KB_MAX = 512;
+
+    /** config_venue_ops.SPONSOR_ASSET_MAX_KB.min */
+    public static final int SPONSOR_ASSET_MAX_KB_MIN = 100;
+
     /** config_venue_ops.SPONSOR_ASSET_MAX_KB.overridable */
     public static final boolean SPONSOR_ASSET_MAX_KB_OVERRIDABLE = true;
-
-    /** config_venue_ops.SUPPORT_RING_BUFFER_MB.bounds_unspecified */
-    public static final boolean SUPPORT_RING_BUFFER_MB_BOUNDS_UNSPECIFIED = true;
 
     /** config_venue_ops.SUPPORT_RING_BUFFER_MB.default */
     public static final int SUPPORT_RING_BUFFER_MB_DEFAULT = 4;
 
+    /** config_venue_ops.SUPPORT_RING_BUFFER_MB.max */
+    public static final int SUPPORT_RING_BUFFER_MB_MAX = 16;
+
+    /** config_venue_ops.SUPPORT_RING_BUFFER_MB.min */
+    public static final int SUPPORT_RING_BUFFER_MB_MIN = 1;
+
     /** config_venue_ops.SUPPORT_RING_BUFFER_MB.overridable */
     public static final boolean SUPPORT_RING_BUFFER_MB_OVERRIDABLE = true;
-
-    /** config_venue_ops.VENUE_ROOM_POST_RATE_PER_MIN.bounds_unspecified */
-    public static final boolean VENUE_ROOM_POST_RATE_PER_MIN_BOUNDS_UNSPECIFIED = true;
 
     /** config_venue_ops.VENUE_ROOM_POST_RATE_PER_MIN.default */
     public static final int VENUE_ROOM_POST_RATE_PER_MIN_DEFAULT = 10;
 
+    /** config_venue_ops.VENUE_ROOM_POST_RATE_PER_MIN.max */
+    public static final int VENUE_ROOM_POST_RATE_PER_MIN_MAX = 30;
+
+    /** config_venue_ops.VENUE_ROOM_POST_RATE_PER_MIN.min */
+    public static final int VENUE_ROOM_POST_RATE_PER_MIN_MIN = 3;
+
     /** config_venue_ops.VENUE_ROOM_POST_RATE_PER_MIN.overridable */
     public static final boolean VENUE_ROOM_POST_RATE_PER_MIN_OVERRIDABLE = true;
-
-    /** config_venue_ops.VOUCHER_NONCE_CACHE.bounds_unspecified */
-    public static final boolean VOUCHER_NONCE_CACHE_BOUNDS_UNSPECIFIED = true;
 
     /** config_venue_ops.VOUCHER_NONCE_CACHE.count */
     public static final int VOUCHER_NONCE_CACHE_COUNT = 5000;
 
+    /** config_venue_ops.VOUCHER_NONCE_CACHE.count_max */
+    public static final int VOUCHER_NONCE_CACHE_COUNT_MAX = 20000;
+
+    /** config_venue_ops.VOUCHER_NONCE_CACHE.count_min */
+    public static final int VOUCHER_NONCE_CACHE_COUNT_MIN = 1000;
+
     /** config_venue_ops.VOUCHER_NONCE_CACHE.days */
     public static final int VOUCHER_NONCE_CACHE_DAYS = 90;
+
+    /** config_venue_ops.VOUCHER_NONCE_CACHE.days_max */
+    public static final int VOUCHER_NONCE_CACHE_DAYS_MAX = 365;
+
+    /** config_venue_ops.VOUCHER_NONCE_CACHE.days_min */
+    public static final int VOUCHER_NONCE_CACHE_DAYS_MIN = 30;
 
     /** config_venue_ops.VOUCHER_NONCE_CACHE.overridable */
     public static final boolean VOUCHER_NONCE_CACHE_OVERRIDABLE = true;

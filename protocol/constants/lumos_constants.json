@@ -5,13 +5,13 @@
  "$generator": "tools/constantsgen",
  "service_uuid": "E853EB6A-775C-4A49-A6BF-320E6A5CC609",
  "$service_uuid_provenance": "One fixed 128-bit GATT service UUID per ADR-002 / TRS Sec. 9.3, generated once from a CSPRNG as an RFC 4122 version-4 UUID in WP-01 slice S2 and frozen here. Advertised by both platforms and used for scan filtering. No 16-bit alias is registered for flagship. Regenerating this value is a breaking protocol change.",
- "constants_hash": "sha256:83f32e68c912a8df9a6392194ac6691a45c6e8ae62fc6d60640424df45cbdc91",
+ "constants_hash": "sha256:12510455720dcc2ff72291f6a428f31930434d3dcb95a8b871ed305edb159855",
  "constants_hash_algorithm": {
   "digest": "SHA-256",
   "encoding": "lowercase hex, prefixed 'sha256:'",
   "canonical_form": "Every hashable leaf is flattened to a dotted path. Lines are '<path>=<value>', sorted bytewise by path as UTF-8, joined with '\\n', with a single trailing '\\n'.",
   "value_rendering": "integer -> decimal with '-' for negatives; boolean -> 'true'/'false'; string -> verbatim UTF-8; array of scalars -> '[' + elements joined by ',' + ']'; array of objects -> recursed by zero-based index as a path segment. There are deliberately NO floating-point values in this register, so no float formatting rule is required and none may be introduced.",
-  "excluded_keys": "Any key beginning with '$', plus the fixed set: constants_hash, constants_hash_algorithm, anchors, source, notes.",
+  "excluded_keys": "Any key beginning with '$', plus the fixed set: constants_hash, constants_hash_algorithm, anchors, source, notes, adr.",
   "rationale": "A flattened key=value form is chosen over canonical JSON because it is trivially reimplementable in Java, Swift and Go without depending on any library's key-ordering or number-formatting behaviour. Documentation-only fields are excluded so that editing a requirement reference or a comment does not invalidate the golden vectors; every value-bearing field is included."
  },
 
@@ -40,13 +40,16 @@
    "anchors": ["SRS-NFR-BAT-004"], "source": "TRS 23.1"
   },
   "RESCAN_LADDER": {
-   "step_pct": 50, "trigger_empty_cycles": 2, "max_steps": 3,
-   "overridable": true, "calibrated": true, "bounds_unspecified": true,
+   "step_pct": 50, "step_pct_min": 25, "step_pct_max": 100,
+   "trigger_empty_cycles": 2, "trigger_empty_cycles_min": 1, "trigger_empty_cycles_max": 4,
+   "max_steps": 3, "max_steps_min": 1, "max_steps_max": 5,
+   "overridable": true, "calibrated": true,
    "anchors": ["TRS-ENV-003"], "source": "TRS 23.1"
   },
   "RSSI_BANDS_DBM": {
-   "very_close_gte": -55, "nearby_gte": -75,
-   "overridable": true, "calibrated": true, "bounds_unspecified": true,
+   "very_close_gte": -55, "very_close_gte_min": -60, "very_close_gte_max": -45,
+   "nearby_gte": -75, "nearby_gte_min": -85, "nearby_gte_max": -65,
+   "overridable": true, "calibrated": true,
    "notes": "Three bands are fully determined by two thresholds: very close >= -55; nearby in [-75,-55); around venue < -75.",
    "anchors": ["SRS-PRO-013", "TRS-ENV-007"], "source": "TRS 23.1"
   },
@@ -100,7 +103,9 @@
    "anchors": ["TRS-BCK-004", "TRS-PROTO-007"], "source": "TRS 23.2"
   },
   "RELAY_MAILBOX_QUOTA": {
-   "envelopes": 1000, "bytes": 8388608, "overridable": true, "bounds_unspecified": true,
+   "envelopes": 1000, "envelopes_min": 200, "envelopes_max": 5000,
+   "bytes": 8388608, "bytes_min": 2097152, "bytes_max": 33554432,
+   "overridable": true,
    "notes": "Per device.",
    "anchors": ["TRS-BCK-004"], "source": "TRS 23.2"
   },
@@ -113,13 +118,15 @@
    "anchors": ["TRS-PROTO-004"], "source": "TRS 23.2"
   },
   "DEDUP_CACHE": {
-   "ids": 10000, "days": 7, "overridable": true, "bounds_unspecified": true,
+   "ids": 10000, "ids_min": 5000, "ids_max": 50000,
+   "days": 7, "days_min": 3, "days_max": 30,
+   "overridable": true,
    "anchors": ["SRS-RMT-004", "TRS-LOC-005"], "source": "TRS 23.2"
   },
   "SAFETY_NUMBER_FORMAT": {
-   "digits": 60, "emoji_count": 6, "overridable": false,
-   "notes": "PROVISIONAL ENCODING. TRS 23.2 says '60 digits + 6-emoji pair', which admits two readings; see docs/adr/ADR-005-draft-safety-number-format.md. emoji_count=6 is the implementer's provisional parse and is NOT owner-approved. Must be settled before WP-01 slice S4 generates crypto/safety_number.json.",
-   "anchors": ["SRS-IDN-005", "SRS-MAT-008"], "source": "TRS 23.2"
+   "digits": 60, "emoji_count": 6, "emoji_alphabet_size": 64, "overridable": false,
+   "notes": "60 decimal digits plus 6 emoji TOTAL (not 6 pairs), drawn from a fixed curated 64-emoji alphabet. The alphabet itself is frozen by WP-01 slice S4 in test-vectors/crypto/safety_number.json. Resolves the TRS 23.2 '6-emoji pair' ambiguity per ADR-005 (Accepted).",
+   "anchors": ["SRS-IDN-005", "SRS-MAT-008"], "adr": ["ADR-005"], "source": "TRS 23.2"
   },
   "CLOCK_SKEW_TOLERANCE_SEC": {
    "default": 300, "overridable": false,
@@ -146,7 +153,9 @@
    "anchors": ["SRS-MSH-006", "SRS-MSH-008"], "source": "TRS 23.3"
   },
   "STORE_FORWARD_QUOTA": {
-   "envelopes": 50, "bytes": 2097152, "overridable": true, "bounds_unspecified": true,
+   "envelopes": 50, "envelopes_min": 10, "envelopes_max": 200,
+   "bytes": 2097152, "bytes_min": 524288, "bytes_max": 8388608,
+   "overridable": true,
    "notes": "Per recipient.",
    "anchors": ["SRS-MSH-006"], "source": "TRS 23.3"
   }
@@ -169,7 +178,9 @@
    "anchors": ["TRS-TRN-007"], "source": "TRS 23.4"
   },
   "REASSEMBLY_TIMEOUT_SEC": {
-   "ble": 120, "lan": 30, "overridable": true, "bounds_unspecified": true,
+   "ble": 120, "ble_min": 60, "ble_max": 300,
+   "lan": 30, "lan_min": 15, "lan_max": 120,
+   "overridable": true,
    "anchors": ["TRS-PROTO-010"], "source": "TRS 23.4"
   },
   "RETRY_BUDGET_PER_PATH": {
@@ -222,7 +233,9 @@
    "anchors": ["TRS-MED-004"], "source": "TRS 23.5"
   },
   "MEDIA_CACHE_QUOTA_MB": {
-   "default": 512, "ttl_days": 30, "overridable": true, "bounds_unspecified": true,
+   "default": 512, "min": 128, "max": 2048,
+   "ttl_days": 30, "ttl_days_min": 7, "ttl_days_max": 90,
+   "overridable": true,
    "notes": "LRU.",
    "anchors": ["SRS-MED-018", "TRS-LOC-006"], "source": "TRS 23.5"
   }
@@ -238,20 +251,24 @@
    "anchors": ["TRS-CFG-001"], "source": "TRS 23.6"
   },
   "SPONSOR_ASSET_MAX_KB": {
-   "default": 300, "cache_count": 8, "overridable": true, "bounds_unspecified": true,
+   "default": 300, "min": 100, "max": 512,
+   "cache_count": 8, "cache_count_min": 4, "cache_count_max": 16,
+   "overridable": true,
    "anchors": ["TRS-CFG-007", "SRS-ADV-006"], "source": "TRS 23.6"
   },
   "VENUE_ROOM_POST_RATE_PER_MIN": {
-   "default": 10, "overridable": true, "bounds_unspecified": true,
+   "default": 10, "min": 3, "max": 30, "overridable": true,
    "notes": "Per user.",
    "anchors": ["SRS-SAF-006", "SRS-MSH-009"], "source": "TRS 23.6"
   },
   "VOUCHER_NONCE_CACHE": {
-   "count": 5000, "days": 90, "overridable": true, "bounds_unspecified": true,
+   "count": 5000, "count_min": 1000, "count_max": 20000,
+   "days": 90, "days_min": 30, "days_max": 365,
+   "overridable": true,
    "anchors": ["TRS-CFG-009"], "source": "TRS 23.6"
   },
   "SUPPORT_RING_BUFFER_MB": {
-   "default": 4, "overridable": true, "bounds_unspecified": true,
+   "default": 4, "min": 1, "max": 16, "overridable": true,
    "notes": "Structured events.",
    "anchors": ["SRS-OPS-001"], "source": "TRS 23.6"
   }

@@ -6,7 +6,7 @@
 /// GENERATED - DO NOT EDIT. Generator: tools/constantsgen
 /// Source register: protocol/constants/lumos_constants.json
 /// Baseline: TRS v1.1 Sec. 23 / EDP v1.0 Sec. 4 (ADR-004)
-/// constants_hash: sha256:83f32e68c912a8df9a6392194ac6691a45c6e8ae62fc6d60640424df45cbdc91
+/// constants_hash: sha256:12510455720dcc2ff72291f6a428f31930434d3dcb95a8b871ed305edb159855
 
 public enum LumosConstants {
 
@@ -14,7 +14,7 @@ public enum LumosConstants {
     public static let serviceUUID = "E853EB6A-775C-4A49-A6BF-320E6A5CC609"
 
     /// Binds generated code to the register that produced it (TRS-CONST-005).
-    public static let constantsHash = "sha256:83f32e68c912a8df9a6392194ac6691a45c6e8ae62fc6d60640424df45cbdc91"
+    public static let constantsHash = "sha256:12510455720dcc2ff72291f6a428f31930434d3dcb95a8b871ed305edb159855"
 
     /// Register schema version.
     public static let schemaVersion = 1
@@ -87,14 +87,17 @@ public enum LumosConstants {
     /// identity_discovery.PRESENCE_AGEOUT_SEC.overridable
     public static let presenceAgeoutSecOverridable = true
 
-    /// identity_discovery.RESCAN_LADDER.bounds_unspecified
-    public static let rescanLadderBoundsUnspecified = true
-
     /// identity_discovery.RESCAN_LADDER.calibrated
     public static let rescanLadderCalibrated = true
 
     /// identity_discovery.RESCAN_LADDER.max_steps
     public static let rescanLadderMaxSteps = 3
+
+    /// identity_discovery.RESCAN_LADDER.max_steps_max
+    public static let rescanLadderMaxStepsMax = 5
+
+    /// identity_discovery.RESCAN_LADDER.max_steps_min
+    public static let rescanLadderMaxStepsMin = 1
 
     /// identity_discovery.RESCAN_LADDER.overridable
     public static let rescanLadderOverridable = true
@@ -102,11 +105,20 @@ public enum LumosConstants {
     /// identity_discovery.RESCAN_LADDER.step_pct
     public static let rescanLadderStepPCT = 50
 
+    /// identity_discovery.RESCAN_LADDER.step_pct_max
+    public static let rescanLadderStepPCTMax = 100
+
+    /// identity_discovery.RESCAN_LADDER.step_pct_min
+    public static let rescanLadderStepPCTMin = 25
+
     /// identity_discovery.RESCAN_LADDER.trigger_empty_cycles
     public static let rescanLadderTriggerEmptyCycles = 2
 
-    /// identity_discovery.RSSI_BANDS_DBM.bounds_unspecified
-    public static let rssiBandsDBMBoundsUnspecified = true
+    /// identity_discovery.RESCAN_LADDER.trigger_empty_cycles_max
+    public static let rescanLadderTriggerEmptyCyclesMax = 4
+
+    /// identity_discovery.RESCAN_LADDER.trigger_empty_cycles_min
+    public static let rescanLadderTriggerEmptyCyclesMin = 1
 
     /// identity_discovery.RSSI_BANDS_DBM.calibrated
     public static let rssiBandsDBMCalibrated = true
@@ -114,11 +126,23 @@ public enum LumosConstants {
     /// identity_discovery.RSSI_BANDS_DBM.nearby_gte
     public static let rssiBandsDBMNearbyGte = -75
 
+    /// identity_discovery.RSSI_BANDS_DBM.nearby_gte_max
+    public static let rssiBandsDBMNearbyGteMax = -65
+
+    /// identity_discovery.RSSI_BANDS_DBM.nearby_gte_min
+    public static let rssiBandsDBMNearbyGteMin = -85
+
     /// identity_discovery.RSSI_BANDS_DBM.overridable
     public static let rssiBandsDBMOverridable = true
 
     /// identity_discovery.RSSI_BANDS_DBM.very_close_gte
     public static let rssiBandsDBMVeryCloseGte = -55
+
+    /// identity_discovery.RSSI_BANDS_DBM.very_close_gte_max
+    public static let rssiBandsDBMVeryCloseGteMax = -45
+
+    /// identity_discovery.RSSI_BANDS_DBM.very_close_gte_min
+    public static let rssiBandsDBMVeryCloseGteMin = -60
 
     /// identity_discovery.SCAN_WINDOW_FG_MS.calibrated
     public static let scanWindowFgMSCalibrated = true
@@ -161,14 +185,23 @@ public enum LumosConstants {
     /// sessions_remote_text.CLOCK_SKEW_TOLERANCE_SEC.overridable
     public static let clockSkewToleranceSecOverridable = false
 
-    /// sessions_remote_text.DEDUP_CACHE.bounds_unspecified
-    public static let dedupCacheBoundsUnspecified = true
-
     /// sessions_remote_text.DEDUP_CACHE.days
     public static let dedupCacheDays = 7
 
+    /// sessions_remote_text.DEDUP_CACHE.days_max
+    public static let dedupCacheDaysMax = 30
+
+    /// sessions_remote_text.DEDUP_CACHE.days_min
+    public static let dedupCacheDaysMin = 3
+
     /// sessions_remote_text.DEDUP_CACHE.ids
     public static let dedupCacheIDS = 10000
+
+    /// sessions_remote_text.DEDUP_CACHE.ids_max
+    public static let dedupCacheIDSMax = 50000
+
+    /// sessions_remote_text.DEDUP_CACHE.ids_min
+    public static let dedupCacheIDSMin = 5000
 
     /// sessions_remote_text.DEDUP_CACHE.overridable
     public static let dedupCacheOverridable = true
@@ -221,14 +254,23 @@ public enum LumosConstants {
     /// sessions_remote_text.RELAY_ENVELOPE_TTL_DAYS.overridable
     public static let relayEnvelopeTTLDaysOverridable = true
 
-    /// sessions_remote_text.RELAY_MAILBOX_QUOTA.bounds_unspecified
-    public static let relayMailboxQuotaBoundsUnspecified = true
-
     /// sessions_remote_text.RELAY_MAILBOX_QUOTA.bytes
     public static let relayMailboxQuotaBytes = 8388608
 
+    /// sessions_remote_text.RELAY_MAILBOX_QUOTA.bytes_max
+    public static let relayMailboxQuotaBytesMax = 33554432
+
+    /// sessions_remote_text.RELAY_MAILBOX_QUOTA.bytes_min
+    public static let relayMailboxQuotaBytesMin = 2097152
+
     /// sessions_remote_text.RELAY_MAILBOX_QUOTA.envelopes
     public static let relayMailboxQuotaEnvelopes = 1000
+
+    /// sessions_remote_text.RELAY_MAILBOX_QUOTA.envelopes_max
+    public static let relayMailboxQuotaEnvelopesMax = 5000
+
+    /// sessions_remote_text.RELAY_MAILBOX_QUOTA.envelopes_min
+    public static let relayMailboxQuotaEnvelopesMin = 200
 
     /// sessions_remote_text.RELAY_MAILBOX_QUOTA.overridable
     public static let relayMailboxQuotaOverridable = true
@@ -247,6 +289,9 @@ public enum LumosConstants {
 
     /// sessions_remote_text.SAFETY_NUMBER_FORMAT.digits
     public static let safetyNumberFormatDigits = 60
+
+    /// sessions_remote_text.SAFETY_NUMBER_FORMAT.emoji_alphabet_size
+    public static let safetyNumberFormatEmojiAlphabetSize = 64
 
     /// sessions_remote_text.SAFETY_NUMBER_FORMAT.emoji_count
     public static let safetyNumberFormatEmojiCount = 6
@@ -322,14 +367,23 @@ public enum LumosConstants {
     /// mesh_store_forward.MESH_HOP_DEFAULT.overridable
     public static let meshHopDefaultOverridable = true
 
-    /// mesh_store_forward.STORE_FORWARD_QUOTA.bounds_unspecified
-    public static let storeForwardQuotaBoundsUnspecified = true
-
     /// mesh_store_forward.STORE_FORWARD_QUOTA.bytes
     public static let storeForwardQuotaBytes = 2097152
 
+    /// mesh_store_forward.STORE_FORWARD_QUOTA.bytes_max
+    public static let storeForwardQuotaBytesMax = 8388608
+
+    /// mesh_store_forward.STORE_FORWARD_QUOTA.bytes_min
+    public static let storeForwardQuotaBytesMin = 524288
+
     /// mesh_store_forward.STORE_FORWARD_QUOTA.envelopes
     public static let storeForwardQuotaEnvelopes = 50
+
+    /// mesh_store_forward.STORE_FORWARD_QUOTA.envelopes_max
+    public static let storeForwardQuotaEnvelopesMax = 200
+
+    /// mesh_store_forward.STORE_FORWARD_QUOTA.envelopes_min
+    public static let storeForwardQuotaEnvelopesMin = 10
 
     /// mesh_store_forward.STORE_FORWARD_QUOTA.overridable
     public static let storeForwardQuotaOverridable = true
@@ -396,11 +450,20 @@ public enum LumosConstants {
     /// transport.REASSEMBLY_TIMEOUT_SEC.ble
     public static let reassemblyTimeoutSecBLE = 120
 
-    /// transport.REASSEMBLY_TIMEOUT_SEC.bounds_unspecified
-    public static let reassemblyTimeoutSecBoundsUnspecified = true
+    /// transport.REASSEMBLY_TIMEOUT_SEC.ble_max
+    public static let reassemblyTimeoutSecBLEMax = 300
+
+    /// transport.REASSEMBLY_TIMEOUT_SEC.ble_min
+    public static let reassemblyTimeoutSecBLEMin = 60
 
     /// transport.REASSEMBLY_TIMEOUT_SEC.lan
     public static let reassemblyTimeoutSecLAN = 30
+
+    /// transport.REASSEMBLY_TIMEOUT_SEC.lan_max
+    public static let reassemblyTimeoutSecLANMax = 120
+
+    /// transport.REASSEMBLY_TIMEOUT_SEC.lan_min
+    public static let reassemblyTimeoutSecLANMin = 15
 
     /// transport.REASSEMBLY_TIMEOUT_SEC.overridable
     public static let reassemblyTimeoutSecOverridable = true
@@ -458,17 +521,26 @@ public enum LumosConstants {
     /// media.FULL_IMAGE_MAX_MB.overridable
     public static let fullImageMaxMBOverridable = true
 
-    /// media.MEDIA_CACHE_QUOTA_MB.bounds_unspecified
-    public static let mediaCacheQuotaMBBoundsUnspecified = true
-
     /// media.MEDIA_CACHE_QUOTA_MB.default
     public static let mediaCacheQuotaMBDefault = 512
+
+    /// media.MEDIA_CACHE_QUOTA_MB.max
+    public static let mediaCacheQuotaMBMax = 2048
+
+    /// media.MEDIA_CACHE_QUOTA_MB.min
+    public static let mediaCacheQuotaMBMin = 128
 
     /// media.MEDIA_CACHE_QUOTA_MB.overridable
     public static let mediaCacheQuotaMBOverridable = true
 
     /// media.MEDIA_CACHE_QUOTA_MB.ttl_days
     public static let mediaCacheQuotaMBTTLDays = 30
+
+    /// media.MEDIA_CACHE_QUOTA_MB.ttl_days_max
+    public static let mediaCacheQuotaMBTTLDaysMax = 90
+
+    /// media.MEDIA_CACHE_QUOTA_MB.ttl_days_min
+    public static let mediaCacheQuotaMBTTLDaysMin = 7
 
     /// media.PREVIEW_MAX_KB.default
     public static let previewMaxKBDefault = 64
@@ -541,44 +613,68 @@ public enum LumosConstants {
     /// config_venue_ops.CONFIG_REFRESH_INTERVAL_HOURS.overridable
     public static let configRefreshIntervalHoursOverridable = true
 
-    /// config_venue_ops.SPONSOR_ASSET_MAX_KB.bounds_unspecified
-    public static let sponsorAssetMaxKBBoundsUnspecified = true
-
     /// config_venue_ops.SPONSOR_ASSET_MAX_KB.cache_count
     public static let sponsorAssetMaxKBCacheCount = 8
+
+    /// config_venue_ops.SPONSOR_ASSET_MAX_KB.cache_count_max
+    public static let sponsorAssetMaxKBCacheCountMax = 16
+
+    /// config_venue_ops.SPONSOR_ASSET_MAX_KB.cache_count_min
+    public static let sponsorAssetMaxKBCacheCountMin = 4
 
     /// config_venue_ops.SPONSOR_ASSET_MAX_KB.default
     public static let sponsorAssetMaxKBDefault = 300
 
+    /// config_venue_ops.SPONSOR_ASSET_MAX_KB.max
+    public static let sponsorAssetMaxKBMax = 512
+
+    /// config_venue_ops.SPONSOR_ASSET_MAX_KB.min
+    public static let sponsorAssetMaxKBMin = 100
+
     /// config_venue_ops.SPONSOR_ASSET_MAX_KB.overridable
     public static let sponsorAssetMaxKBOverridable = true
-
-    /// config_venue_ops.SUPPORT_RING_BUFFER_MB.bounds_unspecified
-    public static let supportRingBufferMBBoundsUnspecified = true
 
     /// config_venue_ops.SUPPORT_RING_BUFFER_MB.default
     public static let supportRingBufferMBDefault = 4
 
+    /// config_venue_ops.SUPPORT_RING_BUFFER_MB.max
+    public static let supportRingBufferMBMax = 16
+
+    /// config_venue_ops.SUPPORT_RING_BUFFER_MB.min
+    public static let supportRingBufferMBMin = 1
+
     /// config_venue_ops.SUPPORT_RING_BUFFER_MB.overridable
     public static let supportRingBufferMBOverridable = true
-
-    /// config_venue_ops.VENUE_ROOM_POST_RATE_PER_MIN.bounds_unspecified
-    public static let venueRoomPostRatePerMinBoundsUnspecified = true
 
     /// config_venue_ops.VENUE_ROOM_POST_RATE_PER_MIN.default
     public static let venueRoomPostRatePerMinDefault = 10
 
+    /// config_venue_ops.VENUE_ROOM_POST_RATE_PER_MIN.max
+    public static let venueRoomPostRatePerMinMax = 30
+
+    /// config_venue_ops.VENUE_ROOM_POST_RATE_PER_MIN.min
+    public static let venueRoomPostRatePerMinMin = 3
+
     /// config_venue_ops.VENUE_ROOM_POST_RATE_PER_MIN.overridable
     public static let venueRoomPostRatePerMinOverridable = true
-
-    /// config_venue_ops.VOUCHER_NONCE_CACHE.bounds_unspecified
-    public static let voucherNonceCacheBoundsUnspecified = true
 
     /// config_venue_ops.VOUCHER_NONCE_CACHE.count
     public static let voucherNonceCacheCount = 5000
 
+    /// config_venue_ops.VOUCHER_NONCE_CACHE.count_max
+    public static let voucherNonceCacheCountMax = 20000
+
+    /// config_venue_ops.VOUCHER_NONCE_CACHE.count_min
+    public static let voucherNonceCacheCountMin = 1000
+
     /// config_venue_ops.VOUCHER_NONCE_CACHE.days
     public static let voucherNonceCacheDays = 90
+
+    /// config_venue_ops.VOUCHER_NONCE_CACHE.days_max
+    public static let voucherNonceCacheDaysMax = 365
+
+    /// config_venue_ops.VOUCHER_NONCE_CACHE.days_min
+    public static let voucherNonceCacheDaysMin = 30
 
     /// config_venue_ops.VOUCHER_NONCE_CACHE.overridable
     public static let voucherNonceCacheOverridable = true

@@ -6,7 +6,7 @@
 // GENERATED - DO NOT EDIT. Generator: tools/constantsgen
 // Source register: protocol/constants/lumos_constants.json
 // Baseline: TRS v1.1 Sec. 23 / EDP v1.0 Sec. 4 (ADR-004)
-// constants_hash: sha256:83f32e68c912a8df9a6392194ac6691a45c6e8ae62fc6d60640424df45cbdc91
+// constants_hash: sha256:12510455720dcc2ff72291f6a428f31930434d3dcb95a8b871ed305edb159855
 
 package lumosconstants
 
@@ -14,7 +14,7 @@ package lumosconstants
 const ServiceUUID = "E853EB6A-775C-4A49-A6BF-320E6A5CC609"
 
 // ConstantsHash binds generated code to the register that produced it (TRS-CONST-005).
-const ConstantsHash = "sha256:83f32e68c912a8df9a6392194ac6691a45c6e8ae62fc6d60640424df45cbdc91"
+const ConstantsHash = "sha256:12510455720dcc2ff72291f6a428f31930434d3dcb95a8b871ed305edb159855"
 
 // SchemaVersion is the register schema version.
 const SchemaVersion = 1
@@ -87,14 +87,17 @@ const PresenceAgeoutSecMin = 30
 // PresenceAgeoutSecOverridable is identity_discovery.PRESENCE_AGEOUT_SEC.overridable.
 const PresenceAgeoutSecOverridable = true
 
-// RescanLadderBoundsUnspecified is identity_discovery.RESCAN_LADDER.bounds_unspecified.
-const RescanLadderBoundsUnspecified = true
-
 // RescanLadderCalibrated is identity_discovery.RESCAN_LADDER.calibrated.
 const RescanLadderCalibrated = true
 
 // RescanLadderMaxSteps is identity_discovery.RESCAN_LADDER.max_steps.
 const RescanLadderMaxSteps = 3
+
+// RescanLadderMaxStepsMax is identity_discovery.RESCAN_LADDER.max_steps_max.
+const RescanLadderMaxStepsMax = 5
+
+// RescanLadderMaxStepsMin is identity_discovery.RESCAN_LADDER.max_steps_min.
+const RescanLadderMaxStepsMin = 1
 
 // RescanLadderOverridable is identity_discovery.RESCAN_LADDER.overridable.
 const RescanLadderOverridable = true
@@ -102,11 +105,20 @@ const RescanLadderOverridable = true
 // RescanLadderStepPCT is identity_discovery.RESCAN_LADDER.step_pct.
 const RescanLadderStepPCT = 50
 
+// RescanLadderStepPCTMax is identity_discovery.RESCAN_LADDER.step_pct_max.
+const RescanLadderStepPCTMax = 100
+
+// RescanLadderStepPCTMin is identity_discovery.RESCAN_LADDER.step_pct_min.
+const RescanLadderStepPCTMin = 25
+
 // RescanLadderTriggerEmptyCycles is identity_discovery.RESCAN_LADDER.trigger_empty_cycles.
 const RescanLadderTriggerEmptyCycles = 2
 
-// RSSIBandsDBMBoundsUnspecified is identity_discovery.RSSI_BANDS_DBM.bounds_unspecified.
-const RSSIBandsDBMBoundsUnspecified = true
+// RescanLadderTriggerEmptyCyclesMax is identity_discovery.RESCAN_LADDER.trigger_empty_cycles_max.
+const RescanLadderTriggerEmptyCyclesMax = 4
+
+// RescanLadderTriggerEmptyCyclesMin is identity_discovery.RESCAN_LADDER.trigger_empty_cycles_min.
+const RescanLadderTriggerEmptyCyclesMin = 1
 
 // RSSIBandsDBMCalibrated is identity_discovery.RSSI_BANDS_DBM.calibrated.
 const RSSIBandsDBMCalibrated = true
@@ -114,11 +126,23 @@ const RSSIBandsDBMCalibrated = true
 // RSSIBandsDBMNearbyGte is identity_discovery.RSSI_BANDS_DBM.nearby_gte.
 const RSSIBandsDBMNearbyGte = -75
 
+// RSSIBandsDBMNearbyGteMax is identity_discovery.RSSI_BANDS_DBM.nearby_gte_max.
+const RSSIBandsDBMNearbyGteMax = -65
+
+// RSSIBandsDBMNearbyGteMin is identity_discovery.RSSI_BANDS_DBM.nearby_gte_min.
+const RSSIBandsDBMNearbyGteMin = -85
+
 // RSSIBandsDBMOverridable is identity_discovery.RSSI_BANDS_DBM.overridable.
 const RSSIBandsDBMOverridable = true
 
 // RSSIBandsDBMVeryCloseGte is identity_discovery.RSSI_BANDS_DBM.very_close_gte.
 const RSSIBandsDBMVeryCloseGte = -55
+
+// RSSIBandsDBMVeryCloseGteMax is identity_discovery.RSSI_BANDS_DBM.very_close_gte_max.
+const RSSIBandsDBMVeryCloseGteMax = -45
+
+// RSSIBandsDBMVeryCloseGteMin is identity_discovery.RSSI_BANDS_DBM.very_close_gte_min.
+const RSSIBandsDBMVeryCloseGteMin = -60
 
 // ScanWindowFgMSCalibrated is identity_discovery.SCAN_WINDOW_FG_MS.calibrated.
 const ScanWindowFgMSCalibrated = true
@@ -161,14 +185,23 @@ const ClockSkewToleranceSecDefault = 300
 // ClockSkewToleranceSecOverridable is sessions_remote_text.CLOCK_SKEW_TOLERANCE_SEC.overridable.
 const ClockSkewToleranceSecOverridable = false
 
-// DedupCacheBoundsUnspecified is sessions_remote_text.DEDUP_CACHE.bounds_unspecified.
-const DedupCacheBoundsUnspecified = true
-
 // DedupCacheDays is sessions_remote_text.DEDUP_CACHE.days.
 const DedupCacheDays = 7
 
+// DedupCacheDaysMax is sessions_remote_text.DEDUP_CACHE.days_max.
+const DedupCacheDaysMax = 30
+
+// DedupCacheDaysMin is sessions_remote_text.DEDUP_CACHE.days_min.
+const DedupCacheDaysMin = 3
+
 // DedupCacheIDS is sessions_remote_text.DEDUP_CACHE.ids.
 const DedupCacheIDS = 10000
+
+// DedupCacheIDSMax is sessions_remote_text.DEDUP_CACHE.ids_max.
+const DedupCacheIDSMax = 50000
+
+// DedupCacheIDSMin is sessions_remote_text.DEDUP_CACHE.ids_min.
+const DedupCacheIDSMin = 5000
 
 // DedupCacheOverridable is sessions_remote_text.DEDUP_CACHE.overridable.
 const DedupCacheOverridable = true
@@ -221,14 +254,23 @@ const RelayEnvelopeTTLDaysMin = 1
 // RelayEnvelopeTTLDaysOverridable is sessions_remote_text.RELAY_ENVELOPE_TTL_DAYS.overridable.
 const RelayEnvelopeTTLDaysOverridable = true
 
-// RelayMailboxQuotaBoundsUnspecified is sessions_remote_text.RELAY_MAILBOX_QUOTA.bounds_unspecified.
-const RelayMailboxQuotaBoundsUnspecified = true
-
 // RelayMailboxQuotaBytes is sessions_remote_text.RELAY_MAILBOX_QUOTA.bytes.
 const RelayMailboxQuotaBytes = 8388608
 
+// RelayMailboxQuotaBytesMax is sessions_remote_text.RELAY_MAILBOX_QUOTA.bytes_max.
+const RelayMailboxQuotaBytesMax = 33554432
+
+// RelayMailboxQuotaBytesMin is sessions_remote_text.RELAY_MAILBOX_QUOTA.bytes_min.
+const RelayMailboxQuotaBytesMin = 2097152
+
 // RelayMailboxQuotaEnvelopes is sessions_remote_text.RELAY_MAILBOX_QUOTA.envelopes.
 const RelayMailboxQuotaEnvelopes = 1000
+
+// RelayMailboxQuotaEnvelopesMax is sessions_remote_text.RELAY_MAILBOX_QUOTA.envelopes_max.
+const RelayMailboxQuotaEnvelopesMax = 5000
+
+// RelayMailboxQuotaEnvelopesMin is sessions_remote_text.RELAY_MAILBOX_QUOTA.envelopes_min.
+const RelayMailboxQuotaEnvelopesMin = 200
 
 // RelayMailboxQuotaOverridable is sessions_remote_text.RELAY_MAILBOX_QUOTA.overridable.
 const RelayMailboxQuotaOverridable = true
@@ -247,6 +289,9 @@ const RelayTextEnvelopeMaxBytesOverridable = true
 
 // SafetyNumberFormatDigits is sessions_remote_text.SAFETY_NUMBER_FORMAT.digits.
 const SafetyNumberFormatDigits = 60
+
+// SafetyNumberFormatEmojiAlphabetSize is sessions_remote_text.SAFETY_NUMBER_FORMAT.emoji_alphabet_size.
+const SafetyNumberFormatEmojiAlphabetSize = 64
 
 // SafetyNumberFormatEmojiCount is sessions_remote_text.SAFETY_NUMBER_FORMAT.emoji_count.
 const SafetyNumberFormatEmojiCount = 6
@@ -322,14 +367,23 @@ const MeshHopDefaultMin = 1
 // MeshHopDefaultOverridable is mesh_store_forward.MESH_HOP_DEFAULT.overridable.
 const MeshHopDefaultOverridable = true
 
-// StoreForwardQuotaBoundsUnspecified is mesh_store_forward.STORE_FORWARD_QUOTA.bounds_unspecified.
-const StoreForwardQuotaBoundsUnspecified = true
-
 // StoreForwardQuotaBytes is mesh_store_forward.STORE_FORWARD_QUOTA.bytes.
 const StoreForwardQuotaBytes = 2097152
 
+// StoreForwardQuotaBytesMax is mesh_store_forward.STORE_FORWARD_QUOTA.bytes_max.
+const StoreForwardQuotaBytesMax = 8388608
+
+// StoreForwardQuotaBytesMin is mesh_store_forward.STORE_FORWARD_QUOTA.bytes_min.
+const StoreForwardQuotaBytesMin = 524288
+
 // StoreForwardQuotaEnvelopes is mesh_store_forward.STORE_FORWARD_QUOTA.envelopes.
 const StoreForwardQuotaEnvelopes = 50
+
+// StoreForwardQuotaEnvelopesMax is mesh_store_forward.STORE_FORWARD_QUOTA.envelopes_max.
+const StoreForwardQuotaEnvelopesMax = 200
+
+// StoreForwardQuotaEnvelopesMin is mesh_store_forward.STORE_FORWARD_QUOTA.envelopes_min.
+const StoreForwardQuotaEnvelopesMin = 10
 
 // StoreForwardQuotaOverridable is mesh_store_forward.STORE_FORWARD_QUOTA.overridable.
 const StoreForwardQuotaOverridable = true
@@ -396,11 +450,20 @@ const QRBootstrapMaxBytesOverridable = false
 // ReassemblyTimeoutSecBLE is transport.REASSEMBLY_TIMEOUT_SEC.ble.
 const ReassemblyTimeoutSecBLE = 120
 
-// ReassemblyTimeoutSecBoundsUnspecified is transport.REASSEMBLY_TIMEOUT_SEC.bounds_unspecified.
-const ReassemblyTimeoutSecBoundsUnspecified = true
+// ReassemblyTimeoutSecBLEMax is transport.REASSEMBLY_TIMEOUT_SEC.ble_max.
+const ReassemblyTimeoutSecBLEMax = 300
+
+// ReassemblyTimeoutSecBLEMin is transport.REASSEMBLY_TIMEOUT_SEC.ble_min.
+const ReassemblyTimeoutSecBLEMin = 60
 
 // ReassemblyTimeoutSecLAN is transport.REASSEMBLY_TIMEOUT_SEC.lan.
 const ReassemblyTimeoutSecLAN = 30
+
+// ReassemblyTimeoutSecLANMax is transport.REASSEMBLY_TIMEOUT_SEC.lan_max.
+const ReassemblyTimeoutSecLANMax = 120
+
+// ReassemblyTimeoutSecLANMin is transport.REASSEMBLY_TIMEOUT_SEC.lan_min.
+const ReassemblyTimeoutSecLANMin = 15
 
 // ReassemblyTimeoutSecOverridable is transport.REASSEMBLY_TIMEOUT_SEC.overridable.
 const ReassemblyTimeoutSecOverridable = true
@@ -458,17 +521,26 @@ const FullImageMaxMBMin = 1
 // FullImageMaxMBOverridable is media.FULL_IMAGE_MAX_MB.overridable.
 const FullImageMaxMBOverridable = true
 
-// MediaCacheQuotaMBBoundsUnspecified is media.MEDIA_CACHE_QUOTA_MB.bounds_unspecified.
-const MediaCacheQuotaMBBoundsUnspecified = true
-
 // MediaCacheQuotaMBDefault is media.MEDIA_CACHE_QUOTA_MB.default.
 const MediaCacheQuotaMBDefault = 512
+
+// MediaCacheQuotaMBMax is media.MEDIA_CACHE_QUOTA_MB.max.
+const MediaCacheQuotaMBMax = 2048
+
+// MediaCacheQuotaMBMin is media.MEDIA_CACHE_QUOTA_MB.min.
+const MediaCacheQuotaMBMin = 128
 
 // MediaCacheQuotaMBOverridable is media.MEDIA_CACHE_QUOTA_MB.overridable.
 const MediaCacheQuotaMBOverridable = true
 
 // MediaCacheQuotaMBTTLDays is media.MEDIA_CACHE_QUOTA_MB.ttl_days.
 const MediaCacheQuotaMBTTLDays = 30
+
+// MediaCacheQuotaMBTTLDaysMax is media.MEDIA_CACHE_QUOTA_MB.ttl_days_max.
+const MediaCacheQuotaMBTTLDaysMax = 90
+
+// MediaCacheQuotaMBTTLDaysMin is media.MEDIA_CACHE_QUOTA_MB.ttl_days_min.
+const MediaCacheQuotaMBTTLDaysMin = 7
 
 // PreviewMaxKBDefault is media.PREVIEW_MAX_KB.default.
 const PreviewMaxKBDefault = 64
@@ -538,44 +610,68 @@ const ConfigRefreshIntervalHoursMin = 1
 // ConfigRefreshIntervalHoursOverridable is config_venue_ops.CONFIG_REFRESH_INTERVAL_HOURS.overridable.
 const ConfigRefreshIntervalHoursOverridable = true
 
-// SponsorAssetMaxKBBoundsUnspecified is config_venue_ops.SPONSOR_ASSET_MAX_KB.bounds_unspecified.
-const SponsorAssetMaxKBBoundsUnspecified = true
-
 // SponsorAssetMaxKBCacheCount is config_venue_ops.SPONSOR_ASSET_MAX_KB.cache_count.
 const SponsorAssetMaxKBCacheCount = 8
+
+// SponsorAssetMaxKBCacheCountMax is config_venue_ops.SPONSOR_ASSET_MAX_KB.cache_count_max.
+const SponsorAssetMaxKBCacheCountMax = 16
+
+// SponsorAssetMaxKBCacheCountMin is config_venue_ops.SPONSOR_ASSET_MAX_KB.cache_count_min.
+const SponsorAssetMaxKBCacheCountMin = 4
 
 // SponsorAssetMaxKBDefault is config_venue_ops.SPONSOR_ASSET_MAX_KB.default.
 const SponsorAssetMaxKBDefault = 300
 
+// SponsorAssetMaxKBMax is config_venue_ops.SPONSOR_ASSET_MAX_KB.max.
+const SponsorAssetMaxKBMax = 512
+
+// SponsorAssetMaxKBMin is config_venue_ops.SPONSOR_ASSET_MAX_KB.min.
+const SponsorAssetMaxKBMin = 100
+
 // SponsorAssetMaxKBOverridable is config_venue_ops.SPONSOR_ASSET_MAX_KB.overridable.
 const SponsorAssetMaxKBOverridable = true
-
-// SupportRingBufferMBBoundsUnspecified is config_venue_ops.SUPPORT_RING_BUFFER_MB.bounds_unspecified.
-const SupportRingBufferMBBoundsUnspecified = true
 
 // SupportRingBufferMBDefault is config_venue_ops.SUPPORT_RING_BUFFER_MB.default.
 const SupportRingBufferMBDefault = 4
 
+// SupportRingBufferMBMax is config_venue_ops.SUPPORT_RING_BUFFER_MB.max.
+const SupportRingBufferMBMax = 16
+
+// SupportRingBufferMBMin is config_venue_ops.SUPPORT_RING_BUFFER_MB.min.
+const SupportRingBufferMBMin = 1
+
 // SupportRingBufferMBOverridable is config_venue_ops.SUPPORT_RING_BUFFER_MB.overridable.
 const SupportRingBufferMBOverridable = true
-
-// VenueRoomPostRatePerMinBoundsUnspecified is config_venue_ops.VENUE_ROOM_POST_RATE_PER_MIN.bounds_unspecified.
-const VenueRoomPostRatePerMinBoundsUnspecified = true
 
 // VenueRoomPostRatePerMinDefault is config_venue_ops.VENUE_ROOM_POST_RATE_PER_MIN.default.
 const VenueRoomPostRatePerMinDefault = 10
 
+// VenueRoomPostRatePerMinMax is config_venue_ops.VENUE_ROOM_POST_RATE_PER_MIN.max.
+const VenueRoomPostRatePerMinMax = 30
+
+// VenueRoomPostRatePerMinMin is config_venue_ops.VENUE_ROOM_POST_RATE_PER_MIN.min.
+const VenueRoomPostRatePerMinMin = 3
+
 // VenueRoomPostRatePerMinOverridable is config_venue_ops.VENUE_ROOM_POST_RATE_PER_MIN.overridable.
 const VenueRoomPostRatePerMinOverridable = true
-
-// VoucherNonceCacheBoundsUnspecified is config_venue_ops.VOUCHER_NONCE_CACHE.bounds_unspecified.
-const VoucherNonceCacheBoundsUnspecified = true
 
 // VoucherNonceCacheCount is config_venue_ops.VOUCHER_NONCE_CACHE.count.
 const VoucherNonceCacheCount = 5000
 
+// VoucherNonceCacheCountMax is config_venue_ops.VOUCHER_NONCE_CACHE.count_max.
+const VoucherNonceCacheCountMax = 20000
+
+// VoucherNonceCacheCountMin is config_venue_ops.VOUCHER_NONCE_CACHE.count_min.
+const VoucherNonceCacheCountMin = 1000
+
 // VoucherNonceCacheDays is config_venue_ops.VOUCHER_NONCE_CACHE.days.
 const VoucherNonceCacheDays = 90
+
+// VoucherNonceCacheDaysMax is config_venue_ops.VOUCHER_NONCE_CACHE.days_max.
+const VoucherNonceCacheDaysMax = 365
+
+// VoucherNonceCacheDaysMin is config_venue_ops.VOUCHER_NONCE_CACHE.days_min.
+const VoucherNonceCacheDaysMin = 30
 
 // VoucherNonceCacheOverridable is config_venue_ops.VOUCHER_NONCE_CACHE.overridable.
 const VoucherNonceCacheOverridable = true

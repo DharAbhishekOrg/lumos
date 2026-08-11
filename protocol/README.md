@@ -36,14 +36,25 @@ go run ./tools/constantsgen -stamp   # recompute and write constants_hash
 go run ./tools/constantsgen -check   # CI gate: verify hash + byte-compare outputs
 ```
 
-## Open decisions blocking full constants closure
+## Accepted decisions folded into the register
 
-- **ADR-005 (draft)** — `SAFETY_NUMBER_FORMAT` "6-emoji pair" is ambiguous;
-  `emoji_count: 6` is provisional. Must be settled before slice S4 generates
-  `crypto/safety_number.json`.
-- **ADR-006 (draft)** — eleven overridable constants carry `bounds_unspecified`
-  because TRS Sec. 23 states "bounded"/"calibrated" without a numeric range.
-  TRS-CONST-002 is not satisfiable for those until the owner supplies bounds.
+- **[ADR-005](../docs/adrs/ADR-005-safety-number-format.md)** — `SAFETY_NUMBER_FORMAT`
+  is 60 digits plus **6 emoji in total** (not 6 pairs), from a fixed curated
+  64-emoji alphabet. Slice S4 freezes the alphabet itself in
+  `test-vectors/crypto/safety_number.json`.
+- **[ADR-006](../docs/adrs/ADR-006-override-bounds.md)** — the eleven overridable
+  constants TRS Sec. 23 left as "bounded"/"calibrated" now carry normative
+  bounds. No `bounds_unspecified` flag remains, and the pin-test is kept with an
+  empty expected set so a twelfth cannot appear silently.
+
+Multi-field entries express bounds as sibling `<field>_min` / `<field>_max` keys
+(for example `ble`, `ble_min`, `ble_max`), which keeps every entry a flat map of
+scalars for the codegen model.
+
+Three entries are bounded differently by TRS Sec. 23 and are exempt from
+per-field bounds, with the exemption pinned in test: `SCAN_WINDOW_FG_MS` and
+`SCAN_WINDOW_VENUE_MS` (duty-cycle percentage) and `VOICE_NOTE` (fixed codec
+profile, duration bounded by `sec_min`/`sec_max`).
 
 ## Rules
 
