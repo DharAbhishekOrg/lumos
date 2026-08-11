@@ -4046,7 +4046,7 @@
    ],
    "evidence": [],
    "adr": [],
-   "last_commit": "9ea2473",
+   "last_commit": "8f62d47",
    "updated": "2026-08-11"
   },
   {
@@ -4061,12 +4061,15 @@
   },
   {
    "req_id": "TRS-AI-005",
-   "status": "not_started",
-   "code": [],
-   "tests": [],
+   "status": "implemented",
+   "code": [
+    ".github/workflows/conformance.yml",
+    ".github/workflows/pipeline.yml"
+   ],
+   "tests": null,
    "evidence": [],
    "adr": [],
-   "last_commit": "9ea2473",
+   "last_commit": "8f62d47",
    "updated": "2026-08-11"
   },
   {
@@ -4810,7 +4813,7 @@
     "ci:conformance#31528127667"
    ],
    "adr": [],
-   "last_commit": "9ea2473",
+   "last_commit": "8f62d47",
    "updated": "2026-08-11"
   },
   {
@@ -4888,7 +4891,7 @@
    ],
    "evidence": [],
    "adr": [],
-   "last_commit": "9ea2473",
+   "last_commit": "8f62d47",
    "updated": "2026-08-11"
   },
   {
@@ -6714,7 +6717,7 @@
    ],
    "evidence": [],
    "adr": [],
-   "last_commit": "9ea2473",
+   "last_commit": "8f62d47",
    "updated": "2026-08-11"
   },
   {

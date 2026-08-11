@@ -21,18 +21,42 @@ a matrix that has since moved on.
 | — `tested` | **17** |
 | — `implemented` | **9** |
 | — `not_started` | **7** (all with a destination WP in §6) |
-| Requirements moved outside the declared set | **25** (§5) |
+| Requirements moved outside the declared set | **26** |
 | Whole matrix | 648 entries, 648 accounted for, **zero orphans in either direction** |
 | EDP §8 owner gates | **9 of 9 `unproven_owner`** — none advanced, none simulated |
 
-Nothing in this closeout upgrades a status that was not executed in the pipeline run cited in §2.
+**One status moved during this closeout**, and only after the run above was green: **TRS-AI-005**
+("keep Android, iOS, backend and protocol builds green at each integration checkpoint", verified by
+*CI evidence*) `not_started` → `implemented`. This closeout **is** that checkpoint, and all four
+builds are green in run `31540987936`. It is `implemented` rather than `tested` because its
+verification is an audit of CI evidence, not a collected test. Nothing else in this document
+upgrades a status that was not executed in that run.
 
 ---
 
 ## 2. Regression and vector suite — this run
 
-<!-- PIPELINE-EVIDENCE -->
-_Filled from the closeout PR's own CI run once it completes; see §2.1 for what is measured._
+**Conformance run [`31540987936`](https://github.com/dharabhishekemail-ops/lumos/actions/runs/31540987936)**
+· **pipeline run [`31540987930`](https://github.com/dharabhishekemail-ops/lumos/actions/runs/31540987930)**
+· 15 of 15 checks green.
+
+| Runner | Passing tests executed |
+| --- | ---: |
+| `go` | 203 |
+| `java` (`:protocol-conformance`) | 12 |
+| `swift` (`LumosProtocolConformance` 10 + `LumosAppShell` 3) | 13 |
+| `ts` (`admin-console`) | 4 |
+| **Total collected** | **232** |
+
+**Every test identifier the trace matrix links executed in this run.** The one linked reference not
+in the executed set is `ci:conformance#31528127667`, a CI run citation rather than a test — correct
+by design.
+
+Getting to that sentence took two attempts, and the first attempt produced the most useful finding
+in this closeout. See **§5.1**.
+
+> A document cannot contain the result of the run that validates the document. The run cited here
+> executes the entire WP-01 deliverable; every commit after it edits only this record.
 
 ### 2.1 What the run covers
 
@@ -90,39 +114,42 @@ executed-test set.
 <!-- STATUS-TABLE -->
 | Requirement | Status | Linked tests | Executed this run |
 | --- | --- | ---: | ---: |
-| TRS-CICD-001 | `implemented` | 1 | - |
-| TRS-CICD-005 | `implemented` | 2 | - |
-| TRS-CONST-001 | `tested` | 9 | - |
-| TRS-CONST-002 | `implemented` | 4 | - |
-| TRS-CONST-003 | `implemented` | 5 | - |
+| TRS-CICD-001 | `implemented` | 1 | 0 |
+| TRS-CICD-005 | `implemented` | 2 | 2 |
+| TRS-CONST-001 | `tested` | 9 | 9 |
+| TRS-CONST-002 | `implemented` | 4 | 4 |
+| TRS-CONST-003 | `implemented` | 5 | 5 |
 | TRS-CONST-004 | `not_started` | 0 | - |
-| TRS-CONST-005 | `tested` | 5 | - |
+| TRS-CONST-005 | `tested` | 5 | 5 |
 | TRS-CONST-006 | `not_started` | 0 | - |
-| TRS-PROTO-001 | `tested` | 8 | - |
-| TRS-PROTO-002 | `tested` | 6 | - |
-| TRS-PROTO-003 | `tested` | 3 | - |
-| TRS-PROTO-004 | `tested` | 6 | - |
-| TRS-PROTO-005 | `tested` | 5 | - |
-| TRS-PROTO-006 | `tested` | 7 | - |
-| TRS-PROTO-007 | `tested` | 8 | - |
+| TRS-PROTO-001 | `tested` | 8 | 8 |
+| TRS-PROTO-002 | `tested` | 6 | 6 |
+| TRS-PROTO-003 | `tested` | 3 | 3 |
+| TRS-PROTO-004 | `tested` | 6 | 6 |
+| TRS-PROTO-005 | `tested` | 5 | 5 |
+| TRS-PROTO-006 | `tested` | 7 | 7 |
+| TRS-PROTO-007 | `tested` | 8 | 8 |
 | TRS-PROTO-008 | `not_started` | 0 | - |
-| TRS-PROTO-009 | `implemented` | 8 | - |
+| TRS-PROTO-009 | `implemented` | 8 | 8 |
 | TRS-PROTO-010 | `not_started` | 0 | - |
-| TRS-PROTO-011 | `tested` | 2 | - |
+| TRS-PROTO-011 | `tested` | 2 | 2 |
 | TRS-PROTO-012 | `not_started` | 0 | - |
-| TRS-PROTO-013 | `tested` | 6 | - |
-| TRS-PROTO-014 | `tested` | 2 | - |
-| TRS-PROTO-015 | `tested` | 9 | - |
+| TRS-PROTO-013 | `tested` | 6 | 6 |
+| TRS-PROTO-014 | `tested` | 2 | 2 |
+| TRS-PROTO-015 | `tested` | 9 | 9 |
 | TRS-PROTO-016 | `not_started` | 0 | - |
-| TRS-REP-001 | `tested` | 8 | - |
-| TRS-REP-002 | `tested` | 5 | - |
-| TRS-REP-003 | `tested` | 9 | - |
-| TRS-REP-004 | `implemented` | 3 | - |
-| TRS-REP-005 | `implemented` | 2 | - |
-| TRS-REP-006 | `implemented` | 8 | - |
-| TRS-REP-007 | `implemented` | 3 | - |
+| TRS-REP-001 | `tested` | 8 | 8 |
+| TRS-REP-002 | `tested` | 5 | 5 |
+| TRS-REP-003 | `tested` | 9 | 9 |
+| TRS-REP-004 | `implemented` | 3 | 3 |
+| TRS-REP-005 | `implemented` | 2 | 2 |
+| TRS-REP-006 | `implemented` | 8 | 8 |
+| TRS-REP-007 | `implemented` | 3 | 3 |
 | TRS-REP-008 | `not_started` | 0 | - |
-| TRS-TST-001 | `tested` | 8 | - |
+| TRS-TST-001 | `tested` | 8 | 8 |
+
+`TRS-CICD-001`'s single "linked test" is `ci:conformance#31528127667`, a CI run citation. Its
+verification method is pipeline inspection, so it has no executable test to count — hence 0.
 
 ### 3.1 Why the nine `implemented` rows are not `tested`
 
@@ -210,7 +237,44 @@ describes what the lockfiles pin.
 
 ---
 
-## 5. The S5 self-agreement finding
+## 5. Findings
+
+### 5.1 The closeout's own finding: WP-01 shipped with every Swift identifier broken
+
+Found while assembling this document, by comparing each requirement's linked tests against the
+executed set of a real run — the check §3's last column represents. **All 13 Swift identifiers the
+matrix links matched nothing**, while the very same run reported `swift: 10 passing tests` and
+`swift: 3 passing tests`, and the traceability gate passed.
+
+**Cause, and it is mine.** Slice S7 changed the collector to prefer the `<testsuite>` name over the
+testcase `classname`, because `node:test`'s junit reporter writes the literal placeholder
+`classname="test"` for every case. SwiftPM does the **mirror image**: one
+`<testsuite name="TestResults">` wrapping everything, with the real suite in `classname`. Preferring
+the suite name renamed every Swift identifier to `TestResults.<method>`.
+
+**Why nothing complained.** Every affected row also links Go or Java tests that did execute, so
+`tested` remained satisfiable. An entire runner's evidence stopped counting and the gate stayed
+green. That is the same shape as the S6 defects below — the *third* occurrence — so it is now a rule
+rather than a lesson:
+
+> `checkIdentifierShapes` fails when a `lang:module` pair produces executed identifiers this run but
+> **none** of the ones the matrix links. Validated against the drifted artefact from run
+> `31540270055`, where it reports both Swift modules.
+
+A pair that produces *nothing at all* is deliberately not flagged: that is a legitimately skipped
+job (the Swift path filter), and the collector's fail-on-empty rule covers the real case.
+
+**The fixture is why it shipped**, and this is the part worth carrying forward. I wrote the S7 Swift
+fixture from what I *assumed* SwiftPM emitted rather than from what it emits. It passed, and it was
+wrong. All three collector fixtures are now verbatim excerpts of artefacts downloaded from a real
+run. **A fixture that agrees with its author instead of with the tool is the same self-agreement
+defect §5.2 is about — repeated by me, two slices after recording it.**
+
+One related gap fixed alongside: `"ts"` was missing from `isTestReference`, so a row backed only by
+TypeScript tests would have skipped the executed-test check entirely and could have reached `tested`
+on evidence nobody verified had run. No row currently depends on it.
+
+### 5.2 The S5 self-agreement finding
 
 **The most important defect found in WP-01, and the reason the harness exists.**
 
@@ -264,6 +328,8 @@ been introduced by the harness's own author.
 | S7 | The collector preferred `classname` over the suite name; `node:test` writes the literal `classname="test"` for every case. | Would have collapsed the admin module into identifiers beginning `test.` — again quiet, not red. First test coverage for the collector, with a real fixture per runner. |
 | S7 | `repolint` flagged git-ignored build output as layout drift. | Any developer who had run `./gradlew` saw a spurious failure. A gate that cries wolf stops being read. |
 | S7 | I claimed the secret scan was reading a truncated history (10 of 23 commits) and "fixed" it. **The diagnosis was wrong.** | `checkout` already fetches all heads; merged PR branches are auto-deleted, so ten *was* the whole history and my 23 were stale local refs. Corrected in `b0ca0f1`; both commits kept, because the sequence is the useful record. |
+| Closeout | The collector preferred the suite name; SwiftPM's placeholder is on that field. **Every Swift identifier matched nothing.** | §5.1. Fourth occurrence of the quiet-failure shape, and the one that finally produced a structural rule instead of a point fix. |
+| Closeout | `tracecheck -stamp -auto` read only the **uncommitted** working tree while the freshness check compares `base..head`. | The gate failed with a remedy line naming that exact command, and running it reported "nothing to stamp". A gate whose advice does nothing teaches the reader that the gate is broken rather than that they are. `-auto` now takes `-base`. |
 
 ---
 

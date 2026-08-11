@@ -1,18 +1,28 @@
 {
  "work_package": "WP-01",
  "baseline": "SRS v1.1 / TRS v1.1 / EDP v1.0",
- "generated_for_commit": "9ea2473",
+ "generated_for_commit": "8f62d47",
  "pipeline": {
-  "run_id": "",
-  "executed_tests_total": 0,
-  "executed_tests_by_language": {},
-  "languages_reporting": []
+  "run_id": "31540987936",
+  "executed_tests_total": 232,
+  "executed_tests_by_language": {
+   "go": 203,
+   "java": 12,
+   "swift": 13,
+   "ts": 4
+  },
+  "languages_reporting": [
+   "go",
+   "java",
+   "swift",
+   "ts"
+  ]
  },
  "totals": {
   "matrix_entries": 648,
   "matrix_by_status": {
-   "implemented": 16,
-   "not_started": 597,
+   "implemented": 17,
+   "not_started": 596,
    "tested": 35
   },
   "in_scope_count": 33,
@@ -21,7 +31,7 @@
    "not_started": 7,
    "tested": 17
   },
-  "out_of_scope_but_moved_count": 25
+  "out_of_scope_but_moved_count": 26
  },
  "in_scope": [
   {
@@ -31,7 +41,8 @@
     "ci:conformance#31528127667"
    ],
    "code_paths": 3,
-   "test_count": 1
+   "test_count": 1,
+   "tests_executed_this_run": 0
   },
   {
    "req_id": "TRS-CICD-005",
@@ -41,7 +52,8 @@
     "go:tools/constantsgen:TestCommittedFilesMatchRegister"
    ],
    "code_paths": 5,
-   "test_count": 2
+   "test_count": 2,
+   "tests_executed_this_run": 2
   },
   {
    "req_id": "TRS-CONST-001",
@@ -58,7 +70,8 @@
     "swift:LumosProtocolConformance:CryptoConformanceTests.testSafetyNumberReproducesDigitsAndEmoji"
    ],
    "code_paths": 11,
-   "test_count": 9
+   "test_count": 9,
+   "tests_executed_this_run": 9
   },
   {
    "req_id": "TRS-CONST-002",
@@ -70,7 +83,8 @@
     "go:tools/constantsgen:TestEveryBoundTripleIsCoherent"
    ],
    "code_paths": 5,
-   "test_count": 4
+   "test_count": 4,
+   "tests_executed_this_run": 4
   },
   {
    "req_id": "TRS-CONST-003",
@@ -83,7 +97,8 @@
     "go:tools/constantsgen:TestCommittedFilesMatchRegister"
    ],
    "code_paths": 2,
-   "test_count": 5
+   "test_count": 5,
+   "tests_executed_this_run": 5
   },
   {
    "req_id": "TRS-CONST-004",
@@ -103,7 +118,8 @@
     "swift:LumosProtocolConformance:FramingConformanceTests.testFrameRoundtripReproducesCommittedBytes"
    ],
    "code_paths": 7,
-   "test_count": 5
+   "test_count": 5,
+   "tests_executed_this_run": 5
   },
   {
    "req_id": "TRS-CONST-006",
@@ -126,7 +142,8 @@
     "swift:LumosProtocolConformance:FramingConformanceTests.testFrameRoundtripReproducesCommittedBytes"
    ],
    "code_paths": 17,
-   "test_count": 8
+   "test_count": 8,
+   "tests_executed_this_run": 8
   },
   {
    "req_id": "TRS-PROTO-002",
@@ -140,7 +157,8 @@
     "swift:LumosProtocolConformance:FramingConformanceTests.testFrameRoundtripReproducesCommittedBytes"
    ],
    "code_paths": 17,
-   "test_count": 6
+   "test_count": 6,
+   "tests_executed_this_run": 6
   },
   {
    "req_id": "TRS-PROTO-003",
@@ -151,7 +169,8 @@
     "swift:LumosProtocolConformance:FramingConformanceTests.testAuthenticatedHeaderIsTheLeadingBytes"
    ],
    "code_paths": 8,
-   "test_count": 3
+   "test_count": 3,
+   "tests_executed_this_run": 3
   },
   {
    "req_id": "TRS-PROTO-004",
@@ -165,7 +184,8 @@
     "swift:LumosProtocolConformance:FramingConformanceTests.testFrameRoundtripReproducesCommittedBytes"
    ],
    "code_paths": 11,
-   "test_count": 6
+   "test_count": 6,
+   "tests_executed_this_run": 6
   },
   {
    "req_id": "TRS-PROTO-005",
@@ -178,7 +198,8 @@
     "swift:LumosProtocolConformance:FramingConformanceTests.testFrameRoundtripReproducesCommittedBytes"
    ],
    "code_paths": 8,
-   "test_count": 5
+   "test_count": 5,
+   "tests_executed_this_run": 5
   },
   {
    "req_id": "TRS-PROTO-006",
@@ -193,7 +214,8 @@
     "swift:LumosProtocolConformance:FramingConformanceTests.testFrameRoundtripReproducesCommittedBytes"
    ],
    "code_paths": 17,
-   "test_count": 7
+   "test_count": 7,
+   "tests_executed_this_run": 7
   },
   {
    "req_id": "TRS-PROTO-007",
@@ -209,7 +231,8 @@
     "swift:LumosProtocolConformance:FramingConformanceTests.testFrameRoundtripReproducesCommittedBytes"
    ],
    "code_paths": 17,
-   "test_count": 8
+   "test_count": 8,
+   "tests_executed_this_run": 8
   },
   {
    "req_id": "TRS-PROTO-008",
@@ -232,7 +255,8 @@
     "swift:LumosProtocolConformance:CryptoConformanceTests.testAdvertisementScheduleAndNegatives"
    ],
    "code_paths": 3,
-   "test_count": 8
+   "test_count": 8,
+   "tests_executed_this_run": 8
   },
   {
    "req_id": "TRS-PROTO-010",
@@ -249,7 +273,8 @@
     "go:protocol/media:TestSelectiveAckBitmapAndRanges"
    ],
    "code_paths": 3,
-   "test_count": 2
+   "test_count": 2,
+   "tests_executed_this_run": 2
   },
   {
    "req_id": "TRS-PROTO-012",
@@ -270,7 +295,8 @@
     "swift:LumosProtocolConformance:FramingConformanceTests.testErrorRegistryMatchesGenerated"
    ],
    "code_paths": 6,
-   "test_count": 6
+   "test_count": 6,
+   "tests_executed_this_run": 6
   },
   {
    "req_id": "TRS-PROTO-014",
@@ -280,7 +306,8 @@
     "go:tools/vectorgen:TestRoundtripCoversEveryRegisterClass"
    ],
    "code_paths": 6,
-   "test_count": 2
+   "test_count": 2,
+   "tests_executed_this_run": 2
   },
   {
    "req_id": "TRS-PROTO-015",
@@ -297,7 +324,8 @@
     "swift:LumosProtocolConformance:FramingConformanceTests.testFrameRoundtripReproducesCommittedBytes"
    ],
    "code_paths": 4,
-   "test_count": 9
+   "test_count": 9,
+   "tests_executed_this_run": 9
   },
   {
    "req_id": "TRS-PROTO-016",
@@ -320,7 +348,8 @@
     "go:tools/repolint:TestCheckDetectsStaleArchiveAtRoot"
    ],
    "code_paths": 1,
-   "test_count": 8
+   "test_count": 8,
+   "tests_executed_this_run": 8
   },
   {
    "req_id": "TRS-REP-002",
@@ -333,7 +362,8 @@
     "swift:LumosProtocolConformance:CryptoConformanceTests.testSafetyNumberReproducesDigitsAndEmoji"
    ],
    "code_paths": 11,
-   "test_count": 5
+   "test_count": 5,
+   "tests_executed_this_run": 5
   },
   {
    "req_id": "TRS-REP-003",
@@ -350,7 +380,8 @@
     "go:tools/deplock:TestManifestNoLongerCallsPinnedItemsPending"
    ],
    "code_paths": 7,
-   "test_count": 9
+   "test_count": 9,
+   "tests_executed_this_run": 9
   },
   {
    "req_id": "TRS-REP-004",
@@ -361,7 +392,8 @@
     "go:tools/bootstrap:TestSampleEnvironmentSeparatesTheFourVariants"
    ],
    "code_paths": 5,
-   "test_count": 3
+   "test_count": 3,
+   "tests_executed_this_run": 3
   },
   {
    "req_id": "TRS-REP-005",
@@ -371,7 +403,8 @@
     "go:tools/bootstrap:TestSecretShapeScannerRejectsACredentialShapedValue"
    ],
    "code_paths": 4,
-   "test_count": 2
+   "test_count": 2,
+   "tests_executed_this_run": 2
   },
   {
    "req_id": "TRS-REP-006",
@@ -387,7 +420,8 @@
     "go:tools/bootstrap:TestBootstrapIsDocumented"
    ],
    "code_paths": 4,
-   "test_count": 8
+   "test_count": 8,
+   "tests_executed_this_run": 8
   },
   {
    "req_id": "TRS-REP-007",
@@ -398,7 +432,8 @@
     "swift:LumosAppShell:LumosAppShellTests.testBuildProvenanceIsReported"
    ],
    "code_paths": 4,
-   "test_count": 3
+   "test_count": 3,
+   "tests_executed_this_run": 3
   },
   {
    "req_id": "TRS-REP-008",
@@ -421,7 +456,8 @@
     "go:protocol/crypto:TestConformanceX3DHKAT"
    ],
    "code_paths": 8,
-   "test_count": 8
+   "test_count": 8,
+   "tests_executed_this_run": 8
   }
  ],
  "out_of_scope_but_moved": [
@@ -436,7 +472,8 @@
     "swift:LumosProtocolConformance:CryptoConformanceTests.testAdvertisementScheduleAndNegatives"
    ],
    "code_paths": 3,
-   "test_count": 5
+   "test_count": 5,
+   "tests_executed_this_run": 5
   },
   {
    "req_id": "SRS-IDN-005",
@@ -449,7 +486,8 @@
     "go:protocol/crypto:TestConformanceSafetyNumber"
    ],
    "code_paths": 2,
-   "test_count": 5
+   "test_count": 5,
+   "tests_executed_this_run": 5
   },
   {
    "req_id": "SRS-NFR-CMP-004",
@@ -462,7 +500,8 @@
     "swift:LumosProtocolConformance:CryptoConformanceTests.testMediaObjectPipeline"
    ],
    "code_paths": 4,
-   "test_count": 5
+   "test_count": 5,
+   "tests_executed_this_run": 5
   },
   {
    "req_id": "TRS-AI-003",
@@ -480,7 +519,15 @@
     "go:tools/tracecheck:TestModuleMapHasNoExclusion"
    ],
    "code_paths": 6,
-   "test_count": 10
+   "test_count": 10,
+   "tests_executed_this_run": 10
+  },
+  {
+   "req_id": "TRS-AI-005",
+   "status": "implemented",
+   "tests": null,
+   "code_paths": 2,
+   "test_count": 0
   },
   {
    "req_id": "TRS-ARCH-006",
@@ -490,7 +537,8 @@
     "ts:admin-console:AdminShell.ordinaryConfigurationFieldsAreAccepted"
    ],
    "code_paths": 1,
-   "test_count": 2
+   "test_count": 2,
+   "tests_executed_this_run": 2
   },
   {
    "req_id": "TRS-CFG-001",
@@ -505,7 +553,8 @@
     "swift:LumosProtocolConformance:CryptoConformanceTests.testConfigPackagesAndVouchers"
    ],
    "code_paths": 5,
-   "test_count": 7
+   "test_count": 7,
+   "tests_executed_this_run": 7
   },
   {
    "req_id": "TRS-CFG-009",
@@ -517,7 +566,8 @@
     "swift:LumosProtocolConformance:CryptoConformanceTests.testConfigPackagesAndVouchers"
    ],
    "code_paths": 5,
-   "test_count": 4
+   "test_count": 4,
+   "tests_executed_this_run": 4
   },
   {
    "req_id": "TRS-CICD-007",
@@ -527,7 +577,8 @@
     "go:tools/tracecheck:TestGateRegisterRejectsDishonestRows"
    ],
    "code_paths": 3,
-   "test_count": 2
+   "test_count": 2,
+   "tests_executed_this_run": 2
   },
   {
    "req_id": "TRS-CICD-008",
@@ -536,7 +587,8 @@
     "go:tools/bootstrap:TestBootstrapIsDocumented"
    ],
    "code_paths": 4,
-   "test_count": 1
+   "test_count": 1,
+   "tests_executed_this_run": 1
   },
   {
    "req_id": "TRS-CODE-001",
@@ -547,7 +599,8 @@
     "go:tools/lumoslint:TestGeneratedMarkerNeedsAGenerator"
    ],
    "code_paths": 2,
-   "test_count": 3
+   "test_count": 3,
+   "tests_executed_this_run": 3
   },
   {
    "req_id": "TRS-CODE-003",
@@ -557,7 +610,8 @@
     "go:tools/lumoslint:TestPendingArchitectureRulesAreDeclared"
    ],
    "code_paths": 2,
-   "test_count": 2
+   "test_count": 2,
+   "tests_executed_this_run": 2
   },
   {
    "req_id": "TRS-CODE-005",
@@ -568,7 +622,8 @@
     "go:tools/lumoslint:TestRegisterValuesAreDistinctiveOnly"
    ],
    "code_paths": 2,
-   "test_count": 3
+   "test_count": 3,
+   "tests_executed_this_run": 3
   },
   {
    "req_id": "TRS-CRY-001",
@@ -580,7 +635,8 @@
     "go:protocol/crypto:TestConformanceX3DHKAT"
    ],
    "code_paths": 6,
-   "test_count": 4
+   "test_count": 4,
+   "tests_executed_this_run": 4
   },
   {
    "req_id": "TRS-CRY-002",
@@ -593,7 +649,8 @@
     "go:protocol/crypto:TestConformanceRatchetSequences"
    ],
    "code_paths": 6,
-   "test_count": 5
+   "test_count": 5,
+   "tests_executed_this_run": 5
   },
   {
    "req_id": "TRS-CRY-003",
@@ -604,7 +661,8 @@
     "go:protocol/crypto:TestConformanceAEADKAT"
    ],
    "code_paths": 2,
-   "test_count": 3
+   "test_count": 3,
+   "tests_executed_this_run": 3
   },
   {
    "req_id": "TRS-CRY-004",
@@ -614,7 +672,8 @@
     "go:protocol/crypto/x3dh:TestSafetyIdentityIsEd25519Only"
    ],
    "code_paths": 2,
-   "test_count": 2
+   "test_count": 2,
+   "tests_executed_this_run": 2
   },
   {
    "req_id": "TRS-CRY-006",
@@ -625,7 +684,8 @@
     "go:protocol/crypto/ratchet:TestSkippedAcrossDHTurn"
    ],
    "code_paths": 2,
-   "test_count": 3
+   "test_count": 3,
+   "tests_executed_this_run": 3
   },
   {
    "req_id": "TRS-CRY-007",
@@ -637,7 +697,8 @@
     "go:protocol/crypto:TestConformanceRatchetSequences"
    ],
    "code_paths": 6,
-   "test_count": 4
+   "test_count": 4,
+   "tests_executed_this_run": 4
   },
   {
    "req_id": "TRS-CRY-008",
@@ -649,7 +710,8 @@
     "go:protocol/media:TestWholeObjectEncryptionPrecedesChunking"
    ],
    "code_paths": 3,
-   "test_count": 4
+   "test_count": 4,
+   "tests_executed_this_run": 4
   },
   {
    "req_id": "TRS-CRY-009",
@@ -662,7 +724,8 @@
     "go:protocol/config:TestVoucherAndConfigSignaturesAreNotInterchangeable"
    ],
    "code_paths": 5,
-   "test_count": 5
+   "test_count": 5,
+   "tests_executed_this_run": 5
   },
   {
    "req_id": "TRS-CRY-011",
@@ -672,7 +735,8 @@
     "go:protocol/crypto/aead:TestRFC8439KnownAnswer"
    ],
    "code_paths": 2,
-   "test_count": 2
+   "test_count": 2,
+   "tests_executed_this_run": 2
   },
   {
    "req_id": "TRS-CRY-013",
@@ -682,7 +746,8 @@
     "go:protocol/crypto/ratchet:TestMessageKeyDeletionByReplay"
    ],
    "code_paths": 2,
-   "test_count": 2
+   "test_count": 2,
+   "tests_executed_this_run": 2
   },
   {
    "req_id": "TRS-CRY-014",
@@ -694,7 +759,8 @@
     "go:protocol/crypto:TestConformanceX3DHKAT"
    ],
    "code_paths": 2,
-   "test_count": 4
+   "test_count": 4,
+   "tests_executed_this_run": 4
   },
   {
    "req_id": "TRS-CRY-015",
@@ -712,7 +778,8 @@
     "swift:LumosProtocolConformance:CryptoConformanceTests.testX3DHSharedSecretsAndTranscripts"
    ],
    "code_paths": 8,
-   "test_count": 10
+   "test_count": 10,
+   "tests_executed_this_run": 10
   },
   {
    "req_id": "TRS-MED-002",
@@ -725,7 +792,8 @@
     "swift:LumosProtocolConformance:CryptoConformanceTests.testMediaObjectPipeline"
    ],
    "code_paths": 3,
-   "test_count": 5
+   "test_count": 5,
+   "tests_executed_this_run": 5
   }
  ],
  "owner_gates": [
