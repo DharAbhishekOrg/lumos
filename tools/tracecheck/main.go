@@ -102,6 +102,14 @@ func doCollect(root string, o opts) error {
 			return err
 		}
 		fmt.Printf("%s: %d passing tests\n", lang, len(got))
+		if len(got) == 0 {
+			// A declared source that harvests nothing leaves the gate blind to
+			// that language while still reporting success. This has now bitten
+			// twice - Java display names, then a missing Swift xUnit report -
+			// and survived both times only because entries link more than one
+			// language. Fail loudly rather than shrug.
+			return fmt.Errorf("%s results at %s yielded no passing tests; the honesty gate would be silently blind to %s", lang, dir, lang)
+		}
 		all = append(all, got...)
 	}
 	if len(all) == 0 {
