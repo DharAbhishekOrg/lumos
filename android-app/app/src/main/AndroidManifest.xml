@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Lumos - android-app/app / Empty shell manifest.
+  Author: dhar.abhishek.email@gmail.com
+  Implements: TRS-REP-001, SRS-NFR-PRI-001
+  ADRs: -
+  Threading: n/a
+  Notes: No permissions, no components, no AD_ID. TRS Sec. 5.3 states the
+  flagship does not use behavioural ad identifiers, and the cleanest way to keep
+  that true is to never add the permission in the first place. Bluetooth,
+  location and notification permissions arrive with WP-03, declared alongside the
+  code that needs them.
+-->
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <application
+        android:allowBackup="false"
+        android:dataExtractionRules="@xml/data_extraction_rules"
+        android:fullBackupContent="@xml/backup_rules"
+        android:label="Lumos" />
+
+</manifest>

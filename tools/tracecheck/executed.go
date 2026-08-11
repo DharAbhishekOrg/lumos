@@ -130,9 +130,14 @@ func addJUnit(out map[string]bool, s junitSuite, lang, module string) {
 		if tc.Failure != nil || tc.Error != nil || tc.Skipped != nil {
 			continue // only passing tests are evidence
 		}
-		class := tc.ClassName
+		// The SUITE name wins over the testcase's classname attribute.
+		// Gradle and swift-testing write the same value into both, so this
+		// changes nothing for them; node:test's junit reporter writes the
+		// literal placeholder classname="test" for every case, which would
+		// collapse an entire module into identifiers beginning "test.".
+		class := s.Name
 		if class == "" {
-			class = s.Name
+			class = tc.ClassName
 		}
 		// Keep the simple class name: the matrix cites Class.method, not FQN.
 		if i := strings.LastIndex(class, "."); i >= 0 {

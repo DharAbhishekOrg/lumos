@@ -20,7 +20,8 @@
    "TRS-BCK"
   ],
   "admin-console/": [
-   "SRS-ADM"
+   "SRS-ADM",
+   "TRS-ARCH-006"
   ],
   "config-schema/": [
    "TRS-CFG",
@@ -98,6 +99,44 @@
    "TRS-TST-001",
    "TRS-PROTO-015",
    "SRS-NFR-CMP-004"
+  ],
+  "ios-app/shell/": [
+   "TRS-REP-004",
+   "TRS-REP-007"
+  ],
+  "android-app/app/": [
+   "TRS-REP-004",
+   "TRS-REP-007"
+  ],
+  "backend/cmd/": [
+   "TRS-REP-004",
+   "TRS-REP-007",
+   "TRS-BCK-002"
+  ],
+  "tools/lumoslint/": [
+   "TRS-CODE-001",
+   "TRS-CODE-003",
+   "TRS-CODE-005",
+   "TRS-CICD-001"
+  ],
+  "tools/deplock/": [
+   "TRS-REP-003",
+   "TRS-CICD-001"
+  ],
+  "tools/sbomgen/": [
+   "TRS-CICD-004"
+  ],
+  "tools/bootstrap/": [
+   "TRS-REP-006",
+   "TRS-CICD-008"
+  ],
+  ".github/workflows/": [
+   "TRS-CICD-001",
+   "TRS-CICD-007"
+  ],
+  ".gitleaks.toml": [
+   "TRS-REP-005",
+   "TRS-CICD-001"
   ]
  },
  "last_commit_convention": "A commit cannot contain its own hash, so last_commit records the HEAD the entry's evidence was produced against - the commit the author stamped from. Freshness proves the field CHANGED between the PR base and head, which is what EDP Sec. 6.2 actually requires ('must also modify those entries' last_commit') and needs no self-referential SHA."

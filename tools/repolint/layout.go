@@ -12,8 +12,10 @@
 package repolint
 
 import (
+	"errors"
 	"fmt"
 	"os"
+	"os/exec"
 	"path/filepath"
 	"sort"
 	"strings"
@@ -166,8 +168,44 @@ func Check(repoRoot string) ([]Violation, error) {
 	return violations, nil
 }
 
+// gitIgnored reports which of the given top-level names git considers ignored.
+//
+// Build output is not layout drift. A developer who has run `./gradlew` has a
+// root-level build/ directory that .gitignore already excludes, and flagging it
+// teaches people that this gate cries wolf - which is how a gate stops being
+// read. Only what git would actually track is layout.
+//
+// If git is unavailable (a source tarball, a container without git), every
+// entry is reported as not-ignored and the check falls back to its stricter
+// behaviour. Failing towards MORE scrutiny is the right direction for a rule
+// whose job is to catch things that should not be there.
+func gitIgnored(repoRoot string, names []string) map[string]bool {
+	ignored := map[string]bool{}
+	if len(names) == 0 {
+		return ignored
+	}
+	cmd := exec.Command("git", append([]string{"check-ignore", "--"}, names...)...)
+	cmd.Dir = repoRoot
+	out, err := cmd.Output()
+	if err != nil {
+		// Exit status 1 means "nothing matched", which is not an error here.
+		// Any other failure leaves the map empty, i.e. nothing is exempted.
+		var exitErr *exec.ExitError
+		if !errors.As(err, &exitErr) {
+			return ignored
+		}
+	}
+	for _, line := range strings.Split(string(out), "\n") {
+		if name := strings.TrimSpace(line); name != "" {
+			ignored[strings.TrimSuffix(name, "/")] = true
+		}
+	}
+	return ignored
+}
+
 // driftingEntries reports top-level entries that are neither a required root
-// nor an allow-listed root file. Dot-prefixed entries are skipped as tooling.
+// nor an allow-listed root file. Dot-prefixed entries are skipped as tooling,
+// and git-ignored entries are skipped as build output.
 func driftingEntries(repoRoot string) ([]Violation, error) {
 	entries, err := os.ReadDir(repoRoot)
 	if err != nil {
@@ -179,10 +217,21 @@ func driftingEntries(repoRoot string) ([]Violation, error) {
 		required[r] = true
 	}
 
+	names := make([]string, 0, len(entries))
+	for _, e := range entries {
+		if !strings.HasPrefix(e.Name(), ".") {
+			names = append(names, e.Name())
+		}
+	}
+	ignored := gitIgnored(repoRoot, names)
+
 	var violations []Violation
 	for _, e := range entries {
 		name := e.Name()
 		if strings.HasPrefix(name, ".") {
+			continue
+		}
+		if ignored[name] {
 			continue
 		}
 		if e.IsDir() {

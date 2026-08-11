@@ -80,6 +80,7 @@ func buildAdvVectors(constantsHash string) (*advFile, error) {
 	// Consecutive epochs, and one far-future epoch, all under a fixed base time.
 	baseUnix := int64(1_700_000_000)
 	baseEpoch := adv.Epoch(baseUnix, rot)
+	// lumoslint:allow-literal - epoch OFFSETS from the base epoch, not a register value.
 	offsets := []int64{0, 1, 2, 3, 100}
 	for i, off := range offsets {
 		epoch := baseEpoch + off
@@ -321,6 +322,7 @@ func basePackage(constantsHash string) *config.Package {
 		ValidFrom:     1_699_000_000,
 		ValidUntil:    1_800_000_000,
 		Overrides: map[string]int64{
+			// lumoslint:allow-literal - a fixture override value chosen AT the bound to exercise it.
 			"EID_ROTATION_SEC": 900,
 			"MESH_HOP_DEFAULT": 4,
 		},
@@ -413,6 +415,7 @@ func buildConfigInvalid(constantsHash string) (*configInvalidFile, error) {
 
 	mutated := basePackage(constantsHash)
 	sigOverOriginal := mutated.Sign(priv)
+	// lumoslint:allow-literal - a fixture override value chosen AT the bound to exercise it.
 	mutated.Overrides["EID_ROTATION_SEC"] = 300 // signed bytes no longer match
 	add("mutated_override_after_signing", "An override value changed after signing; every field is covered by the signature.",
 		mutated, sigOverOriginal, configNow, 4, config.EnvStaging, "ERR_CONFIG_SIGNATURE_INVALID")

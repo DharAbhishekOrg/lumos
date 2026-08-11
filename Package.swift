@@ -18,7 +18,10 @@ let package = Package(
     name: "LumosProtocolConformance",
     platforms: [
         // CryptoKit needs macOS 10.15+; 13 is the floor the CI image provides.
-        .macOS(.v13)
+        // iOS 17 is declared so the app shell is compiled against the platform
+        // it actually ships to, not merely against the host.
+        .macOS(.v13),
+        .iOS(.v17),
     ],
     targets: [
         // Generated constants, message classes, error codes and class limits.
@@ -39,6 +42,21 @@ let package = Package(
             name: "LumosProtocolConformance",
             dependencies: ["LumosProtocol", "LumosProtocolGenerated"],
             path: "ios-app/protocol-conformance/Tests/LumosProtocolConformance",
+            swiftSettings: [.swiftLanguageMode(.v6)]
+        ),
+
+        // The empty iOS application shell. A SwiftPM library rather than an .app
+        // bundle: a bundle needs an Xcode project and a signing identity, and
+        // signing material never exists in source or CI (TRS-REP-005).
+        .target(
+            name: "LumosAppShell",
+            path: "ios-app/shell/Sources/LumosAppShell",
+            swiftSettings: [.swiftLanguageMode(.v6)]
+        ),
+        .testTarget(
+            name: "LumosAppShellTests",
+            dependencies: ["LumosAppShell"],
+            path: "ios-app/shell/Tests/LumosAppShellTests",
             swiftSettings: [.swiftLanguageMode(.v6)]
         ),
     ]
