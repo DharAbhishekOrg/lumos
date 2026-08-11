@@ -119,16 +119,22 @@ jobs:
           fi
           echo "scanner confirmed live: the planted key was detected"
 
-      # fetch-depth: 0 gives the full history of the refs checkout fetched -
-      # which on a pull request is this branch and its base, and nothing else.
-      # `--all` then traverses 10 commits and the job still calls itself a
-      # full-history scan. Fetching every remote head first makes the name
-      # true: a secret pushed to a branch that was never merged is still
-      # published, and that is precisely the case a merged-only scan misses.
-      - name: fetch every remote branch
+      # This step exists to make the scan's SCOPE visible, not to widen it.
+      # actions/checkout at fetch-depth: 0 already fetches +refs/heads/*, so
+      # the fetch here is a belt-and-braces no-op on GitHub-hosted runners; it
+      # is kept so the job does not silently depend on that action's default
+      # refspec staying what it is today.
+      #
+      # What matters is the printed output. "full history" is a claim about
+      # coverage, and a reader cannot check it from the job's name - the run
+      # log has to say which refs were reachable and how many commits were
+      # walked. A low number here is not automatically wrong: branches whose
+      # pull requests have merged are deleted on the remote, so their commits
+      # are reachable through main rather than through a branch of their own.
+      - name: show what the scan can reach
         run: |
           git fetch --no-tags --prune --quiet origin '+refs/heads/*:refs/remotes/origin/*'
-          echo "refs now visible to the scan:"
+          echo "refs visible to the scan:"
           git for-each-ref --format='  %(refname)' refs/remotes/origin | head -50
           echo "commits reachable: $(git rev-list --all --count)"
 
