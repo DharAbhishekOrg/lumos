@@ -214,9 +214,85 @@ func CheckHonesty(m *Matrix, cat *Catalogue, executed *ExecutedTests) []Finding 
 	}
 
 	out = append(out, checkGateRegister(m)...)
+	out = append(out, checkIdentifierShapes(m, executed)...)
 
 	SortFindings(out)
 	return out
+}
+
+// checkIdentifierShapes catches a runner whose identifier FORMAT has drifted
+// away from the matrix, as opposed to a runner that failed.
+//
+// This is the failure this project keeps meeting. A collector change renames
+// every identifier a language produces; the language still reports its tests as
+// passing, the collector still writes a healthy-looking set, and every linked ID
+// for that language silently matches nothing. Rows survive because they also
+// link a language that still matches, so the gate stays green while a whole
+// runner's evidence has quietly stopped counting. It has now happened three
+// times: Java @DisplayName sentences, a missing Swift xUnit report, and - in
+// slice S7 - a suite-name preference that broke every Swift identifier at once.
+//
+// The rule: for every lang:module pair the matrix links, if that pair produced
+// ANY executed identifier this run, at least one of the matrix's linked
+// identifiers for it must be among them. A pair that produced nothing at all is
+// not flagged here - that is either a legitimately skipped job (the Swift path
+// filter) or the collector's own fail-on-empty rule, which fires first.
+func checkIdentifierShapes(m *Matrix, executed *ExecutedTests) []Finding {
+	if executed == nil || len(executed.Tests) == 0 {
+		return nil
+	}
+
+	executedByPair := map[string]int{}
+	for _, id := range executed.Tests {
+		if pair, ok := langModule(id); ok {
+			executedByPair[pair]++
+		}
+	}
+
+	linkedByPair := map[string]int{}
+	matchedByPair := map[string]int{}
+	for i := range m.Entries {
+		for _, t := range m.Entries[i].Tests {
+			pair, ok := langModule(t)
+			if !ok {
+				continue // e.g. a "ci:workflow#run" reference, not a test identifier
+			}
+			linkedByPair[pair]++
+			if executed.Has(t) {
+				matchedByPair[pair]++
+			}
+		}
+	}
+
+	var out []Finding
+	for pair, linked := range linkedByPair {
+		produced := executedByPair[pair]
+		if produced == 0 || matchedByPair[pair] > 0 {
+			continue
+		}
+		out = append(out, Finding{
+			Rule:  "identifier-shape-drift",
+			ReqID: pair,
+			Detail: fmt.Sprintf(
+				"run %s produced %d executed identifiers for %s but none of the %d the matrix links; "+
+					"the runner's identifier format has drifted, so its evidence is silently not counting",
+				executed.RunID, produced, pair, linked),
+		})
+	}
+	return out
+}
+
+// langModule extracts the "lang:module" prefix of a matrix test identifier.
+func langModule(id string) (string, bool) {
+	lang, rest, ok := strings.Cut(id, ":")
+	if !ok {
+		return "", false
+	}
+	module, _, ok := strings.Cut(rest, ":")
+	if !ok {
+		return "", false
+	}
+	return lang + ":" + module, true
 }
 
 // checkGateRegister validates the matrix's own EDP Sec. 8 owner-gate register:
@@ -293,10 +369,18 @@ func anyExecuted(links []string, executed *ExecutedTests) bool {
 	return false
 }
 
+// TestLanguages are the runner prefixes a matrix test identifier may carry.
+// "ts" joined the set in slice S7 when the admin console gained a collected
+// junit report; it was missing from isTestReference until the WP-01 closeout,
+// which meant a row backed only by TypeScript tests skipped the executed-test
+// check entirely and could have reached 'tested' on evidence nobody verified
+// had run.
+var TestLanguages = []string{"go", "java", "swift", "ts"}
+
 // isTestReference reports whether a link names an executable test.
 func isTestReference(l string) bool {
-	for _, prefix := range []string{"go:", "java:", "swift:"} {
-		if strings.HasPrefix(l, prefix) {
+	for _, lang := range TestLanguages {
+		if strings.HasPrefix(l, lang+":") {
 			return true
 		}
 	}

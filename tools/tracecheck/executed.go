@@ -125,20 +125,47 @@ func CollectJUnitTests(dir, lang, module string) ([]string, error) {
 	return sortedKeys(out), nil
 }
 
+// placeholderSuiteNames are values a runner writes when it has nothing real to
+// put in the field. Each entry is here because a runner ACTUALLY emits it, as
+// captured from a live CI artefact - not because it looked plausible:
+//
+//	"TestResults" - SwiftPM's --xunit-output writes one <testsuite
+//	                name="TestResults"> wrapper around every case and puts the
+//	                real suite in classname.
+//	"test"        - node:test's junit reporter does the mirror image: the real
+//	                suite is the <testsuite> name from describe(), and every
+//	                classname is the literal string "test".
+//
+// The two runners put their placeholder on OPPOSITE fields, which is why
+// neither "always prefer classname" nor "always prefer the suite name" works.
+// Slice S7 chose suite-name-first to accommodate node and silently broke every
+// Swift identifier; the closeout run is where that surfaced.
+var placeholderSuiteNames = map[string]bool{
+	"TestResults": true,
+	"test":        true,
+}
+
+// suiteName picks whichever of the two fields carries real information.
+func suiteName(fromSuite, fromClassName string) string {
+	for _, candidate := range []string{fromClassName, fromSuite} {
+		if candidate != "" && !placeholderSuiteNames[candidate] {
+			return candidate
+		}
+	}
+	// Both are empty or both are placeholders: prefer whatever is non-empty so
+	// the caller's own emptiness checks decide, rather than inventing a name.
+	if fromClassName != "" {
+		return fromClassName
+	}
+	return fromSuite
+}
+
 func addJUnit(out map[string]bool, s junitSuite, lang, module string) {
 	for _, tc := range s.TestCase {
 		if tc.Failure != nil || tc.Error != nil || tc.Skipped != nil {
 			continue // only passing tests are evidence
 		}
-		// The SUITE name wins over the testcase's classname attribute.
-		// Gradle and swift-testing write the same value into both, so this
-		// changes nothing for them; node:test's junit reporter writes the
-		// literal placeholder classname="test" for every case, which would
-		// collapse an entire module into identifiers beginning "test.".
-		class := s.Name
-		if class == "" {
-			class = tc.ClassName
-		}
+		class := suiteName(s.Name, tc.ClassName)
 		// Keep the simple class name: the matrix cites Class.method, not FQN.
 		if i := strings.LastIndex(class, "."); i >= 0 {
 			class = class[i+1:]

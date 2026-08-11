@@ -4,12 +4,15 @@
 // ADRs: -
 // Threading: any
 // Notes: Every defect this collector has had was a naming defect - Gradle
-// writing a @DisplayName sentence into the name attribute, Swift wrapping a
-// method as "-[Suite method]", node:test emitting the placeholder
-// classname="test" for every case. None of them failed loudly; each produced
-// identifiers that matched no matrix row, so the honesty gate went quiet
-// instead of red. The fixtures below are the real output shape of each of the
-// three runners, and they assert the EXACT identifier produced.
+// writing a @DisplayName sentence into the name attribute, a missing Swift
+// xUnit report, node:test emitting the placeholder classname="test", and
+// SwiftPM emitting the placeholder name="TestResults" on the other field. None
+// of them failed loudly; each produced identifiers that matched no matrix row,
+// so the honesty gate went quiet instead of red.
+//
+// The fixtures here are CAPTURED from a real CI artefact, not composed. That is
+// not pedantry: the invented Swift fixture written in slice S7 is precisely why
+// the fourth defect shipped.
 package main
 
 import (
@@ -48,51 +51,149 @@ func assertIDs(t *testing.T, got, want []string) {
 	}
 }
 
-// Gradle writes one file per test class, rooted at <testsuite>, with the fully
-// qualified class name in both the suite name and every classname attribute.
+// The three fixtures below are CAPTURED, not composed. Each is a verbatim
+// excerpt of an artefact downloaded from CI run 31540270055. That distinction is
+// the point of this file: slice S7's Swift fixture was written from what I
+// assumed SwiftPM emitted - a <testsuite> named for the class - and the real
+// output names every suite "TestResults" and puts the class in classname. The
+// invented fixture passed while every Swift identifier in the matrix silently
+// matched nothing. A fixture that agrees with its author instead of with the
+// tool is the same self-agreement defect the golden vectors exist to prevent.
+
+// Gradle: one file per class, rooted at <testsuite>, fully qualified class name
+// in BOTH the suite name and every classname attribute.
 func TestCollectsGradleJUnitReports(t *testing.T) {
 	const report = `<?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="com.lumos.protocol.FramingConformanceTest" tests="2" failures="0">
-  <testcase name="roundTripsEveryPositiveVector()" classname="com.lumos.protocol.FramingConformanceTest"/>
-  <testcase name="rejectsEveryInvalidVector()" classname="com.lumos.protocol.FramingConformanceTest"/>
+<testsuite name="com.lumos.protocol.conformance.CryptoConformanceTest" tests="7" skipped="0" failures="0" errors="0" timestamp="2026-08-11T21:58:11.429Z" hostname="runnervmzvulz" time="0.599">
+  <properties/>
+  <testcase name="aeadKat()" classname="com.lumos.protocol.conformance.CryptoConformanceTest" time="0.221"/>
+  <testcase name="advertisement()" classname="com.lumos.protocol.conformance.CryptoConformanceTest" time="0.023"/>
 </testsuite>`
 	assertIDs(t, collect(t, report, "java", "protocol-conformance"), []string{
-		"java:protocol-conformance:FramingConformanceTest.rejectsEveryInvalidVector",
-		"java:protocol-conformance:FramingConformanceTest.roundTripsEveryPositiveVector",
+		"java:protocol-conformance:CryptoConformanceTest.advertisement",
+		"java:protocol-conformance:CryptoConformanceTest.aeadKat",
 	})
 }
 
-// SwiftPM's --xunit-output wraps suites in <testsuites> and may write the
-// Objective-C selector form "-[Suite method]" as the case name.
+// SwiftPM's --xunit-output: ONE <testsuite name="TestResults"> wrapping every
+// case, with the real suite in classname. Preferring the suite name here is
+// what broke every Swift identifier in slice S7.
 func TestCollectsSwiftXUnitReports(t *testing.T) {
 	const report = `<?xml version="1.0" encoding="UTF-8"?>
+
 <testsuites>
-  <testsuite name="LumosProtocolConformance.CryptoConformanceTests" tests="2" failures="0">
-    <testcase classname="LumosProtocolConformance.CryptoConformanceTests" name="testSafetyNumberReproducesDigitsAndEmoji"/>
-    <testcase classname="LumosProtocolConformance.CryptoConformanceTests" name="-[CryptoConformanceTests testAeadTamperCases]"/>
-  </testsuite>
+<testsuite name="TestResults" errors="0" tests="10" failures="0" time="1.5345801280000002">
+<testcase classname="LumosProtocolConformance.CryptoConformanceTests" name="testConfigPackagesAndVouchers" time="0.261370167">
+</testcase>
+<testcase classname="LumosProtocolConformance.CryptoConformanceTests" name="testAEADKnownAnswersAndTampers" time="0.262349459">
+</testcase>
+</testsuite>
 </testsuites>`
 	assertIDs(t, collect(t, report, "swift", "LumosProtocolConformance"), []string{
-		"swift:LumosProtocolConformance:CryptoConformanceTests.testAeadTamperCases",
-		"swift:LumosProtocolConformance:CryptoConformanceTests.testSafetyNumberReproducesDigitsAndEmoji",
+		"swift:LumosProtocolConformance:CryptoConformanceTests.testAEADKnownAnswersAndTampers",
+		"swift:LumosProtocolConformance:CryptoConformanceTests.testConfigPackagesAndVouchers",
 	})
 }
 
 // node:test writes the describe() block as the suite and the literal string
-// "test" as every case's classname. Preferring classname here would collapse
-// the whole module into identifiers beginning "test.".
+// "test" as every classname - the mirror image of SwiftPM. Preferring classname
+// here would collapse the whole module into identifiers beginning "test.".
 func TestCollectsNodeTestJUnitReports(t *testing.T) {
 	const report = `<?xml version="1.0" encoding="utf-8"?>
 <testsuites>
-  <testsuite name="AdminShell" tests="2" failures="0">
-    <testcase name="fourBuildEnvironmentsAreSeparated" classname="test" file="dist/shell.test.js"/>
-    <testcase name="buildProvenanceIsRendered" classname="test" file="dist/shell.test.js"/>
-  </testsuite>
+	<testsuite name="AdminShell" time="0.002169" disabled="0" errors="0" tests="2" failures="0" skipped="0">
+		<testcase name="fourBuildEnvironmentsAreSeparated" time="0.000740" classname="test" file="dist/shell.test.js"/>
+		<testcase name="buildProvenanceIsRendered" time="0.000099" classname="test" file="dist/shell.test.js"/>
+	</testsuite>
 </testsuites>`
 	assertIDs(t, collect(t, report, "ts", "admin-console"), []string{
 		"ts:admin-console:AdminShell.buildProvenanceIsRendered",
 		"ts:admin-console:AdminShell.fourBuildEnvironmentsAreSeparated",
 	})
+}
+
+// TestPlaceholdersSitOnOppositeFields is the regression guard. Neither "always
+// prefer classname" nor "always prefer the suite name" can satisfy both runners,
+// so a future simplification to either one must fail here.
+func TestPlaceholdersSitOnOppositeFields(t *testing.T) {
+	cases := []struct {
+		name             string
+		suite, className string
+		want             string
+	}{
+		{"swiftpm places the placeholder on the suite", "TestResults", "Module.CryptoConformanceTests", "Module.CryptoConformanceTests"},
+		{"node places it on the classname", "AdminShell", "test", "AdminShell"},
+		{"gradle agrees with itself", "com.lumos.X", "com.lumos.X", "com.lumos.X"},
+		{"neither field is useful", "TestResults", "test", "test"},
+		{"only a suite name exists", "OnlySuite", "", "OnlySuite"},
+	}
+	for _, c := range cases {
+		if got := suiteName(c.suite, c.className); got != c.want {
+			t.Errorf("%s: suiteName(%q, %q) = %q, want %q", c.name, c.suite, c.className, got, c.want)
+		}
+	}
+}
+
+// TestIdentifierShapeDriftIsCaught: the collector renaming everything a runner
+// produces must be LOUD. This is the check that would have caught the S7 Swift
+// break in the run that introduced it.
+func TestIdentifierShapeDriftIsCaught(t *testing.T) {
+	m := &Matrix{Entries: []Entry{{
+		ReqID:  "TRS-PROTO-001",
+		Status: StatusTested,
+		Code:   []string{"protocol/wire/frame.go"},
+		Tests: []string{
+			"go:protocol/wire:TestRoundTrip",
+			"swift:LumosProtocolConformance:FramingConformanceTests.testFrameRoundtrip",
+		},
+	}}}
+
+	// The Swift runner reported tests, but under drifted identifiers.
+	drifted := &ExecutedTests{RunID: "1", Tests: []string{
+		"go:protocol/wire:TestRoundTrip",
+		"swift:LumosProtocolConformance:TestResults.testFrameRoundtrip",
+	}}
+	findings := checkIdentifierShapes(m, drifted)
+	if len(findings) != 1 || findings[0].Rule != "identifier-shape-drift" {
+		t.Fatalf("drifted Swift identifiers were not flagged: %v", findings)
+	}
+	if findings[0].ReqID != "swift:LumosProtocolConformance" {
+		t.Errorf("finding names %q, want the lang:module pair", findings[0].ReqID)
+	}
+
+	// Matching identifiers: silent.
+	matching := &ExecutedTests{RunID: "1", Tests: []string{
+		"go:protocol/wire:TestRoundTrip",
+		"swift:LumosProtocolConformance:FramingConformanceTests.testFrameRoundtrip",
+	}}
+	if f := checkIdentifierShapes(m, matching); len(f) != 0 {
+		t.Errorf("healthy identifiers were flagged: %v", f)
+	}
+
+	// A runner that produced NOTHING is a skipped job, not drift. The Swift
+	// path filter skips macOS legitimately, and flagging that would make the
+	// filter unusable; the collector's fail-on-empty rule covers the real case.
+	skipped := &ExecutedTests{RunID: "1", Tests: []string{"go:protocol/wire:TestRoundTrip"}}
+	if f := checkIdentifierShapes(m, skipped); len(f) != 0 {
+		t.Errorf("a skipped runner was reported as drift: %v", f)
+	}
+}
+
+// TestEveryRunnerLanguageIsATestReference stops a new runner being wired into
+// CI while the honesty check silently ignores its identifiers - which is what
+// happened to "ts" between slice S7 and the WP-01 closeout.
+func TestEveryRunnerLanguageIsATestReference(t *testing.T) {
+	for _, lang := range TestLanguages {
+		id := lang + ":module:Suite.method"
+		if !isTestReference(id) {
+			t.Errorf("%q is a declared runner language but %q is not treated as a test reference", lang, id)
+		}
+	}
+	for _, notATest := range []string{"ci:conformance#123", "vector:test-vectors/framing/frame_roundtrip.json", ""} {
+		if isTestReference(notATest) {
+			t.Errorf("%q is evidence of a different kind and must not count as an executed test", notATest)
+		}
+	}
 }
 
 // Only passing tests are evidence. A failed, errored or skipped case that
