@@ -97,15 +97,31 @@ is success; papering over it is the only real failure mode.
 
 ## 7. Current state
 
-- Active WP: **WP-01** (see `docs/prompts/WP-01-kickoff.md`)
-- Trace matrix: seeded; WP-01 slices S0 (toolchain pin) and S1 (repo roots per
-  TRS §4.1) are complete and `tested`. Everything else remains `not_started`.
-- Repo layout is now the TRS §4.1 ten-root form. The handover pack's
+- **WP-01 is closed.** Full record: `evidence/wp01/closeout.md`, with
+  machine-readable results in `evidence/wp01/closeout-results.json`. Read the
+  closeout before starting WP-02 — it lists every deviation, every ADR raised,
+  and everything left `not_started` with its destination WP.
+- Active WP: **WP-02** (EDP §7). Do not start it without its kickoff brief.
+- **WP-02 preflight, owner-assigned 2026-08-12 (TRS-REP-008):** seed the threat
+  model and privacy data map **before** feature code. They constrain design;
+  written afterwards they only describe it. They then live per-WP and are
+  audited in WP-11.
+- Trace matrix: 648 entries. Of the 33 IDs in WP-01's declared scope, 17 are
+  `tested`, 9 `implemented` and 7 `not_started`. All nine EDP §8 owner gates
+  remain `unproven_owner`; no agent may advance one.
+- Repo layout is the TRS §4.1 ten-root form. The handover pack's
   `requirements/`, `acceptance/` and `prompts/` directories were moved under
   `docs/` in slice S1; the original archive is retained at
   `docs/handover/Lumos_Codex_Handover_Pack.zip`.
 - Toolchains are pinned in `tools/toolchain/toolchain-manifest.json`. Swift is
   unavailable on the Windows authoring host by design; the iOS conformance
-  runner executes on a GitHub Actions `macos-latest` runner.
-- Beyond the above, nothing is implemented. Do not assume any code exists that
-  you have not read.
+  runner and the iOS shell build on a GitHub Actions `macos-latest` runner.
+- What exists: 306 frozen constants with tri-language codegen (no hand-written
+  constant anywhere), the protocol schemas, the complete TRS §18.4 golden-vector
+  suite, Go/Java/Swift/TypeScript conformance and unit runners, the traceability
+  gate, the PR pipeline (lint, secret scan, dependency locks, SBOM stub), and
+  four EMPTY application shells.
+- ADRs 005–009 were raised during WP-01 and are all Accepted; two carry flags
+  for gate G-07 (external cryptographic review). See `docs/adrs/`.
+- Beyond the above, nothing is implemented. The shells are empty by instruction.
+  Do not assume any code exists that you have not read.

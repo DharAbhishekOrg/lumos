@@ -1,0 +1,856 @@
+{
+ "work_package": "WP-01",
+ "baseline": "SRS v1.1 / TRS v1.1 / EDP v1.0",
+ "generated_for_commit": "5b07855",
+ "pipeline": {
+  "run_id": "31540987936",
+  "executed_tests_total": 232,
+  "executed_tests_by_language": {
+   "go": 203,
+   "java": 12,
+   "swift": 13,
+   "ts": 4
+  },
+  "languages_reporting": [
+   "go",
+   "java",
+   "swift",
+   "ts"
+  ]
+ },
+ "totals": {
+  "matrix_entries": 648,
+  "matrix_by_status": {
+   "implemented": 17,
+   "not_started": 596,
+   "tested": 35
+  },
+  "in_scope_count": 33,
+  "in_scope_by_status": {
+   "implemented": 9,
+   "not_started": 7,
+   "tested": 17
+  },
+  "out_of_scope_but_moved_count": 26
+ },
+ "in_scope": [
+  {
+   "req_id": "TRS-CICD-001",
+   "status": "implemented",
+   "tests": [
+    "ci:conformance#31528127667"
+   ],
+   "code_paths": 3,
+   "test_count": 1,
+   "tests_executed_this_run": 0
+  },
+  {
+   "req_id": "TRS-CICD-005",
+   "status": "implemented",
+   "tests": [
+    "go:protocol/schema:TestGeneratedConfigOverridesAreRegisterDriven",
+    "go:tools/constantsgen:TestCommittedFilesMatchRegister"
+   ],
+   "code_paths": 5,
+   "test_count": 2,
+   "tests_executed_this_run": 2
+  },
+  {
+   "req_id": "TRS-CONST-001",
+   "status": "tested",
+   "tests": [
+    "go:tools/constantsgen:TestGeneratedFilesCarryTheGeneratedBanner",
+    "go:tools/constantsgen:TestGeneratedGoValuesMatchRegister",
+    "go:tools/constantsgen:TestGeneratedJavaCompilesAndMatchesRegister",
+    "go:tools/constantsgen:TestGeneratedSwiftIsStructurallyComplete",
+    "go:tools/constantsgen:TestGoldenValues",
+    "go:tools/constantsgen:TestRegisterCoversTRSSection23",
+    "go:tools/constantsgen:TestSafetyNumberFormatMatchesADR005",
+    "java:protocol-conformance:CryptoConformanceTest.safetyNumber",
+    "swift:LumosProtocolConformance:CryptoConformanceTests.testSafetyNumberReproducesDigitsAndEmoji"
+   ],
+   "code_paths": 11,
+   "test_count": 9,
+   "tests_executed_this_run": 9
+  },
+  {
+   "req_id": "TRS-CONST-002",
+   "status": "implemented",
+   "tests": [
+    "go:protocol/schema:TestGeneratedConfigOverridesAreRegisterDriven",
+    "go:tools/constantsgen:TestEveryOverridableEntryDeclaresBoundsOrTheGap",
+    "go:tools/constantsgen:TestADR006BoundsWereAppliedExactly",
+    "go:tools/constantsgen:TestEveryBoundTripleIsCoherent"
+   ],
+   "code_paths": 5,
+   "test_count": 4,
+   "tests_executed_this_run": 4
+  },
+  {
+   "req_id": "TRS-CONST-003",
+   "status": "implemented",
+   "tests": [
+    "go:tools/constantsgen:TestDeclaredHashMatchesContent",
+    "go:tools/constantsgen:TestHashIsSensitiveToValueChanges",
+    "go:tools/constantsgen:TestCanonicalFormExcludesDocumentation",
+    "go:tools/constantsgen:TestEmissionIsDeterministic",
+    "go:tools/constantsgen:TestCommittedFilesMatchRegister"
+   ],
+   "code_paths": 2,
+   "test_count": 5,
+   "tests_executed_this_run": 5
+  },
+  {
+   "req_id": "TRS-CONST-004",
+   "status": "not_started",
+   "tests": [],
+   "code_paths": 0,
+   "test_count": 0
+  },
+  {
+   "req_id": "TRS-CONST-005",
+   "status": "tested",
+   "tests": [
+    "go:protocol/schema:TestGeneratedConfigOverridesAreRegisterDriven",
+    "go:protocol/wire:TestConformanceFrameRoundtripVectors",
+    "go:tools/vectorgen:TestEveryVectorFileEmbedsTheRegisterHash",
+    "java:protocol-conformance:FramingConformanceTest.frameRoundtrip",
+    "swift:LumosProtocolConformance:FramingConformanceTests.testFrameRoundtripReproducesCommittedBytes"
+   ],
+   "code_paths": 7,
+   "test_count": 5,
+   "tests_executed_this_run": 5
+  },
+  {
+   "req_id": "TRS-CONST-006",
+   "status": "not_started",
+   "tests": [],
+   "code_paths": 0,
+   "test_count": 0
+  },
+  {
+   "req_id": "TRS-PROTO-001",
+   "status": "tested",
+   "tests": [
+    "go:protocol/wire:TestConformanceFrameInvalidVectors",
+    "go:protocol/wire:TestConformanceFrameRoundtripVectors",
+    "go:protocol/wire:TestEncodeMatchesHandComputedBytes",
+    "go:protocol/wire:TestRoundtripEveryKnownClass",
+    "java:protocol-conformance:FramingConformanceTest.frameInvalid",
+    "java:protocol-conformance:FramingConformanceTest.frameRoundtrip",
+    "swift:LumosProtocolConformance:FramingConformanceTests.testFrameInvalidFailsWithExactCode",
+    "swift:LumosProtocolConformance:FramingConformanceTests.testFrameRoundtripReproducesCommittedBytes"
+   ],
+   "code_paths": 17,
+   "test_count": 8,
+   "tests_executed_this_run": 8
+  },
+  {
+   "req_id": "TRS-PROTO-002",
+   "status": "tested",
+   "tests": [
+    "go:protocol/wire:TestConformanceFrameRoundtripVectors",
+    "go:protocol/wire:TestEncodeMatchesHandComputedBytes",
+    "java:protocol-conformance:FramingConformanceTest.frameInvalid",
+    "java:protocol-conformance:FramingConformanceTest.frameRoundtrip",
+    "swift:LumosProtocolConformance:FramingConformanceTests.testFrameInvalidFailsWithExactCode",
+    "swift:LumosProtocolConformance:FramingConformanceTests.testFrameRoundtripReproducesCommittedBytes"
+   ],
+   "code_paths": 17,
+   "test_count": 6,
+   "tests_executed_this_run": 6
+  },
+  {
+   "req_id": "TRS-PROTO-003",
+   "status": "tested",
+   "tests": [
+    "go:protocol/schema:TestFrameHeaderWidthMatchesRegister",
+    "java:protocol-conformance:FramingConformanceTest.headerBytesIsTheAad",
+    "swift:LumosProtocolConformance:FramingConformanceTests.testAuthenticatedHeaderIsTheLeadingBytes"
+   ],
+   "code_paths": 8,
+   "test_count": 3,
+   "tests_executed_this_run": 3
+  },
+  {
+   "req_id": "TRS-PROTO-004",
+   "status": "tested",
+   "tests": [
+    "go:protocol/wire:TestConformanceFrameRoundtripVectors",
+    "go:protocol/wire:TestEncodeMatchesHandComputedBytes",
+    "java:protocol-conformance:FramingConformanceTest.frameInvalid",
+    "java:protocol-conformance:FramingConformanceTest.frameRoundtrip",
+    "swift:LumosProtocolConformance:FramingConformanceTests.testFrameInvalidFailsWithExactCode",
+    "swift:LumosProtocolConformance:FramingConformanceTests.testFrameRoundtripReproducesCommittedBytes"
+   ],
+   "code_paths": 11,
+   "test_count": 6,
+   "tests_executed_this_run": 6
+  },
+  {
+   "req_id": "TRS-PROTO-005",
+   "status": "tested",
+   "tests": [
+    "go:protocol/schema:TestMessagePayloadsCoverEveryRegisteredClass",
+    "go:protocol/schema:TestTextEventEnvelopeMatchesAMD005",
+    "go:tools/constantsgen:TestMessageClassesMatchTRS92",
+    "java:protocol-conformance:FramingConformanceTest.frameRoundtrip",
+    "swift:LumosProtocolConformance:FramingConformanceTests.testFrameRoundtripReproducesCommittedBytes"
+   ],
+   "code_paths": 8,
+   "test_count": 5,
+   "tests_executed_this_run": 5
+  },
+  {
+   "req_id": "TRS-PROTO-006",
+   "status": "tested",
+   "tests": [
+    "go:protocol/wire:TestConformanceFrameInvalidVectors",
+    "go:protocol/wire:TestDecodeErrorPaths",
+    "go:protocol/wire:TestSkippableConditionsDecode",
+    "java:protocol-conformance:FramingConformanceTest.frameInvalid",
+    "java:protocol-conformance:FramingConformanceTest.frameRoundtrip",
+    "swift:LumosProtocolConformance:FramingConformanceTests.testFrameInvalidFailsWithExactCode",
+    "swift:LumosProtocolConformance:FramingConformanceTests.testFrameRoundtripReproducesCommittedBytes"
+   ],
+   "code_paths": 17,
+   "test_count": 7,
+   "tests_executed_this_run": 7
+  },
+  {
+   "req_id": "TRS-PROTO-007",
+   "status": "tested",
+   "tests": [
+    "go:protocol/wire:TestDecodeErrorPaths",
+    "go:protocol/wire:TestEncodeRejectsOversizedAndUnknown",
+    "go:tools/constantsgen:TestClassLimitsResolveUnitsCorrectly",
+    "go:tools/constantsgen:TestEveryClassHasAPositiveLimit",
+    "java:protocol-conformance:FramingConformanceTest.frameInvalid",
+    "java:protocol-conformance:FramingConformanceTest.frameRoundtrip",
+    "swift:LumosProtocolConformance:FramingConformanceTests.testFrameInvalidFailsWithExactCode",
+    "swift:LumosProtocolConformance:FramingConformanceTests.testFrameRoundtripReproducesCommittedBytes"
+   ],
+   "code_paths": 17,
+   "test_count": 8,
+   "tests_executed_this_run": 8
+  },
+  {
+   "req_id": "TRS-PROTO-008",
+   "status": "not_started",
+   "tests": [],
+   "code_paths": 0,
+   "test_count": 0
+  },
+  {
+   "req_id": "TRS-PROTO-009",
+   "status": "implemented",
+   "tests": [
+    "go:protocol/adv:TestConformanceAdvNegatives",
+    "go:protocol/adv:TestConformanceAdvSchedule",
+    "go:protocol/adv:TestLayoutMatchesADR002",
+    "go:protocol/adv:TestNoProhibitedContentCapacity",
+    "go:protocol/adv:TestRoundtripVerify",
+    "go:protocol/adv:TestVerifyRejectsWrongEpochAndTamper",
+    "java:protocol-conformance:CryptoConformanceTest.advertisement",
+    "swift:LumosProtocolConformance:CryptoConformanceTests.testAdvertisementScheduleAndNegatives"
+   ],
+   "code_paths": 3,
+   "test_count": 8,
+   "tests_executed_this_run": 8
+  },
+  {
+   "req_id": "TRS-PROTO-010",
+   "status": "not_started",
+   "tests": [],
+   "code_paths": 0,
+   "test_count": 0
+  },
+  {
+   "req_id": "TRS-PROTO-011",
+   "status": "tested",
+   "tests": [
+    "go:protocol/media:TestConformanceMediaAckCases",
+    "go:protocol/media:TestSelectiveAckBitmapAndRanges"
+   ],
+   "code_paths": 3,
+   "test_count": 2,
+   "tests_executed_this_run": 2
+  },
+  {
+   "req_id": "TRS-PROTO-012",
+   "status": "not_started",
+   "tests": [],
+   "code_paths": 0,
+   "test_count": 0
+  },
+  {
+   "req_id": "TRS-PROTO-013",
+   "status": "tested",
+   "tests": [
+    "go:protocol/schema:TestErrorCodesAreStableAndUnique",
+    "go:protocol/wire:TestDecodeErrorPaths",
+    "go:tools/constantsgen:TestGeneratedErrorCodesCoverRegistry",
+    "go:tools/vectorgen:TestNegativeVectorsUseRegisteredCodesOnly",
+    "java:protocol-conformance:FramingConformanceTest.errorRegistry",
+    "swift:LumosProtocolConformance:FramingConformanceTests.testErrorRegistryMatchesGenerated"
+   ],
+   "code_paths": 6,
+   "test_count": 6,
+   "tests_executed_this_run": 6
+  },
+  {
+   "req_id": "TRS-PROTO-014",
+   "status": "tested",
+   "tests": [
+    "go:protocol/wire:TestConformanceFrameRoundtripVectors",
+    "go:tools/vectorgen:TestRoundtripCoversEveryRegisterClass"
+   ],
+   "code_paths": 6,
+   "test_count": 2,
+   "tests_executed_this_run": 2
+  },
+  {
+   "req_id": "TRS-PROTO-015",
+   "status": "tested",
+   "tests": [
+    "go:tools/vectorgen:TestEveryPrescribedFileIsCommitted",
+    "go:tools/vectorgen:TestGateFailsOnMissingFile",
+    "go:tools/vectorgen:TestGateFailsOnUnexpectedFile",
+    "go:tools/vectorgen:TestManifestListsTheWholeSuite",
+    "go:tools/vectorgen:TestSuiteFilesMatchTRS184",
+    "java:protocol-conformance:CryptoConformanceTest.x3dhKat",
+    "java:protocol-conformance:FramingConformanceTest.frameRoundtrip",
+    "swift:LumosProtocolConformance:CryptoConformanceTests.testX3DHSharedSecretsAndTranscripts",
+    "swift:LumosProtocolConformance:FramingConformanceTests.testFrameRoundtripReproducesCommittedBytes"
+   ],
+   "code_paths": 4,
+   "test_count": 9,
+   "tests_executed_this_run": 9
+  },
+  {
+   "req_id": "TRS-PROTO-016",
+   "status": "not_started",
+   "tests": [],
+   "code_paths": 0,
+   "test_count": 0
+  },
+  {
+   "req_id": "TRS-REP-001",
+   "status": "tested",
+   "tests": [
+    "go:tools/repolint:TestRepositoryLayoutConforms",
+    "go:tools/repolint:TestRequiredRootsMatchTRS41",
+    "go:tools/repolint:TestCheckDetectsMissingRoot",
+    "go:tools/repolint:TestCheckDetectsRequiredRootThatIsAFile",
+    "go:tools/repolint:TestCheckDetectsUnexpectedRootDirectory",
+    "go:tools/repolint:TestCheckDetectsUnexpectedRootFile",
+    "go:tools/repolint:TestCheckDetectsMissingRelocatedArtifact",
+    "go:tools/repolint:TestCheckDetectsStaleArchiveAtRoot"
+   ],
+   "code_paths": 1,
+   "test_count": 8,
+   "tests_executed_this_run": 8
+  },
+  {
+   "req_id": "TRS-REP-002",
+   "status": "tested",
+   "tests": [
+    "go:tools/constantsgen:TestGeneratedGoValuesMatchRegister",
+    "go:tools/constantsgen:TestGeneratedJavaCompilesAndMatchesRegister",
+    "go:tools/constantsgen:TestIdentifiersAreValidAndDistinct",
+    "java:protocol-conformance:CryptoConformanceTest.safetyNumber",
+    "swift:LumosProtocolConformance:CryptoConformanceTests.testSafetyNumberReproducesDigitsAndEmoji"
+   ],
+   "code_paths": 11,
+   "test_count": 5,
+   "tests_executed_this_run": 5
+  },
+  {
+   "req_id": "TRS-REP-003",
+   "status": "tested",
+   "tests": [
+    "go:tools/deplock:TestEveryGoModuleIsChecksummed",
+    "go:tools/deplock:TestGoManifestMirrorsGoMod",
+    "go:tools/deplock:TestOnlyTheApprovedCryptoDependencyIsPresent",
+    "go:tools/deplock:TestGradleWrapperIsChecksumPinned",
+    "go:tools/deplock:TestJVMDependenciesAreCataloguedAndDeclared",
+    "go:tools/deplock:TestNPMLockfilePinsEveryPackageWithIntegrity",
+    "go:tools/deplock:TestNPMManifestMirrorsPackageJSON",
+    "go:tools/deplock:TestBuildPluginsAreDeclaredAndCatalogued",
+    "go:tools/deplock:TestManifestNoLongerCallsPinnedItemsPending"
+   ],
+   "code_paths": 7,
+   "test_count": 9,
+   "tests_executed_this_run": 9
+  },
+  {
+   "req_id": "TRS-REP-004",
+   "status": "implemented",
+   "tests": [
+    "ts:admin-console:AdminShell.fourBuildEnvironmentsAreSeparated",
+    "swift:LumosAppShell:LumosAppShellTests.testFourEnvironmentsAreSeparated",
+    "go:tools/bootstrap:TestSampleEnvironmentSeparatesTheFourVariants"
+   ],
+   "code_paths": 5,
+   "test_count": 3,
+   "tests_executed_this_run": 3
+  },
+  {
+   "req_id": "TRS-REP-005",
+   "status": "implemented",
+   "tests": [
+    "go:tools/bootstrap:TestSampleEnvironmentCarriesNothingSecretShaped",
+    "go:tools/bootstrap:TestSecretShapeScannerRejectsACredentialShapedValue"
+   ],
+   "code_paths": 4,
+   "test_count": 2,
+   "tests_executed_this_run": 2
+  },
+  {
+   "req_id": "TRS-REP-006",
+   "status": "implemented",
+   "tests": [
+    "go:tools/bootstrap:TestScriptsCarryNoVersionLiterals",
+    "go:tools/bootstrap:TestBothScriptsReadTheManifest",
+    "go:tools/bootstrap:TestEveryPinnedToolchainIsChecked",
+    "go:tools/bootstrap:TestBothScriptsApplyTheSameVersionPolicy",
+    "go:tools/bootstrap:TestScriptsCoverTheKnownGaps",
+    "go:tools/bootstrap:TestPosixScriptIsExecutableShellWithUnixEndings",
+    "go:tools/bootstrap:TestVersionLiteralScannerRejectsAHardcodedVersion",
+    "go:tools/bootstrap:TestBootstrapIsDocumented"
+   ],
+   "code_paths": 4,
+   "test_count": 8,
+   "tests_executed_this_run": 8
+  },
+  {
+   "req_id": "TRS-REP-007",
+   "status": "implemented",
+   "tests": [
+    "go:backend/cmd/lumosd:TestReleaseProvenanceFieldsExist",
+    "ts:admin-console:AdminShell.buildProvenanceIsRendered",
+    "swift:LumosAppShell:LumosAppShellTests.testBuildProvenanceIsReported"
+   ],
+   "code_paths": 4,
+   "test_count": 3,
+   "tests_executed_this_run": 3
+  },
+  {
+   "req_id": "TRS-REP-008",
+   "status": "not_started",
+   "tests": [],
+   "code_paths": 0,
+   "test_count": 0
+  },
+  {
+   "req_id": "TRS-TST-001",
+   "status": "tested",
+   "tests": [
+    "java:protocol-conformance:FramingConformanceTest.frameRoundtrip",
+    "java:protocol-conformance:FramingConformanceTest.frameInvalid",
+    "java:protocol-conformance:CryptoConformanceTest.aeadKat",
+    "java:protocol-conformance:CryptoConformanceTest.x3dhKat",
+    "swift:LumosProtocolConformance:FramingConformanceTests.testFrameRoundtripReproducesCommittedBytes",
+    "swift:LumosProtocolConformance:CryptoConformanceTests.testAEADKnownAnswersAndTampers",
+    "go:protocol/wire:TestConformanceFrameRoundtripVectors",
+    "go:protocol/crypto:TestConformanceX3DHKAT"
+   ],
+   "code_paths": 8,
+   "test_count": 8,
+   "tests_executed_this_run": 8
+  }
+ ],
+ "out_of_scope_but_moved": [
+  {
+   "req_id": "SRS-IDN-004",
+   "status": "implemented",
+   "tests": [
+    "go:protocol/adv:TestConformanceAdvSchedule",
+    "go:protocol/adv:TestEIDIsUnlinkableAcrossEpochs",
+    "go:protocol/adv:TestEpochUsesRegisterCadence",
+    "java:protocol-conformance:CryptoConformanceTest.advertisement",
+    "swift:LumosProtocolConformance:CryptoConformanceTests.testAdvertisementScheduleAndNegatives"
+   ],
+   "code_paths": 3,
+   "test_count": 5,
+   "tests_executed_this_run": 5
+  },
+  {
+   "req_id": "SRS-IDN-005",
+   "status": "tested",
+   "tests": [
+    "go:protocol/crypto/safety:TestAlphabetMeetsADR009MechanicalCriteria",
+    "go:protocol/crypto/safety:TestDistinctIdentitiesDiverge",
+    "go:protocol/crypto/safety:TestSafetyNumberDependsOnlyOnEd25519",
+    "go:protocol/crypto/safety:TestShapeAndSymmetry",
+    "go:protocol/crypto:TestConformanceSafetyNumber"
+   ],
+   "code_paths": 2,
+   "test_count": 5,
+   "tests_executed_this_run": 5
+  },
+  {
+   "req_id": "SRS-NFR-CMP-004",
+   "status": "tested",
+   "tests": [
+    "java:protocol-conformance:FramingConformanceTest.frameRoundtrip",
+    "java:protocol-conformance:CryptoConformanceTest.aeadKat",
+    "java:protocol-conformance:CryptoConformanceTest.mediaPipeline",
+    "swift:LumosProtocolConformance:FramingConformanceTests.testFrameRoundtripReproducesCommittedBytes",
+    "swift:LumosProtocolConformance:CryptoConformanceTests.testMediaObjectPipeline"
+   ],
+   "code_paths": 4,
+   "test_count": 5,
+   "tests_executed_this_run": 5
+  },
+  {
+   "req_id": "TRS-AI-003",
+   "status": "tested",
+   "tests": [
+    "go:tools/tracecheck:TestLiveMatrixPassesEveryStructuralRule",
+    "go:tools/tracecheck:TestLiveMatrixIsExactlyTheCatalogue",
+    "go:tools/tracecheck:TestCompletenessDetectsMissingOrphanAndDuplicate",
+    "go:tools/tracecheck:TestFreshnessDetectsStaleEntries",
+    "go:tools/tracecheck:TestHonestyStructuralRules",
+    "go:tools/tracecheck:TestHonestyOwnerGateRules",
+    "go:tools/tracecheck:TestHonestyRequiresATestThatActuallyRan",
+    "go:tools/tracecheck:TestMatrixStructCoversEveryTopLevelField",
+    "go:tools/tracecheck:TestGateRegisterMatchesEDPSection8",
+    "go:tools/tracecheck:TestModuleMapHasNoExclusion"
+   ],
+   "code_paths": 6,
+   "test_count": 10,
+   "tests_executed_this_run": 10
+  },
+  {
+   "req_id": "TRS-AI-005",
+   "status": "implemented",
+   "tests": null,
+   "code_paths": 2,
+   "test_count": 0
+  },
+  {
+   "req_id": "TRS-ARCH-006",
+   "status": "implemented",
+   "tests": [
+    "ts:admin-console:AdminShell.executableShapedConfigurationFieldsAreRejected",
+    "ts:admin-console:AdminShell.ordinaryConfigurationFieldsAreAccepted"
+   ],
+   "code_paths": 1,
+   "test_count": 2,
+   "tests_executed_this_run": 2
+  },
+  {
+   "req_id": "TRS-CFG-001",
+   "status": "tested",
+   "tests": [
+    "go:protocol/config:TestConformanceConfigInvalid",
+    "go:protocol/config:TestConformanceConfigValid",
+    "go:protocol/config:TestNegativeGates",
+    "go:protocol/config:TestValidPackageAccepted",
+    "go:protocol/config:TestValidationOrderIsDeterministic",
+    "java:protocol-conformance:CryptoConformanceTest.configPackages",
+    "swift:LumosProtocolConformance:CryptoConformanceTests.testConfigPackagesAndVouchers"
+   ],
+   "code_paths": 5,
+   "test_count": 7,
+   "tests_executed_this_run": 7
+  },
+  {
+   "req_id": "TRS-CFG-009",
+   "status": "tested",
+   "tests": [
+    "go:protocol/config:TestConformanceVoucherTokens",
+    "go:protocol/config:TestVoucherLifecycle",
+    "java:protocol-conformance:CryptoConformanceTest.voucherTokens",
+    "swift:LumosProtocolConformance:CryptoConformanceTests.testConfigPackagesAndVouchers"
+   ],
+   "code_paths": 5,
+   "test_count": 4,
+   "tests_executed_this_run": 4
+  },
+  {
+   "req_id": "TRS-CICD-007",
+   "status": "implemented",
+   "tests": [
+    "go:tools/tracecheck:TestReleaseCandidateGate",
+    "go:tools/tracecheck:TestGateRegisterRejectsDishonestRows"
+   ],
+   "code_paths": 3,
+   "test_count": 2,
+   "tests_executed_this_run": 2
+  },
+  {
+   "req_id": "TRS-CICD-008",
+   "status": "implemented",
+   "tests": [
+    "go:tools/bootstrap:TestBootstrapIsDocumented"
+   ],
+   "code_paths": 4,
+   "test_count": 1,
+   "tests_executed_this_run": 1
+  },
+  {
+   "req_id": "TRS-CODE-001",
+   "status": "tested",
+   "tests": [
+    "go:tools/lumoslint:TestRepositoryPassesEveryLint",
+    "go:tools/lumoslint:TestHeaderRuleFiresAndStaysSilent",
+    "go:tools/lumoslint:TestGeneratedMarkerNeedsAGenerator"
+   ],
+   "code_paths": 2,
+   "test_count": 3,
+   "tests_executed_this_run": 3
+  },
+  {
+   "req_id": "TRS-CODE-003",
+   "status": "implemented",
+   "tests": [
+    "go:tools/lumoslint:TestArchitectureRuleFiresOnForbiddenImports",
+    "go:tools/lumoslint:TestPendingArchitectureRulesAreDeclared"
+   ],
+   "code_paths": 2,
+   "test_count": 2,
+   "tests_executed_this_run": 2
+  },
+  {
+   "req_id": "TRS-CODE-005",
+   "status": "implemented",
+   "tests": [
+    "go:tools/lumoslint:TestConstantsRuleFiresOnProductionCode",
+    "go:tools/lumoslint:TestConstantsRuleExemptsTheKnownFalsePositives",
+    "go:tools/lumoslint:TestRegisterValuesAreDistinctiveOnly"
+   ],
+   "code_paths": 2,
+   "test_count": 3,
+   "tests_executed_this_run": 3
+  },
+  {
+   "req_id": "TRS-CRY-001",
+   "status": "tested",
+   "tests": [
+    "go:protocol/crypto/x3dh:TestBothSidesDeriveTheSameSessionWithOPK",
+    "go:protocol/crypto/x3dh:TestBothSidesDeriveTheSameSessionWithoutOPK",
+    "go:protocol/crypto/x3dh:TestTamperedSignaturesAreRejected",
+    "go:protocol/crypto:TestConformanceX3DHKAT"
+   ],
+   "code_paths": 6,
+   "test_count": 4,
+   "tests_executed_this_run": 4
+  },
+  {
+   "req_id": "TRS-CRY-002",
+   "status": "tested",
+   "tests": [
+    "go:protocol/crypto/ratchet:TestConversationWithDHTurns",
+    "go:protocol/crypto/ratchet:TestHeaderRoundtrip",
+    "go:protocol/crypto/ratchet:TestOutOfOrderWithinChain",
+    "go:protocol/crypto/ratchet:TestSkippedAcrossDHTurn",
+    "go:protocol/crypto:TestConformanceRatchetSequences"
+   ],
+   "code_paths": 6,
+   "test_count": 5,
+   "tests_executed_this_run": 5
+  },
+  {
+   "req_id": "TRS-CRY-003",
+   "status": "tested",
+   "tests": [
+    "go:protocol/crypto/aead:TestEveryTamperFailsIdentically",
+    "go:protocol/crypto/aead:TestRFC8439KnownAnswer",
+    "go:protocol/crypto:TestConformanceAEADKAT"
+   ],
+   "code_paths": 2,
+   "test_count": 3,
+   "tests_executed_this_run": 3
+  },
+  {
+   "req_id": "TRS-CRY-004",
+   "status": "implemented",
+   "tests": [
+    "go:protocol/crypto/safety:TestSafetyNumberDependsOnlyOnEd25519",
+    "go:protocol/crypto/x3dh:TestSafetyIdentityIsEd25519Only"
+   ],
+   "code_paths": 2,
+   "test_count": 2,
+   "tests_executed_this_run": 2
+  },
+  {
+   "req_id": "TRS-CRY-006",
+   "status": "tested",
+   "tests": [
+    "go:protocol/crypto/ratchet:TestMessageKeyDeletionByReplay",
+    "go:protocol/crypto/ratchet:TestOutOfOrderWithinChain",
+    "go:protocol/crypto/ratchet:TestSkippedAcrossDHTurn"
+   ],
+   "code_paths": 2,
+   "test_count": 3,
+   "tests_executed_this_run": 3
+  },
+  {
+   "req_id": "TRS-CRY-007",
+   "status": "tested",
+   "tests": [
+    "go:protocol/crypto/ratchet:TestMaxSkipBreach",
+    "go:protocol/crypto/ratchet:TestSkippedKeyTTLExpiry",
+    "go:protocol/crypto/ratchet:TestSkippedSessionCapFromRegister",
+    "go:protocol/crypto:TestConformanceRatchetSequences"
+   ],
+   "code_paths": 6,
+   "test_count": 4,
+   "tests_executed_this_run": 4
+  },
+  {
+   "req_id": "TRS-CRY-008",
+   "status": "tested",
+   "tests": [
+    "go:protocol/media:TestConformanceMediaPipeline",
+    "go:protocol/media:TestObjectKeyIsBoundToItsSession",
+    "go:protocol/media:TestSealChunkReassembleOpen",
+    "go:protocol/media:TestWholeObjectEncryptionPrecedesChunking"
+   ],
+   "code_paths": 3,
+   "test_count": 4,
+   "tests_executed_this_run": 4
+  },
+  {
+   "req_id": "TRS-CRY-009",
+   "status": "tested",
+   "tests": [
+    "go:protocol/config:TestCanonicalBytesAreDeterministicAndSorted",
+    "go:protocol/config:TestConformanceConfigValid",
+    "go:protocol/config:TestConformanceVoucherTokens",
+    "go:protocol/config:TestEveryFieldIsSigned",
+    "go:protocol/config:TestVoucherAndConfigSignaturesAreNotInterchangeable"
+   ],
+   "code_paths": 5,
+   "test_count": 5,
+   "tests_executed_this_run": 5
+  },
+  {
+   "req_id": "TRS-CRY-011",
+   "status": "tested",
+   "tests": [
+    "go:protocol/crypto/aead:TestDerivationIsDeterministicAndKeySeparated",
+    "go:protocol/crypto/aead:TestRFC8439KnownAnswer"
+   ],
+   "code_paths": 2,
+   "test_count": 2,
+   "tests_executed_this_run": 2
+  },
+  {
+   "req_id": "TRS-CRY-013",
+   "status": "tested",
+   "tests": [
+    "go:protocol/crypto/aead:TestEveryTamperFailsIdentically",
+    "go:protocol/crypto/ratchet:TestMessageKeyDeletionByReplay"
+   ],
+   "code_paths": 2,
+   "test_count": 2,
+   "tests_executed_this_run": 2
+  },
+  {
+   "req_id": "TRS-CRY-014",
+   "status": "tested",
+   "tests": [
+    "go:protocol/crypto/safety:TestShapeAndSymmetry",
+    "go:protocol/crypto/x3dh:TestTranscriptBindsEveryMandatedInput",
+    "go:protocol/crypto/x3dh:TestVerificationPrecedesDH",
+    "go:protocol/crypto:TestConformanceX3DHKAT"
+   ],
+   "code_paths": 2,
+   "test_count": 4,
+   "tests_executed_this_run": 4
+  },
+  {
+   "req_id": "TRS-CRY-015",
+   "status": "tested",
+   "tests": [
+    "go:protocol/crypto:TestConformanceAEADKAT",
+    "go:protocol/crypto:TestConformanceRatchetSequences",
+    "go:protocol/crypto:TestConformanceSafetyNumber",
+    "go:protocol/crypto:TestConformanceX3DHKAT",
+    "java:protocol-conformance:CryptoConformanceTest.aeadKat",
+    "java:protocol-conformance:CryptoConformanceTest.safetyNumber",
+    "java:protocol-conformance:CryptoConformanceTest.x3dhKat",
+    "swift:LumosProtocolConformance:CryptoConformanceTests.testAEADKnownAnswersAndTampers",
+    "swift:LumosProtocolConformance:CryptoConformanceTests.testSafetyNumberReproducesDigitsAndEmoji",
+    "swift:LumosProtocolConformance:CryptoConformanceTests.testX3DHSharedSecretsAndTranscripts"
+   ],
+   "code_paths": 8,
+   "test_count": 10,
+   "tests_executed_this_run": 10
+  },
+  {
+   "req_id": "TRS-MED-002",
+   "status": "tested",
+   "tests": [
+    "go:protocol/media:TestConformanceMediaNegatives",
+    "go:protocol/media:TestDigestMismatchOnCleanDecrypt",
+    "go:protocol/media:TestTruncatedReassemblyRejected",
+    "java:protocol-conformance:CryptoConformanceTest.mediaPipeline",
+    "swift:LumosProtocolConformance:CryptoConformanceTests.testMediaObjectPipeline"
+   ],
+   "code_paths": 3,
+   "test_count": 5,
+   "tests_executed_this_run": 5
+  }
+ ],
+ "owner_gates": [
+  {
+   "gate": "G-01",
+   "status": "unproven_owner",
+   "evidence": [],
+   "owner_signoff": null
+  },
+  {
+   "gate": "G-02",
+   "status": "unproven_owner",
+   "evidence": [],
+   "owner_signoff": null
+  },
+  {
+   "gate": "G-03",
+   "status": "unproven_owner",
+   "evidence": [],
+   "owner_signoff": null
+  },
+  {
+   "gate": "G-04",
+   "status": "unproven_owner",
+   "evidence": [],
+   "owner_signoff": null
+  },
+  {
+   "gate": "G-05",
+   "status": "unproven_owner",
+   "evidence": [],
+   "owner_signoff": null
+  },
+  {
+   "gate": "G-06",
+   "status": "unproven_owner",
+   "evidence": [],
+   "owner_signoff": null
+  },
+  {
+   "gate": "G-07",
+   "status": "unproven_owner",
+   "evidence": [],
+   "owner_signoff": null
+  },
+  {
+   "gate": "G-08",
+   "status": "unproven_owner",
+   "evidence": [],
+   "owner_signoff": null
+  },
+  {
+   "gate": "G-09",
+   "status": "unproven_owner",
+   "evidence": [],
+   "owner_signoff": null
+  }
+ ],
+ "unproven_or_deferred_req_ids": null
+}

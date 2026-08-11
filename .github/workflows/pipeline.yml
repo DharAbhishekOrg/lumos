@@ -19,6 +19,9 @@ on:
   push:
     branches: [main]
   pull_request:
+  # Manually runnable so a work-package close can execute the whole pipeline on
+  # demand, rather than inheriting whatever an ordinary pull request triggered.
+  workflow_dispatch:
 
 permissions:
   contents: read

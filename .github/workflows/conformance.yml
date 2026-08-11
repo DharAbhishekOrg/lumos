@@ -25,6 +25,14 @@ on:
   push:
     branches: [main]
   pull_request:
+  # A work-package close needs the FULL regression regardless of which paths the
+  # closing change happens to touch. The Swift path filter is a cost
+  # optimisation for ordinary pull requests, and at a checkpoint it is exactly
+  # the wrong behaviour: a closeout that reported "swift: skipped" would be
+  # reporting the filter, not the state of the code. The `changes` job forces
+  # swift=true for any event that is not a pull request, so a dispatch run is a
+  # complete one.
+  workflow_dispatch:
 
 permissions:
   contents: read

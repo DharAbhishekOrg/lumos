@@ -145,9 +145,28 @@ func doStamp(root string, o opts) error {
 		if err != nil {
 			return err
 		}
-		changed, err := workingChanges(root)
-		if err != nil {
-			return err
+		// With -base, compute the SAME change set the freshness check computes:
+		// base..head, the whole branch. Without it, fall back to the uncommitted
+		// working tree.
+		//
+		// The distinction matters and it is not academic. -auto originally read
+		// the working tree only, so an author who committed before stamping got
+		// "nothing to stamp" - while CI, comparing the full branch, failed with
+		// a list of stale IDs and a remedy line naming this exact command. The
+		// remedy did nothing, which is the worst state for a gate's advice to be
+		// in. This closeout is where that bit.
+		var changed []string
+		if o.base != "" {
+			changed, err = gitDiffNames(root, o.base, o.head)
+			if err != nil {
+				return fmt.Errorf("stamp diff: %w", err)
+			}
+			fmt.Printf("stamping against %s..%s\n", o.base, o.head)
+		} else {
+			changed, err = workingChanges(root)
+			if err != nil {
+				return err
+			}
 		}
 		ids = requiredIDs(mm, cat, changed)
 		fmt.Printf("%d changed paths require %d requirement entries\n", len(changed), len(ids))
