@@ -10,24 +10,25 @@ with itself. Java and Swift never generate vectors.
 
 ## Status
 
-Created in WP-01 slice S1. **No vectors exist yet** — the tree below is
-generated in slice S4 and consumed by the runners in slice S5.
+| File | Contents | Status |
+| --- | --- | --- |
+| `manifest.json` | schema_version, generator commit, constants hash | **Present** (S4a) |
+| `framing/frame_roundtrip.json` | every message class: fields -> exact bytes; decode-only skippable cases | **Present** (S4a) — 26 cases |
+| `framing/frame_invalid.json` | truncation, bad magic/lengths, unknown critical type, reserved bits, oversize | **Present** (S4a) — 12 negatives, exact codes |
+| `errors/error_codes.json` | stable code registry snapshot | **Present** (S4a) — 27 codes |
+| `crypto/x3dh_kat.json` | identity+prekeys -> shared secret, first-message binding | S4b |
+| `crypto/ratchet_sequences.json` | in-order, out-of-order, skipped, DH turns, MAX_SKIP breach | S4b |
+| `crypto/aead_kat.json` | ChaCha20-Poly1305 with header-as-AAD; tamper cases | S4b |
+| `crypto/safety_number.json` | identity pairs -> 60-digit + emoji output; freezes the 64-emoji alphabet | S4b |
+| `adv/ble_advertisement.json` | EID schedule + authTag derivation per ADR-002 | S4c |
+| `media/object_pipeline.json` | object key wrap, whole-object AEAD, SHA-256, chunk plan, ACK | S4c |
+| `config/package_valid.json` | canonical bytes, payloadHash, signatures | S4c |
+| `config/package_invalid.json` | tampered, expired, wrong env, rollback attempt | S4c |
+| `voucher/voucher_tokens.json` | valid, replayed nonce, revoked, expired | S4c |
 
-| File | Contents |
-| --- | --- |
-| `manifest.json` | schema_version, generator commit, constants hash |
-| `framing/frame_roundtrip.json` | every message class: fields -> exact bytes |
-| `framing/frame_invalid.json` | truncation, bad magic/lengths, unknown critical type |
-| `crypto/x3dh_kat.json` | identity+prekeys -> shared secret, first-message binding |
-| `crypto/ratchet_sequences.json` | in-order, out-of-order, skipped, DH turns, MAX_SKIP breach |
-| `crypto/aead_kat.json` | ChaCha20-Poly1305 with header-as-AAD; tamper cases |
-| `crypto/safety_number.json` | identity pairs -> 60-digit + emoji-pair output |
-| `adv/ble_advertisement.json` | EID schedule + authTag derivation per ADR-002 |
-| `media/object_pipeline.json` | object key wrap, whole-object AEAD, SHA-256, chunk plan, ACK |
-| `config/package_valid.json` | canonical bytes, payloadHash, signatures |
-| `config/package_invalid.json` | tampered, expired, wrong env, rollback attempt |
-| `voucher/voucher_tokens.json` | valid, replayed nonce, revoked, expired |
-| `errors/error_codes.json` | stable code registry snapshot |
+Regenerate with `go run ./tools/vectorgen`; CI verifies with
+`go run ./tools/vectorgen -check`. Generation always double-builds and
+byte-compares before writing, so a nondeterministic generator cannot emit at all.
 
 ## Rules
 

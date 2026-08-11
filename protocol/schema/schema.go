@@ -153,6 +153,19 @@ func (r *Register) Has(dotted string) bool {
 	return err == nil
 }
 
+// String resolves a dotted register path to a string value.
+func (r *Register) String(dotted string) (string, error) {
+	v, err := r.lookup(dotted)
+	if err != nil {
+		return "", err
+	}
+	s, ok := v.(string)
+	if !ok {
+		return "", fmt.Errorf("register path %q is not a string", dotted)
+	}
+	return s, nil
+}
+
 func (r *Register) lookup(dotted string) (any, error) {
 	var cur any = r.data
 	for _, seg := range strings.Split(dotted, ".") {

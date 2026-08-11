@@ -11,7 +11,6 @@ package schema
 
 import (
 	"encoding/json"
-	"os"
 	"path/filepath"
 	"regexp"
 	"sort"
@@ -436,7 +435,7 @@ func TestGeneratedConfigOverridesAreRegisterDriven(t *testing.T) {
 		t.Fatalf("LoadRegister: %v", err)
 	}
 	declaredHash, _ := raw["x-constants-hash"].(string)
-	registerHash, err := registerString(reg, "constants_hash")
+	registerHash, err := reg.String("constants_hash")
 	if err != nil {
 		t.Fatalf("register constants_hash: %v", err)
 	}
@@ -464,18 +463,6 @@ func TestGeneratedConfigOverridesAreRegisterDriven(t *testing.T) {
 			t.Errorf("override property %s describes register path %q, which does not resolve", key, regPath)
 		}
 	}
-}
-
-func registerString(r *Register, key string) (string, error) {
-	v, err := r.lookup(key)
-	if err != nil {
-		return "", err
-	}
-	s, ok := v.(string)
-	if !ok {
-		return "", os.ErrInvalid
-	}
-	return s, nil
 }
 
 // TestConfigAndVoucherSchemasForbidFreeFormObjects is the structural half of

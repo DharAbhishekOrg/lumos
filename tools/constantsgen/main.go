@@ -82,6 +82,18 @@ func run(root string, check, stamp bool) error {
 	if err != nil {
 		return err
 	}
+	wireIn, err := LoadWireInputs(root)
+	if err != nil {
+		return err
+	}
+	if err := ValidateWireCoverage(reg, model, wireIn); err != nil {
+		return err
+	}
+	wireFiles, err := EmitWireFiles(reg, model, wireIn)
+	if err != nil {
+		return err
+	}
+	files = append(files, wireFiles...)
 
 	if check {
 		return verify(root, files)

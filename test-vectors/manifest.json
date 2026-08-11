@@ -1,0 +1,35 @@
+{
+  "schema_version": 1,
+  "generator": "tools/vectorgen",
+  "generator_commit": "ab21e9a",
+  "constants_hash": "sha256:7315f92990eb8e431d0d0c392a73822035bcc96c1c469fc4fa734d75cfa278d5",
+  "key_provenance": "TESTONLY-lumos-vectors-v1",
+  "notes": "Golden-vector manifest (TRS Sec. 18.4). generator_commit is the HEAD at generation time, same convention as the trace matrix. The crypto, adv, media, config and voucher trees arrive in slices S4b/S4c; their absence here is deliberate scope, not an omission.",
+  "files": [
+    {
+      "path": "test-vectors/framing/frame_roundtrip.json",
+      "implements": [
+        "TRS-PROTO-001",
+        "TRS-PROTO-002",
+        "TRS-PROTO-004",
+        "TRS-PROTO-014",
+        "SRS-NFR-CMP-004"
+      ]
+    },
+    {
+      "path": "test-vectors/framing/frame_invalid.json",
+      "implements": [
+        "TRS-PROTO-001",
+        "TRS-PROTO-006",
+        "TRS-PROTO-007",
+        "TRS-PROTO-013"
+      ]
+    },
+    {
+      "path": "test-vectors/errors/error_codes.json",
+      "implements": [
+        "TRS-PROTO-013"
+      ]
+    }
+  ]
+}

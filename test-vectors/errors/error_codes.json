@@ -1,0 +1,174 @@
+{
+  "schema_version": 1,
+  "generator": "tools/vectorgen",
+  "constants_hash": "sha256:7315f92990eb8e431d0d0c392a73822035bcc96c1c469fc4fa734d75cfa278d5",
+  "implements": [
+    "TRS-PROTO-013"
+  ],
+  "key_provenance": "TESTONLY-lumos-vectors-v1",
+  "notes": "Stable code registry snapshot. Codes are append-only; a consumer failing a negative vector must report exactly one of these codes.",
+  "codes": [
+    {
+      "code": "ERR_FRAME_BAD_MAGIC",
+      "numeric": 1,
+      "category": "framing",
+      "meaning": "Frame magic did not match framing.FRAME_MAGIC."
+    },
+    {
+      "code": "ERR_FRAME_UNSUPPORTED_VERSION",
+      "numeric": 2,
+      "category": "framing",
+      "meaning": "Protocol major version differs from this build's."
+    },
+    {
+      "code": "ERR_FRAME_UNKNOWN_TYPE",
+      "numeric": 3,
+      "category": "framing",
+      "meaning": "Unknown message class on a frame marked critical."
+    },
+    {
+      "code": "ERR_FRAME_BAD_HEADER_LENGTH",
+      "numeric": 4,
+      "category": "framing",
+      "meaning": "header_length disagreed with the fixed length for this protocol version."
+    },
+    {
+      "code": "ERR_FRAME_TRUNCATED",
+      "numeric": 5,
+      "category": "framing",
+      "meaning": "Fewer bytes available than header_length or payload_length require."
+    },
+    {
+      "code": "ERR_FRAME_RESERVED_FLAG",
+      "numeric": 6,
+      "category": "framing",
+      "meaning": "A reserved flag bit was set on a frame marked critical."
+    },
+    {
+      "code": "ERR_FRAME_RESERVED_FIELD",
+      "numeric": 7,
+      "category": "framing",
+      "meaning": "The reserved header byte was non-zero on a frame marked critical."
+    },
+    {
+      "code": "ERR_FRAME_PAYLOAD_TOO_LARGE",
+      "numeric": 8,
+      "category": "framing",
+      "meaning": "payload_length exceeded the maximum for its message class."
+    },
+    {
+      "code": "ERR_PAYLOAD_DECOMPRESSION_BOMB",
+      "numeric": 20,
+      "category": "payload",
+      "meaning": "Declared or actual decompressed size exceeded the class maximum."
+    },
+    {
+      "code": "ERR_PAYLOAD_MALFORMED",
+      "numeric": 21,
+      "category": "payload",
+      "meaning": "Payload did not decode against its class schema."
+    },
+    {
+      "code": "ERR_TEXT_UNKNOWN_EVENT_KIND",
+      "numeric": 22,
+      "category": "payload",
+      "meaning": "Unknown inner event_kind on a critical TEXT_MESSAGE (AMD-005)."
+    },
+    {
+      "code": "ERR_TEXT_MISSING_TARGET",
+      "numeric": 23,
+      "category": "payload",
+      "meaning": "An edit, delete or reaction arrived without target_message_id."
+    },
+    {
+      "code": "ERR_CRYPTO_AEAD_AUTH_FAILED",
+      "numeric": 40,
+      "category": "crypto",
+      "meaning": "AEAD authentication failed; header-as-AAD mismatch or tampering."
+    },
+    {
+      "code": "ERR_CRYPTO_MAX_SKIP_EXCEEDED",
+      "numeric": 41,
+      "category": "crypto",
+      "meaning": "Ratchet skip exceeded sessions_remote_text.MAX_SKIP_PER_CHAIN."
+    },
+    {
+      "code": "ERR_CRYPTO_SKIPPED_KEY_CAP",
+      "numeric": 42,
+      "category": "crypto",
+      "meaning": "Stored skipped keys would exceed SKIPPED_KEYS_PER_SESSION_CAP."
+    },
+    {
+      "code": "ERR_CRYPTO_REPLAY",
+      "numeric": 43,
+      "category": "crypto",
+      "meaning": "message_id already seen within the dedup window."
+    },
+    {
+      "code": "ERR_MESH_HOP_VIOLATION",
+      "numeric": 60,
+      "category": "mesh",
+      "meaning": "A relay attempted to raise hop_limit or TTL (TRS-PROTO-012)."
+    },
+    {
+      "code": "ERR_MESH_TTL_EXPIRED",
+      "numeric": 61,
+      "category": "mesh",
+      "meaning": "Frame TTL expired before delivery."
+    },
+    {
+      "code": "ERR_TRANSPORT_LOCAL_ONLY_VIOLATION",
+      "numeric": 62,
+      "category": "mesh",
+      "meaning": "A frame flagged local-only was offered to the internet relay (SRS-TRN-009)."
+    },
+    {
+      "code": "ERR_CONFIG_SIGNATURE_INVALID",
+      "numeric": 80,
+      "category": "config",
+      "meaning": "Signed configuration or voucher failed signature verification."
+    },
+    {
+      "code": "ERR_CONFIG_SCHEMA_INVALID",
+      "numeric": 81,
+      "category": "config",
+      "meaning": "Configuration failed schema validation, including an out-of-bounds override (TRS-CONST-002)."
+    },
+    {
+      "code": "ERR_CONFIG_ROLLBACK",
+      "numeric": 82,
+      "category": "config",
+      "meaning": "Configuration version was older than the active one."
+    },
+    {
+      "code": "ERR_CONFIG_EXPIRED",
+      "numeric": 83,
+      "category": "config",
+      "meaning": "Configuration or voucher validity window has passed."
+    },
+    {
+      "code": "ERR_CONFIG_WRONG_ENVIRONMENT",
+      "numeric": 84,
+      "category": "config",
+      "meaning": "Package environment did not match this build's."
+    },
+    {
+      "code": "ERR_CONFIG_CONSTANTS_HASH_MISMATCH",
+      "numeric": 85,
+      "category": "config",
+      "meaning": "Package constants_hash did not match this build's register (TRS-CONST-005)."
+    },
+    {
+      "code": "ERR_VOUCHER_NONCE_REPLAY",
+      "numeric": 86,
+      "category": "config",
+      "meaning": "Voucher nonce was already redeemed within VOUCHER_NONCE_CACHE."
+    },
+    {
+      "code": "ERR_VOUCHER_REVOKED",
+      "numeric": 87,
+      "category": "config",
+      "meaning": "Voucher appears in the revocation set."
+    }
+  ]
+}
