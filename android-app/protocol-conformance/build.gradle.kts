@@ -39,12 +39,12 @@ dependencies {
     // files. The JDK ships no JSON parser and hand-rolling one inside a
     // conformance runner would put unreviewed parsing between the vectors and
     // the assertions. Apache-2.0 is a preferred licence under AGENTS.md Sec. 3.
-    testImplementation("com.google.code.gson:gson:2.11.0")
+    testImplementation(libs.gson)
 
     // JUnit 5, EPL-2.0. The JVM test framework TRS Sec. 18.4 names for this
     // module. EPL-2.0 is weak copyleft limited to the library's own files and
     // is not linked into any shipped artefact - this is a test-only dependency.
-    testImplementation(platform("org.junit:junit-bom:5.11.3"))
+    testImplementation(platform(libs.junit.bom))
     testImplementation("org.junit.jupiter:junit-jupiter")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }

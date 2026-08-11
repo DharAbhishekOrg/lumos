@@ -214,10 +214,11 @@ func dutyCycleConstraint(name string, fields map[string]any) (map[string]any, bo
 		return nil, false
 	}
 	c := map[string]any{
-		"constant":                  name,
-		"rule":                      "on / (on + off) * 100 must fall within the stated duty-cycle range",
-		"properties":                []string{name + ".on", name + ".off"},
-		"duty_max_pct":              hi,
+		"constant":     name,
+		"rule":         "on / (on + off) * 100 must fall within the stated duty-cycle range",
+		"properties":   []string{name + ".on", name + ".off"},
+		"duty_max_pct": hi,
+		// lumoslint:allow-literal - 100 is the percentage denominator, not a constant.
 		"register_default_duty_pct": on * 100 / (on + off),
 		"enforced_by":               "config-client (WP-08). JSON Schema cannot express a cross-property relationship; an override passing schema validation is NOT yet proven in-bounds.",
 	}

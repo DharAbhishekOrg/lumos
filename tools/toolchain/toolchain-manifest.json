@@ -3,6 +3,7 @@
  "schema_version": 1,
  "work_package": "WP-01",
  "slice": "S0",
+ "last_updated_slice": "S7",
  "implements": [
   "TRS-REP-003",
   "TRS-REP-006",
@@ -66,7 +67,13 @@
     "30.0.14904198"
    ],
    "cmdline_tools": [],
-   "note": "TRS Sec. 5.3 baseline compileSdk/targetSdk 36 is satisfied by android-36 + build-tools 36.1.0. cmdline-tools is absent; CI license acceptance and headless SDK management are addressed in slice S7."
+   "note": "TRS Sec. 5.3 baseline compileSdk/targetSdk 36 is satisfied by android-36 + build-tools 36.1.0. cmdline-tools is absent; CI license acceptance and headless SDK management are addressed in slice S7.",
+   "cmdline_tools_resolution": {
+    "slice": "S7",
+    "authoring_host": "still absent. tools/bootstrap reports it as MISSING with the exact remediation rather than downloading it: the archive comes from a licence-gated Google endpoint and accepting an SDK licence is the developer's act, not a script's.",
+    "ci": "android-actions/setup-android provisions cmdline-tools and accepts the licences on the runner, so the Android shell build never depends on the authoring host's SDK state.",
+    "verified": "The Android shell was built on the authoring host with the pre-existing platform 36 + build-tools 36.1.0 (assembleDevDebug, assembleProdRelease, lintDevDebug all succeeded). CI reproduces the build from a provisioned SDK."
+   }
   }
  },
  "supporting": {
@@ -79,6 +86,15 @@
    "install": "winget install --id GitHub.cli --exact",
    "why": "Opens and updates the per-slice pull requests. Authenticated interactively by the owner; the agent never handles the token and never reads it out of the credential store.",
    "scope": "authoring_host_only"
+  },
+  "gitleaks": {
+   "version": "8.30.1",
+   "license": "MIT",
+   "license_verified": "MIT License, Copyright (c) 2019 Zachary Rice - read from the LICENSE file shipped inside the installed package, not assumed.",
+   "install": "winget install --id Gitleaks.Gitleaks --exact",
+   "why": "Secret scan over the full git history (TRS-REP-005, TRS-CICD-001). CI tooling only; never linked into any artefact.",
+   "config": ".gitleaks.toml",
+   "verified": "Run on the authoring host against the working tree and against `git --log-opts='--all --full-history'` (23 commits): no leaks. The configuration's own rules were exercised against planted fixtures before being trusted."
   },
   "docker": {
    "client": "29.6.2",
@@ -118,12 +134,64 @@
   ]
  },
  "not_yet_pinned": {
-  "note": "The remaining lockfiles are established in slice S7 per TRS-REP-003. This manifest pins the toolchains and now the Go module set; the mobile/admin lockfiles follow.",
-  "pending": [
-   "agp",
-   "swiftpm_resolved",
-   "npm_lockfile",
-   "sbom"
+  "note": "Slice S7 closed the outstanding lockfile items per TRS-REP-003. tools/deplock asserts by test that nothing listed here is in fact already pinned, so this list cannot quietly become wrong in either direction.",
+  "pending": [],
+  "resolved_in_s7": {
+   "agp": "gradle/libs.versions.toml pins androidGradlePlugin 9.3.1; see build_dependencies below.",
+   "npm_lockfile": "admin-console/package-lock.json committed at lockfileVersion 3; every entry carries a sha512 integrity hash and npm ci verifies it.",
+   "sbom": "tools/sbomgen emits evidence/sbom/lumos-sbom.json (CycloneDX 1.5). A STUB, and it says so in its own metadata: direct dependencies only, no transitive closure, no provenance. The release SBOM is WP-11's."
+  },
+  "not_applicable": {
+   "swiftpm_resolved": "The SwiftPM package declares no external dependencies - only Foundation, CryptoKit and XCTest - so SwiftPM generates no Package.resolved. There is nothing to pin. If a Swift dependency is ever added, Package.resolved must be committed and this entry removed."
+  }
+ },
+ "build_dependencies": {
+  "note": "Build-time plugins. Not linked into any shipped artefact, but they determine what is produced, so they are pinned and declared like any other dependency.",
+  "modules": [
+   {
+    "path": "com.android.application",
+    "version": "9.3.1",
+    "license": "Apache-2.0",
+    "why": "Android Gradle Plugin for the app shell. AGP 8.13.0 was tried first and rejected at build time: it calls org.gradle.api.problems.internal.InternalProblems, a Gradle internal removed in Gradle 9.6.0. Bumping AGP was the right fix over downgrading the checksum-pinned Gradle 9.7.0 wrapper.",
+    "catalogue_alias": "androidGradlePlugin"
+   }
+  ]
+ },
+ "npm_dependencies": {
+  "note": "admin-console, devDependencies only - the WP-01 shell ships no runtime dependency. Locked in admin-console/package-lock.json with sha512 integrity per package.",
+  "modules": [
+   {
+    "path": "typescript",
+    "version": "5.6.3",
+    "license": "Apache-2.0",
+    "why": "Strict-mode type checking for the admin console shell (TRS Sec. 5.3)."
+   },
+   {
+    "path": "eslint",
+    "version": "9.39.5",
+    "license": "MIT",
+    "why": "Lint stage for TypeScript sources (TRS-CICD-001), run with --max-warnings=0.",
+    "version_note": "Held on the 9.x line. 9.15.0 was tried first and rejected: npm audit reported two low-severity ReDoS advisories (GHSA-xffm-g5w8-qvg7) in the transitive @eslint/plugin-kit, fixed at 9.39.5. ESLint 10 is available but is a major bump with flat-config changes and no security motive, so it is a WP-11 dependency-automation decision, not a WP-01 one."
+   },
+   {
+    "path": "@eslint/js",
+    "version": "9.39.5",
+    "license": "MIT",
+    "why": "ESLint's own recommended rule set, required by the flat config. Held in lockstep with eslint."
+   },
+   {
+    "path": "typescript-eslint",
+    "version": "8.67.0",
+    "license": "MIT",
+    "why": "TypeScript parser and rules for ESLint 9 flat config."
+   },
+   {
+    "path": "@types/node",
+    "version": "24.13.3",
+    "license": "MIT",
+    "why": "Type definitions for the node:test runner the shell's tests use; no test framework is added.",
+    "version_note": "Moved from 22.x to 24.x so the types describe the Node runtime actually pinned above. Types for a different major than the runtime is a correctness problem, not a cosmetic one."
+   }
   ]
  },
  "jvm_test_dependencies": {

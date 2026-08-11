@@ -1,0 +1,348 @@
+# Lumos - CI / Pull-request pipeline: lint, secrets, dependencies, SBOM, shells.
+# Author: dhar.abhishek.email@gmail.com
+# Implements: TRS-CICD-001, TRS-CICD-004, TRS-CICD-007, TRS-REP-003, TRS-REP-005
+# ADRs: ADR-004
+# Threading: n/a
+# Notes: TRS-CICD-001 lists six things every pull request must run: format,
+# lint, unit, protocol vector, secret scan and dependency checks. Format, unit
+# and protocol vector live in conformance.yml, which already gates every PR;
+# this workflow adds lint, secret scan and dependency checks, and builds the
+# four empty application shells so the toolchains are proven end to end.
+#
+# The shells are EMPTY by instruction. What is being proven here is that four
+# toolchains compile and lint clean in a container that has never seen this
+# repository - not that any feature works.
+
+name: pipeline
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: pipeline-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  # Pinned in tools/toolchain/toolchain-manifest.json and verified against the
+  # LICENSE shipped in the release archive. The binary is installed directly
+  # rather than through gitleaks-action, which gates organisation use behind a
+  # licence key; a pinned binary also means CI runs the exact version whose
+  # rules were exercised against planted fixtures on the authoring host.
+  GITLEAKS_VERSION: 8.30.1
+
+jobs:
+  # ---------------------------------------------------------------- lint ----
+  lint:
+    name: lint (headers, constants, architecture, layout, eslint)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-go@v7
+        with:
+          go-version-file: go.mod
+          cache: true
+
+      # TRS Sec. 24: the mandatory file header, the no-hand-written-constants
+      # rule of ADR-004, and the Sec. 4.3 layering constraints.
+      - name: lumoslint
+        run: go run ./tools/lumoslint -headers -constants -architecture
+
+      # TRS Sec. 4.1 repository layout. A Go test also covers this; running the
+      # tool here means a layout failure reports as a lint failure with a
+      # readable message rather than as a test assertion.
+      - name: repository layout
+        run: go test ./tools/repolint/ -count=1
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '24'
+          cache: npm
+          cache-dependency-path: admin-console/package-lock.json
+      - name: eslint + tsc
+        working-directory: admin-console
+        run: |
+          npm ci
+          npm run lint
+          npm run typecheck
+
+  # --------------------------------------------------------- secret scan ----
+  secret-scan:
+    name: secret scan (full history)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          # The whole point. A credential committed and later removed is still
+          # in the pack file, in every clone and in every fork; a shallow
+          # checkout would report such a branch clean.
+          fetch-depth: 0
+
+      - name: install gitleaks
+        run: |
+          set -euo pipefail
+          curl -sSfL -o /tmp/gitleaks.tar.gz \
+            "https://github.com/gitleaks/gitleaks/releases/download/v${GITLEAKS_VERSION}/gitleaks_${GITLEAKS_VERSION}_linux_x64.tar.gz"
+          tar -xzf /tmp/gitleaks.tar.gz -C /tmp gitleaks
+          sudo install /tmp/gitleaks /usr/local/bin/gitleaks
+          gitleaks version
+
+      # A scanner that has only ever been run against a clean tree is
+      # indistinguishable from one that reports nothing. This plants a secret
+      # in RUNNER_TEMP - never in the working tree, which would put it in the
+      # history the next step scans - and fails the job if it is NOT detected.
+      - name: prove the scanner is live
+        shell: bash
+        run: |
+          set -uo pipefail
+          canary="$RUNNER_TEMP/canary"
+          mkdir -p "$canary"
+          # Assembled from pieces on purpose. Written literally, the PEM header
+          # would sit in this file, and the full-history scan below would flag
+          # THIS workflow - forcing an allowlist that would then hide a real key
+          # pasted into any workflow. The canary must exist only at runtime.
+          d="-----"
+          {
+            echo "${d}BEGIN PRIVATE KEY${d}"
+            echo "MIIBVgIBADANBgkqhkiG9w0BAQEFAASCAUAwggE8AgEAAkEA0"
+            echo "${d}END PRIVATE KEY${d}"
+          } > "$canary/planted.txt"
+          if gitleaks dir "$canary" --config .gitleaks.toml --no-banner --redact; then
+            echo "::error::The secret scanner did NOT flag a planted private key."
+            echo "The configuration or the rule set is broken; a clean result from"
+            echo "the next step would mean nothing."
+            exit 1
+          fi
+          echo "scanner confirmed live: the planted key was detected"
+
+      - name: scan full history
+        run: |
+          gitleaks git . \
+            --config .gitleaks.toml \
+            --log-opts="--all --full-history" \
+            --redact \
+            --report-format sarif \
+            --report-path "$RUNNER_TEMP/gitleaks.sarif" \
+            --no-banner
+
+      - name: upload findings
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: secret-scan-report
+          path: ${{ runner.temp }}/gitleaks.sarif
+          retention-days: 7
+          if-no-files-found: ignore
+
+  # --------------------------------------------------- dependency locking ----
+  dependencies:
+    name: dependency locks and checksums
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-go@v7
+        with:
+          go-version-file: go.mod
+          cache: true
+
+      # Verifies the downloaded module bytes against go.sum.
+      - name: go mod verify
+        run: go mod verify
+
+      # Fails if go.mod/go.sum are not what `go mod tidy` would produce, which
+      # is how an unused or undeclared dependency hides.
+      - name: go.mod is tidy
+        run: go mod tidy -diff
+
+      # Checks gradle-wrapper.jar against Gradle's published checksums. This is
+      # a supply-chain control, not a formality: the wrapper JAR is executable
+      # code committed to the repository.
+      - name: validate gradle wrapper
+        uses: gradle/actions/wrapper-validation@v6
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '24'
+          cache: npm
+          cache-dependency-path: admin-console/package-lock.json
+
+      # npm ci fails outright if package.json and package-lock.json disagree,
+      # and verifies every package against its integrity hash.
+      - name: npm ci (lockfile-exact install)
+        working-directory: admin-console
+        run: npm ci
+
+      # Calibrated at moderate, not low. Every dependency here is dev-only lint
+      # and type tooling that is never shipped, and an audit that fails on every
+      # low advisory in that chain is one people learn to skip - which is worse
+      # than a gate set where it will be believed. Low findings are printed.
+      - name: npm audit
+        working-directory: admin-console
+        run: |
+          npm audit || true
+          npm audit --audit-level=moderate
+
+      # The cross-checks the ecosystem tools cannot do: that the toolchain
+      # manifest - the record a human reviews - still describes the same bytes
+      # the lockfiles pin.
+      - name: manifest agrees with every lockfile
+        run: go test ./tools/deplock/ -count=1 -v
+
+  # ------------------------------------------------------------- SBOM -------
+  sbom:
+    name: SBOM
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-go@v7
+        with:
+          go-version-file: go.mod
+          cache: true
+      - name: regenerate
+        run: go run ./tools/sbomgen
+      # The committed SBOM must match what the generator produces from the
+      # current lockfiles. A stale SBOM is worse than none: it is an inventory
+      # that is wrong in a direction nobody checks.
+      - name: committed SBOM is current
+        run: |
+          if ! git diff --exit-code -- evidence/sbom; then
+            echo "::error::evidence/sbom is stale. Run: go run ./tools/sbomgen"
+            exit 1
+          fi
+      - name: upload
+        uses: actions/upload-artifact@v7
+        with:
+          name: sbom
+          path: evidence/sbom/lumos-sbom.json
+          retention-days: 30
+
+  # -------------------------------------------------------- shell builds ----
+  shell-backend:
+    name: shell build - Go backend
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-go@v7
+        with:
+          go-version-file: go.mod
+          cache: true
+      - name: build
+        run: |
+          go build -trimpath \
+            -ldflags "-X main.version=0.0.0-ci -X main.revision=${GITHUB_SHA::7} -X main.buildEnv=test" \
+            -o "$RUNNER_TEMP/lumosd" ./backend/cmd/lumosd
+      - name: test
+        run: go test ./backend/... -count=1
+      - name: the binary starts and answers /healthz
+        shell: bash
+        run: |
+          set -euo pipefail
+          "$RUNNER_TEMP/lumosd" -addr 127.0.0.1:8080 &
+          pid=$!
+          trap 'kill $pid 2>/dev/null || true' EXIT
+          for _ in $(seq 1 30); do
+            if curl -sf http://127.0.0.1:8080/healthz > "$RUNNER_TEMP/health.json"; then break; fi
+            sleep 0.2
+          done
+          cat "$RUNNER_TEMP/health.json"
+          grep -q '"status":"ok"' "$RUNNER_TEMP/health.json"
+
+  shell-admin:
+    name: shell build - TypeScript admin console
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '24'
+          cache: npm
+          cache-dependency-path: admin-console/package-lock.json
+      # `npm test` compiles first: node:test runs the emitted JavaScript, so a
+      # test run against a stale dist/ would be testing the previous commit.
+      - name: install, typecheck, test
+        working-directory: admin-console
+        run: |
+          npm ci
+          npm run typecheck
+          npm test
+
+  shell-android:
+    name: shell build - Android (Java 17, API 36)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: '17'
+      # Provisions cmdline-tools and accepts the SDK licences on the runner.
+      # This is the S0 preflight gap closed: the authoring host has SDK
+      # platforms but no cmdline-tools, so headless licence acceptance had to be
+      # solved here rather than assumed.
+      - uses: android-actions/setup-android@v4
+        with:
+          packages: 'platforms;android-36 build-tools;36.1.0 platform-tools'
+      - uses: gradle/actions/setup-gradle@v6
+
+      # -PlumosAndroid=true opts the :app module into the build. Without it the
+      # settings script omits :app entirely, which is what keeps
+      # :protocol-conformance runnable on a machine with no Android SDK.
+      - name: assemble debug and release
+        run: |
+          ./gradlew -PlumosAndroid=true :app:assembleDevDebug :app:assembleProdRelease \
+            --no-daemon --console=plain
+      - name: android lint (warnings are errors)
+        run: ./gradlew -PlumosAndroid=true :app:lintDevDebug --no-daemon --console=plain
+      - name: upload lint report on failure
+        if: failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: android-lint-report
+          path: android-app/app/build/reports/lint-results-devDebug.html
+          retention-days: 7
+      - name: upload shells
+        uses: actions/upload-artifact@v7
+        with:
+          name: android-shell-apks
+          path: android-app/app/build/outputs/apk/**/*.apk
+          retention-days: 7
+
+  # The iOS shell is NOT built here. It is a target of the same SwiftPM package
+  # as LumosProtocolConformance and is compiled and tested by the path-filtered
+  # macOS job in conformance.yml, so WP-01 spends one macOS runner rather than
+  # two. See that workflow's `swift` job.
+
+  # ------------------------------------------------------------- gate -------
+  pipeline-gate:
+    name: pipeline gate
+    runs-on: ubuntu-latest
+    needs: [lint, secret-scan, dependencies, sbom, shell-backend, shell-admin, shell-android]
+    if: always()
+    steps:
+      - name: assess
+        shell: bash
+        run: |
+          set -euo pipefail
+          results=(
+            "lint=${{ needs.lint.result }}"
+            "secret-scan=${{ needs.secret-scan.result }}"
+            "dependencies=${{ needs.dependencies.result }}"
+            "sbom=${{ needs.sbom.result }}"
+            "shell-backend=${{ needs.shell-backend.result }}"
+            "shell-admin=${{ needs.shell-admin.result }}"
+            "shell-android=${{ needs.shell-android.result }}"
+          )
+          printf '%s\n' "${results[@]}"
+          failed=0
+          for r in "${results[@]}"; do
+            if [ "${r#*=}" != "success" ]; then failed=1; fi
+          done
+          if [ "$failed" -ne 0 ]; then
+            echo "::error::TRS-CICD-007: no merge while a pipeline stage fails."
+            exit 1
+          fi
+          echo "every pipeline stage green"

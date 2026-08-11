@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Lumos - android-app/app / Backup exclusions for Android 11 and below.
+  Author: dhar.abhishek.email@gmail.com
+  Implements: SRS-DAT-012, TRS-LOC-001
+  ADRs: ADR-003
+  Threading: n/a
+  Notes: The pre-Android-12 counterpart of data_extraction_rules.xml. minSdk is
+  26, so this path is live for real devices and cannot be treated as legacy.
+-->
+<full-backup-content>
+    <exclude domain="root" />
+    <exclude domain="file" />
+    <exclude domain="database" />
+    <exclude domain="sharedpref" />
+    <exclude domain="external" />
+</full-backup-content>

@@ -9,8 +9,8 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": null,
-   "updated": null
+   "last_commit": "90e0ae8",
+   "updated": "2026-08-11"
   },
   {
    "req_id": "SRS-ADM-002",
@@ -19,8 +19,8 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": null,
-   "updated": null
+   "last_commit": "90e0ae8",
+   "updated": "2026-08-11"
   },
   {
    "req_id": "SRS-ADM-003",
@@ -29,8 +29,8 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": null,
-   "updated": null
+   "last_commit": "90e0ae8",
+   "updated": "2026-08-11"
   },
   {
    "req_id": "SRS-ADM-004",
@@ -39,8 +39,8 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": null,
-   "updated": null
+   "last_commit": "90e0ae8",
+   "updated": "2026-08-11"
   },
   {
    "req_id": "SRS-ADM-005",
@@ -49,8 +49,8 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": null,
-   "updated": null
+   "last_commit": "90e0ae8",
+   "updated": "2026-08-11"
   },
   {
    "req_id": "SRS-ADM-006",
@@ -59,8 +59,8 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": null,
-   "updated": null
+   "last_commit": "90e0ae8",
+   "updated": "2026-08-11"
   },
   {
    "req_id": "SRS-ADM-007",
@@ -69,8 +69,8 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": null,
-   "updated": null
+   "last_commit": "90e0ae8",
+   "updated": "2026-08-11"
   },
   {
    "req_id": "SRS-ADM-008",
@@ -79,8 +79,8 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": null,
-   "updated": null
+   "last_commit": "90e0ae8",
+   "updated": "2026-08-11"
   },
   {
    "req_id": "SRS-ADM-009",
@@ -89,8 +89,8 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": null,
-   "updated": null
+   "last_commit": "90e0ae8",
+   "updated": "2026-08-11"
   },
   {
    "req_id": "SRS-ADM-010",
@@ -99,8 +99,8 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": null,
-   "updated": null
+   "last_commit": "90e0ae8",
+   "updated": "2026-08-11"
   },
   {
    "req_id": "SRS-ADM-011",
@@ -109,8 +109,8 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": null,
-   "updated": null
+   "last_commit": "90e0ae8",
+   "updated": "2026-08-11"
   },
   {
    "req_id": "SRS-ADM-012",
@@ -119,8 +119,8 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": null,
-   "updated": null
+   "last_commit": "90e0ae8",
+   "updated": "2026-08-11"
   },
   {
    "req_id": "SRS-ADV-001",
@@ -1438,7 +1438,7 @@
     "ci:conformance#31528127667"
    ],
    "adr": [],
-   "last_commit": "692fcee",
+   "last_commit": "90e0ae8",
    "updated": "2026-08-11"
   },
   {
@@ -4046,7 +4046,7 @@
    ],
    "evidence": [],
    "adr": [],
-   "last_commit": "4ac21f2",
+   "last_commit": "90e0ae8",
    "updated": "2026-08-11"
   },
   {
@@ -4166,7 +4166,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "692fcee",
+   "last_commit": "90e0ae8",
    "updated": "2026-08-11"
   },
   {
@@ -4176,7 +4176,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "692fcee",
+   "last_commit": "90e0ae8",
    "updated": "2026-08-11"
   },
   {
@@ -4186,7 +4186,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "692fcee",
+   "last_commit": "90e0ae8",
    "updated": "2026-08-11"
   },
   {
@@ -4196,7 +4196,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "692fcee",
+   "last_commit": "90e0ae8",
    "updated": "2026-08-11"
   },
   {
@@ -4206,7 +4206,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "692fcee",
+   "last_commit": "90e0ae8",
    "updated": "2026-08-11"
   },
   {
@@ -4216,7 +4216,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "692fcee",
+   "last_commit": "90e0ae8",
    "updated": "2026-08-11"
   },
   {
@@ -4226,7 +4226,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "692fcee",
+   "last_commit": "90e0ae8",
    "updated": "2026-08-11"
   },
   {
@@ -4236,7 +4236,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "692fcee",
+   "last_commit": "90e0ae8",
    "updated": "2026-08-11"
   },
   {
@@ -4246,7 +4246,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "692fcee",
+   "last_commit": "90e0ae8",
    "updated": "2026-08-11"
   },
   {
@@ -4256,7 +4256,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "692fcee",
+   "last_commit": "90e0ae8",
    "updated": "2026-08-11"
   },
   {
@@ -4266,7 +4266,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "692fcee",
+   "last_commit": "90e0ae8",
    "updated": "2026-08-11"
   },
   {
@@ -4276,7 +4276,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "692fcee",
+   "last_commit": "90e0ae8",
    "updated": "2026-08-11"
   },
   {
@@ -4331,13 +4331,18 @@
   },
   {
    "req_id": "TRS-ARCH-006",
-   "status": "not_started",
-   "code": [],
-   "tests": [],
+   "status": "implemented",
+   "code": [
+    "admin-console/src/shell.ts"
+   ],
+   "tests": [
+    "ts:admin-console:AdminShell.executableShapedConfigurationFieldsAreRejected",
+    "ts:admin-console:AdminShell.ordinaryConfigurationFieldsAreAccepted"
+   ],
    "evidence": [],
    "adr": [],
-   "last_commit": null,
-   "updated": null
+   "last_commit": "90e0ae8",
+   "updated": "2026-08-11"
   },
   {
    "req_id": "TRS-ARCH-007",
@@ -4386,8 +4391,8 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": null,
-   "updated": null
+   "last_commit": "90e0ae8",
+   "updated": "2026-08-11"
   },
   {
    "req_id": "TRS-BCK-002",
@@ -4396,8 +4401,8 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": null,
-   "updated": null
+   "last_commit": "90e0ae8",
+   "updated": "2026-08-11"
   },
   {
    "req_id": "TRS-BCK-003",
@@ -4406,8 +4411,8 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": null,
-   "updated": null
+   "last_commit": "90e0ae8",
+   "updated": "2026-08-11"
   },
   {
    "req_id": "TRS-BCK-004",
@@ -4416,8 +4421,8 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": null,
-   "updated": null
+   "last_commit": "90e0ae8",
+   "updated": "2026-08-11"
   },
   {
    "req_id": "TRS-BCK-005",
@@ -4426,8 +4431,8 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": null,
-   "updated": null
+   "last_commit": "90e0ae8",
+   "updated": "2026-08-11"
   },
   {
    "req_id": "TRS-BCK-006",
@@ -4436,8 +4441,8 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": null,
-   "updated": null
+   "last_commit": "90e0ae8",
+   "updated": "2026-08-11"
   },
   {
    "req_id": "TRS-BCK-007",
@@ -4446,8 +4451,8 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": null,
-   "updated": null
+   "last_commit": "90e0ae8",
+   "updated": "2026-08-11"
   },
   {
    "req_id": "TRS-BCK-008",
@@ -4456,8 +4461,8 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": null,
-   "updated": null
+   "last_commit": "90e0ae8",
+   "updated": "2026-08-11"
   },
   {
    "req_id": "TRS-BCK-009",
@@ -4466,8 +4471,8 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": null,
-   "updated": null
+   "last_commit": "90e0ae8",
+   "updated": "2026-08-11"
   },
   {
    "req_id": "TRS-BCK-010",
@@ -4476,8 +4481,8 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": null,
-   "updated": null
+   "last_commit": "90e0ae8",
+   "updated": "2026-08-11"
   },
   {
    "req_id": "TRS-BCK-011",
@@ -4486,8 +4491,8 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": null,
-   "updated": null
+   "last_commit": "90e0ae8",
+   "updated": "2026-08-11"
   },
   {
    "req_id": "TRS-BCK-012",
@@ -4496,8 +4501,8 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": null,
-   "updated": null
+   "last_commit": "90e0ae8",
+   "updated": "2026-08-11"
   },
   {
    "req_id": "TRS-BCK-013",
@@ -4506,8 +4511,8 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": null,
-   "updated": null
+   "last_commit": "90e0ae8",
+   "updated": "2026-08-11"
   },
   {
    "req_id": "TRS-BCK-014",
@@ -4516,8 +4521,8 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": null,
-   "updated": null
+   "last_commit": "90e0ae8",
+   "updated": "2026-08-11"
   },
   {
    "req_id": "TRS-BIL-001",
@@ -4794,7 +4799,9 @@
    "req_id": "TRS-CICD-001",
    "status": "implemented",
    "code": [
-    ".github/workflows/conformance.yml"
+    ".github/workflows/conformance.yml",
+    ".github/workflows/pipeline.yml",
+    ".gitleaks.toml"
    ],
    "tests": [
     "ci:conformance#31528127667"
@@ -4803,8 +4810,8 @@
     "ci:conformance#31528127667"
    ],
    "adr": [],
-   "last_commit": "fbeaca8",
-   "updated": "2026-08-12"
+   "last_commit": "90e0ae8",
+   "updated": "2026-08-11"
   },
   {
    "req_id": "TRS-CICD-002",
@@ -4833,8 +4840,8 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": null,
-   "updated": null
+   "last_commit": "90e0ae8",
+   "updated": "2026-08-11"
   },
   {
    "req_id": "TRS-CICD-005",
@@ -4872,7 +4879,8 @@
    "status": "implemented",
    "code": [
     "tools/tracecheck/checks.go",
-    ".github/workflows/conformance.yml"
+    ".github/workflows/conformance.yml",
+    ".github/workflows/pipeline.yml"
    ],
    "tests": [
     "go:tools/tracecheck:TestReleaseCandidateGate",
@@ -4880,18 +4888,25 @@
    ],
    "evidence": [],
    "adr": [],
-   "last_commit": "4ac21f2",
+   "last_commit": "90e0ae8",
    "updated": "2026-08-11"
   },
   {
    "req_id": "TRS-CICD-008",
-   "status": "not_started",
-   "code": [],
-   "tests": [],
+   "status": "implemented",
+   "code": [
+    "tools/bootstrap/bootstrap.sh",
+    "tools/bootstrap/bootstrap.ps1",
+    "tools/bootstrap/README.md",
+    ".github/workflows/pipeline.yml"
+   ],
+   "tests": [
+    "go:tools/bootstrap:TestBootstrapIsDocumented"
+   ],
    "evidence": [],
    "adr": [],
-   "last_commit": null,
-   "updated": null
+   "last_commit": "90e0ae8",
+   "updated": "2026-08-11"
   },
   {
    "req_id": "TRS-CICD-009",
@@ -4935,13 +4950,20 @@
   },
   {
    "req_id": "TRS-CODE-001",
-   "status": "not_started",
-   "code": [],
-   "tests": [],
+   "status": "tested",
+   "code": [
+    "tools/lumoslint/header.go",
+    "tools/lumoslint/main.go"
+   ],
+   "tests": [
+    "go:tools/lumoslint:TestRepositoryPassesEveryLint",
+    "go:tools/lumoslint:TestHeaderRuleFiresAndStaysSilent",
+    "go:tools/lumoslint:TestGeneratedMarkerNeedsAGenerator"
+   ],
    "evidence": [],
    "adr": [],
-   "last_commit": null,
-   "updated": null
+   "last_commit": "90e0ae8",
+   "updated": "2026-08-11"
   },
   {
    "req_id": "TRS-CODE-002",
@@ -4955,13 +4977,19 @@
   },
   {
    "req_id": "TRS-CODE-003",
-   "status": "not_started",
-   "code": [],
-   "tests": [],
+   "status": "implemented",
+   "code": [
+    "tools/lumoslint/architecture.go",
+    "tools/lumoslint/main.go"
+   ],
+   "tests": [
+    "go:tools/lumoslint:TestArchitectureRuleFiresOnForbiddenImports",
+    "go:tools/lumoslint:TestPendingArchitectureRulesAreDeclared"
+   ],
    "evidence": [],
    "adr": [],
-   "last_commit": null,
-   "updated": null
+   "last_commit": "90e0ae8",
+   "updated": "2026-08-11"
   },
   {
    "req_id": "TRS-CODE-004",
@@ -4975,13 +5003,20 @@
   },
   {
    "req_id": "TRS-CODE-005",
-   "status": "not_started",
-   "code": [],
-   "tests": [],
+   "status": "implemented",
+   "code": [
+    "tools/lumoslint/constants.go",
+    "tools/lumoslint/main.go"
+   ],
+   "tests": [
+    "go:tools/lumoslint:TestConstantsRuleFiresOnProductionCode",
+    "go:tools/lumoslint:TestConstantsRuleExemptsTheKnownFalsePositives",
+    "go:tools/lumoslint:TestRegisterValuesAreDistinctiveOnly"
+   ],
    "evidence": [],
    "adr": [],
-   "last_commit": null,
-   "updated": null
+   "last_commit": "90e0ae8",
+   "updated": "2026-08-11"
   },
   {
    "req_id": "TRS-CODE-006",
@@ -5068,8 +5103,8 @@
     "ADR-005",
     "ADR-006"
    ],
-   "last_commit": "fbeaca8",
-   "updated": "2026-08-12"
+   "last_commit": "90e0ae8",
+   "updated": "2026-08-11"
   },
   {
    "req_id": "TRS-CONST-002",
@@ -5113,8 +5148,8 @@
    "adr": [
     "ADR-004"
    ],
-   "last_commit": "a9f1686",
-   "updated": "2026-08-12"
+   "last_commit": "90e0ae8",
+   "updated": "2026-08-11"
   },
   {
    "req_id": "TRS-CONST-004",
@@ -5151,8 +5186,8 @@
    "adr": [
     "ADR-004"
    ],
-   "last_commit": "fbeaca8",
-   "updated": "2026-08-12"
+   "last_commit": "90e0ae8",
+   "updated": "2026-08-11"
   },
   {
    "req_id": "TRS-CONST-006",
@@ -5459,8 +5494,8 @@
    "adr": [
     "ADR-001"
    ],
-   "last_commit": "fbeaca8",
-   "updated": "2026-08-12"
+   "last_commit": "90e0ae8",
+   "updated": "2026-08-11"
   },
   {
    "req_id": "TRS-CRY-016",
@@ -5619,8 +5654,8 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": null,
-   "updated": null
+   "last_commit": "90e0ae8",
+   "updated": "2026-08-11"
   },
   {
    "req_id": "TRS-IOS-002",
@@ -5629,8 +5664,8 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": null,
-   "updated": null
+   "last_commit": "90e0ae8",
+   "updated": "2026-08-11"
   },
   {
    "req_id": "TRS-IOS-003",
@@ -5639,8 +5674,8 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": null,
-   "updated": null
+   "last_commit": "90e0ae8",
+   "updated": "2026-08-11"
   },
   {
    "req_id": "TRS-IOS-004",
@@ -5649,8 +5684,8 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": null,
-   "updated": null
+   "last_commit": "90e0ae8",
+   "updated": "2026-08-11"
   },
   {
    "req_id": "TRS-IOS-005",
@@ -5659,8 +5694,8 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": null,
-   "updated": null
+   "last_commit": "90e0ae8",
+   "updated": "2026-08-11"
   },
   {
    "req_id": "TRS-IOS-006",
@@ -5669,8 +5704,8 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": null,
-   "updated": null
+   "last_commit": "90e0ae8",
+   "updated": "2026-08-11"
   },
   {
    "req_id": "TRS-IOS-007",
@@ -5679,8 +5714,8 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": null,
-   "updated": null
+   "last_commit": "90e0ae8",
+   "updated": "2026-08-11"
   },
   {
    "req_id": "TRS-IOS-008",
@@ -5689,8 +5724,8 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": null,
-   "updated": null
+   "last_commit": "90e0ae8",
+   "updated": "2026-08-11"
   },
   {
    "req_id": "TRS-IOS-009",
@@ -5699,8 +5734,8 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": null,
-   "updated": null
+   "last_commit": "90e0ae8",
+   "updated": "2026-08-11"
   },
   {
    "req_id": "TRS-IOS-010",
@@ -5709,8 +5744,8 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": null,
-   "updated": null
+   "last_commit": "90e0ae8",
+   "updated": "2026-08-11"
   },
   {
    "req_id": "TRS-IOS-011",
@@ -5719,8 +5754,8 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": null,
-   "updated": null
+   "last_commit": "90e0ae8",
+   "updated": "2026-08-11"
   },
   {
    "req_id": "TRS-IOS-012",
@@ -5729,8 +5764,8 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": null,
-   "updated": null
+   "last_commit": "90e0ae8",
+   "updated": "2026-08-11"
   },
   {
    "req_id": "TRS-LOC-001",
@@ -6530,7 +6565,7 @@
     "ci:conformance#31528127667"
    ],
    "adr": [],
-   "last_commit": "692fcee",
+   "last_commit": "90e0ae8",
    "updated": "2026-08-11"
   },
   {
@@ -6581,8 +6616,8 @@
    ],
    "evidence": [],
    "adr": [],
-   "last_commit": "fbeaca8",
-   "updated": "2026-08-12"
+   "last_commit": "90e0ae8",
+   "updated": "2026-08-11"
   },
   {
    "req_id": "TRS-REP-002",
@@ -6613,58 +6648,117 @@
    "adr": [
     "ADR-004"
    ],
-   "last_commit": "fbeaca8",
-   "updated": "2026-08-12"
+   "last_commit": "90e0ae8",
+   "updated": "2026-08-11"
   },
   {
    "req_id": "TRS-REP-003",
-   "status": "not_started",
-   "code": [],
-   "tests": [],
+   "status": "tested",
+   "code": [
+    "tools/deplock/deplock.go",
+    "go.mod",
+    "go.sum",
+    "gradle/libs.versions.toml",
+    "gradle/wrapper/gradle-wrapper.properties",
+    "admin-console/package-lock.json",
+    "tools/toolchain/toolchain-manifest.json"
+   ],
+   "tests": [
+    "go:tools/deplock:TestEveryGoModuleIsChecksummed",
+    "go:tools/deplock:TestGoManifestMirrorsGoMod",
+    "go:tools/deplock:TestOnlyTheApprovedCryptoDependencyIsPresent",
+    "go:tools/deplock:TestGradleWrapperIsChecksumPinned",
+    "go:tools/deplock:TestJVMDependenciesAreCataloguedAndDeclared",
+    "go:tools/deplock:TestNPMLockfilePinsEveryPackageWithIntegrity",
+    "go:tools/deplock:TestNPMManifestMirrorsPackageJSON",
+    "go:tools/deplock:TestBuildPluginsAreDeclaredAndCatalogued",
+    "go:tools/deplock:TestManifestNoLongerCallsPinnedItemsPending"
+   ],
    "evidence": [],
    "adr": [],
-   "last_commit": "fbeaca8",
-   "updated": "2026-08-12"
+   "last_commit": "90e0ae8",
+   "updated": "2026-08-11"
   },
   {
    "req_id": "TRS-REP-004",
-   "status": "not_started",
-   "code": [],
-   "tests": [],
+   "status": "implemented",
+   "code": [
+    "android-app/app/build.gradle.kts",
+    "ios-app/shell/Sources/LumosAppShell/LumosAppShell.swift",
+    "admin-console/src/shell.ts",
+    "backend/cmd/lumosd/main.go",
+    "tools/bootstrap/sample-env/lumos.env.sample"
+   ],
+   "tests": [
+    "ts:admin-console:AdminShell.fourBuildEnvironmentsAreSeparated",
+    "swift:LumosAppShell:LumosAppShellTests.testFourEnvironmentsAreSeparated",
+    "go:tools/bootstrap:TestSampleEnvironmentSeparatesTheFourVariants"
+   ],
    "evidence": [],
    "adr": [],
-   "last_commit": null,
-   "updated": null
+   "last_commit": "90e0ae8",
+   "updated": "2026-08-11"
   },
   {
    "req_id": "TRS-REP-005",
-   "status": "not_started",
-   "code": [],
-   "tests": [],
+   "status": "implemented",
+   "code": [
+    ".gitleaks.toml",
+    ".github/workflows/pipeline.yml",
+    ".gitignore",
+    "tools/bootstrap/sample-env/lumos.env.sample"
+   ],
+   "tests": [
+    "go:tools/bootstrap:TestSampleEnvironmentCarriesNothingSecretShaped",
+    "go:tools/bootstrap:TestSecretShapeScannerRejectsACredentialShapedValue"
+   ],
    "evidence": [],
    "adr": [],
-   "last_commit": null,
-   "updated": null
+   "last_commit": "90e0ae8",
+   "updated": "2026-08-11"
   },
   {
    "req_id": "TRS-REP-006",
-   "status": "not_started",
-   "code": [],
-   "tests": [],
+   "status": "implemented",
+   "code": [
+    "tools/bootstrap/bootstrap.sh",
+    "tools/bootstrap/bootstrap.ps1",
+    "tools/bootstrap/sample-env/lumos.env.sample",
+    "tools/bootstrap/README.md"
+   ],
+   "tests": [
+    "go:tools/bootstrap:TestScriptsCarryNoVersionLiterals",
+    "go:tools/bootstrap:TestBothScriptsReadTheManifest",
+    "go:tools/bootstrap:TestEveryPinnedToolchainIsChecked",
+    "go:tools/bootstrap:TestBothScriptsApplyTheSameVersionPolicy",
+    "go:tools/bootstrap:TestScriptsCoverTheKnownGaps",
+    "go:tools/bootstrap:TestPosixScriptIsExecutableShellWithUnixEndings",
+    "go:tools/bootstrap:TestVersionLiteralScannerRejectsAHardcodedVersion",
+    "go:tools/bootstrap:TestBootstrapIsDocumented"
+   ],
    "evidence": [],
    "adr": [],
-   "last_commit": "19e7093",
+   "last_commit": "90e0ae8",
    "updated": "2026-08-11"
   },
   {
    "req_id": "TRS-REP-007",
-   "status": "not_started",
-   "code": [],
-   "tests": [],
+   "status": "implemented",
+   "code": [
+    "backend/cmd/lumosd/main.go",
+    "ios-app/shell/Sources/LumosAppShell/LumosAppShell.swift",
+    "admin-console/src/shell.ts",
+    "android-app/app/build.gradle.kts"
+   ],
+   "tests": [
+    "go:backend/cmd/lumosd:TestReleaseProvenanceFieldsExist",
+    "ts:admin-console:AdminShell.buildProvenanceIsRendered",
+    "swift:LumosAppShell:LumosAppShellTests.testBuildProvenanceIsReported"
+   ],
    "evidence": [],
    "adr": [],
-   "last_commit": null,
-   "updated": null
+   "last_commit": "90e0ae8",
+   "updated": "2026-08-11"
   },
   {
    "req_id": "TRS-REP-008",
@@ -6865,7 +6959,7 @@
    "adr": [
     "ADR-004"
    ],
-   "last_commit": "692fcee",
+   "last_commit": "90e0ae8",
    "updated": "2026-08-11"
   },
   {

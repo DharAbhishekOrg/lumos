@@ -10,6 +10,7 @@ package repolint
 
 import (
 	"os"
+	"os/exec"
 	"path/filepath"
 	"sort"
 	"testing"
@@ -215,6 +216,69 @@ func TestCheckIgnoresDotEntries(t *testing.T) {
 	}
 	if len(violations) != 0 {
 		t.Errorf("dot entries must not be flagged, got %v", violations)
+	}
+}
+
+// TestGitIgnoredBuildOutputIsNotLayoutDrift covers the exemption in both
+// directions in one fixture: with build/ ignored the tree is clean, and the
+// moment the ignore rule goes away the same directory is flagged. An exemption
+// asserted only in the passing direction cannot be distinguished from the
+// check having stopped looking.
+func TestGitIgnoredBuildOutputIsNotLayoutDrift(t *testing.T) {
+	dir := newConformingFixture(t)
+	git := func(args ...string) {
+		t.Helper()
+		cmd := exec.Command("git", args...)
+		cmd.Dir = dir
+		if out, err := cmd.CombinedOutput(); err != nil {
+			t.Skipf("git unavailable in this environment (%v): %s", err, out)
+		}
+	}
+	git("init", "-q")
+
+	if err := os.MkdirAll(filepath.Join(dir, "build"), 0o755); err != nil {
+		t.Fatalf("mkdir build: %v", err)
+	}
+	if err := os.WriteFile(filepath.Join(dir, ".gitignore"), []byte("build/\n"), 0o644); err != nil {
+		t.Fatalf("write .gitignore: %v", err)
+	}
+	violations, err := Check(dir)
+	if err != nil {
+		t.Fatalf("Check: %v", err)
+	}
+	if len(violations) != 0 {
+		t.Errorf("git-ignored build output must not be layout drift, got %v", violations)
+	}
+
+	// Same directory, no longer ignored: the rule must fire.
+	if err := os.WriteFile(filepath.Join(dir, ".gitignore"), []byte("# nothing ignored\n"), 0o644); err != nil {
+		t.Fatalf("rewrite .gitignore: %v", err)
+	}
+	violations, err = Check(dir)
+	if err != nil {
+		t.Fatalf("Check: %v", err)
+	}
+	if rulesOf(violations)["unexpected-root-directory"] != "build" {
+		t.Errorf("a tracked build/ directory must still be flagged, got %v", violations)
+	}
+}
+
+// TestExemptionIsRefusedWithoutGit pins the fallback: no git means no
+// exemptions, so the check degrades towards more scrutiny rather than less.
+func TestExemptionIsRefusedWithoutGit(t *testing.T) {
+	dir := newConformingFixture(t) // deliberately NOT a git repository
+	if err := os.MkdirAll(filepath.Join(dir, "build"), 0o755); err != nil {
+		t.Fatalf("mkdir build: %v", err)
+	}
+	if err := os.WriteFile(filepath.Join(dir, ".gitignore"), []byte("build/\n"), 0o644); err != nil {
+		t.Fatalf("write .gitignore: %v", err)
+	}
+	violations, err := Check(dir)
+	if err != nil {
+		t.Fatalf("Check: %v", err)
+	}
+	if rulesOf(violations)["unexpected-root-directory"] != "build" {
+		t.Errorf("without a git repository nothing may be exempted, got %v", violations)
 	}
 }
 

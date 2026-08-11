@@ -18,6 +18,11 @@
 node_modules/
 npm-debug.log*
 .npm/
+# tsc output. `npm test` recompiles before running, so a committed dist/ would
+# only ever be stale, and reviewing generated JavaScript alongside its source
+# is review effort spent on nothing.
+admin-console/dist/
+admin-console/test-results/
 
 # Gradle / Android
 .gradle/

@@ -126,6 +126,7 @@ type x3dhCase struct {
 	SPKSigHex            string `json:"signed_prekey_sig_hex"`
 }
 
+// lumoslint:allow-literal - arbitrary TESTONLY match-ID bytes; 0xB4 coincides with a register value.
 var vectorMatchID = [16]byte{0xA1, 0xA2, 0xA3, 0xA4, 0xA5, 0xA6, 0xA7, 0xA8, 0xB1, 0xB2, 0xB3, 0xB4, 0xB5, 0xB6, 0xB7, 0xB8}
 
 func buildX3DHKAT(constantsHash string) (*x3dhKAT, error) {

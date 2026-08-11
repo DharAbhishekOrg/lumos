@@ -1,0 +1,26 @@
+# Lumos - build / Version catalogue: pinned plugin and library versions.
+# Author: dhar.abhishek.email@gmail.com
+# Implements: TRS-REP-003
+# ADRs: -
+# Threading: n/a
+# Notes: TRS-REP-003 requires dependency versions to be locked and updateable
+# through controlled automation. A single catalogue is that control point: every
+# module resolves its versions from here, so an update is one reviewed change
+# rather than a hunt through build files.
+
+[versions]
+# AGP 9.3.1: the 8.x line uses a Gradle internal API removed in Gradle 9.6, so
+# it cannot run on the pinned Gradle 9.7 wrapper. Gradle's own failure message
+# offers "downgrade to Gradle 9.5" as the alternative; moving the plugin forward
+# is the better trade, since the wrapper is checksum-pinned and shared with the
+# conformance module.
+androidGradlePlugin = "9.3.1"
+gson = "2.11.0"
+junit = "5.11.3"
+
+[plugins]
+android-application = { id = "com.android.application", version.ref = "androidGradlePlugin" }
+
+[libraries]
+gson = { module = "com.google.code.gson:gson", version.ref = "gson" }
+junit-bom = { module = "org.junit:junit-bom", version.ref = "junit" }
