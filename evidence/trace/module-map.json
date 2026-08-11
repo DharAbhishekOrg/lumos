@@ -67,6 +67,9 @@
   "protocol/schema/": [
    "TRS-PROTO",
    "TRS-CICD-005"
+  ],
+  "protocol/wire/": [
+   "TRS-PROTO"
   ]
  }
 }

@@ -1,0 +1,87 @@
+{
+  "schema_version": 1,
+  "generator": "tools/vectorgen",
+  "constants_hash": "sha256:7315f92990eb8e431d0d0c392a73822035bcc96c1c469fc4fa734d75cfa278d5",
+  "implements": [
+    "TRS-PROTO-001",
+    "TRS-PROTO-006",
+    "TRS-PROTO-007",
+    "TRS-PROTO-013"
+  ],
+  "key_provenance": "TESTONLY-lumos-vectors-v1",
+  "notes": "Negative vectors. Every case MUST fail with exactly expected_error; a decoder that accepts the frame, or fails with a different stable code, fails conformance. The decode validation order is part of the wire contract (protocol/wire/frame.go).",
+  "cases": [
+    {
+      "name": "empty_input",
+      "description": "Zero bytes cannot hold the magic.",
+      "frame_hex": "",
+      "expected_error": "ERR_FRAME_TRUNCATED"
+    },
+    {
+      "name": "one_byte",
+      "description": "A single byte cannot hold the magic.",
+      "frame_hex": "4c",
+      "expected_error": "ERR_FRAME_TRUNCATED"
+    },
+    {
+      "name": "bad_magic",
+      "description": "Byte-swapped magic 0x4D4C.",
+      "frame_hex": "4d4c10010000003a726ea162ec1069635cb4868e6955c94defd92cff3eb315b80c1dcd5c336103d50000000100000000000000180000012c0000bd3e09b63d4f426dbcf17a4daaed184f1b2bbe575285f855",
+      "expected_error": "ERR_FRAME_BAD_MAGIC"
+    },
+    {
+      "name": "truncated_header",
+      "description": "Valid magic but only 20 of 58 header bytes.",
+      "frame_hex": "4c4d10010000003a726ea162ec1069635cb4868e",
+      "expected_error": "ERR_FRAME_TRUNCATED"
+    },
+    {
+      "name": "unsupported_major_version",
+      "description": "Version 0x20 (v2.0): differing MAJOR nibble fails closed (ADR-007).",
+      "frame_hex": "4c4d20010000003a726ea162ec1069635cb4868e6955c94defd92cff3eb315b80c1dcd5c336103d50000000100000000000000180000012c0000bd3e09b63d4f426dbcf17a4daaed184f1b2bbe575285f855",
+      "expected_error": "ERR_FRAME_UNSUPPORTED_VERSION"
+    },
+    {
+      "name": "bad_header_length",
+      "description": "header_length declares 57; protocol v1 headers are exactly 58 bytes.",
+      "frame_hex": "4c4d100100000039726ea162ec1069635cb4868e6955c94defd92cff3eb315b80c1dcd5c336103d50000000100000000000000180000012c0000bd3e09b63d4f426dbcf17a4daaed184f1b2bbe575285f855",
+      "expected_error": "ERR_FRAME_BAD_HEADER_LENGTH"
+    },
+    {
+      "name": "unknown_type_critical",
+      "description": "Unknown class 0x77 with the critical flag fails closed (TRS-PROTO-006).",
+      "frame_hex": "4c4d10770001003a726ea162ec1069635cb4868e6955c94defd92cff3eb315b80c1dcd5c336103d50000000100000000000000180000012c0000bd3e09b63d4f426dbcf17a4daaed184f1b2bbe575285f855",
+      "expected_error": "ERR_FRAME_UNKNOWN_TYPE"
+    },
+    {
+      "name": "reserved_flag_critical",
+      "description": "Reserved flag bit set together with the critical flag.",
+      "frame_hex": "4c4d10010101003a726ea162ec1069635cb4868e6955c94defd92cff3eb315b80c1dcd5c336103d50000000100000000000000180000012c0000bd3e09b63d4f426dbcf17a4daaed184f1b2bbe575285f855",
+      "expected_error": "ERR_FRAME_RESERVED_FLAG"
+    },
+    {
+      "name": "reserved_byte_critical",
+      "description": "Non-zero reserved byte together with the critical flag.",
+      "frame_hex": "4c4d10010001003a726ea162ec1069635cb4868e6955c94defd92cff3eb315b80c1dcd5c336103d50000000100000000000000180000012c0001bd3e09b63d4f426dbcf17a4daaed184f1b2bbe575285f855",
+      "expected_error": "ERR_FRAME_RESERVED_FIELD"
+    },
+    {
+      "name": "payload_exceeds_class_bound",
+      "description": "HELLO declaring a 2000-byte payload; the class bound is QR_BOOTSTRAP_MAX_BYTES=1228. Checked before allocation (TRS-PROTO-007).",
+      "frame_hex": "4c4d10010000003a726ea162ec1069635cb4868e6955c94defd92cff3eb315b80c1dcd5c336103d50000000100000000000007d00000012c0000",
+      "expected_error": "ERR_FRAME_PAYLOAD_TOO_LARGE"
+    },
+    {
+      "name": "payload_truncated",
+      "description": "Payload declares 24 bytes but only 20 are present.",
+      "frame_hex": "4c4d10010000003a726ea162ec1069635cb4868e6955c94defd92cff3eb315b80c1dcd5c336103d50000000100000000000000180000012c0000bd3e09b63d4f426dbcf17a4daaed184f1b2bbe57",
+      "expected_error": "ERR_FRAME_TRUNCATED"
+    },
+    {
+      "name": "trailing_garbage",
+      "description": "One byte beyond the declared payload.",
+      "frame_hex": "4c4d10010000003a726ea162ec1069635cb4868e6955c94defd92cff3eb315b80c1dcd5c336103d50000000100000000000000180000012c0000bd3e09b63d4f426dbcf17a4daaed184f1b2bbe575285f855ee",
+      "expected_error": "ERR_PAYLOAD_MALFORMED"
+    }
+  ]
+}

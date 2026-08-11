@@ -1,0 +1,588 @@
+{
+  "schema_version": 1,
+  "generator": "tools/vectorgen",
+  "constants_hash": "sha256:7315f92990eb8e431d0d0c392a73822035bcc96c1c469fc4fa734d75cfa278d5",
+  "implements": [
+    "TRS-PROTO-001",
+    "TRS-PROTO-002",
+    "TRS-PROTO-004",
+    "TRS-PROTO-014",
+    "SRS-NFR-CMP-004"
+  ],
+  "key_provenance": "TESTONLY-lumos-vectors-v1",
+  "notes": "Positive vectors: every TRS Sec. 9.2 message class, fields -\u003e exact bytes. decode_only cases cover the skippable conditions of TRS-PROTO-006 and the ADR-007 minor-version rule; consumers assert decode succeeds with the given fields.",
+  "cases": [
+    {
+      "name": "HELLO",
+      "description": "Canonical HELLO frame: fields -\u003e exact bytes (TRS Sec. 9.1/9.2).",
+      "decode_only": false,
+      "fields": {
+        "version": 16,
+        "message_type": 1,
+        "flags": 0,
+        "session_id_hex": "726ea162ec1069635cb4868e6955c94d",
+        "message_id_hex": "efd92cff3eb315b80c1dcd5c336103d5",
+        "sequence": 1,
+        "ack_base": 0,
+        "payload_length": 24,
+        "expiry_seconds": 300,
+        "hop_limit": 0,
+        "payload_hex": "bd3e09b63d4f426dbcf17a4daaed184f1b2bbe575285f855"
+      },
+      "frame_hex": "4c4d10010000003a726ea162ec1069635cb4868e6955c94defd92cff3eb315b80c1dcd5c336103d50000000100000000000000180000012c0000bd3e09b63d4f426dbcf17a4daaed184f1b2bbe575285f855",
+      "expect": {
+        "message_type_known": true
+      }
+    },
+    {
+      "name": "HELLO_ACK",
+      "description": "Canonical HELLO_ACK frame: fields -\u003e exact bytes (TRS Sec. 9.1/9.2).",
+      "decode_only": false,
+      "fields": {
+        "version": 16,
+        "message_type": 2,
+        "flags": 0,
+        "session_id_hex": "7c98d9dd3c65008c7992aecfdb750243",
+        "message_id_hex": "23dfa00567497088a5df664e29758dbe",
+        "sequence": 2,
+        "ack_base": 0,
+        "payload_length": 24,
+        "expiry_seconds": 300,
+        "hop_limit": 0,
+        "payload_hex": "260f402d3050c65900b31e70d3c8860e92538d33600117aa"
+      },
+      "frame_hex": "4c4d10020000003a7c98d9dd3c65008c7992aecfdb75024323dfa00567497088a5df664e29758dbe0000000200000000000000180000012c0000260f402d3050c65900b31e70d3c8860e92538d33600117aa",
+      "expect": {
+        "message_type_known": true
+      }
+    },
+    {
+      "name": "INTEREST_REQUEST",
+      "description": "Canonical INTEREST_REQUEST frame: fields -\u003e exact bytes (TRS Sec. 9.1/9.2).",
+      "decode_only": false,
+      "fields": {
+        "version": 16,
+        "message_type": 3,
+        "flags": 0,
+        "session_id_hex": "e723b03edf03cca654aeeba09bfcba2b",
+        "message_id_hex": "1b712bdb6535d05292ae1e14a29c6375",
+        "sequence": 3,
+        "ack_base": 0,
+        "payload_length": 24,
+        "expiry_seconds": 300,
+        "hop_limit": 0,
+        "payload_hex": "ce3c540c5a75a97036e5091cd8509efbd6e16b2e73e9ade9"
+      },
+      "frame_hex": "4c4d10030000003ae723b03edf03cca654aeeba09bfcba2b1b712bdb6535d05292ae1e14a29c63750000000300000000000000180000012c0000ce3c540c5a75a97036e5091cd8509efbd6e16b2e73e9ade9",
+      "expect": {
+        "message_type_known": true
+      }
+    },
+    {
+      "name": "INTEREST_RESPONSE",
+      "description": "Canonical INTEREST_RESPONSE frame: fields -\u003e exact bytes (TRS Sec. 9.1/9.2).",
+      "decode_only": false,
+      "fields": {
+        "version": 16,
+        "message_type": 4,
+        "flags": 0,
+        "session_id_hex": "47cc3fcce22a1d65083ba7282347a96c",
+        "message_id_hex": "e3dde4993c69d559e365dd76cf5efd5d",
+        "sequence": 4,
+        "ack_base": 0,
+        "payload_length": 24,
+        "expiry_seconds": 300,
+        "hop_limit": 0,
+        "payload_hex": "c091a735bdbe5845f55cd5fcbf2bd2cadd480b5100d5bbee"
+      },
+      "frame_hex": "4c4d10040000003a47cc3fcce22a1d65083ba7282347a96ce3dde4993c69d559e365dd76cf5efd5d0000000400000000000000180000012c0000c091a735bdbe5845f55cd5fcbf2bd2cadd480b5100d5bbee",
+      "expect": {
+        "message_type_known": true
+      }
+    },
+    {
+      "name": "PROFILE_PREVIEW",
+      "description": "Canonical PROFILE_PREVIEW frame: fields -\u003e exact bytes (TRS Sec. 9.1/9.2).",
+      "decode_only": false,
+      "fields": {
+        "version": 16,
+        "message_type": 5,
+        "flags": 0,
+        "session_id_hex": "dbb309a68b3b1570dffca45d9c8274f1",
+        "message_id_hex": "5ee900e16b74aabccabba8534570149a",
+        "sequence": 5,
+        "ack_base": 0,
+        "payload_length": 24,
+        "expiry_seconds": 300,
+        "hop_limit": 0,
+        "payload_hex": "c08a05ee9036dbd29e8b743f828fc6532e1ea012e8cb37a5"
+      },
+      "frame_hex": "4c4d10050000003adbb309a68b3b1570dffca45d9c8274f15ee900e16b74aabccabba8534570149a0000000500000000000000180000012c0000c08a05ee9036dbd29e8b743f828fc6532e1ea012e8cb37a5",
+      "expect": {
+        "message_type_known": true
+      }
+    },
+    {
+      "name": "PROFILE_FULL",
+      "description": "Canonical PROFILE_FULL frame: fields -\u003e exact bytes (TRS Sec. 9.1/9.2).",
+      "decode_only": false,
+      "fields": {
+        "version": 16,
+        "message_type": 6,
+        "flags": 0,
+        "session_id_hex": "0e99cace69061353e82b46e572668e30",
+        "message_id_hex": "76ac8b4ce3cccb8259058ffaf420e047",
+        "sequence": 6,
+        "ack_base": 0,
+        "payload_length": 24,
+        "expiry_seconds": 300,
+        "hop_limit": 0,
+        "payload_hex": "22eabd9989e2c5c3e60cfeba31f89e4a110d639c92f0292b"
+      },
+      "frame_hex": "4c4d10060000003a0e99cace69061353e82b46e572668e3076ac8b4ce3cccb8259058ffaf420e0470000000600000000000000180000012c000022eabd9989e2c5c3e60cfeba31f89e4a110d639c92f0292b",
+      "expect": {
+        "message_type_known": true
+      }
+    },
+    {
+      "name": "TEXT_MESSAGE",
+      "description": "Canonical TEXT_MESSAGE frame: fields -\u003e exact bytes (TRS Sec. 9.1/9.2).",
+      "decode_only": false,
+      "fields": {
+        "version": 16,
+        "message_type": 16,
+        "flags": 1,
+        "session_id_hex": "ea735cd902f59f4643d335c3a81623cb",
+        "message_id_hex": "2cdd1658bb869a1d4b306527a1a4a1af",
+        "sequence": 7,
+        "ack_base": 0,
+        "payload_length": 24,
+        "expiry_seconds": 300,
+        "hop_limit": 0,
+        "payload_hex": "3682544e5c54548c9a626d6c4a0c53bd152df4e2df46550b"
+      },
+      "frame_hex": "4c4d10100001003aea735cd902f59f4643d335c3a81623cb2cdd1658bb869a1d4b306527a1a4a1af0000000700000000000000180000012c00003682544e5c54548c9a626d6c4a0c53bd152df4e2df46550b",
+      "expect": {
+        "message_type_known": true
+      }
+    },
+    {
+      "name": "DELIVERY_RECEIPT",
+      "description": "Canonical DELIVERY_RECEIPT frame: fields -\u003e exact bytes (TRS Sec. 9.1/9.2).",
+      "decode_only": false,
+      "fields": {
+        "version": 16,
+        "message_type": 17,
+        "flags": 0,
+        "session_id_hex": "73ea7c58da51a6400625aba39a77ef3e",
+        "message_id_hex": "b7a938951a647d434bdc1b7f4f945325",
+        "sequence": 8,
+        "ack_base": 0,
+        "payload_length": 24,
+        "expiry_seconds": 300,
+        "hop_limit": 0,
+        "payload_hex": "a60342f1ca8fd93b9f7a350df823709e1142bdc5a0f15b36"
+      },
+      "frame_hex": "4c4d10110000003a73ea7c58da51a6400625aba39a77ef3eb7a938951a647d434bdc1b7f4f9453250000000800000000000000180000012c0000a60342f1ca8fd93b9f7a350df823709e1142bdc5a0f15b36",
+      "expect": {
+        "message_type_known": true
+      }
+    },
+    {
+      "name": "READ_RECEIPT",
+      "description": "Canonical READ_RECEIPT frame: fields -\u003e exact bytes (TRS Sec. 9.1/9.2).",
+      "decode_only": false,
+      "fields": {
+        "version": 16,
+        "message_type": 18,
+        "flags": 0,
+        "session_id_hex": "1606fac3ace89427ffc10935d55bbfc0",
+        "message_id_hex": "6b08a84d198d7c981bfde54c7915f88f",
+        "sequence": 9,
+        "ack_base": 0,
+        "payload_length": 24,
+        "expiry_seconds": 300,
+        "hop_limit": 0,
+        "payload_hex": "43b4c92964906168b9f70a6db902204cdad4a8492b921d69"
+      },
+      "frame_hex": "4c4d10120000003a1606fac3ace89427ffc10935d55bbfc06b08a84d198d7c981bfde54c7915f88f0000000900000000000000180000012c000043b4c92964906168b9f70a6db902204cdad4a8492b921d69",
+      "expect": {
+        "message_type_known": true
+      }
+    },
+    {
+      "name": "TYPING",
+      "description": "Canonical TYPING frame: fields -\u003e exact bytes (TRS Sec. 9.1/9.2).",
+      "decode_only": false,
+      "fields": {
+        "version": 16,
+        "message_type": 19,
+        "flags": 0,
+        "session_id_hex": "bd99c11bd989eae1c43e0217fbce274c",
+        "message_id_hex": "b39778ad897006e5385792f4e147c7fb",
+        "sequence": 10,
+        "ack_base": 0,
+        "payload_length": 24,
+        "expiry_seconds": 300,
+        "hop_limit": 0,
+        "payload_hex": "8ab67c6eda8aea167590fb109001276841fc3ddbbd7908a5"
+      },
+      "frame_hex": "4c4d10130000003abd99c11bd989eae1c43e0217fbce274cb39778ad897006e5385792f4e147c7fb0000000a00000000000000180000012c00008ab67c6eda8aea167590fb109001276841fc3ddbbd7908a5",
+      "expect": {
+        "message_type_known": true
+      }
+    },
+    {
+      "name": "OBJECT_META",
+      "description": "Canonical OBJECT_META frame: fields -\u003e exact bytes (TRS Sec. 9.1/9.2).",
+      "decode_only": false,
+      "fields": {
+        "version": 16,
+        "message_type": 32,
+        "flags": 0,
+        "session_id_hex": "75e2de3deba88e7d98d37f331224c40c",
+        "message_id_hex": "04f9a4693463c50193d2fe53a12083ad",
+        "sequence": 11,
+        "ack_base": 0,
+        "payload_length": 24,
+        "expiry_seconds": 300,
+        "hop_limit": 0,
+        "payload_hex": "31cd2f2db86eac7e5349616339b274673a7f424cbb48f1ee"
+      },
+      "frame_hex": "4c4d10200000003a75e2de3deba88e7d98d37f331224c40c04f9a4693463c50193d2fe53a12083ad0000000b00000000000000180000012c000031cd2f2db86eac7e5349616339b274673a7f424cbb48f1ee",
+      "expect": {
+        "message_type_known": true
+      }
+    },
+    {
+      "name": "OBJECT_CHUNK",
+      "description": "Canonical OBJECT_CHUNK frame: fields -\u003e exact bytes (TRS Sec. 9.1/9.2).",
+      "decode_only": false,
+      "fields": {
+        "version": 16,
+        "message_type": 33,
+        "flags": 8,
+        "session_id_hex": "639eafcce0b4e042284760c3d16ac493",
+        "message_id_hex": "6a04082416521471cfd5df427274bc28",
+        "sequence": 12,
+        "ack_base": 0,
+        "payload_length": 64,
+        "expiry_seconds": 300,
+        "hop_limit": 0,
+        "payload_hex": "7eafe2743f07baa3c2d1d2e9d205fd5de8c9371d7f75faee76af2649615b48b2ff9f90a5d086e0780cad54b3ac06789cd4863b42ddd6d5d17285a39bfbbb8c68"
+      },
+      "frame_hex": "4c4d10210008003a639eafcce0b4e042284760c3d16ac4936a04082416521471cfd5df427274bc280000000c00000000000000400000012c00007eafe2743f07baa3c2d1d2e9d205fd5de8c9371d7f75faee76af2649615b48b2ff9f90a5d086e0780cad54b3ac06789cd4863b42ddd6d5d17285a39bfbbb8c68",
+      "expect": {
+        "message_type_known": true
+      }
+    },
+    {
+      "name": "OBJECT_ACK",
+      "description": "Canonical OBJECT_ACK frame: fields -\u003e exact bytes (TRS Sec. 9.1/9.2).",
+      "decode_only": false,
+      "fields": {
+        "version": 16,
+        "message_type": 34,
+        "flags": 0,
+        "session_id_hex": "78e6493502be49e33d8487c977e215ac",
+        "message_id_hex": "c174e423eef139c0c10a97286e15d0f9",
+        "sequence": 13,
+        "ack_base": 0,
+        "payload_length": 24,
+        "expiry_seconds": 300,
+        "hop_limit": 0,
+        "payload_hex": "cc0911ec09043eee857ff441c0e93edc3b0dc5ccb15cd099"
+      },
+      "frame_hex": "4c4d10220000003a78e6493502be49e33d8487c977e215acc174e423eef139c0c10a97286e15d0f90000000d00000000000000180000012c0000cc0911ec09043eee857ff441c0e93edc3b0dc5ccb15cd099",
+      "expect": {
+        "message_type_known": true
+      }
+    },
+    {
+      "name": "OBJECT_CANCEL",
+      "description": "Canonical OBJECT_CANCEL frame: fields -\u003e exact bytes (TRS Sec. 9.1/9.2).",
+      "decode_only": false,
+      "fields": {
+        "version": 16,
+        "message_type": 35,
+        "flags": 0,
+        "session_id_hex": "de8f8e77513215f25c63d867d9b6069c",
+        "message_id_hex": "73b054ee95e8db37100e906629b635d2",
+        "sequence": 14,
+        "ack_base": 0,
+        "payload_length": 24,
+        "expiry_seconds": 300,
+        "hop_limit": 0,
+        "payload_hex": "77a0094942c9229286b042f0c58460f2c8ac2355b9665e7a"
+      },
+      "frame_hex": "4c4d10230000003ade8f8e77513215f25c63d867d9b6069c73b054ee95e8db37100e906629b635d20000000e00000000000000180000012c000077a0094942c9229286b042f0c58460f2c8ac2355b9665e7a",
+      "expect": {
+        "message_type_known": true
+      }
+    },
+    {
+      "name": "VOICE_META",
+      "description": "Canonical VOICE_META frame: fields -\u003e exact bytes (TRS Sec. 9.1/9.2).",
+      "decode_only": false,
+      "fields": {
+        "version": 16,
+        "message_type": 36,
+        "flags": 9,
+        "session_id_hex": "f99128bae24aa09836e9225ebda24a9e",
+        "message_id_hex": "f120f96efb20d1af7838578ac457831f",
+        "sequence": 15,
+        "ack_base": 0,
+        "payload_length": 24,
+        "expiry_seconds": 300,
+        "hop_limit": 0,
+        "payload_hex": "7f7853c8d9fa4be51f3043b0a4afcd1f6ef5b222eac7d40d"
+      },
+      "frame_hex": "4c4d10240009003af99128bae24aa09836e9225ebda24a9ef120f96efb20d1af7838578ac457831f0000000f00000000000000180000012c00007f7853c8d9fa4be51f3043b0a4afcd1f6ef5b222eac7d40d",
+      "expect": {
+        "message_type_known": true
+      }
+    },
+    {
+      "name": "MESH_RELAY",
+      "description": "Canonical MESH_RELAY frame: fields -\u003e exact bytes (TRS Sec. 9.1/9.2).",
+      "decode_only": false,
+      "fields": {
+        "version": 16,
+        "message_type": 48,
+        "flags": 4,
+        "session_id_hex": "3e2f17a4b11f213141688266dcbe32c7",
+        "message_id_hex": "b4cde7d3619c3be89f9c7c82052b6d07",
+        "sequence": 16,
+        "ack_base": 0,
+        "payload_length": 24,
+        "expiry_seconds": 300,
+        "hop_limit": 3,
+        "payload_hex": "9a945d99c3cd910df2f23e7dd7c50559f2564146acee1376"
+      },
+      "frame_hex": "4c4d10300004003a3e2f17a4b11f213141688266dcbe32c7b4cde7d3619c3be89f9c7c82052b6d070000001000000000000000180000012c03009a945d99c3cd910df2f23e7dd7c50559f2564146acee1376",
+      "expect": {
+        "message_type_known": true
+      }
+    },
+    {
+      "name": "STORE_FORWARD",
+      "description": "Canonical STORE_FORWARD frame: fields -\u003e exact bytes (TRS Sec. 9.1/9.2).",
+      "decode_only": false,
+      "fields": {
+        "version": 16,
+        "message_type": 49,
+        "flags": 4,
+        "session_id_hex": "07c8b6ee75bfa98cbbaec853276ed5e3",
+        "message_id_hex": "4398b1571e741fdd3e33aa3ea120a098",
+        "sequence": 17,
+        "ack_base": 0,
+        "payload_length": 24,
+        "expiry_seconds": 300,
+        "hop_limit": 3,
+        "payload_hex": "652113defdfaaa376afa66d108aba7037083c773a0b24b5b"
+      },
+      "frame_hex": "4c4d10310004003a07c8b6ee75bfa98cbbaec853276ed5e34398b1571e741fdd3e33aa3ea120a0980000001100000000000000180000012c0300652113defdfaaa376afa66d108aba7037083c773a0b24b5b",
+      "expect": {
+        "message_type_known": true
+      }
+    },
+    {
+      "name": "VENUE_PACKAGE_HINT",
+      "description": "Canonical VENUE_PACKAGE_HINT frame: fields -\u003e exact bytes (TRS Sec. 9.1/9.2).",
+      "decode_only": false,
+      "fields": {
+        "version": 16,
+        "message_type": 64,
+        "flags": 0,
+        "session_id_hex": "fedb1172a82554c30e6db5577c535282",
+        "message_id_hex": "776ba5eb1ce843b004850570d0c18020",
+        "sequence": 18,
+        "ack_base": 0,
+        "payload_length": 24,
+        "expiry_seconds": 300,
+        "hop_limit": 0,
+        "payload_hex": "67a223fa5bab67d5724486515a76c1896372f9cc4937fbe8"
+      },
+      "frame_hex": "4c4d10400000003afedb1172a82554c30e6db5577c535282776ba5eb1ce843b004850570d0c180200000001200000000000000180000012c000067a223fa5bab67d5724486515a76c1896372f9cc4937fbe8",
+      "expect": {
+        "message_type_known": true
+      }
+    },
+    {
+      "name": "VENUE_ROOM_EVENT",
+      "description": "Canonical VENUE_ROOM_EVENT frame: fields -\u003e exact bytes (TRS Sec. 9.1/9.2).",
+      "decode_only": false,
+      "fields": {
+        "version": 16,
+        "message_type": 65,
+        "flags": 0,
+        "session_id_hex": "0f54a1fef960d2c2380a6c1d95a4c0e8",
+        "message_id_hex": "f582465f61492fdf67d86d11a8eedfcf",
+        "sequence": 19,
+        "ack_base": 0,
+        "payload_length": 24,
+        "expiry_seconds": 300,
+        "hop_limit": 0,
+        "payload_hex": "4fcae5fa2ef804c4bffee884ae5814e07ca961aed66bb286"
+      },
+      "frame_hex": "4c4d10410000003a0f54a1fef960d2c2380a6c1d95a4c0e8f582465f61492fdf67d86d11a8eedfcf0000001300000000000000180000012c00004fcae5fa2ef804c4bffee884ae5814e07ca961aed66bb286",
+      "expect": {
+        "message_type_known": true
+      }
+    },
+    {
+      "name": "VOUCHER_TOKEN",
+      "description": "Canonical VOUCHER_TOKEN frame: fields -\u003e exact bytes (TRS Sec. 9.1/9.2).",
+      "decode_only": false,
+      "fields": {
+        "version": 16,
+        "message_type": 66,
+        "flags": 0,
+        "session_id_hex": "9029f60e15ec5fc3f39ec88c2453ef14",
+        "message_id_hex": "ff3b48b76c4f4b74a2230b7169a8528d",
+        "sequence": 20,
+        "ack_base": 0,
+        "payload_length": 24,
+        "expiry_seconds": 300,
+        "hop_limit": 0,
+        "payload_hex": "d18ec41f0c9b1ef3d035ecafebdd48d2c2dd14b2b143af3a"
+      },
+      "frame_hex": "4c4d10420000003a9029f60e15ec5fc3f39ec88c2453ef14ff3b48b76c4f4b74a2230b7169a8528d0000001400000000000000180000012c0000d18ec41f0c9b1ef3d035ecafebdd48d2c2dd14b2b143af3a",
+      "expect": {
+        "message_type_known": true
+      }
+    },
+    {
+      "name": "HEARTBEAT",
+      "description": "Canonical HEARTBEAT frame: fields -\u003e exact bytes (TRS Sec. 9.1/9.2).",
+      "decode_only": false,
+      "fields": {
+        "version": 16,
+        "message_type": 80,
+        "flags": 0,
+        "session_id_hex": "976812f6875662c5148847607204817c",
+        "message_id_hex": "4dc1cc0afa5a29c1823142f7884acf58",
+        "sequence": 21,
+        "ack_base": 0,
+        "payload_length": 0,
+        "expiry_seconds": 300,
+        "hop_limit": 0,
+        "payload_hex": ""
+      },
+      "frame_hex": "4c4d10500000003a976812f6875662c5148847607204817c4dc1cc0afa5a29c1823142f7884acf580000001500000000000000000000012c0000",
+      "expect": {
+        "message_type_known": true
+      }
+    },
+    {
+      "name": "ERROR",
+      "description": "Canonical ERROR frame: fields -\u003e exact bytes (TRS Sec. 9.1/9.2).",
+      "decode_only": false,
+      "fields": {
+        "version": 16,
+        "message_type": 127,
+        "flags": 0,
+        "session_id_hex": "4aacfd220008176cd3775c97a2dbd176",
+        "message_id_hex": "dabd985e6c874eb0d07bd7d4dff3367c",
+        "sequence": 22,
+        "ack_base": 0,
+        "payload_length": 24,
+        "expiry_seconds": 300,
+        "hop_limit": 0,
+        "payload_hex": "76263b44359520c1b47728da3df0ed2962ca6c8879a7df11"
+      },
+      "frame_hex": "4c4d107f0000003a4aacfd220008176cd3775c97a2dbd176dabd985e6c874eb0d07bd7d4dff3367c0000001600000000000000180000012c000076263b44359520c1b47728da3df0ed2962ca6c8879a7df11",
+      "expect": {
+        "message_type_known": true
+      }
+    },
+    {
+      "name": "minor_version_accepted",
+      "description": "Version 0x11 (v1.1): differing MINOR nibble is accepted per ADR-007.",
+      "decode_only": true,
+      "fields": {
+        "version": 17,
+        "message_type": 1,
+        "flags": 0,
+        "session_id_hex": "726ea162ec1069635cb4868e6955c94d",
+        "message_id_hex": "efd92cff3eb315b80c1dcd5c336103d5",
+        "sequence": 1,
+        "ack_base": 0,
+        "payload_length": 24,
+        "expiry_seconds": 300,
+        "hop_limit": 0,
+        "payload_hex": "bd3e09b63d4f426dbcf17a4daaed184f1b2bbe575285f855"
+      },
+      "frame_hex": "4c4d11010000003a726ea162ec1069635cb4868e6955c94defd92cff3eb315b80c1dcd5c336103d50000000100000000000000180000012c0000bd3e09b63d4f426dbcf17a4daaed184f1b2bbe575285f855",
+      "expect": {
+        "message_type_known": true
+      }
+    },
+    {
+      "name": "unknown_type_noncritical_skippable",
+      "description": "Unknown class 0x0F without the critical flag decodes and is skipped by the caller (TRS-PROTO-006).",
+      "decode_only": true,
+      "fields": {
+        "version": 16,
+        "message_type": 15,
+        "flags": 0,
+        "session_id_hex": "726ea162ec1069635cb4868e6955c94d",
+        "message_id_hex": "efd92cff3eb315b80c1dcd5c336103d5",
+        "sequence": 1,
+        "ack_base": 0,
+        "payload_length": 24,
+        "expiry_seconds": 300,
+        "hop_limit": 0,
+        "payload_hex": "bd3e09b63d4f426dbcf17a4daaed184f1b2bbe575285f855"
+      },
+      "frame_hex": "4c4d100f0000003a726ea162ec1069635cb4868e6955c94defd92cff3eb315b80c1dcd5c336103d50000000100000000000000180000012c0000bd3e09b63d4f426dbcf17a4daaed184f1b2bbe575285f855",
+      "expect": {
+        "message_type_known": false
+      }
+    },
+    {
+      "name": "reserved_flag_noncritical_ignored",
+      "description": "Reserved flag bit 8 set without the critical flag is ignored (ADR-007).",
+      "decode_only": true,
+      "fields": {
+        "version": 16,
+        "message_type": 1,
+        "flags": 256,
+        "session_id_hex": "726ea162ec1069635cb4868e6955c94d",
+        "message_id_hex": "efd92cff3eb315b80c1dcd5c336103d5",
+        "sequence": 1,
+        "ack_base": 0,
+        "payload_length": 24,
+        "expiry_seconds": 300,
+        "hop_limit": 0,
+        "payload_hex": "bd3e09b63d4f426dbcf17a4daaed184f1b2bbe575285f855"
+      },
+      "frame_hex": "4c4d10010100003a726ea162ec1069635cb4868e6955c94defd92cff3eb315b80c1dcd5c336103d50000000100000000000000180000012c0000bd3e09b63d4f426dbcf17a4daaed184f1b2bbe575285f855",
+      "expect": {
+        "message_type_known": true
+      }
+    },
+    {
+      "name": "reserved_byte_noncritical_ignored",
+      "description": "Non-zero reserved header byte without the critical flag is ignored (TRS Sec. 9.1).",
+      "decode_only": true,
+      "fields": {
+        "version": 16,
+        "message_type": 1,
+        "flags": 0,
+        "session_id_hex": "726ea162ec1069635cb4868e6955c94d",
+        "message_id_hex": "efd92cff3eb315b80c1dcd5c336103d5",
+        "sequence": 1,
+        "ack_base": 0,
+        "payload_length": 24,
+        "expiry_seconds": 300,
+        "hop_limit": 0,
+        "payload_hex": "bd3e09b63d4f426dbcf17a4daaed184f1b2bbe575285f855"
+      },
+      "frame_hex": "4c4d10010000003a726ea162ec1069635cb4868e6955c94defd92cff3eb315b80c1dcd5c336103d50000000100000000000000180000012c0001bd3e09b63d4f426dbcf17a4daaed184f1b2bbe575285f855",
+      "expect": {
+        "message_type_known": true
+      }
+    }
+  ]
+}
