@@ -102,6 +102,10 @@ is success; papering over it is the only real failure mode.
   closeout before starting WP-02 — it lists every deviation, every ADR raised,
   and everything left `not_started` with its destination WP.
 - Active WP: **WP-02** (EDP §7). Do not start it without its kickoff brief.
+- **WP-02 preflight, owner-assigned 2026-08-12 (TRS-REP-008):** seed the threat
+  model and privacy data map **before** feature code. They constrain design;
+  written afterwards they only describe it. They then live per-WP and are
+  audited in WP-11.
 - Trace matrix: 648 entries. Of the 33 IDs in WP-01's declared scope, 17 are
   `tested`, 9 `implemented` and 7 `not_started`. All nine EDP §8 owner gates
   remain `unproven_owner`; no agent may advance one.

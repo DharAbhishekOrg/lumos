@@ -351,19 +351,39 @@ was never touched — no signing key, credential or `.env` secret exists in sour
 
 ### 6.2 In-scope requirements left `not_started`
 
-Destinations marked **stated** come from the requirement text or an EDP work-package brief.
-Destinations marked *inferred* are my reading of subject matter — **the EDP does not assign these
-IDs to a work package by ID**, and the owner should confirm them.
+**Every destination below is normative.** Five were raised as agent inferences in review and
+**confirmed by the owner on 2026-08-12**; the other two were already stated by the requirement text
+or an EDP work-package brief. Nothing here is now a reading of subject matter, and a later work
+package should treat these as assignments rather than suggestions.
 
-| ID | P | Subject | Destination |
-| --- | --- | --- | --- |
-| TRS-PROTO-008 | P0 | Optional negotiated compression, decompression-bomb protection | **WP-06** negotiation + **WP-11** fuzzing — *inferred*; WP-11's scope names "fuzz campaigns on every decoder/parser … decompression" |
-| TRS-PROTO-010 | P0 | Fragmentation independent of framing; reassembly timeout, duplicate suppression | **WP-06** — *inferred*; its constants (`REASSEMBLY_TIMEOUT`, `LAN_CHUNK_PAYLOAD`) are transport |
-| TRS-PROTO-012 | P0 | Mesh forwarding authenticates TTL/hop/message ID; relay may not increase them | **WP-06** — **stated**; its brief names "mesh relay rules (TTL/hop decrement, drop policy)" |
-| TRS-PROTO-016 | P1 | Semantic versioning + compatibility review for protocol changes | **WP-11** — *inferred*; release-gate work |
-| TRS-CONST-004 | P1 | Calibration values tuned on reference device classes, evidence in `/evidence` | **WP-03 / WP-07** — **stated in the requirement text** |
-| TRS-CONST-006 | P1 | Signed config selects predefined environment profiles (normal, crowded-venue, battery-saver) | **WP-08** — *inferred*; ADR-006 attributes config-override work to WP-08 |
-| TRS-REP-008 | P1 | ADRs, threat model, privacy data map, generated API/protocol docs | **Partly done, no owner**: ADRs exist (9 of them). Threat model, privacy data map and generated docs are unstarted — *inferred* **WP-11** |
+| ID | P | Subject | Destination | Basis |
+| --- | --- | --- | --- | --- |
+| TRS-PROTO-008 | P0 | Optional negotiated compression, decompression-bomb protection | **WP-06** | Owner-confirmed 2026-08-12 |
+| TRS-PROTO-010 | P0 | Fragmentation independent of framing; reassembly timeout, duplicate suppression | **WP-03** | Owner-confirmed 2026-08-12 |
+| TRS-PROTO-012 | P0 | Mesh forwarding authenticates TTL/hop/message ID; relay may not increase them | **WP-06** | EDP WP-06 brief: "mesh relay rules (TTL/hop decrement, drop policy)" |
+| TRS-PROTO-016 | P1 | Semantic versioning + compatibility review for protocol changes | **WP-11** | Owner-confirmed 2026-08-12 |
+| TRS-CONST-004 | P1 | Calibration values tuned on reference device classes, evidence in `/evidence` | **WP-03 / WP-07** | Stated in the requirement text |
+| TRS-CONST-006 | P1 | Signed config selects predefined environment profiles (normal, crowded-venue, battery-saver) | **WP-08** | Owner-confirmed 2026-08-12 |
+| TRS-REP-008 | P1 | ADRs, threat model, privacy data map, generated API/protocol documentation | **WP-02 preflight → living per-WP → final audit WP-11** | Owner-confirmed 2026-08-12 |
+
+Two of the confirmations **moved a destination away from where I had inferred it**, and the
+reasoning is worth carrying rather than just the answer:
+
+- **TRS-PROTO-010 → WP-03, not WP-06.** I had reasoned from the constants (`REASSEMBLY_TIMEOUT`,
+  `LAN_CHUNK_PAYLOAD`) that fragmentation is transport-orchestrator work. It lands earlier:
+  BLE chunking and reassembly are needed the first time a preview crosses a GATT connection in
+  WP-03, well before the mesh exists. Fragmentation is a property of the *link*, not of the routing
+  policy above it.
+- **TRS-PROTO-008 → WP-06 alone.** I had proposed splitting it, with negotiation in WP-06 and
+  decompression-bomb hardening in WP-11's fuzz campaign. The requirement is one clause and gets one
+  owner; WP-11 still fuzzes the decoder, but the requirement is not satisfied in two places.
+
+**TRS-REP-008 is a three-phase assignment, not a single destination.** The threat model and privacy
+data map are **seeded in WP-02 as a preflight, before feature code exists** — they are inputs to
+design decisions, and a threat model written after the system is built documents what was done
+rather than constraining what should be. They then live per-WP, updated by whichever package changes
+the attack surface or the data map, with the final documentation audit in WP-11. ADRs are already
+part of this row and are live (nine of them).
 
 ### 6.3 Deliberately not claimed
 
@@ -389,6 +409,11 @@ IDs to a work package by ID**, and the owner should confirm them.
 - A PR pipeline running all six TRS-CICD-001 stages, plus four empty shells that compile and lint
   clean from a container that has never seen the repository.
 - Bootstrap scripts and a deterministic sample environment for a fresh machine.
+
+**One obligation WP-02 inherits directly.** Per the owner's 2026-08-12 assignment of TRS-REP-008,
+the **threat model and privacy data map are a WP-02 preflight** — seeded before feature code, not
+written after it. They are inputs to design decisions; produced afterwards they document what was
+built rather than constrain what should be. They then live per-WP and are audited in WP-11.
 
 **Entry criteria for WP-02 that this work package does not satisfy** and that are not its job:
 physical devices for the WP-03 evidence loop, owner cloud/push projects for WP-05, and the
