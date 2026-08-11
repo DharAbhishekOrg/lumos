@@ -28,6 +28,7 @@
   ],
   "config-schema/": [
    "TRS-CFG",
+   "TRS-CONST-002",
    "TRS-CICD-005"
   ],
   "tools/vectorgen/": [
@@ -58,6 +59,14 @@
   ],
   "tools/tracecheck/": [
    "TRS-AI-003"
+  ],
+  "protocol/schemas/": [
+   "TRS-PROTO",
+   "TRS-CICD-005"
+  ],
+  "protocol/schema/": [
+   "TRS-PROTO",
+   "TRS-CICD-005"
   ]
  }
 }

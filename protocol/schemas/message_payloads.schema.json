@@ -1,0 +1,80 @@
+{
+ "$comment": "Per-class payload rules for the TRS Sec. 9.2 message classes. The class codes themselves live in the constants register and are generated into typed enums; this file adds the per-class payload bound required by TRS-PROTO-007 and the inner event envelope of AMD-005. Every class listed in the register must appear here exactly once - the loader enforces that, so a new class cannot be added without deciding its payload bound.",
+ "schema_id": "lumos.message_payloads",
+ "schema_version": 1,
+ "source": "TRS Sec. 9.2, AMD-005",
+ "implements": ["TRS-PROTO-005", "TRS-PROTO-006", "TRS-PROTO-007", "TRS-PROTO-011", "TRS-PROTO-014"],
+
+ "unknown_handling": {
+  "rule": "Unknown non-critical optional fields are safely skipped; unknown critical versions or types fail closed (TRS-PROTO-006).",
+  "critical_flag_ref": "framing.FRAME_FLAG_CRITICAL",
+  "error_code_unknown_critical": "ERR_FRAME_UNKNOWN_TYPE"
+ },
+
+ "decode_order": {
+  "note": "Bounds are validated BEFORE allocation (TRS-PROTO-007). The decoder reads header_length, rejects a header that disagrees with the version's fixed length, then reads payload_length and rejects it against max_payload_ref for the class - all before any buffer is sized.",
+  "anchors": ["TRS-PROTO-007"]
+ },
+
+ "compression": {
+  "rule": "Optional and negotiated. A compressed payload declares its decompressed size, which is checked against the class maximum BEFORE decompression, and the decompressor is hard-stopped at that bound.",
+  "flag_ref": "framing.FRAME_FLAG_COMPRESSED",
+  "error_code": "ERR_PAYLOAD_DECOMPRESSION_BOMB",
+  "anchors": ["TRS-PROTO-008"]
+ },
+
+ "classes": [
+  {"name": "HELLO", "max_payload_ref": "transport.QR_BOOTSTRAP_MAX_BYTES", "encrypted": false,
+   "note": "Capability and version bootstrap. Canonical trust is established here, not in the advertisement (TRS-PROTO-017)."},
+  {"name": "HELLO_ACK", "max_payload_ref": "transport.QR_BOOTSTRAP_MAX_BYTES", "encrypted": false},
+  {"name": "INTEREST_REQUEST", "max_payload_ref": "transport.QR_BOOTSTRAP_MAX_BYTES", "encrypted": true},
+  {"name": "INTEREST_RESPONSE", "max_payload_ref": "transport.QR_BOOTSTRAP_MAX_BYTES", "encrypted": true,
+   "note": "Decline and ignore must be indistinguishable on the wire - no rejection signal (SRS-MAT)."},
+  {"name": "PROFILE_PREVIEW", "max_payload_ref": "media.PREVIEW_MAX_KB", "unit": "kb", "encrypted": true},
+  {"name": "PROFILE_FULL", "max_payload_ref": "media.FULL_IMAGE_MAX_MB", "unit": "mb", "encrypted": true},
+
+  {"name": "TEXT_MESSAGE", "max_payload_ref": "sessions_remote_text.RELAY_TEXT_ENVELOPE_MAX_BYTES", "encrypted": true,
+   "inner_envelope": "text_event"},
+  {"name": "DELIVERY_RECEIPT", "max_payload_ref": "transport.QR_BOOTSTRAP_MAX_BYTES", "encrypted": true},
+  {"name": "READ_RECEIPT", "max_payload_ref": "transport.QR_BOOTSTRAP_MAX_BYTES", "encrypted": true},
+  {"name": "TYPING", "max_payload_ref": "transport.QR_BOOTSTRAP_MAX_BYTES", "encrypted": true, "ephemeral": true},
+
+  {"name": "OBJECT_META", "max_payload_ref": "transport.QR_BOOTSTRAP_MAX_BYTES", "encrypted": true},
+  {"name": "OBJECT_CHUNK", "max_payload_ref": "transport.LAN_CHUNK_PAYLOAD_BYTES", "encrypted": true,
+   "note": "Over BLE the effective bound is the negotiated MTU rule, transport.BLE_CHUNK_PAYLOAD."},
+  {"name": "OBJECT_ACK", "max_payload_ref": "transport.QR_BOOTSTRAP_MAX_BYTES", "encrypted": true,
+   "note": "Bounded bitmap or ranges plus a resume token (TRS-PROTO-011)."},
+  {"name": "OBJECT_CANCEL", "max_payload_ref": "transport.QR_BOOTSTRAP_MAX_BYTES", "encrypted": true},
+  {"name": "VOICE_META", "max_payload_ref": "transport.QR_BOOTSTRAP_MAX_BYTES", "encrypted": true},
+
+  {"name": "MESH_RELAY", "max_payload_ref": "sessions_remote_text.RELAY_TEXT_ENVELOPE_MAX_BYTES", "encrypted": true,
+   "opaque_to_relay": true},
+  {"name": "STORE_FORWARD", "max_payload_ref": "sessions_remote_text.RELAY_TEXT_ENVELOPE_MAX_BYTES", "encrypted": true,
+   "opaque_to_relay": true},
+
+  {"name": "VENUE_PACKAGE_HINT", "max_payload_ref": "transport.QR_BOOTSTRAP_MAX_BYTES", "encrypted": false},
+  {"name": "VENUE_ROOM_EVENT", "max_payload_ref": "transport.QR_BOOTSTRAP_MAX_BYTES", "encrypted": true},
+  {"name": "VOUCHER_TOKEN", "max_payload_ref": "transport.QR_BOOTSTRAP_MAX_BYTES", "encrypted": false,
+   "note": "Signed; see config-schema/voucher_token.schema.json."},
+
+  {"name": "HEARTBEAT", "max_payload_ref": "transport.QR_BOOTSTRAP_MAX_BYTES", "encrypted": false},
+  {"name": "ERROR", "max_payload_ref": "transport.QR_BOOTSTRAP_MAX_BYTES", "encrypted": false,
+   "note": "Carries a stable machine-readable code from error_codes.schema.json (TRS-PROTO-013)."}
+ ],
+
+ "text_event": {
+  "$comment": "AMD-005 inner canonical event envelope carried by class 0x10 TEXT_MESSAGE. Edits, deletes and reactions are AUTHENTICATED EVENTS OVER THE ORIGINAL MESSAGE - they ride the same ratcheted session, so a relay cannot forge or replay one.",
+  "kind_enum_ref": "message_classes.text_event_kinds",
+  "fields": [
+   {"name": "event_kind", "type": "u8", "required": true, "enum_ref": "message_classes.text_event_kinds"},
+   {"name": "target_message_id", "type": "bytes", "width_ref": "sessions_remote_text.MESSAGE_ID_LEN_BYTES",
+    "required_for": ["EDIT", "DELETE_FOR_EVERYONE", "REACTION"],
+    "prohibited_for": ["TEXT"]},
+   {"name": "body", "type": "bytes", "required_for": ["TEXT", "EDIT", "REACTION"], "prohibited_for": ["DELETE_FOR_EVERYONE"]}
+  ],
+  "unknown_kind_handling": {
+   "rule": "An unknown event_kind follows TRS-PROTO-006: skipped when non-critical, fail closed when the frame is marked critical.",
+   "error_code": "ERR_TEXT_UNKNOWN_EVENT_KIND"
+  }
+ }
+}

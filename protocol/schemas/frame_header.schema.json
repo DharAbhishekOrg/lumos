@@ -1,0 +1,119 @@
+{
+ "$comment": "Lumos canonical frame header, TRS Sec. 9.1. This is a BINARY layout description, not JSON Schema: JSON Schema describes documents, and the frame header is a fixed-width byte structure. Field order and widths are normative. Byte offsets are NOT listed here - they are derived by the loader from the widths in declaration order, so an offset can never drift out of step with a width. The loader also cross-checks the computed total against framing.FRAME_HEADER_LEN_BYTES in the constants register.",
+ "schema_id": "lumos.frame_header",
+ "schema_version": 1,
+ "source": "TRS Sec. 9.1",
+ "implements": ["TRS-PROTO-001", "TRS-PROTO-002", "TRS-PROTO-003", "TRS-PROTO-004"],
+ "byte_order": "big_endian",
+ "byte_order_note": "Network byte order per TRS-PROTO-001.",
+
+ "aead_associated_data": {
+  "covers": "entire_header",
+  "note": "The complete immutable header - message class, IDs, sequence, expiry and hop limit included - is authenticated as AEAD associated data (TRS-PROTO-003). A relay may READ only the fields marked relay_readable; it may not modify any field, and any modification breaks authentication at the recipient.",
+  "constant_ref": "framing.FRAME_HEADER_LEN_BYTES"
+ },
+
+ "fields": [
+  {
+   "name": "magic", "type": "u16", "width": 2,
+   "constant_ref": "framing.FRAME_MAGIC",
+   "relay_readable": true,
+   "on_mismatch": "reject",
+   "error_code": "ERR_FRAME_BAD_MAGIC",
+   "description": "0x4C4D, ASCII 'LM'."
+  },
+  {
+   "name": "protocol_version", "type": "u8", "width": 1,
+   "constant_ref": "framing.PROTOCOL_VERSION",
+   "relay_readable": true,
+   "on_major_mismatch": "reject",
+   "on_minor_mismatch": "accept",
+   "error_code": "ERR_FRAME_UNSUPPORTED_VERSION",
+   "description": "High nibble major, low nibble minor. A differing major fails closed (TRS-PROTO-006); a differing minor is accepted."
+  },
+  {
+   "name": "message_type", "type": "u8", "width": 1,
+   "enum_ref": "message_classes.classes",
+   "relay_readable": true,
+   "on_unknown": "reject_if_critical_else_skip",
+   "error_code": "ERR_FRAME_UNKNOWN_TYPE",
+   "description": "Canonical message class (TRS Sec. 9.2)."
+  },
+  {
+   "name": "flags", "type": "u16", "width": 2,
+   "bit_refs": [
+    "framing.FRAME_FLAG_CRITICAL",
+    "framing.FRAME_FLAG_COMPRESSED",
+    "framing.FRAME_FLAG_RELAY_ELIGIBLE",
+    "framing.FRAME_FLAG_LOCAL_ONLY"
+   ],
+   "reserved_mask_ref": "framing.FRAME_FLAGS_RESERVED_MASK",
+   "relay_readable": true,
+   "on_reserved_bits_set": "reject_if_critical_else_ignore",
+   "error_code": "ERR_FRAME_RESERVED_FLAG",
+   "description": "Critical/optional, compression, relay eligibility, local-only."
+  },
+  {
+   "name": "header_length", "type": "u16", "width": 2,
+   "constant_ref": "framing.FRAME_HEADER_LEN_BYTES",
+   "relay_readable": true,
+   "validate": "must_equal_constant_for_this_version",
+   "on_mismatch": "reject",
+   "error_code": "ERR_FRAME_BAD_HEADER_LENGTH",
+   "description": "Total authenticated header bytes. Validated BEFORE any allocation (TRS-PROTO-007)."
+  },
+  {
+   "name": "session_id", "type": "bytes", "width": 16,
+   "constant_ref": "sessions_remote_text.SESSION_ID_LEN_BYTES",
+   "relay_readable": true,
+   "description": "128-bit random or collision-resistant session identifier (TRS-PROTO-004)."
+  },
+  {
+   "name": "message_id", "type": "bytes", "width": 16,
+   "constant_ref": "sessions_remote_text.MESSAGE_ID_LEN_BYTES",
+   "relay_readable": true,
+   "description": "128-bit globally unique message identifier (TRS-PROTO-004). Basis for dedup."
+  },
+  {
+   "name": "sequence", "type": "u32", "width": 4,
+   "relay_readable": false,
+   "description": "Fragment/message sequence."
+  },
+  {
+   "name": "ack_base", "type": "u32", "width": 4,
+   "relay_readable": false,
+   "description": "Selective acknowledgement base."
+  },
+  {
+   "name": "payload_length", "type": "u32", "width": 4,
+   "relay_readable": true,
+   "validate": "bounds_checked_before_allocation",
+   "max_ref": "per_message_class",
+   "on_exceeds_class_maximum": "reject",
+   "error_code": "ERR_FRAME_PAYLOAD_TOO_LARGE",
+   "description": "Validated bounded ciphertext length. Class-specific maxima live in message_payloads.schema.json (TRS-PROTO-007)."
+  },
+  {
+   "name": "expiry_seconds", "type": "u32", "width": 4,
+   "relay_readable": true,
+   "description": "Relative or canonical expiry policy."
+  },
+  {
+   "name": "hop_limit", "type": "u8", "width": 1,
+   "ceiling_ref": "mesh_store_forward.MESH_HOP_ABSOLUTE_CEILING",
+   "relay_readable": true,
+   "validate": "relay_may_only_decrement",
+   "on_relay_increase": "reject",
+   "error_code": "ERR_MESH_HOP_VIOLATION",
+   "description": "Mesh forwarding ceiling. A relay may never raise this or the TTL (TRS-PROTO-012); because the header is AAD, any attempt breaks authentication."
+  },
+  {
+   "name": "reserved", "type": "u8", "width": 1,
+   "must_be": 0,
+   "relay_readable": false,
+   "on_nonzero": "reject_if_critical_else_ignore",
+   "error_code": "ERR_FRAME_RESERVED_FIELD",
+   "description": "Zero; future compatible."
+  }
+ ]
+}

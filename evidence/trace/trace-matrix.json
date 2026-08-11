@@ -4744,13 +4744,24 @@
   },
   {
    "req_id": "TRS-CICD-005",
-   "status": "not_started",
-   "code": [],
-   "tests": [],
+   "status": "implemented",
+   "code": [
+    "config-schema/config_package.schema.json",
+    "config-schema/voucher_token.schema.json",
+    "config-schema/config_overrides.schema.json",
+    "tools/constantsgen/emit_configschema.go",
+    "tools/constantsgen/main.go"
+   ],
+   "tests": [
+    "go:protocol/schema:TestGeneratedConfigOverridesAreRegisterDriven",
+    "go:tools/constantsgen:TestCommittedFilesMatchRegister"
+   ],
    "evidence": [],
-   "adr": [],
-   "last_commit": null,
-   "updated": null
+   "adr": [
+    "ADR-004"
+   ],
+   "last_commit": "19e7093",
+   "updated": "2026-08-11"
   },
   {
    "req_id": "TRS-CICD-006",
@@ -4953,16 +4964,21 @@
     "ADR-005",
     "ADR-006"
    ],
-   "last_commit": "8aeed1b",
+   "last_commit": "19e7093",
    "updated": "2026-08-11"
   },
   {
    "req_id": "TRS-CONST-002",
-   "status": "not_started",
+   "status": "implemented",
    "code": [
+    "config-schema/config_package.schema.json",
+    "config-schema/voucher_token.schema.json",
+    "config-schema/config_overrides.schema.json",
+    "tools/constantsgen/emit_configschema.go",
     "protocol/constants/lumos_constants.json"
    ],
    "tests": [
+    "go:protocol/schema:TestGeneratedConfigOverridesAreRegisterDriven",
     "go:tools/constantsgen:TestEveryOverridableEntryDeclaresBoundsOrTheGap",
     "go:tools/constantsgen:TestADR006BoundsWereAppliedExactly",
     "go:tools/constantsgen:TestEveryBoundTripleIsCoherent"
@@ -4972,7 +4988,7 @@
     "ADR-004",
     "ADR-006"
    ],
-   "last_commit": "8aeed1b",
+   "last_commit": "19e7093",
    "updated": "2026-08-11"
   },
   {
@@ -4993,7 +5009,7 @@
    "adr": [
     "ADR-004"
    ],
-   "last_commit": "8aeed1b",
+   "last_commit": "19e7093",
    "updated": "2026-08-11"
   },
   {
@@ -5015,7 +5031,7 @@
    "adr": [
     "ADR-004"
    ],
-   "last_commit": "8aeed1b",
+   "last_commit": "19e7093",
    "updated": "2026-08-11"
   },
   {
@@ -5850,73 +5866,143 @@
   },
   {
    "req_id": "TRS-PROTO-001",
-   "status": "not_started",
-   "code": [],
-   "tests": [],
+   "status": "implemented",
+   "code": [
+    "protocol/schemas/frame_header.schema.json",
+    "protocol/schemas/adv_v1.schema.json",
+    "protocol/schemas/message_payloads.schema.json",
+    "protocol/schemas/error_codes.schema.json",
+    "protocol/schemas/prekey_bundle.schema.json",
+    "protocol/schema/schema.go"
+   ],
+   "tests": [
+    "go:protocol/schema:TestFrameHeaderMatchesTRS91",
+    "go:protocol/schema:TestFrameHeaderWidthMatchesRegister",
+    "go:protocol/schema:TestEveryConstantRefResolves"
+   ],
    "evidence": [],
    "adr": [],
-   "last_commit": null,
-   "updated": null
+   "last_commit": "19e7093",
+   "updated": "2026-08-11"
   },
   {
    "req_id": "TRS-PROTO-002",
-   "status": "not_started",
-   "code": [],
-   "tests": [],
+   "status": "implemented",
+   "code": [
+    "protocol/schemas/frame_header.schema.json",
+    "protocol/schemas/adv_v1.schema.json",
+    "protocol/schemas/message_payloads.schema.json",
+    "protocol/schemas/error_codes.schema.json",
+    "protocol/schemas/prekey_bundle.schema.json",
+    "protocol/schema/schema.go"
+   ],
+   "tests": [
+    "go:protocol/schema:TestFrameHeaderMatchesTRS91",
+    "go:protocol/schema:TestFrameHeaderWidthMatchesRegister",
+    "go:protocol/schema:TestEveryConstantRefResolves"
+   ],
    "evidence": [],
    "adr": [],
-   "last_commit": null,
-   "updated": null
+   "last_commit": "19e7093",
+   "updated": "2026-08-11"
   },
   {
    "req_id": "TRS-PROTO-003",
-   "status": "not_started",
-   "code": [],
-   "tests": [],
+   "status": "implemented",
+   "code": [
+    "protocol/schemas/frame_header.schema.json",
+    "protocol/schemas/adv_v1.schema.json",
+    "protocol/schemas/message_payloads.schema.json",
+    "protocol/schemas/error_codes.schema.json",
+    "protocol/schemas/prekey_bundle.schema.json",
+    "protocol/schema/schema.go"
+   ],
+   "tests": [
+    "go:protocol/schema:TestFrameHeaderWidthMatchesRegister"
+   ],
    "evidence": [],
    "adr": [],
-   "last_commit": null,
-   "updated": null
+   "last_commit": "19e7093",
+   "updated": "2026-08-11"
   },
   {
    "req_id": "TRS-PROTO-004",
-   "status": "not_started",
-   "code": [],
-   "tests": [],
+   "status": "implemented",
+   "code": [
+    "protocol/schemas/frame_header.schema.json",
+    "protocol/schemas/adv_v1.schema.json",
+    "protocol/schemas/message_payloads.schema.json",
+    "protocol/schemas/error_codes.schema.json",
+    "protocol/schemas/prekey_bundle.schema.json",
+    "protocol/schema/schema.go"
+   ],
+   "tests": [
+    "go:protocol/schema:TestFrameHeaderMatchesTRS91"
+   ],
    "evidence": [],
    "adr": [],
-   "last_commit": null,
-   "updated": null
+   "last_commit": "19e7093",
+   "updated": "2026-08-11"
   },
   {
    "req_id": "TRS-PROTO-005",
-   "status": "not_started",
-   "code": [],
-   "tests": [],
+   "status": "implemented",
+   "code": [
+    "protocol/schemas/frame_header.schema.json",
+    "protocol/schemas/adv_v1.schema.json",
+    "protocol/schemas/message_payloads.schema.json",
+    "protocol/schemas/error_codes.schema.json",
+    "protocol/schemas/prekey_bundle.schema.json",
+    "protocol/schema/schema.go"
+   ],
+   "tests": [
+    "go:protocol/schema:TestMessagePayloadsCoverEveryRegisteredClass",
+    "go:protocol/schema:TestTextEventEnvelopeMatchesAMD005",
+    "go:tools/constantsgen:TestMessageClassesMatchTRS92"
+   ],
    "evidence": [],
    "adr": [],
-   "last_commit": null,
-   "updated": null
+   "last_commit": "19e7093",
+   "updated": "2026-08-11"
   },
   {
    "req_id": "TRS-PROTO-006",
-   "status": "not_started",
-   "code": [],
-   "tests": [],
+   "status": "implemented",
+   "code": [
+    "protocol/schemas/frame_header.schema.json",
+    "protocol/schemas/adv_v1.schema.json",
+    "protocol/schemas/message_payloads.schema.json",
+    "protocol/schemas/error_codes.schema.json",
+    "protocol/schemas/prekey_bundle.schema.json",
+    "protocol/schema/schema.go"
+   ],
+   "tests": [
+    "go:protocol/schema:TestMessagePayloadsCoverEveryRegisteredClass",
+    "go:protocol/schema:TestTextEventEnvelopeMatchesAMD005"
+   ],
    "evidence": [],
    "adr": [],
-   "last_commit": null,
-   "updated": null
+   "last_commit": "19e7093",
+   "updated": "2026-08-11"
   },
   {
    "req_id": "TRS-PROTO-007",
-   "status": "not_started",
-   "code": [],
-   "tests": [],
+   "status": "implemented",
+   "code": [
+    "protocol/schemas/frame_header.schema.json",
+    "protocol/schemas/adv_v1.schema.json",
+    "protocol/schemas/message_payloads.schema.json",
+    "protocol/schemas/error_codes.schema.json",
+    "protocol/schemas/prekey_bundle.schema.json",
+    "protocol/schema/schema.go"
+   ],
+   "tests": [
+    "go:protocol/schema:TestMessagePayloadsCoverEveryRegisteredClass"
+   ],
    "evidence": [],
    "adr": [],
-   "last_commit": null,
-   "updated": null
+   "last_commit": "19e7093",
+   "updated": "2026-08-11"
   },
   {
    "req_id": "TRS-PROTO-008",
@@ -5970,13 +6056,21 @@
   },
   {
    "req_id": "TRS-PROTO-013",
-   "status": "not_started",
-   "code": [],
-   "tests": [],
+   "status": "implemented",
+   "code": [
+    "protocol/schemas/error_codes.schema.json",
+    "protocol/schema/schema.go"
+   ],
+   "tests": [
+    "go:protocol/schema:TestErrorCodesAreStableAndUnique",
+    "go:protocol/schema:TestUserMessagesAvoidProtocolJargon",
+    "go:protocol/schema:TestSchemaErrorCodesExistInRegistry",
+    "go:protocol/schema:TestJargonDetectorActuallyDetects"
+   ],
    "evidence": [],
    "adr": [],
-   "last_commit": null,
-   "updated": null
+   "last_commit": "19e7093",
+   "updated": "2026-08-11"
   },
   {
    "req_id": "TRS-PROTO-014",
@@ -6074,7 +6168,7 @@
    "adr": [
     "ADR-004"
    ],
-   "last_commit": "8aeed1b",
+   "last_commit": "19e7093",
    "updated": "2026-08-11"
   },
   {
@@ -6084,8 +6178,8 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": null,
-   "updated": null
+   "last_commit": "19e7093",
+   "updated": "2026-08-11"
   },
   {
    "req_id": "TRS-REP-004",
@@ -6114,8 +6208,8 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": null,
-   "updated": null
+   "last_commit": "19e7093",
+   "updated": "2026-08-11"
   },
   {
    "req_id": "TRS-REP-007",

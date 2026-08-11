@@ -6,7 +6,7 @@
 /// GENERATED - DO NOT EDIT. Generator: tools/constantsgen
 /// Source register: protocol/constants/lumos_constants.json
 /// Baseline: TRS v1.1 Sec. 23 / EDP v1.0 Sec. 4 (ADR-004)
-/// constants_hash: sha256:12510455720dcc2ff72291f6a428f31930434d3dcb95a8b871ed305edb159855
+/// constants_hash: sha256:7315f92990eb8e431d0d0c392a73822035bcc96c1c469fc4fa734d75cfa278d5
 
 public enum LumosConstants {
 
@@ -14,13 +14,69 @@ public enum LumosConstants {
     public static let serviceUUID = "E853EB6A-775C-4A49-A6BF-320E6A5CC609"
 
     /// Binds generated code to the register that produced it (TRS-CONST-005).
-    public static let constantsHash = "sha256:12510455720dcc2ff72291f6a428f31930434d3dcb95a8b871ed305edb159855"
+    public static let constantsHash = "sha256:7315f92990eb8e431d0d0c392a73822035bcc96c1c469fc4fa734d75cfa278d5"
 
     /// Register schema version.
     public static let schemaVersion = 1
 
     /// Specification sections this register was derived from.
     public static let baseline = "TRS v1.1 Sec. 23 / EDP v1.0 Sec. 4 (ADR-004)"
+
+    // MARK: - Framing
+
+    /// framing.FRAME_FLAGS_RESERVED_MASK.default
+    public static let frameFlagsReservedMaskDefault = 65520
+
+    /// framing.FRAME_FLAGS_RESERVED_MASK.overridable
+    public static let frameFlagsReservedMaskOverridable = false
+
+    /// framing.FRAME_FLAG_COMPRESSED.default
+    public static let frameFlagCompressedDefault = 2
+
+    /// framing.FRAME_FLAG_COMPRESSED.overridable
+    public static let frameFlagCompressedOverridable = false
+
+    /// framing.FRAME_FLAG_CRITICAL.default
+    public static let frameFlagCriticalDefault = 1
+
+    /// framing.FRAME_FLAG_CRITICAL.overridable
+    public static let frameFlagCriticalOverridable = false
+
+    /// framing.FRAME_FLAG_LOCAL_ONLY.default
+    public static let frameFlagLocalOnlyDefault = 8
+
+    /// framing.FRAME_FLAG_LOCAL_ONLY.overridable
+    public static let frameFlagLocalOnlyOverridable = false
+
+    /// framing.FRAME_FLAG_RELAY_ELIGIBLE.default
+    public static let frameFlagRelayEligibleDefault = 4
+
+    /// framing.FRAME_FLAG_RELAY_ELIGIBLE.overridable
+    public static let frameFlagRelayEligibleOverridable = false
+
+    /// framing.FRAME_HEADER_LEN_BYTES.default
+    public static let frameHeaderLenBytesDefault = 58
+
+    /// framing.FRAME_HEADER_LEN_BYTES.overridable
+    public static let frameHeaderLenBytesOverridable = false
+
+    /// framing.FRAME_MAGIC.default
+    public static let frameMagicDefault = 19533
+
+    /// framing.FRAME_MAGIC.overridable
+    public static let frameMagicOverridable = false
+
+    /// framing.PROTOCOL_VERSION.encoded
+    public static let protocolVersionEncoded = 16
+
+    /// framing.PROTOCOL_VERSION.major
+    public static let protocolVersionMajor = 1
+
+    /// framing.PROTOCOL_VERSION.minor
+    public static let protocolVersionMinor = 0
+
+    /// framing.PROTOCOL_VERSION.overridable
+    public static let protocolVersionOverridable = false
 
     // MARK: - Identity discovery
 
@@ -29,6 +85,36 @@ public enum LumosConstants {
 
     /// identity_discovery.ADV_AUTH_TAG_LEN.overridable
     public static let advAuthTagLenOverridable = false
+
+    /// identity_discovery.ADV_V1_LAYOUT.auth_tag_len
+    public static let advV1LayoutAuthTagLen = 4
+
+    /// identity_discovery.ADV_V1_LAYOUT.eid_len
+    public static let advV1LayoutEIDLen = 12
+
+    /// identity_discovery.ADV_V1_LAYOUT.mode_flags_len
+    public static let advV1LayoutModeFlagsLen = 1
+
+    /// identity_discovery.ADV_V1_LAYOUT.overridable
+    public static let advV1LayoutOverridable = false
+
+    /// identity_discovery.ADV_V1_LAYOUT.total_len
+    public static let advV1LayoutTotalLen = 18
+
+    /// identity_discovery.ADV_V1_LAYOUT.version_len
+    public static let advV1LayoutVersionLen = 1
+
+    /// identity_discovery.ADV_V1_SCAN_RESPONSE_LAYOUT.capability_bits_len
+    public static let advV1ScanResponseLayoutCapabilityBitsLen = 2
+
+    /// identity_discovery.ADV_V1_SCAN_RESPONSE_LAYOUT.overridable
+    public static let advV1ScanResponseLayoutOverridable = false
+
+    /// identity_discovery.ADV_V1_SCAN_RESPONSE_LAYOUT.total_len
+    public static let advV1ScanResponseLayoutTotalLen = 6
+
+    /// identity_discovery.ADV_V1_SCAN_RESPONSE_LAYOUT.venue_hint_len
+    public static let advV1ScanResponseLayoutVenueHintLen = 4
 
     /// identity_discovery.EID_ROTATION_SEC.default
     public static let eidRotationSecDefault = 600

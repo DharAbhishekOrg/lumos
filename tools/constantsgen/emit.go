@@ -38,7 +38,7 @@ const (
 // through go/format so the generator can never emit code that fails the
 // repository's format gate; a formatting error here is a generator bug and is
 // surfaced rather than written to disk.
-func Emit(m *Model, canonical string) ([]File, error) {
+func Emit(r *Register, m *Model, canonical string) ([]File, error) {
 	goConstants, err := gofmtSource(GoOutPath, emitGoConstants(m))
 	if err != nil {
 		return nil, err
@@ -47,7 +47,12 @@ func Emit(m *Model, canonical string) ([]File, error) {
 	if err != nil {
 		return nil, err
 	}
+	configSchema, err := EmitConfigOverrideSchema(r, m)
+	if err != nil {
+		return nil, err
+	}
 	return []File{
+		{ConfigSchemaOutPath, configSchema},
 		{GoOutPath, goConstants},
 		{GoEnumOutPath, goEnums},
 		{JavaConstOutPath, []byte(emitJavaConstants(m))},

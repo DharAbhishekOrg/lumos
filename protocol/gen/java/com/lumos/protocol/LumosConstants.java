@@ -7,7 +7,7 @@
  * GENERATED - DO NOT EDIT. Generator: tools/constantsgen
  * Source register: protocol/constants/lumos_constants.json
  * Baseline: TRS v1.1 Sec. 23 / EDP v1.0 Sec. 4 (ADR-004)
- * constants_hash: sha256:12510455720dcc2ff72291f6a428f31930434d3dcb95a8b871ed305edb159855
+ * constants_hash: sha256:7315f92990eb8e431d0d0c392a73822035bcc96c1c469fc4fa734d75cfa278d5
  */
 package com.lumos.protocol;
 
@@ -24,13 +24,69 @@ public final class LumosConstants {
     public static final String SERVICE_UUID = "E853EB6A-775C-4A49-A6BF-320E6A5CC609";
 
     /** Binds generated code to the register that produced it (TRS-CONST-005). */
-    public static final String CONSTANTS_HASH = "sha256:12510455720dcc2ff72291f6a428f31930434d3dcb95a8b871ed305edb159855";
+    public static final String CONSTANTS_HASH = "sha256:7315f92990eb8e431d0d0c392a73822035bcc96c1c469fc4fa734d75cfa278d5";
 
     /** Register schema version. */
     public static final int SCHEMA_VERSION = 1;
 
     /** Specification sections this register was derived from. */
     public static final String BASELINE = "TRS v1.1 Sec. 23 / EDP v1.0 Sec. 4 (ADR-004)";
+
+    // Framing
+
+    /** framing.FRAME_FLAGS_RESERVED_MASK.default */
+    public static final int FRAME_FLAGS_RESERVED_MASK_DEFAULT = 65520;
+
+    /** framing.FRAME_FLAGS_RESERVED_MASK.overridable */
+    public static final boolean FRAME_FLAGS_RESERVED_MASK_OVERRIDABLE = false;
+
+    /** framing.FRAME_FLAG_COMPRESSED.default */
+    public static final int FRAME_FLAG_COMPRESSED_DEFAULT = 2;
+
+    /** framing.FRAME_FLAG_COMPRESSED.overridable */
+    public static final boolean FRAME_FLAG_COMPRESSED_OVERRIDABLE = false;
+
+    /** framing.FRAME_FLAG_CRITICAL.default */
+    public static final int FRAME_FLAG_CRITICAL_DEFAULT = 1;
+
+    /** framing.FRAME_FLAG_CRITICAL.overridable */
+    public static final boolean FRAME_FLAG_CRITICAL_OVERRIDABLE = false;
+
+    /** framing.FRAME_FLAG_LOCAL_ONLY.default */
+    public static final int FRAME_FLAG_LOCAL_ONLY_DEFAULT = 8;
+
+    /** framing.FRAME_FLAG_LOCAL_ONLY.overridable */
+    public static final boolean FRAME_FLAG_LOCAL_ONLY_OVERRIDABLE = false;
+
+    /** framing.FRAME_FLAG_RELAY_ELIGIBLE.default */
+    public static final int FRAME_FLAG_RELAY_ELIGIBLE_DEFAULT = 4;
+
+    /** framing.FRAME_FLAG_RELAY_ELIGIBLE.overridable */
+    public static final boolean FRAME_FLAG_RELAY_ELIGIBLE_OVERRIDABLE = false;
+
+    /** framing.FRAME_HEADER_LEN_BYTES.default */
+    public static final int FRAME_HEADER_LEN_BYTES_DEFAULT = 58;
+
+    /** framing.FRAME_HEADER_LEN_BYTES.overridable */
+    public static final boolean FRAME_HEADER_LEN_BYTES_OVERRIDABLE = false;
+
+    /** framing.FRAME_MAGIC.default */
+    public static final int FRAME_MAGIC_DEFAULT = 19533;
+
+    /** framing.FRAME_MAGIC.overridable */
+    public static final boolean FRAME_MAGIC_OVERRIDABLE = false;
+
+    /** framing.PROTOCOL_VERSION.encoded */
+    public static final int PROTOCOL_VERSION_ENCODED = 16;
+
+    /** framing.PROTOCOL_VERSION.major */
+    public static final int PROTOCOL_VERSION_MAJOR = 1;
+
+    /** framing.PROTOCOL_VERSION.minor */
+    public static final int PROTOCOL_VERSION_MINOR = 0;
+
+    /** framing.PROTOCOL_VERSION.overridable */
+    public static final boolean PROTOCOL_VERSION_OVERRIDABLE = false;
 
     // Identity discovery
 
@@ -39,6 +95,36 @@ public final class LumosConstants {
 
     /** identity_discovery.ADV_AUTH_TAG_LEN.overridable */
     public static final boolean ADV_AUTH_TAG_LEN_OVERRIDABLE = false;
+
+    /** identity_discovery.ADV_V1_LAYOUT.auth_tag_len */
+    public static final int ADV_V1_LAYOUT_AUTH_TAG_LEN = 4;
+
+    /** identity_discovery.ADV_V1_LAYOUT.eid_len */
+    public static final int ADV_V1_LAYOUT_EID_LEN = 12;
+
+    /** identity_discovery.ADV_V1_LAYOUT.mode_flags_len */
+    public static final int ADV_V1_LAYOUT_MODE_FLAGS_LEN = 1;
+
+    /** identity_discovery.ADV_V1_LAYOUT.overridable */
+    public static final boolean ADV_V1_LAYOUT_OVERRIDABLE = false;
+
+    /** identity_discovery.ADV_V1_LAYOUT.total_len */
+    public static final int ADV_V1_LAYOUT_TOTAL_LEN = 18;
+
+    /** identity_discovery.ADV_V1_LAYOUT.version_len */
+    public static final int ADV_V1_LAYOUT_VERSION_LEN = 1;
+
+    /** identity_discovery.ADV_V1_SCAN_RESPONSE_LAYOUT.capability_bits_len */
+    public static final int ADV_V1_SCAN_RESPONSE_LAYOUT_CAPABILITY_BITS_LEN = 2;
+
+    /** identity_discovery.ADV_V1_SCAN_RESPONSE_LAYOUT.overridable */
+    public static final boolean ADV_V1_SCAN_RESPONSE_LAYOUT_OVERRIDABLE = false;
+
+    /** identity_discovery.ADV_V1_SCAN_RESPONSE_LAYOUT.total_len */
+    public static final int ADV_V1_SCAN_RESPONSE_LAYOUT_TOTAL_LEN = 6;
+
+    /** identity_discovery.ADV_V1_SCAN_RESPONSE_LAYOUT.venue_hint_len */
+    public static final int ADV_V1_SCAN_RESPONSE_LAYOUT_VENUE_HINT_LEN = 4;
 
     /** identity_discovery.EID_ROTATION_SEC.default */
     public static final int EID_ROTATION_SEC_DEFAULT = 600;

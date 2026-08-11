@@ -63,6 +63,13 @@
     "git": {
       "version": "2.55.0.windows.3"
     },
+    "gh": {
+      "version": "2.97.0",
+      "license": "MIT",
+      "install": "winget install --id GitHub.cli --exact",
+      "why": "Opens and updates the per-slice pull requests. Authenticated interactively by the owner; the agent never handles the token and never reads it out of the credential store.",
+      "scope": "authoring_host_only"
+    },
     "docker": {
       "client": "29.6.2",
       "server": "29.6.2",

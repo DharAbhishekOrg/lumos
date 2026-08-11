@@ -21,6 +21,7 @@ import (
 // GroupOrder fixes the emission order of the constant groups. Message classes
 // are emitted separately as typed enums.
 var GroupOrder = []string{
+	"framing",
 	"identity_discovery",
 	"sessions_remote_text",
 	"mesh_store_forward",
@@ -120,7 +121,10 @@ func BuildModel(r *Register, hash string) (*Model, error) {
 			}
 			fieldNames := make([]string, 0, len(fields))
 			for f := range fields {
-				if excluded(f) {
+				if excluded(f) || f == "overridable_fields" {
+					// overridable_fields narrows signed-config scope and is consumed by
+					// the config-schema emitter. It is hashed, because it is policy, but
+					// it is not a tunable value and has no generated symbol.
 					continue
 				}
 				fieldNames = append(fieldNames, f)
