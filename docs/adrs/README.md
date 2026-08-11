@@ -12,9 +12,11 @@ onward are raised during implementation per TRS-AI-006 and captured here.
 | [005](ADR-005-safety-number-format.md) | **Accepted** | SAFETY_NUMBER_FORMAT = 60 digits + 6 emoji from a 64-glyph alphabet |
 | [006](ADR-006-override-bounds.md) | **Accepted** | Override bounds for the eleven constants TRS §23 left unbounded |
 | [007](ADR-007-wire-encoding-choices.md) | **Accepted** | Frozen wire encodings: protocol-version byte and flag bit positions |
-| [008](ADR-008-identity-dh-key.md) | **Provisional** | Separate X25519 identity-DH key, Ed25519-signed (avoids cross-curve conversion) |
+| [008](ADR-008-identity-dh-key.md) | **Accepted** | Separate X25519 identity-DH key, Ed25519-signed; Ed25519 sole root of trust, verify-before-DH (2 conditions) |
 | [009](ADR-009-safety-number-emoji-alphabet.md) | **Accepted** | The frozen 64-emoji safety-number alphabet and its selection criteria |
 
-**ADR-008 is provisional** and awaits owner ratification: it resolves how X3DH
-runs without an Ed25519↔X25519 conversion that the mandated platform libraries
-do not expose. See the record for the security note flagged for gate G-07.
+**ADR-008 was ratified** with two binding conditions (Ed25519 as sole root of
+trust; signature verification fails closed before any DH), both enforced by test.
+It resolves how X3DH runs without an Ed25519↔X25519 conversion the mandated
+platform libraries do not expose. The gate G-07 cryptographic-review flag is
+retained.

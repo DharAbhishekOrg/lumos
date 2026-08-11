@@ -98,6 +98,16 @@ func TestConformanceX3DHKAT(t *testing.T) {
 			OPKID            uint32 `json:"one_time_prekey_id"`
 			TranscriptADHex  string `json:"transcript_ad_hex"`
 		} `json:"cases"`
+		Negatives []struct {
+			Name             string `json:"name"`
+			ResponderIDEdHex string `json:"responder_identity_ed_pub_hex"`
+			ResponderIDDHHex string `json:"responder_identity_dh_pub_hex"`
+			IdentityDHSigHex string `json:"identity_dh_sig_hex"`
+			SPKID            uint32 `json:"signed_prekey_id"`
+			ResponderSPKHex  string `json:"responder_signed_prekey_pub_hex"`
+			SPKSigHex        string `json:"signed_prekey_sig_hex"`
+			ExpectedError    string `json:"expected_error"`
+		} `json:"negatives"`
 	}
 	load(t, "test-vectors/crypto/x3dh_kat.json", &vf)
 	if vf.ConstantsHash != regHash(t) {
@@ -119,6 +129,31 @@ func TestConformanceX3DHKAT(t *testing.T) {
 				c.SPKID, c.OPKID, matchID)
 			if hex.EncodeToString(got) != c.TranscriptADHex {
 				t.Errorf("transcript mismatch:\n got %s\nwant %s", hex.EncodeToString(got), c.TranscriptADHex)
+			}
+		})
+	}
+
+	// ADR-008 condition 2: each negative bundle must be rejected by signature
+	// verification with its exact stable code.
+	if len(vf.Negatives) == 0 {
+		t.Fatal("x3dh vectors carry no negative (ADR-008 condition 2 requires at least one)")
+	}
+	for _, n := range vf.Negatives {
+		t.Run("negative/"+n.Name, func(t *testing.T) {
+			bundle, err := x3dh.ParsePublicBundle(x3dh.PublicBundle{
+				IdentityEd:    hexDecode(t, n.ResponderIDEdHex),
+				IdentityDH:    hexDecode(t, n.ResponderIDDHHex),
+				IdentityDHSig: hexDecode(t, n.IdentityDHSigHex),
+				SPKID:         n.SPKID,
+				SPK:           hexDecode(t, n.ResponderSPKHex),
+				SPKSig:        hexDecode(t, n.SPKSigHex),
+			})
+			if err == nil {
+				err = x3dh.VerifyBundle(bundle)
+			}
+			var we *wire.Error
+			if !errors.As(err, &we) || we.Code != n.ExpectedError {
+				t.Fatalf("negative %s: expected %s, got %v", n.Name, n.ExpectedError, err)
 			}
 		})
 	}

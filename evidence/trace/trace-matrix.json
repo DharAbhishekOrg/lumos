@@ -402,6 +402,7 @@
    "tests": [
     "go:protocol/crypto/safety:TestAlphabetMeetsADR009MechanicalCriteria",
     "go:protocol/crypto/safety:TestDistinctIdentitiesDiverge",
+    "go:protocol/crypto/safety:TestSafetyNumberDependsOnlyOnEd25519",
     "go:protocol/crypto/safety:TestShapeAndSymmetry",
     "go:protocol/crypto:TestConformanceSafetyNumber"
    ],
@@ -410,7 +411,7 @@
     "ADR-005",
     "ADR-009"
    ],
-   "last_commit": "d3e505f",
+   "last_commit": "9b06f88",
    "updated": "2026-08-11"
   },
   {
@@ -5089,7 +5090,7 @@
     "ADR-001",
     "ADR-008"
    ],
-   "last_commit": "d3e505f",
+   "last_commit": "9b06f88",
    "updated": "2026-08-11"
   },
   {
@@ -5138,13 +5139,22 @@
   },
   {
    "req_id": "TRS-CRY-004",
-   "status": "not_started",
-   "code": [],
-   "tests": [],
+   "status": "implemented",
+   "code": [
+    "protocol/crypto/x3dh/x3dh.go",
+    "protocol/crypto/safety/safety.go"
+   ],
+   "tests": [
+    "go:protocol/crypto/safety:TestSafetyNumberDependsOnlyOnEd25519",
+    "go:protocol/crypto/x3dh:TestSafetyIdentityIsEd25519Only"
+   ],
    "evidence": [],
-   "adr": [],
-   "last_commit": null,
-   "updated": null
+   "adr": [
+    "ADR-001",
+    "ADR-008"
+   ],
+   "last_commit": "9b06f88",
+   "updated": "2026-08-11"
   },
   {
    "req_id": "TRS-CRY-005",
@@ -5285,6 +5295,7 @@
    "tests": [
     "go:protocol/crypto/safety:TestShapeAndSymmetry",
     "go:protocol/crypto/x3dh:TestTranscriptBindsEveryMandatedInput",
+    "go:protocol/crypto/x3dh:TestVerificationPrecedesDH",
     "go:protocol/crypto:TestConformanceX3DHKAT"
    ],
    "evidence": [],
@@ -5293,7 +5304,7 @@
     "ADR-005",
     "ADR-008"
    ],
-   "last_commit": "d3e505f",
+   "last_commit": "9b06f88",
    "updated": "2026-08-11"
   },
   {
@@ -5317,7 +5328,7 @@
    "adr": [
     "ADR-001"
    ],
-   "last_commit": "d3e505f",
+   "last_commit": "9b06f88",
    "updated": "2026-08-11"
   },
   {

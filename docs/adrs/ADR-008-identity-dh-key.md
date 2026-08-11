@@ -1,9 +1,39 @@
 # ADR-008 — Separate X25519 identity-DH key, Ed25519-signed
 
-- **Status:** **PROVISIONAL** — raised and applied by the implementing agent in WP-01 slice S4b per TRS-AI-006. Needs owner ratification.
+- **Status:** **ACCEPTED** — ratified by the owner 2026-08-11 with two binding conditions (below), enforced by test in WP-01 slice S4b. Raised by the implementing agent per TRS-AI-006.
 - **Raised:** 2026-08-11
-- **Affected requirements:** TRS-CRY-001, TRS-CRY-003, TRS-CRY-014, TRS-PROTO-005
-- **Affected artefacts:** `protocol/schemas/prekey_bundle.schema.json`, `protocol/crypto/x3dh`, `crypto/x3dh_kat.json`
+- **Affected requirements:** TRS-CRY-001, TRS-CRY-003, TRS-CRY-004, TRS-CRY-014, SRS-IDN-005, SRS-IDN-006, TRS-PROTO-005
+- **Affected artefacts:** `protocol/schemas/prekey_bundle.schema.json`, `protocol/crypto/x3dh`, `protocol/crypto/safety`, `crypto/x3dh_kat.json`
+
+## Ratification conditions (binding, enforced by test)
+
+The owner ratified this decision subject to two conditions, both now asserted on
+this branch:
+
+**Condition 1 — the Ed25519 identity key is the sole root of trust.**
+The safety number (ADR-005) derives from the **Ed25519 identity keys only**;
+`safety.Derive` takes no other key, so nothing else can enter it. Key-change
+re-verification (SRS-IDN-006) therefore triggers on a change of the **Ed25519**
+identity. Rotating the X25519 identity-DH key while re-signing it with the same
+Ed25519 identity is **legitimate rotation, not an identity change**, and must not
+trigger re-verification or alter the safety number.
+*Enforced by:* `safety.TestSafetyNumberDependsOnlyOnEd25519` (the number is a
+pure function of the Ed25519 pair; an Ed25519 change alters it) and
+`x3dh.TestSafetyIdentityIsEd25519Only` (a rotated identity-DH key re-signed by
+the same Ed25519 identity verifies and is accepted).
+
+**Condition 2 — verification fails closed before any DH.**
+The X25519 identity-DH key's signature is verified **before any Diffie-Hellman
+computation**, failing closed with the exact stable code
+`ERR_CRYPTO_PREKEY_SIGNATURE_INVALID`.
+*Enforced by:* `x3dh.TestVerificationPrecedesDH` (a tampered signature combined
+with a low-order signed prekey still fails with the signature code, not a DH
+error — proving verification ran first) and the negative golden vectors
+`test-vectors/crypto/x3dh_kat.json#negatives` (`tampered_identity_dh_signature`,
+`tampered_signed_prekey_signature`), each pinned to the exact code and driven by
+`crypto.TestConformanceX3DHKAT`.
+
+The gate G-07 external-review flag is retained (see the security note below).
 
 ## Context
 

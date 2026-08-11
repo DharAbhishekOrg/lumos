@@ -56,8 +56,25 @@ func (k *deterministicKP) GenerateDH() (*ecdh.PrivateKey, error) {
 
 type x3dhKAT struct {
 	fileMeta
-	MatchIDHex string     `json:"match_id_hex"`
-	Cases      []x3dhCase `json:"cases"`
+	MatchIDHex string         `json:"match_id_hex"`
+	Cases      []x3dhCase     `json:"cases"`
+	Negatives  []x3dhNegative `json:"negatives"`
+}
+
+// x3dhNegative is a bundle a consumer must REJECT by signature verification
+// before performing any Diffie-Hellman (ADR-008 condition 2). The consumer
+// reconstructs the bundle from these public fields, verifies it, and must fail
+// closed with expected_error.
+type x3dhNegative struct {
+	Name             string `json:"name"`
+	Description      string `json:"description"`
+	ResponderIDEdHex string `json:"responder_identity_ed_pub_hex"`
+	ResponderIDDHHex string `json:"responder_identity_dh_pub_hex"`
+	IdentityDHSigHex string `json:"identity_dh_sig_hex"`
+	SPKID            uint32 `json:"signed_prekey_id"`
+	ResponderSPKHex  string `json:"responder_signed_prekey_pub_hex"`
+	SPKSigHex        string `json:"signed_prekey_sig_hex"`
+	ExpectedError    string `json:"expected_error"`
 }
 
 type x3dhCase struct {
@@ -99,7 +116,58 @@ func buildX3DHKAT(constantsHash string) (*x3dhKAT, error) {
 		}
 		file.Cases = append(file.Cases, c)
 	}
+
+	negs, err := x3dhNegatives()
+	if err != nil {
+		return nil, err
+	}
+	file.Negatives = negs
 	return file, nil
+}
+
+// x3dhNegatives builds bundles whose signatures do not verify. Both must be
+// rejected with ERR_CRYPTO_PREKEY_SIGNATURE_INVALID before any DH (ADR-008).
+func x3dhNegatives() ([]x3dhNegative, error) {
+	bobEd := edFromSeed("neg|bob|ed")
+	bobDH, err := dhFromSeed("neg|bob|dh")
+	if err != nil {
+		return nil, err
+	}
+	bobSPK, err := dhFromSeed("neg|bob|spk")
+	if err != nil {
+		return nil, err
+	}
+	const spkID = 7
+	validIDSig := x3dh.SignIdentityDH(bobEd, bobDH.PublicKey())
+	validSPKSig := x3dh.SignPrekey(bobEd, spkID, bobSPK.PublicKey())
+
+	base := func() x3dhNegative {
+		return x3dhNegative{
+			ResponderIDEdHex: hex.EncodeToString(bobEd.Public().(ed25519.PublicKey)),
+			ResponderIDDHHex: hex.EncodeToString(bobDH.PublicKey().Bytes()),
+			IdentityDHSigHex: hex.EncodeToString(validIDSig),
+			SPKID:            spkID,
+			ResponderSPKHex:  hex.EncodeToString(bobSPK.PublicKey().Bytes()),
+			SPKSigHex:        hex.EncodeToString(validSPKSig),
+			ExpectedError:    "ERR_CRYPTO_PREKEY_SIGNATURE_INVALID",
+		}
+	}
+
+	tamperedID := base()
+	tamperedID.Name = "tampered_identity_dh_signature"
+	tamperedID.Description = "The Ed25519 signature over the responder's X25519 identity-DH key is corrupted; verification must fail closed before any DH."
+	badID := append([]byte(nil), validIDSig...)
+	badID[0] ^= 0x01
+	tamperedID.IdentityDHSigHex = hex.EncodeToString(badID)
+
+	tamperedSPK := base()
+	tamperedSPK.Name = "tampered_signed_prekey_signature"
+	tamperedSPK.Description = "The signed-prekey signature is corrupted; the bundle must be rejected before any DH."
+	badSPK := append([]byte(nil), validSPKSig...)
+	badSPK[0] ^= 0x01
+	tamperedSPK.SPKSigHex = hex.EncodeToString(badSPK)
+
+	return []x3dhNegative{tamperedID, tamperedSPK}, nil
 }
 
 func oneX3DHCase(withOPK bool) (x3dhCase, error) {

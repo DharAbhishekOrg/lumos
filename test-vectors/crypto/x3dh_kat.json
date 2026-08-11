@@ -43,5 +43,29 @@
       "shared_secret_hex": "8962ece8c0a73de5840927d5ec5a373883d6a2eebaf40325274cc71c75a9e3d6",
       "transcript_ad_hex": "d029c205cff36c47e3f9deeb27d219388faa7f37b8f9307bac5d1f5e083deb6b"
     }
+  ],
+  "negatives": [
+    {
+      "name": "tampered_identity_dh_signature",
+      "description": "The Ed25519 signature over the responder's X25519 identity-DH key is corrupted; verification must fail closed before any DH.",
+      "responder_identity_ed_pub_hex": "80c4bc172a4661fde375649b1d97bff8a486cd5208355f85ccb268fbaa79a069",
+      "responder_identity_dh_pub_hex": "b96ba1e83d34dcd66a00dc0bd35594d1f16c50008214b21337bcb09399530f2a",
+      "identity_dh_sig_hex": "9b4d5144aa4a6b0d954d2e34d1ebdf56ad7953e77f1a6c72086270874726ef0d1b388dea4adc29de4e34a07c151bb81ae9eefaba3ca4dc6032956e74a945b302",
+      "signed_prekey_id": 7,
+      "responder_signed_prekey_pub_hex": "2e83237d3032a310b291f3e0f2566042f1592109156bb3c6c6dcd9486ef28771",
+      "signed_prekey_sig_hex": "ea95e3c2dab515f1a1dc8790b36a5f2cc5d2cbc9f2b8ec295c9cfd01d7b586579e10abb27795026968c2cfcfd9ff6563bb2d170489816074edc099e886d05107",
+      "expected_error": "ERR_CRYPTO_PREKEY_SIGNATURE_INVALID"
+    },
+    {
+      "name": "tampered_signed_prekey_signature",
+      "description": "The signed-prekey signature is corrupted; the bundle must be rejected before any DH.",
+      "responder_identity_ed_pub_hex": "80c4bc172a4661fde375649b1d97bff8a486cd5208355f85ccb268fbaa79a069",
+      "responder_identity_dh_pub_hex": "b96ba1e83d34dcd66a00dc0bd35594d1f16c50008214b21337bcb09399530f2a",
+      "identity_dh_sig_hex": "9a4d5144aa4a6b0d954d2e34d1ebdf56ad7953e77f1a6c72086270874726ef0d1b388dea4adc29de4e34a07c151bb81ae9eefaba3ca4dc6032956e74a945b302",
+      "signed_prekey_id": 7,
+      "responder_signed_prekey_pub_hex": "2e83237d3032a310b291f3e0f2566042f1592109156bb3c6c6dcd9486ef28771",
+      "signed_prekey_sig_hex": "eb95e3c2dab515f1a1dc8790b36a5f2cc5d2cbc9f2b8ec295c9cfd01d7b586579e10abb27795026968c2cfcfd9ff6563bb2d170489816074edc099e886d05107",
+      "expected_error": "ERR_CRYPTO_PREKEY_SIGNATURE_INVALID"
+    }
   ]
 }

@@ -70,6 +70,43 @@ func prekeyMessage(spkID uint32, spk *ecdh.PublicKey) []byte {
 	return append(msg, spk.Bytes()...)
 }
 
+// PublicBundle carries the public halves of a prekey bundle in hex, as a
+// golden vector or wire message presents them. ParsePublicBundle turns it into
+// a Bundle for verification without any private material.
+type PublicBundle struct {
+	IdentityEd    []byte
+	IdentityDH    []byte
+	IdentityDHSig []byte
+	SPKID         uint32
+	SPK           []byte
+	SPKSig        []byte
+}
+
+// ParsePublicBundle assembles a Bundle from public bytes. Malformed key
+// encodings are rejected with the signature-invalid code, since a bundle that
+// cannot even be parsed is not a bundle to be trusted.
+func ParsePublicBundle(p PublicBundle) (*Bundle, error) {
+	idDH, err := ecdh.X25519().NewPublicKey(p.IdentityDH)
+	if err != nil {
+		return nil, &wire.Error{Code: lumoserrors.ErrCryptoPrekeySignatureInvalid, Detail: "bad identity-dh key"}
+	}
+	spk, err := ecdh.X25519().NewPublicKey(p.SPK)
+	if err != nil {
+		return nil, &wire.Error{Code: lumoserrors.ErrCryptoPrekeySignatureInvalid, Detail: "bad signed prekey"}
+	}
+	if len(p.IdentityEd) != ed25519.PublicKeySize {
+		return nil, &wire.Error{Code: lumoserrors.ErrCryptoPrekeySignatureInvalid, Detail: "bad identity key"}
+	}
+	return &Bundle{
+		IdentityEd:    ed25519.PublicKey(p.IdentityEd),
+		IdentityDH:    idDH,
+		IdentityDHSig: p.IdentityDHSig,
+		SPKID:         p.SPKID,
+		SPK:           spk,
+		SPKSig:        p.SPKSig,
+	}, nil
+}
+
 // VerifyBundle checks both signatures. Failure is fail-closed with the stable
 // prekey-signature code; no detail distinguishes which signature failed.
 func VerifyBundle(b *Bundle) error {

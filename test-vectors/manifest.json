@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "generator": "tools/vectorgen",
-  "generator_commit": "d3e505f",
+  "generator_commit": "9b06f88",
   "constants_hash": "sha256:3e979bd0561766daee1280ca0a7b2d793532573266d01f10a79c2c18009074a4",
   "key_provenance": "TESTONLY-lumos-vectors-v1",
   "notes": "Golden-vector manifest (TRS Sec. 18.4). generator_commit is the HEAD at generation time, same convention as the trace matrix. The adv, media, config and voucher trees arrive in slice S4c; their absence here is deliberate scope, not an omission.",

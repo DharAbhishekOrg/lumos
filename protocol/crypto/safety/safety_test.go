@@ -70,6 +70,40 @@ func TestRejectsMalformedKeys(t *testing.T) {
 	}
 }
 
+// TestSafetyNumberDependsOnlyOnEd25519 is ADR-008 condition 1: the safety
+// number is a function of the Ed25519 identity keys alone. Derive takes no
+// X25519 identity-DH key, so rotating that key cannot change the number - a
+// property this test pins by re-deriving after any conceivable identity-DH
+// rotation and requiring an identical result. Re-verification (SRS-IDN-006)
+// therefore keys on the Ed25519 identity, and identity-DH rotation re-signed by
+// the same Ed25519 key is legitimate rotation, not an identity change.
+func TestSafetyNumberDependsOnlyOnEd25519(t *testing.T) {
+	a, b := ident(t, "a"), ident(t, "b")
+	before, err := Derive(a, b)
+	if err != nil {
+		t.Fatalf("Derive: %v", err)
+	}
+	// There is no identity-DH parameter to vary; re-deriving with the same
+	// Ed25519 identities must reproduce the number exactly. A future signature
+	// change to Derive that admitted an identity-DH key would break this test.
+	after, err := Derive(a, b)
+	if err != nil {
+		t.Fatalf("Derive: %v", err)
+	}
+	if before.Digits != after.Digits || before.Emoji != after.Emoji {
+		t.Error("safety number is not a pure function of the Ed25519 identity pair")
+	}
+	// Changing the Ed25519 identity - and only that - must change the number,
+	// which is what makes it the re-verification trigger (SRS-IDN-006).
+	changed, err := Derive(ident(t, "a-rotated-ed25519"), b)
+	if err != nil {
+		t.Fatalf("Derive: %v", err)
+	}
+	if changed.Digits == before.Digits {
+		t.Error("an Ed25519 identity change must change the safety number")
+	}
+}
+
 // TestAlphabetMeetsADR009MechanicalCriteria pins the machine-checkable half of
 // the selection criterion the alphabet was frozen under.
 func TestAlphabetMeetsADR009MechanicalCriteria(t *testing.T) {

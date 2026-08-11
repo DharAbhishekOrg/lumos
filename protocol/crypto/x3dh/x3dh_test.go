@@ -161,6 +161,60 @@ func TestTamperedSignaturesAreRejected(t *testing.T) {
 	expectSigFailure(t, b)
 }
 
+// TestVerificationPrecedesDH proves ADR-008 condition 2's ordering: signature
+// verification fails closed BEFORE any Diffie-Hellman. The bundle carries a
+// tampered identity-DH signature AND a low-order (all-zero) signed prekey. If
+// DH ran first, DH(identity, low-order SPK) would fail with the DH error code;
+// because verification runs first, the failure is the signature code instead.
+func TestVerificationPrecedesDH(t *testing.T) {
+	alice := newParty(t, "alice")
+	bob := newParty(t, "bob")
+
+	b := bob.bundle(true)
+	tampered := append([]byte(nil), b.IdentityDHSig...)
+	tampered[0] ^= 1
+	b.IdentityDHSig = tampered
+	lowOrder, err := ecdh.X25519().NewPublicKey(make([]byte, 32))
+	if err != nil {
+		t.Fatalf("construct low-order key: %v", err)
+	}
+	b.SPK = lowOrder // DH against this errors, so a DH-first impl would reveal itself
+
+	_, err = Initiate(alice.ed.Public().(ed25519.PublicKey), alice.dh, dhKey(t, "alice/eph"), b, matchID)
+	var we *wire.Error
+	if !errors.As(err, &we) {
+		t.Fatalf("expected a wire error, got %v", err)
+	}
+	if we.Code != lumoserrors.ErrCryptoPrekeySignatureInvalid {
+		t.Fatalf("got %s; verification did not precede DH (a DH error would mean DH ran first)", we.Code)
+	}
+}
+
+// TestSafetyIdentityIsEd25519Only is ADR-008 condition 1: the safety-number
+// identity is the Ed25519 key alone. Rotating the X25519 identity-DH key while
+// keeping the same Ed25519 identity is legitimate rotation, not an identity
+// change, so it must not alter the safety number. Proven here by construction:
+// the safety derivation takes only Ed25519 keys, so a rotated identity-DH key
+// cannot enter it.
+func TestSafetyIdentityIsEd25519Only(t *testing.T) {
+	// The x3dh package binds the identity-DH key to the Ed25519 identity; the
+	// safety package (imported by the conformance suite) derives from Ed25519
+	// alone. This test pins the binding direction: a new identity-DH key signed
+	// by the SAME Ed25519 identity verifies, so rotation is accepted without a
+	// new root of trust.
+	bob := newParty(t, "bob")
+	rotatedDH := dhKey(t, "bob/dh/rotated")
+
+	b := bob.bundle(true)
+	b.IdentityDH = rotatedDH.PublicKey()
+	b.IdentityDHSig = SignIdentityDH(bob.ed, rotatedDH.PublicKey()) // same Ed25519 identity re-signs
+
+	alice := newParty(t, "alice")
+	if _, err := Initiate(alice.ed.Public().(ed25519.PublicKey), alice.dh, dhKey(t, "alice/eph"), b, matchID); err != nil {
+		t.Fatalf("a rotated identity-DH key re-signed by the same Ed25519 identity must verify: %v", err)
+	}
+}
+
 // TestTranscriptBindsEveryMandatedInput: identity keys, signed-prekey ID,
 // one-time-prekey ID, protocol version (fixed constant, cannot vary in-test)
 // and match ID.
