@@ -42,6 +42,18 @@
   ],
   "tools/constantsgen/": [
    "TRS-CONST-001",
+   "TRS-CONST-003",
+   "TRS-CONST-005",
+   "TRS-REP-002"
+  ],
+  "protocol/constants/": [
+   "TRS-CONST-001",
+   "TRS-CONST-002",
+   "TRS-CONST-003",
+   "TRS-CONST-005"
+  ],
+  "protocol/gen/": [
+   "TRS-CONST-001",
    "TRS-REP-002"
   ],
   "tools/tracecheck/": [

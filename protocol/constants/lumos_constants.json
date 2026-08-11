@@ -1,0 +1,344 @@
+{
+ "$comment": "Lumos master constants register. Normative sources: TRS v1.1 Sec. 23 and EDP v1.0 Sec. 4 (ADR-004). This file is the single source of truth; LumosConstants.java, LumosConstants.swift and constants.go are generated from it by tools/constantsgen and are the ONLY permitted consumer surface (TRS-CONST-001). A hand-written constant in any language is a defect. Signed configuration may override only entries with overridable=true, and only within [min,max] (TRS-CONST-002). Changing any entry invalidates every golden vector that embeds constants_hash and therefore requires an approved change request plus vector regeneration (TRS-CONST-003).",
+ "schema_version": 1,
+ "baseline": "TRS v1.1 Sec. 23 / EDP v1.0 Sec. 4 (ADR-004)",
+ "$generator": "tools/constantsgen",
+ "service_uuid": "E853EB6A-775C-4A49-A6BF-320E6A5CC609",
+ "$service_uuid_provenance": "One fixed 128-bit GATT service UUID per ADR-002 / TRS Sec. 9.3, generated once from a CSPRNG as an RFC 4122 version-4 UUID in WP-01 slice S2 and frozen here. Advertised by both platforms and used for scan filtering. No 16-bit alias is registered for flagship. Regenerating this value is a breaking protocol change.",
+ "constants_hash": "sha256:12510455720dcc2ff72291f6a428f31930434d3dcb95a8b871ed305edb159855",
+ "constants_hash_algorithm": {
+  "digest": "SHA-256",
+  "encoding": "lowercase hex, prefixed 'sha256:'",
+  "canonical_form": "Every hashable leaf is flattened to a dotted path. Lines are '<path>=<value>', sorted bytewise by path as UTF-8, joined with '\\n', with a single trailing '\\n'.",
+  "value_rendering": "integer -> decimal with '-' for negatives; boolean -> 'true'/'false'; string -> verbatim UTF-8; array of scalars -> '[' + elements joined by ',' + ']'; array of objects -> recursed by zero-based index as a path segment. There are deliberately NO floating-point values in this register, so no float formatting rule is required and none may be introduced.",
+  "excluded_keys": "Any key beginning with '$', plus the fixed set: constants_hash, constants_hash_algorithm, anchors, source, notes, adr.",
+  "rationale": "A flattened key=value form is chosen over canonical JSON because it is trivially reimplementable in Java, Swift and Go without depending on any library's key-ordering or number-formatting behaviour. Documentation-only fields are excluded so that editing a requirement reference or a comment does not invalidate the golden vectors; every value-bearing field is included."
+ },
+
+ "identity_discovery": {
+  "EID_ROTATION_SEC": {
+   "default": 600, "min": 300, "max": 900, "overridable": true,
+   "anchors": ["SRS-IDN-004", "AT-003"], "source": "TRS 23.1"
+  },
+  "ADV_AUTH_TAG_LEN": {
+   "default": 4, "overridable": false,
+   "notes": "Bytes. First 4 bytes of HMAC-SHA-256(K_adv, version|modeFlags|rotatingEid|epoch); Android pre-connection noise rejection only.",
+   "anchors": ["ADR-002", "TRS-PROTO-009"], "source": "TRS 23.1"
+  },
+  "PRESENCE_AGEOUT_SEC": {
+   "default": 90, "min": 30, "max": 300, "overridable": true,
+   "anchors": ["SRS-NBY-007", "TRS-ENV-002"], "source": "TRS 23.1"
+  },
+  "SCAN_WINDOW_FG_MS": {
+   "on": 4000, "off": 6000, "duty_min_pct": 20, "duty_max_pct": 60,
+   "overridable": true, "calibrated": true,
+   "anchors": ["SRS-NBY-005", "SRS-NFR-BAT-001"], "source": "TRS 23.1"
+  },
+  "SCAN_WINDOW_VENUE_MS": {
+   "on": 6000, "off": 4000, "duty_max_pct": 70,
+   "overridable": true, "calibrated": true,
+   "anchors": ["SRS-NFR-BAT-004"], "source": "TRS 23.1"
+  },
+  "RESCAN_LADDER": {
+   "step_pct": 50, "step_pct_min": 25, "step_pct_max": 100,
+   "trigger_empty_cycles": 2, "trigger_empty_cycles_min": 1, "trigger_empty_cycles_max": 4,
+   "max_steps": 3, "max_steps_min": 1, "max_steps_max": 5,
+   "overridable": true, "calibrated": true,
+   "anchors": ["TRS-ENV-003"], "source": "TRS 23.1"
+  },
+  "RSSI_BANDS_DBM": {
+   "very_close_gte": -55, "very_close_gte_min": -60, "very_close_gte_max": -45,
+   "nearby_gte": -75, "nearby_gte_min": -85, "nearby_gte_max": -65,
+   "overridable": true, "calibrated": true,
+   "notes": "Three bands are fully determined by two thresholds: very close >= -55; nearby in [-75,-55); around venue < -75.",
+   "anchors": ["SRS-PRO-013", "TRS-ENV-007"], "source": "TRS 23.1"
+  },
+  "MAX_CONCURRENT_GATT_LINKS": {
+   "default": 4, "min": 2, "max": 7, "overridable": true,
+   "anchors": ["SRS-NFR-SCL-006", "TRS-ENV-001"], "source": "TRS 23.1"
+  },
+  "INTEREST_RATE_LIMIT_PER_HOUR": {
+   "default": 20, "min": 5, "max": 60, "overridable": true,
+   "notes": "Rolling hour.",
+   "anchors": ["SRS-MAT-011", "SRS-SAF-006"], "source": "TRS 23.1"
+  },
+  "NEARBY_SYNTHETIC_LOAD_TARGET": {
+   "default": 100, "overridable": false, "test_only": true,
+   "notes": "Synthetic peer count the discovery view must remain responsive under. Present in EDP 4.1 only; TRS 23.1 omits it. Added in WP-01 slice S2 with owner approval.",
+   "anchors": ["SRS-NBY-015", "AT-004"], "source": "EDP 4.1"
+  }
+ },
+
+ "sessions_remote_text": {
+  "ONE_TIME_PREKEYS_UPLOADED": {
+   "default": 100, "min": 50, "max": 200, "overridable": true,
+   "anchors": ["TRS-BCK-005"], "source": "TRS 23.2"
+  },
+  "PREKEY_REPLENISH_THRESHOLD": {
+   "default": 20, "min": 10, "max": 50, "overridable": true,
+   "anchors": ["TRS-BCK-005"], "source": "TRS 23.2"
+  },
+  "SIGNED_PREKEY_ROTATION_DAYS": {
+   "default": 7, "min": 3, "max": 30, "overridable": true,
+   "anchors": ["TRS-CRY-005"], "source": "TRS 23.2"
+  },
+  "MAX_SKIP_PER_CHAIN": {
+   "default": 512, "overridable": false,
+   "anchors": ["TRS-CRY-007", "SRS-RMT-008"], "source": "TRS 23.2"
+  },
+  "SKIPPED_KEYS_PER_SESSION_CAP": {
+   "default": 2000, "overridable": false,
+   "anchors": ["TRS-CRY-007"], "source": "TRS 23.2"
+  },
+  "SKIPPED_KEY_TTL_DAYS": {
+   "default": 30, "min": 7, "max": 45, "overridable": true,
+   "anchors": ["TRS-CRY-006", "TRS-CRY-007"], "source": "TRS 23.2"
+  },
+  "RELAY_ENVELOPE_TTL_DAYS": {
+   "default": 30, "min": 1, "max": 45, "overridable": true,
+   "anchors": ["SRS-RMT-015", "TRS-BCK-004"], "source": "TRS 23.2"
+  },
+  "RELAY_TEXT_ENVELOPE_MAX_BYTES": {
+   "default": 32768, "min": 8192, "max": 65536, "overridable": true,
+   "anchors": ["TRS-BCK-004", "TRS-PROTO-007"], "source": "TRS 23.2"
+  },
+  "RELAY_MAILBOX_QUOTA": {
+   "envelopes": 1000, "envelopes_min": 200, "envelopes_max": 5000,
+   "bytes": 8388608, "bytes_min": 2097152, "bytes_max": 33554432,
+   "overridable": true,
+   "notes": "Per device.",
+   "anchors": ["TRS-BCK-004"], "source": "TRS 23.2"
+  },
+  "MESSAGE_ID_LEN_BYTES": {
+   "default": 16, "overridable": false,
+   "anchors": ["TRS-PROTO-004"], "source": "TRS 23.2"
+  },
+  "SESSION_ID_LEN_BYTES": {
+   "default": 16, "overridable": false,
+   "anchors": ["TRS-PROTO-004"], "source": "TRS 23.2"
+  },
+  "DEDUP_CACHE": {
+   "ids": 10000, "ids_min": 5000, "ids_max": 50000,
+   "days": 7, "days_min": 3, "days_max": 30,
+   "overridable": true,
+   "anchors": ["SRS-RMT-004", "TRS-LOC-005"], "source": "TRS 23.2"
+  },
+  "SAFETY_NUMBER_FORMAT": {
+   "digits": 60, "emoji_count": 6, "emoji_alphabet_size": 64, "overridable": false,
+   "notes": "60 decimal digits plus 6 emoji TOTAL (not 6 pairs), drawn from a fixed curated 64-emoji alphabet. The alphabet itself is frozen by WP-01 slice S4 in test-vectors/crypto/safety_number.json. Resolves the TRS 23.2 '6-emoji pair' ambiguity per ADR-005 (Accepted).",
+   "anchors": ["SRS-IDN-005", "SRS-MAT-008"], "adr": ["ADR-005"], "source": "TRS 23.2"
+  },
+  "CLOCK_SKEW_TOLERANCE_SEC": {
+   "default": 300, "overridable": false,
+   "notes": "Plus or minus, with server hint.",
+   "anchors": ["TRS-LOC-010"], "source": "TRS 23.2"
+  }
+ },
+
+ "mesh_store_forward": {
+  "MESH_HOP_DEFAULT": {
+   "default": 3, "min": 1, "max": 5, "overridable": true,
+   "anchors": ["SRS-MSH-003"], "source": "TRS 23.3"
+  },
+  "MESH_HOP_ABSOLUTE_CEILING": {
+   "default": 5, "overridable": false,
+   "anchors": ["SRS-MSH-003", "TRS-PROTO-012"], "source": "TRS 23.3"
+  },
+  "MESH_FRAME_TTL_SEC": {
+   "default": 300, "min": 60, "max": 900, "overridable": true,
+   "anchors": ["TRS-PROTO-012"], "source": "TRS 23.3"
+  },
+  "STORE_FORWARD_TTL_SEC": {
+   "default": 1800, "min": 300, "max": 7200, "overridable": true,
+   "anchors": ["SRS-MSH-006", "SRS-MSH-008"], "source": "TRS 23.3"
+  },
+  "STORE_FORWARD_QUOTA": {
+   "envelopes": 50, "envelopes_min": 10, "envelopes_max": 200,
+   "bytes": 2097152, "bytes_min": 524288, "bytes_max": 8388608,
+   "overridable": true,
+   "notes": "Per recipient.",
+   "anchors": ["SRS-MSH-006"], "source": "TRS 23.3"
+  }
+ },
+
+ "transport": {
+  "BLE_TARGET_ATT_MTU": {
+   "default": 251, "min": 23, "max": 517, "overridable": false,
+   "notes": "Payload 244 at the 251 target.",
+   "anchors": ["TRS-TRN-002"], "source": "TRS 23.4"
+  },
+  "BLE_CHUNK_PAYLOAD": {
+   "rule": "negotiated_mtu_minus_7_floor_20", "subtract": 7, "floor": 20,
+   "overridable": false,
+   "notes": "Derived at runtime from the negotiated ATT MTU.",
+   "anchors": ["TRS-PROTO-010"], "source": "TRS 23.4"
+  },
+  "LAN_CHUNK_PAYLOAD_BYTES": {
+   "default": 65536, "overridable": false,
+   "anchors": ["TRS-TRN-007"], "source": "TRS 23.4"
+  },
+  "REASSEMBLY_TIMEOUT_SEC": {
+   "ble": 120, "ble_min": 60, "ble_max": 300,
+   "lan": 30, "lan_min": 15, "lan_max": 120,
+   "overridable": true,
+   "anchors": ["TRS-PROTO-010"], "source": "TRS 23.4"
+  },
+  "RETRY_BUDGET_PER_PATH": {
+   "default": 5, "min": 3, "max": 8, "overridable": true,
+   "anchors": ["TRS-TRN-009", "SRS-NFR-REL-008"], "source": "TRS 23.4"
+  },
+  "RETRY_BACKOFF": {
+   "base_ms": 1000, "factor": 2, "jitter": true, "cap_ms": 60000,
+   "overridable": false,
+   "notes": "Fixed shape.",
+   "anchors": ["SRS-TRN-007"], "source": "TRS 23.4"
+  },
+  "CIRCUIT_BREAKER": {
+   "open_after_fails": 3, "half_open_after_sec": 30, "overridable": false,
+   "notes": "Fixed shape.",
+   "anchors": ["TRS-TRN-009"], "source": "TRS 23.4"
+  },
+  "QR_BOOTSTRAP_MAX_BYTES": {
+   "default": 1228, "overridable": false,
+   "notes": "1.2 KB signed payload.",
+   "anchors": ["TRS-TRN-014"], "source": "TRS 23.4"
+  }
+ },
+
+ "media": {
+  "THUMBNAIL_MAX_KB": {
+   "default": 12, "min": 8, "max": 16, "overridable": true,
+   "notes": "JPEG.",
+   "anchors": ["TRS-MED-002"], "source": "TRS 23.5"
+  },
+  "PREVIEW_MAX_KB": {
+   "default": 64, "min": 32, "max": 128, "overridable": true,
+   "notes": "JPEG.",
+   "anchors": ["TRS-MED-002"], "source": "TRS 23.5"
+  },
+  "FULL_IMAGE_MAX_MB": {
+   "default": 2, "min": 1, "max": 10, "overridable": true,
+   "anchors": ["TRS-MED-002"], "source": "TRS 23.5"
+  },
+  "FILE_MAX_MB": {
+   "default": 25, "min": 5, "max": 100, "overridable": true,
+   "notes": "Allowlisted MIME only.",
+   "anchors": ["SRS-MED-015", "TRS-MED-010"], "source": "TRS 23.5"
+  },
+  "VOICE_NOTE": {
+   "codec": "AAC-LC mono M4A", "sample_rate_hz": 24000,
+   "bitrate_kbps": [24, 32], "max_sec": 120, "max_kb": 600,
+   "sec_min": 30, "sec_max": 180, "overridable": true,
+   "notes": "VOICE_NOTE_PROFILE (codec/sample rate/bitrate) is fixed per TRS 23.5; VOICE_NOTE_MAX duration is overridable within 30..180 s.",
+   "anchors": ["TRS-MED-004"], "source": "TRS 23.5"
+  },
+  "MEDIA_CACHE_QUOTA_MB": {
+   "default": 512, "min": 128, "max": 2048,
+   "ttl_days": 30, "ttl_days_min": 7, "ttl_days_max": 90,
+   "overridable": true,
+   "notes": "LRU.",
+   "anchors": ["SRS-MED-018", "TRS-LOC-006"], "source": "TRS 23.5"
+  }
+ },
+
+ "config_venue_ops": {
+  "CONFIG_REFRESH_INTERVAL_HOURS": {
+   "default": 6, "min": 1, "max": 24, "jitter": true, "overridable": true,
+   "anchors": ["TRS-CFG-012"], "source": "TRS 23.6"
+  },
+  "CONFIG_PACKAGE_MAX_KB": {
+   "default": 512, "overridable": false,
+   "anchors": ["TRS-CFG-001"], "source": "TRS 23.6"
+  },
+  "SPONSOR_ASSET_MAX_KB": {
+   "default": 300, "min": 100, "max": 512,
+   "cache_count": 8, "cache_count_min": 4, "cache_count_max": 16,
+   "overridable": true,
+   "anchors": ["TRS-CFG-007", "SRS-ADV-006"], "source": "TRS 23.6"
+  },
+  "VENUE_ROOM_POST_RATE_PER_MIN": {
+   "default": 10, "min": 3, "max": 30, "overridable": true,
+   "notes": "Per user.",
+   "anchors": ["SRS-SAF-006", "SRS-MSH-009"], "source": "TRS 23.6"
+  },
+  "VOUCHER_NONCE_CACHE": {
+   "count": 5000, "count_min": 1000, "count_max": 20000,
+   "days": 90, "days_min": 30, "days_max": 365,
+   "overridable": true,
+   "anchors": ["TRS-CFG-009"], "source": "TRS 23.6"
+  },
+  "SUPPORT_RING_BUFFER_MB": {
+   "default": 4, "min": 1, "max": 16, "overridable": true,
+   "notes": "Structured events.",
+   "anchors": ["SRS-OPS-001"], "source": "TRS 23.6"
+  }
+ },
+
+ "resource_budgets": {
+  "$section_notes": "TRS 23.7. Release-gated budgets, regression-tracked per TRS-CICD-010. None are overridable by signed configuration. Absent from the handover seed; added in WP-01 slice S2 because TRS Sec. 23 is normative in full.",
+  "ANDROID_DOWNLOAD_MAX_MB": {
+   "default": 40, "overridable": false, "budget": true,
+   "notes": "APK/AAB download size.",
+   "anchors": ["TRS-CICD-010"], "source": "TRS 23.7"
+  },
+  "IOS_DOWNLOAD_MAX_MB": {
+   "default": 60, "overridable": false, "budget": true,
+   "anchors": ["TRS-CICD-010"], "source": "TRS 23.7"
+  },
+  "STEADY_STATE_RAM_MAX_MB": {
+   "default": 220, "overridable": false, "budget": true,
+   "notes": "Foreground, mid-tier reference device.",
+   "anchors": ["SRS-NFR-REL-010"], "source": "TRS 23.7"
+  },
+  "COLD_LAUNCH_P95_MS": {
+   "default": 2000, "overridable": false,
+   "notes": "TRS 23.7 states 2.0 s. Encoded in milliseconds as an integer so the register contains no floating-point value and constants_hash needs no float-formatting rule.",
+   "anchors": ["SRS-NFR-PERF-001"], "source": "TRS 23.7"
+  },
+  "ACTIVE_VENUE_BATTERY_MAX_PCT_30MIN": {
+   "default": 6, "overridable": false, "budget": true, "calibrated": true,
+   "notes": "Reference mid-tier device, 30 minutes.",
+   "anchors": ["SRS-NFR-BAT-004"], "source": "TRS 23.7"
+  },
+  "IDLE_BACKGROUND": {
+   "battery_pct_max": 0, "wake_locks_permitted": false, "overridable": false,
+   "notes": "TRS 23.7 states '~0%; no wake locks' for visibility-off idle. Encoded as a 0% ceiling plus an explicit prohibition on wake locks.",
+   "anchors": ["SRS-NFR-BAT-005"], "source": "TRS 23.7"
+  }
+ },
+
+ "message_classes": {
+  "$section_notes": "TRS Sec. 9.2 canonical message classes. Generated into a typed enum in all three languages so no wire code hand-writes a class byte (TRS-CODE-005, TRS-PAT-006). Adding or changing a class is a protocol change under TRS-PROTO-016 and moves constants_hash by design.",
+  "classes": [
+   {"code": 1,   "name": "HELLO",              "purpose": "Version/capability/session bootstrap"},
+   {"code": 2,   "name": "HELLO_ACK",          "purpose": "Capability and session acknowledgement"},
+   {"code": 3,   "name": "INTEREST_REQUEST",   "purpose": "Consent-stage request payload"},
+   {"code": 4,   "name": "INTEREST_RESPONSE",  "purpose": "Accept/decline/ignore-safe response"},
+   {"code": 5,   "name": "PROFILE_PREVIEW",    "purpose": "Approved preview fields"},
+   {"code": 6,   "name": "PROFILE_FULL",       "purpose": "Approved full profile after match"},
+   {"code": 16,  "name": "TEXT_MESSAGE",       "purpose": "Ratcheted private text event carrying the inner event envelope (AMD-005)"},
+   {"code": 17,  "name": "DELIVERY_RECEIPT",   "purpose": "Delivered state"},
+   {"code": 18,  "name": "READ_RECEIPT",       "purpose": "Optional read state"},
+   {"code": 19,  "name": "TYPING",             "purpose": "Optional ephemeral state"},
+   {"code": 32,  "name": "OBJECT_META",        "purpose": "Media/file metadata and digest"},
+   {"code": 33,  "name": "OBJECT_CHUNK",       "purpose": "Encrypted object fragment"},
+   {"code": 34,  "name": "OBJECT_ACK",         "purpose": "Selective acknowledgement bitmap/ranges"},
+   {"code": 35,  "name": "OBJECT_CANCEL",      "purpose": "Cancellation/cleanup"},
+   {"code": 36,  "name": "VOICE_META",         "purpose": "Voice-note codec/duration metadata"},
+   {"code": 48,  "name": "MESH_RELAY",         "purpose": "Opaque relay wrapper"},
+   {"code": 49,  "name": "STORE_FORWARD",      "purpose": "Short-TTL opaque mailbox frame"},
+   {"code": 64,  "name": "VENUE_PACKAGE_HINT", "purpose": "Signed venue package reference"},
+   {"code": 65,  "name": "VENUE_ROOM_EVENT",   "purpose": "Moderated graphical room event"},
+   {"code": 66,  "name": "VOUCHER_TOKEN",      "purpose": "Signed voucher/bootstrap token"},
+   {"code": 80,  "name": "HEARTBEAT",          "purpose": "Liveness and route health"},
+   {"code": 127, "name": "ERROR",              "purpose": "Stable machine-readable failure"}
+  ],
+  "text_event_kinds": [
+   {"code": 0, "name": "TEXT",                 "purpose": "Original text event"},
+   {"code": 1, "name": "EDIT",                 "purpose": "Authenticated edit over the original message"},
+   {"code": 2, "name": "DELETE_FOR_EVERYONE",  "purpose": "Authenticated delete over the original message"},
+   {"code": 3, "name": "REACTION",             "purpose": "Authenticated reaction over the original message"}
+  ],
+  "$text_event_notes": "AMD-005 / TRS Sec. 9.2 class 0x10. Kinds 1..3 carry target_message_id. Unknown event_kind values follow TRS-PROTO-006 (safe skip if non-critical, fail closed if critical)."
+ }
+}

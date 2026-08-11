@@ -4924,33 +4924,77 @@
   },
   {
    "req_id": "TRS-CONST-001",
-   "status": "not_started",
-   "code": [],
-   "tests": [],
+   "status": "implemented",
+   "code": [
+    "protocol/constants/lumos_constants.json",
+    "tools/constantsgen/register.go",
+    "tools/constantsgen/model.go",
+    "tools/constantsgen/emit.go",
+    "tools/constantsgen/main.go",
+    "protocol/gen/go/lumosconstants/constants.go",
+    "protocol/gen/go/lumosconstants/message_class.go",
+    "protocol/gen/java/com/lumos/protocol/LumosConstants.java",
+    "protocol/gen/java/com/lumos/protocol/MessageClass.java",
+    "protocol/gen/java/com/lumos/protocol/TextEventKind.java",
+    "protocol/gen/swift/LumosConstants.swift"
+   ],
+   "tests": [
+    "go:tools/constantsgen:TestGeneratedFilesCarryTheGeneratedBanner",
+    "go:tools/constantsgen:TestGeneratedGoValuesMatchRegister",
+    "go:tools/constantsgen:TestGeneratedJavaCompilesAndMatchesRegister",
+    "go:tools/constantsgen:TestGeneratedSwiftIsStructurallyComplete",
+    "go:tools/constantsgen:TestGoldenValues",
+    "go:tools/constantsgen:TestRegisterCoversTRSSection23",
+    "go:tools/constantsgen:TestSafetyNumberFormatMatchesADR005"
+   ],
    "evidence": [],
-   "adr": [],
-   "last_commit": null,
-   "updated": null
+   "adr": [
+    "ADR-004",
+    "ADR-005",
+    "ADR-006"
+   ],
+   "last_commit": "8aeed1b",
+   "updated": "2026-08-11"
   },
   {
    "req_id": "TRS-CONST-002",
    "status": "not_started",
-   "code": [],
-   "tests": [],
+   "code": [
+    "protocol/constants/lumos_constants.json"
+   ],
+   "tests": [
+    "go:tools/constantsgen:TestEveryOverridableEntryDeclaresBoundsOrTheGap",
+    "go:tools/constantsgen:TestADR006BoundsWereAppliedExactly",
+    "go:tools/constantsgen:TestEveryBoundTripleIsCoherent"
+   ],
    "evidence": [],
-   "adr": [],
-   "last_commit": null,
-   "updated": null
+   "adr": [
+    "ADR-004",
+    "ADR-006"
+   ],
+   "last_commit": "8aeed1b",
+   "updated": "2026-08-11"
   },
   {
    "req_id": "TRS-CONST-003",
-   "status": "not_started",
-   "code": [],
-   "tests": [],
+   "status": "implemented",
+   "code": [
+    "tools/constantsgen/register.go",
+    "tools/constantsgen/main.go"
+   ],
+   "tests": [
+    "go:tools/constantsgen:TestDeclaredHashMatchesContent",
+    "go:tools/constantsgen:TestHashIsSensitiveToValueChanges",
+    "go:tools/constantsgen:TestCanonicalFormExcludesDocumentation",
+    "go:tools/constantsgen:TestEmissionIsDeterministic",
+    "go:tools/constantsgen:TestCommittedFilesMatchRegister"
+   ],
    "evidence": [],
-   "adr": [],
-   "last_commit": null,
-   "updated": null
+   "adr": [
+    "ADR-004"
+   ],
+   "last_commit": "8aeed1b",
+   "updated": "2026-08-11"
   },
   {
    "req_id": "TRS-CONST-004",
@@ -4968,9 +5012,11 @@
    "code": [],
    "tests": [],
    "evidence": [],
-   "adr": [],
-   "last_commit": null,
-   "updated": null
+   "adr": [
+    "ADR-004"
+   ],
+   "last_commit": "8aeed1b",
+   "updated": "2026-08-11"
   },
   {
    "req_id": "TRS-CONST-006",
@@ -6005,13 +6051,31 @@
   },
   {
    "req_id": "TRS-REP-002",
-   "status": "not_started",
-   "code": [],
-   "tests": [],
+   "status": "implemented",
+   "code": [
+    "protocol/constants/lumos_constants.json",
+    "tools/constantsgen/register.go",
+    "tools/constantsgen/model.go",
+    "tools/constantsgen/emit.go",
+    "tools/constantsgen/main.go",
+    "protocol/gen/go/lumosconstants/constants.go",
+    "protocol/gen/go/lumosconstants/message_class.go",
+    "protocol/gen/java/com/lumos/protocol/LumosConstants.java",
+    "protocol/gen/java/com/lumos/protocol/MessageClass.java",
+    "protocol/gen/java/com/lumos/protocol/TextEventKind.java",
+    "protocol/gen/swift/LumosConstants.swift"
+   ],
+   "tests": [
+    "go:tools/constantsgen:TestGeneratedJavaCompilesAndMatchesRegister",
+    "go:tools/constantsgen:TestGeneratedGoValuesMatchRegister",
+    "go:tools/constantsgen:TestIdentifiersAreValidAndDistinct"
+   ],
    "evidence": [],
-   "adr": [],
-   "last_commit": null,
-   "updated": null
+   "adr": [
+    "ADR-004"
+   ],
+   "last_commit": "8aeed1b",
+   "updated": "2026-08-11"
   },
   {
    "req_id": "TRS-REP-003",

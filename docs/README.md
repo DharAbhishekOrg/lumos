@@ -29,8 +29,16 @@ Same content, easier to query:
 | --- | --- |
 | `prompts/` | Per-work-package kickoff prompts |
 | `handover/` | Original handover pack archive, retained for provenance |
-| `adr/` | Not yet created — ADR-001..004 currently live in the EDP; standalone records are not a WP-01 deliverable |
+| `adrs/` | ADR-005 and ADR-006, both **Accepted**. ADR-001..004 remain in the EDP; back-porting them as standalone records is not a WP-01 deliverable |
 | threat model, privacy data map | Not yet created (TRS-REP-008); not a WP-01 deliverable |
+
+## Architecture decision records
+
+| ADR | Status | Subject |
+| --- | --- | --- |
+| ADR-001..004 | Accepted | Recorded in `Lumos_EDP_v1_0.pdf` — crypto, BLE asymmetry, recovery, constants freeze |
+| [ADR-005](adrs/ADR-005-safety-number-format.md) | **Accepted** 2026-08-11 | `SAFETY_NUMBER_FORMAT` = 60 digits + 6 emoji from a 64-emoji alphabet |
+| [ADR-006](adrs/ADR-006-override-bounds.md) | **Accepted** 2026-08-11 | Override bounds for the eleven constants TRS §23 left unbounded |
 
 ## Note on `handover/Lumos_Codex_Handover_Pack.zip`
 
