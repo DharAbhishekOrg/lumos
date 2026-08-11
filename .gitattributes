@@ -1,0 +1,78 @@
+# Lumos - line-ending and diff policy (WP-01 slice S2)
+#
+# The repository is authored on Windows, built on Linux containers and runs its
+# Swift conformance on a macOS CI host. Without this file the same byte-identical
+# source can hash differently per platform, which would silently break the
+# determinism self-check of TRS Sec. 18.4 and the constants_hash of TRS-CONST-005.
+# LF is therefore normalized in the index for every text format.
+
+# Default: let Git detect text and normalize it to LF in the index.
+* text=auto eol=lf
+
+# Source
+*.go      text eol=lf
+*.java    text eol=lf
+*.kt      text eol=lf
+*.kts     text eol=lf
+*.swift   text eol=lf
+*.ts      text eol=lf
+*.tsx     text eol=lf
+*.js      text eol=lf
+*.mjs     text eol=lf
+*.m       text eol=lf
+*.h       text eol=lf
+*.c       text eol=lf
+*.sh      text eol=lf
+
+# Schemas, data, generated artefacts and evidence
+*.json    text eol=lf
+*.cbor    binary
+*.yml     text eol=lf
+*.yaml    text eol=lf
+*.xml     text eol=lf
+*.csv     text eol=lf
+*.proto   text eol=lf
+*.md      text eol=lf
+*.txt     text eol=lf
+*.toml    text eol=lf
+*.properties text eol=lf
+*.pro     text eol=lf
+*.cfg     text eol=lf
+*.gradle  text eol=lf
+*.plist   text eol=lf
+*.entitlements text eol=lf
+*.pbxproj text eol=lf merge=union
+*.resolved text eol=lf
+Dockerfile text eol=lf
+Makefile  text eol=lf
+.gitignore text eol=lf
+.gitattributes text eol=lf
+
+# Windows-only scripts genuinely require CRLF to execute.
+*.bat     text eol=crlf
+*.cmd     text eol=crlf
+*.ps1     text eol=crlf
+
+# Binary - never normalize, never diff as text.
+*.pdf     binary
+*.zip     binary
+*.png     binary
+*.jpg     binary
+*.jpeg    binary
+*.gif     binary
+*.webp    binary
+*.ico     binary
+*.jar     binary
+*.aar     binary
+*.apk     binary
+*.aab     binary
+*.keystore binary
+*.jks     binary
+*.p12     binary
+*.mobileprovision binary
+*.m4a     binary
+*.bin     binary
+
+# Generated code is reviewed as text but is never hand-edited; marking it keeps
+# it out of language statistics and out of noisy review diffs.
+protocol/gen/** linguist-generated=true
