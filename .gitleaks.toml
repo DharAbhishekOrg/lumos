@@ -78,13 +78,20 @@ paths = ['''test-vectors/.*\.json''']
 
 [[allowlists]]
 description = """
-ADR prose. Two findings where the word "key" precedes a long token in a \
-sentence ("separate X25519 identity-DH key, Ed25519-signed..."). Compensating \
-control: these files are Markdown, never executed and never deployed, and a \
-real credential pasted into an ADR would still be caught by every \
-provider-specific rule, which stay active here."""
+Decision and closeout prose. Findings where the word "key" precedes a long \
+token in an ordinary sentence ("separate X25519 identity-DH key, \
+Ed25519-signed..."). Documents that discuss key handling will always read this \
+way to a keyword-plus-entropy rule, and rewriting the prose to dodge a scanner \
+would make the record worse. Compensating control: these files are Markdown, \
+never executed and never deployed; every provider-specific rule stays active \
+here, so a real credential pasted into one is still caught; and \
+lumos-pem-private-key, which is repository-wide and unscoped, still fires on \
+any actual key block."""
 targetRules = ["generic-api-key"]
-paths = ['''docs/adrs/.*\.md''']
+paths = [
+  '''docs/adrs/.*\.md''',
+  '''evidence/.*\.md''',
+]
 
 [[allowlists]]
 description = """
