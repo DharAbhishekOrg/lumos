@@ -12,6 +12,7 @@
 
 import CryptoKit
 import Foundation
+import LumosProtocolGenerated
 
 /// CryptoKit-backed primitives matching ADR-001.
 public enum LumosCrypto {
