@@ -1,0 +1,48 @@
+# Lumos - repository ignore rules (WP-01 slice S1)
+# Build outputs and local tooling only. Nothing here may be used to hide
+# source, schemas, vectors or evidence from review.
+
+# Agent / editor local state
+.claude/
+.idea/
+.vscode/
+*.iml
+
+# Go
+/bin/
+*.exe
+*.test
+*.out
+
+# Node / admin-console
+node_modules/
+npm-debug.log*
+.npm/
+
+# Gradle / Android
+.gradle/
+build/
+local.properties
+captures/
+*.apk
+*.aab
+
+# Swift / SwiftPM / Xcode
+.build/
+.swiftpm/
+xcuserdata/
+DerivedData/
+
+# OS noise
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Never commit secrets or signing material (TRS-REP-005). These patterns are a
+# safety net, not a substitute for the secret scan of WP-01 slice S7.
+.env
+.env.*
+*.keystore
+*.jks
+*.p12
+*.mobileprovision

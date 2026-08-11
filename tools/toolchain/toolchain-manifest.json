@@ -1,0 +1,87 @@
+{
+  "$comment": "Lumos pinned toolchain manifest. Produced by WP-01 slice S0. Consumed by the bootstrap scripts of TRS-REP-006 (WP-01 slice S7) and by the clean-container CI evidence job. Every version here is one that was installed and executed on the authoring host; nothing is aspirational.",
+  "schema_version": 1,
+  "work_package": "WP-01",
+  "slice": "S0",
+  "implements": [
+    "TRS-REP-003",
+    "TRS-REP-006",
+    "SRS-NFR-MNT-007"
+  ],
+  "host": {
+    "os": "Windows 11 Enterprise 10.0.26200",
+    "arch": "amd64"
+  },
+  "toolchains": {
+    "go": {
+      "version": "1.26.5",
+      "verified": "go version go1.26.5 windows/amd64",
+      "path": "C:\\Program Files\\Go\\bin\\go.exe",
+      "license": "BSD-3-Clause",
+      "install": "winget install --id GoLang.Go --exact",
+      "why": "Single-generator rule (TRS Sec. 18.4): /tools/vectorgen and the backend conformance runner 'go test ./protocol/...' are Go."
+    },
+    "jdk": {
+      "version": "17.0.20+8",
+      "distribution": "Eclipse Temurin",
+      "verified": "OpenJDK Runtime Environment Temurin-17.0.20+8 (build 17.0.20+8)",
+      "path": "C:\\Program Files\\Eclipse Adoptium\\jdk-17.0.20.8-hotspot",
+      "license": "GPL-2.0-with-classpath-exception",
+      "license_note": "Standard OpenJDK licensing. Build toolchain only; not linked into any shipped artefact. Installed on explicit owner instruction.",
+      "install": "winget install --id EclipseAdoptium.Temurin.17.JDK --exact",
+      "why": "TRS Sec. 5.3 mandates a Java 17 toolchain. Drives the pure-JVM :protocol-conformance module (slice S5)."
+    },
+    "node": {
+      "version": "24.19.0",
+      "npm": "11.17.0",
+      "channel": "LTS",
+      "verified": "v24.19.0",
+      "path": "C:\\Program Files\\nodejs\\node.exe",
+      "license": "MIT",
+      "install": "winget install --id OpenJS.NodeJS.LTS --exact",
+      "why": "admin-console empty-shell build (TypeScript, ESLint + tsc strict) in slice S7."
+    },
+    "swift": {
+      "version": null,
+      "status": "unavailable_on_this_host",
+      "why": "Swift 6 / SwiftPM is not installable on this Windows host in a form that satisfies the WP-01 known trap: LumosProtocolConformance must run on a macOS CI host without a simulator. The Swift conformance runner is authored in slice S5 and executed on a GitHub Actions macos-latest runner, path-filtered per owner instruction to protocol/, test-vectors/ and the iOS conformance target only.",
+      "execution_surface": "github-actions:macos-latest"
+    }
+  },
+  "platform_sdks": {
+    "android_sdk": {
+      "root": "%LOCALAPPDATA%\\Android\\Sdk",
+      "platforms": ["android-34", "android-36"],
+      "build_tools": ["34.0.0", "35.0.0", "36.1.0", "37.0.0"],
+      "platform_tools": "37.0.0",
+      "ndk": ["30.0.14904198"],
+      "cmdline_tools": [],
+      "note": "TRS Sec. 5.3 baseline compileSdk/targetSdk 36 is satisfied by android-36 + build-tools 36.1.0. cmdline-tools is absent; CI license acceptance and headless SDK management are addressed in slice S7."
+    }
+  },
+  "supporting": {
+    "git": {
+      "version": "2.55.0.windows.3"
+    },
+    "docker": {
+      "client": "29.6.2",
+      "server": "29.6.2",
+      "reachable": true,
+      "why": "Clean-container build evidence job (TRS-CICD-008, SRS-NFR-MNT-007)."
+    },
+    "gradle": {
+      "version": null,
+      "status": "pending_slice_S7",
+      "note": "Supplied by a committed Gradle wrapper with a pinned distribution and checksum, not a host install (TRS-REP-003)."
+    },
+    "python": {
+      "version": "3.14.5",
+      "scope": "authoring_host_only",
+      "note": "Not a project dependency and not required by any build. Used only to read the baselined specification PDFs (pypdf 6.15.0, BSD-3-Clause). Must not appear in any lockfile or bootstrap script."
+    }
+  },
+  "not_yet_pinned": {
+    "note": "Dependency versions and checksums are locked in slice S7 per TRS-REP-003. This manifest pins the toolchains only; it is not a lockfile and must not be mistaken for one.",
+    "pending": ["gradle_wrapper", "agp", "swiftpm_resolved", "go_sum", "npm_lockfile", "sbom"]
+  }
+}

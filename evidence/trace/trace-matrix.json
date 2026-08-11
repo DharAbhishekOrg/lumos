@@ -5984,13 +5984,24 @@
   },
   {
    "req_id": "TRS-REP-001",
-   "status": "not_started",
-   "code": [],
-   "tests": [],
+   "status": "tested",
+   "code": [
+    "tools/repolint/layout.go"
+   ],
+   "tests": [
+    "go:tools/repolint:TestRepositoryLayoutConforms",
+    "go:tools/repolint:TestRequiredRootsMatchTRS41",
+    "go:tools/repolint:TestCheckDetectsMissingRoot",
+    "go:tools/repolint:TestCheckDetectsRequiredRootThatIsAFile",
+    "go:tools/repolint:TestCheckDetectsUnexpectedRootDirectory",
+    "go:tools/repolint:TestCheckDetectsUnexpectedRootFile",
+    "go:tools/repolint:TestCheckDetectsMissingRelocatedArtifact",
+    "go:tools/repolint:TestCheckDetectsStaleArchiveAtRoot"
+   ],
    "evidence": [],
    "adr": [],
-   "last_commit": null,
-   "updated": null
+   "last_commit": "834e08c",
+   "updated": "2026-08-11"
   },
   {
    "req_id": "TRS-REP-002",
@@ -6538,5 +6549,6 @@
    "evidence": [],
    "owner_signoff": null
   }
- ]
+ ],
+ "last_commit_convention": "last_commit is the SHA of the HEAD the entry's verification executed against. WP-01 slice S6 replaces this hand-set convention with a post-commit stamp and enforces the EDP Sec. 6.2 freshness rule mechanically."
 }

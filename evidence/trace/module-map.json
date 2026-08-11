@@ -1,5 +1,9 @@
 {
  "comment": "Map module path prefixes to requirement domains; CI uses this for freshness checks (TRS 19.3). Extend as modules are created in WP-01.",
+ "exclude": [
+  "**/README.md"
+ ],
+ "exclude_rationale": "The EDP Sec. 6.2 freshness rule exists to prove that code and its trace entries are co-edited. A directory README carries no requirement evidence, so requiring it to restamp every mapped ID would generate noise that trains reviewers to ignore the gate. Source, schema, vector and test changes are never excluded. Enforced by the validator delivered in WP-01 slice S6.",
  "mappings": {
   "protocol/": [
    "TRS-PROTO",
@@ -22,8 +26,26 @@
   "admin-console/": [
    "SRS-ADM"
   ],
+  "config-schema/": [
+   "TRS-CFG",
+   "TRS-CICD-005"
+  ],
   "tools/vectorgen/": [
    "TRS-TST-001"
+  ],
+  "tools/repolint/": [
+   "TRS-REP-001"
+  ],
+  "tools/toolchain/": [
+   "TRS-REP-003",
+   "TRS-REP-006"
+  ],
+  "tools/constantsgen/": [
+   "TRS-CONST-001",
+   "TRS-REP-002"
+  ],
+  "tools/tracecheck/": [
+   "TRS-AI-003"
   ]
  }
 }

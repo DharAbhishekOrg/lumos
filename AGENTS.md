@@ -13,9 +13,9 @@ else except the baselined documents, this file and the documents win.
 3. `docs/Lumos_EDP_v1_0.pdf` — ADR-001..004 full records, WP-01..WP-11 kickoff
    briefs (§7), owner-executed gates G-01..G-09 (§8)
 4. Machine-readable equivalents (same content, easier to query):
-   - `requirements/srs_requirements_v1_1.json`
-   - `requirements/trs_requirements_v1_1.json`
-   - `acceptance/acceptance_tests_v1_1.csv`
+   - `docs/requirements/srs_requirements_v1_1.json`
+   - `docs/requirements/trs_requirements_v1_1.json`
+   - `docs/acceptance/acceptance_tests_v1_1.csv`
    - `protocol/constants/lumos_constants.seed.json`
 
 If prose and a numbered requirement conflict, the stricter privacy/safety/security
@@ -97,6 +97,15 @@ is success; papering over it is the only real failure mode.
 
 ## 7. Current state
 
-- Active WP: **WP-01** (see `prompts/WP-01-kickoff.md`)
-- Trace matrix: seeded, all 648 entries `not_started`
-- Nothing is implemented yet. Do not assume any code exists that you have not read.
+- Active WP: **WP-01** (see `docs/prompts/WP-01-kickoff.md`)
+- Trace matrix: seeded; WP-01 slices S0 (toolchain pin) and S1 (repo roots per
+  TRS §4.1) are complete and `tested`. Everything else remains `not_started`.
+- Repo layout is now the TRS §4.1 ten-root form. The handover pack's
+  `requirements/`, `acceptance/` and `prompts/` directories were moved under
+  `docs/` in slice S1; the original archive is retained at
+  `docs/handover/Lumos_Codex_Handover_Pack.zip`.
+- Toolchains are pinned in `tools/toolchain/toolchain-manifest.json`. Swift is
+  unavailable on the Windows authoring host by design; the iOS conformance
+  runner executes on a GitHub Actions `macos-latest` runner.
+- Beyond the above, nothing is implemented. Do not assume any code exists that
+  you have not read.
