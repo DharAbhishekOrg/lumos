@@ -1,0 +1,71 @@
+{
+  "schema_version": 1,
+  "generator": "tools/vectorgen",
+  "constants_hash": "sha256:3e979bd0561766daee1280ca0a7b2d793532573266d01f10a79c2c18009074a4",
+  "implements": [
+    "TRS-CRY-001",
+    "TRS-CRY-005",
+    "TRS-CRY-014",
+    "TRS-CRY-015"
+  ],
+  "key_provenance": "TESTONLY-lumos-vectors-v1",
+  "notes": "X3DH known-answer vectors (ADR-001/ADR-008). Consumers reconstruct the shared secret and transcript AD from the public inputs and their own secret halves; both must match exactly. The no-OPK case is the TRS-CRY-005 fallback.",
+  "match_id_hex": "a1a2a3a4a5a6a7a8b1b2b3b4b5b6b7b8",
+  "cases": [
+    {
+      "name": "x3dh_with_opk",
+      "description": "X3DH agreement with_opk; both sides derive the same secret and transcript.",
+      "with_one_time_prekey": true,
+      "initiator_identity_ed_pub_hex": "157fc1035e5f1f2c83343e577dbf61852f7a6ad4f29f11603013ccd8a889608b",
+      "initiator_identity_dh_pub_hex": "1a6322cf25da9523c1ae0fd9151267b09d93ace7bd6bb51489278f0ec7308056",
+      "initiator_ephemeral_pub_hex": "4fbbec6fe68116f08477a8d392868784705e1e3f5fecbffe31378a32ffbced1e",
+      "responder_identity_ed_pub_hex": "4855cda91a5c8275b1cee52d4d6cf0bcc785391275e0d2beaf2c0c4a32288290",
+      "responder_identity_dh_pub_hex": "763710984e437dad75a71b4bc555e72ee1d18fe19e039334fc176278487c6e7b",
+      "signed_prekey_id": 7,
+      "responder_signed_prekey_pub_hex": "0e5018699247c2ddca5e0c976f8df41b4c2fdf0f6d6d2a95b6320f4182f19567",
+      "one_time_prekey_id": 42,
+      "responder_one_time_prekey_pub_hex": "9bd77384b91382b0819fb555c9f06e8da8c25870b688b652aa947d23fb73db45",
+      "shared_secret_hex": "cafb363aa6d89ef7b44551b09c5f2a7408b051b0e99a2c0d628f24f99cd31efc",
+      "transcript_ad_hex": "3629f9f1ab0ec2ac2dd24cb45a14ff27f306763508b7a45677fa1a665ec40355"
+    },
+    {
+      "name": "x3dh_no_opk",
+      "description": "X3DH agreement no_opk; both sides derive the same secret and transcript.",
+      "with_one_time_prekey": false,
+      "initiator_identity_ed_pub_hex": "a919550ebdb43012f5706e3e10b4c4bf030970a84aca0bba81d81156220ed603",
+      "initiator_identity_dh_pub_hex": "22f0f514e937f22e7a4a15b2ad6a0d6b9e4691647867131e0def5997f8992f4b",
+      "initiator_ephemeral_pub_hex": "cbfb9d414aad7243059d909471813ac89d4dc90896901d9db412717358cda703",
+      "responder_identity_ed_pub_hex": "9ba4487f6660b78cbd5915c46036a221b85f5c36b9657b6c381e6d9c1a0f9118",
+      "responder_identity_dh_pub_hex": "40dbad7acea9deaef9f9bed07144614690f7e8b32783e11d331e3e9132f56304",
+      "signed_prekey_id": 7,
+      "responder_signed_prekey_pub_hex": "3299c0a8a97795251e87aa2064ded34c3a8074f1fdbebf60c58292a870730d6f",
+      "one_time_prekey_id": 4294967295,
+      "shared_secret_hex": "8962ece8c0a73de5840927d5ec5a373883d6a2eebaf40325274cc71c75a9e3d6",
+      "transcript_ad_hex": "d029c205cff36c47e3f9deeb27d219388faa7f37b8f9307bac5d1f5e083deb6b"
+    }
+  ],
+  "negatives": [
+    {
+      "name": "tampered_identity_dh_signature",
+      "description": "The Ed25519 signature over the responder's X25519 identity-DH key is corrupted; verification must fail closed before any DH.",
+      "responder_identity_ed_pub_hex": "80c4bc172a4661fde375649b1d97bff8a486cd5208355f85ccb268fbaa79a069",
+      "responder_identity_dh_pub_hex": "b96ba1e83d34dcd66a00dc0bd35594d1f16c50008214b21337bcb09399530f2a",
+      "identity_dh_sig_hex": "9b4d5144aa4a6b0d954d2e34d1ebdf56ad7953e77f1a6c72086270874726ef0d1b388dea4adc29de4e34a07c151bb81ae9eefaba3ca4dc6032956e74a945b302",
+      "signed_prekey_id": 7,
+      "responder_signed_prekey_pub_hex": "2e83237d3032a310b291f3e0f2566042f1592109156bb3c6c6dcd9486ef28771",
+      "signed_prekey_sig_hex": "ea95e3c2dab515f1a1dc8790b36a5f2cc5d2cbc9f2b8ec295c9cfd01d7b586579e10abb27795026968c2cfcfd9ff6563bb2d170489816074edc099e886d05107",
+      "expected_error": "ERR_CRYPTO_PREKEY_SIGNATURE_INVALID"
+    },
+    {
+      "name": "tampered_signed_prekey_signature",
+      "description": "The signed-prekey signature is corrupted; the bundle must be rejected before any DH.",
+      "responder_identity_ed_pub_hex": "80c4bc172a4661fde375649b1d97bff8a486cd5208355f85ccb268fbaa79a069",
+      "responder_identity_dh_pub_hex": "b96ba1e83d34dcd66a00dc0bd35594d1f16c50008214b21337bcb09399530f2a",
+      "identity_dh_sig_hex": "9a4d5144aa4a6b0d954d2e34d1ebdf56ad7953e77f1a6c72086270874726ef0d1b388dea4adc29de4e34a07c151bb81ae9eefaba3ca4dc6032956e74a945b302",
+      "signed_prekey_id": 7,
+      "responder_signed_prekey_pub_hex": "2e83237d3032a310b291f3e0f2566042f1592109156bb3c6c6dcd9486ef28771",
+      "signed_prekey_sig_hex": "eb95e3c2dab515f1a1dc8790b36a5f2cc5d2cbc9f2b8ec295c9cfd01d7b586579e10abb27795026968c2cfcfd9ff6563bb2d170489816074edc099e886d05107",
+      "expected_error": "ERR_CRYPTO_PREKEY_SIGNATURE_INVALID"
+    }
+  ]
+}

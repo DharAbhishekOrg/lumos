@@ -458,6 +458,35 @@ func Build(root, generatorCommit string) ([]VectorFile, error) {
 		return nil, err
 	}
 
+	x3dhFile, err := buildX3DHKAT(constantsHash)
+	if err != nil {
+		return nil, err
+	}
+	if err := appendJSON("test-vectors/crypto/x3dh_kat.json", x3dhFile.Implements, x3dhFile); err != nil {
+		return nil, err
+	}
+	ratchetFile, err := buildRatchetSequences(constantsHash)
+	if err != nil {
+		return nil, err
+	}
+	if err := appendJSON("test-vectors/crypto/ratchet_sequences.json", ratchetFile.Implements, ratchetFile); err != nil {
+		return nil, err
+	}
+	aeadFile, err := buildAEADKAT(constantsHash)
+	if err != nil {
+		return nil, err
+	}
+	if err := appendJSON("test-vectors/crypto/aead_kat.json", aeadFile.Implements, aeadFile); err != nil {
+		return nil, err
+	}
+	safetyFile, err := buildSafetyNumber(constantsHash)
+	if err != nil {
+		return nil, err
+	}
+	if err := appendJSON("test-vectors/crypto/safety_number.json", safetyFile.Implements, safetyFile); err != nil {
+		return nil, err
+	}
+
 	man := manifest{
 		SchemaVersion:   1,
 		Generator:       GeneratorName,
@@ -465,9 +494,9 @@ func Build(root, generatorCommit string) ([]VectorFile, error) {
 		ConstantsHash:   constantsHash,
 		KeyProvenance:   KeyProvenance,
 		Notes: "Golden-vector manifest (TRS Sec. 18.4). generator_commit is the HEAD at " +
-			"generation time, same convention as the trace matrix. The crypto, adv, media, " +
-			"config and voucher trees arrive in slices S4b/S4c; their absence here is " +
-			"deliberate scope, not an omission.",
+			"generation time, same convention as the trace matrix. The adv, media, config " +
+			"and voucher trees arrive in slice S4c; their absence here is deliberate scope, " +
+			"not an omission.",
 	}
 	for _, f := range files {
 		man.Files = append(man.Files, manifestEntry{Path: f.Path, Implements: f.Implements})

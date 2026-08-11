@@ -118,12 +118,14 @@ func TestGeneratedJavaCompilesAndMatchesRegister(t *testing.T) {
 		sources = append(sources, filepath.Join(root, filepath.FromSlash(p)))
 	}
 
-	args := append([]string{"-Xlint:all", "-Werror", "--release", "17", "-d", classes}, sources...)
+	args := append([]string{"-Xlint:all", "-Werror", "-encoding", "UTF-8", "--release", "17", "-d", classes}, sources...)
 	if out, err := exec.Command(javac, args...).CombinedOutput(); err != nil {
 		t.Fatalf("javac failed (generated Java must compile warning-free under TRS-CODE-006):\n%s", out)
 	}
 
-	out, err := exec.Command(java, "-cp", classes, "Dump").CombinedOutput()
+	// -Dfile.encoding=UTF-8 keeps System.out UTF-8 on Windows JDK 17, so the
+	// emoji alphabet survives the pipe byte-for-byte.
+	out, err := exec.Command(java, "-Dfile.encoding=UTF-8", "-cp", classes, "Dump").CombinedOutput()
 	if err != nil {
 		t.Fatalf("running Dump failed:\n%s", out)
 	}
@@ -164,6 +166,8 @@ func TestGeneratedJavaCompilesAndMatchesRegister(t *testing.T) {
 				parts[i] = strconv.FormatInt(v, 10)
 			}
 			want[key] = "[" + strings.Join(parts, ",") + "]"
+		case KindStringSlice:
+			want[key] = "[" + strings.Join(c.Strs, ",") + "]"
 		}
 	}
 	for _, mem := range m.MessageClass {

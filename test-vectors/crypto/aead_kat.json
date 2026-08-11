@@ -1,0 +1,55 @@
+{
+  "schema_version": 1,
+  "generator": "tools/vectorgen",
+  "constants_hash": "sha256:3e979bd0561766daee1280ca0a7b2d793532573266d01f10a79c2c18009074a4",
+  "implements": [
+    "TRS-CRY-003",
+    "TRS-CRY-011",
+    "TRS-CRY-013",
+    "TRS-PROTO-003",
+    "TRS-CRY-015"
+  ],
+  "key_provenance": "TESTONLY-lumos-vectors-v1",
+  "notes": "ChaCha20-Poly1305 with the REAL frame header as associated data (TRS-PROTO-003). The message key is expanded to (key,nonce) via HKDF with the register info string. Every tamper case mutates the genuine S4a frame-header AAD and must fail with the exact stable code.",
+  "positive": [
+    {
+      "name": "text_message_header_aad",
+      "description": "AEAD over a real TEXT_MESSAGE frame header.",
+      "message_key_hex": "1b007db43121ef9251e748c01fd94bd6e17c27ac2a730524813e9b54f88c6a0f",
+      "derived_key_hex": "dc6e71a24248eafd21e413d2fcac823b6aa7c29d0b267d7c36837316b2f3246c",
+      "nonce_hex": "a504e07c6a086e32526c940f",
+      "aad_hex": "4c4d10100001003ac0c129b5658ff26349ffac32963a1ebc78e6c2cdfb5630932854a30ff82ee7c6000000010000000000000000000000000000",
+      "plaintext_hex": "74686520717569636b2062726f776e20666f78",
+      "ciphertext_hex": "80aca85e0038031c860d5a4a42a65632e2fb2cf65604d0ced21ac9e7f64a51a11d4078"
+    }
+  ],
+  "tamper": [
+    {
+      "name": "mutated_header_aad",
+      "description": "One byte of the frame-header AAD flipped; authentication must fail.",
+      "message_key_hex": "1b007db43121ef9251e748c01fd94bd6e17c27ac2a730524813e9b54f88c6a0f",
+      "nonce_hex": "a504e07c6a086e32526c940f",
+      "aad_hex": "4c4d10100001003ac0c129b5658ff26349ffac32963a1ebc79e6c2cdfb5630932854a30ff82ee7c6000000010000000000000000000000000000",
+      "ciphertext_hex": "80aca85e0038031c860d5a4a42a65632e2fb2cf65604d0ced21ac9e7f64a51a11d4078",
+      "expected_error": "ERR_CRYPTO_AEAD_AUTH_FAILED"
+    },
+    {
+      "name": "mutated_ciphertext",
+      "description": "One ciphertext byte flipped.",
+      "message_key_hex": "1b007db43121ef9251e748c01fd94bd6e17c27ac2a730524813e9b54f88c6a0f",
+      "nonce_hex": "a504e07c6a086e32526c940f",
+      "aad_hex": "4c4d10100001003ac0c129b5658ff26349ffac32963a1ebc78e6c2cdfb5630932854a30ff82ee7c6000000010000000000000000000000000000",
+      "ciphertext_hex": "81aca85e0038031c860d5a4a42a65632e2fb2cf65604d0ced21ac9e7f64a51a11d4078",
+      "expected_error": "ERR_CRYPTO_AEAD_AUTH_FAILED"
+    },
+    {
+      "name": "mutated_tag",
+      "description": "The Poly1305 tag flipped.",
+      "message_key_hex": "1b007db43121ef9251e748c01fd94bd6e17c27ac2a730524813e9b54f88c6a0f",
+      "nonce_hex": "a504e07c6a086e32526c940f",
+      "aad_hex": "4c4d10100001003ac0c129b5658ff26349ffac32963a1ebc78e6c2cdfb5630932854a30ff82ee7c6000000010000000000000000000000000000",
+      "ciphertext_hex": "80aca85e0038031c860d5a4a42a65632e2fb2cf65604d0ced21ac9e7f64a51a11d4079",
+      "expected_error": "ERR_CRYPTO_AEAD_AUTH_FAILED"
+    }
+  ]
+}

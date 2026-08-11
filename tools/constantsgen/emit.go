@@ -13,6 +13,7 @@ import (
 	"go/format"
 	"strconv"
 	"strings"
+	"unicode/utf16"
 )
 
 // File is one generated artefact.
@@ -121,7 +122,7 @@ func emitGoConstants(m *Model) string {
 			group = c.Group
 			b.WriteString("\n// " + groupTitle(group) + "\n")
 		}
-		if c.Kind == KindIntSlice {
+		if c.Kind == KindIntSlice || c.Kind == KindStringSlice {
 			slices = append(slices, c)
 			continue
 		}
@@ -130,6 +131,10 @@ func emitGoConstants(m *Model) string {
 	}
 	for _, c := range slices {
 		b.WriteString(fmt.Sprintf("\n// %s is %s. It is a var because Go has no array constants; treat it as read-only.\n", c.GoName(), c.SourcePth))
+		if c.Kind == KindStringSlice {
+			b.WriteString(fmt.Sprintf("var %s = [...]string{%s}\n", c.GoName(), joinQuoted(c.Strs, ", ")))
+			continue
+		}
 		b.WriteString(fmt.Sprintf("var %s = [...]int{%s}\n", c.GoName(), joinInts(c.Ints, ", ")))
 	}
 	return b.String()
@@ -189,6 +194,38 @@ func goEnum(typeName, doc string, members []EnumMember) string {
 
 func groupTitle(group string) string {
 	return strings.ToUpper(group[:1]) + strings.ReplaceAll(group[1:], "_", " ")
+}
+
+func joinQuoted(xs []string, sep string) string {
+	parts := make([]string, len(xs))
+	for i, x := range xs {
+		parts[i] = strconv.Quote(x)
+	}
+	return strings.Join(parts, sep)
+}
+
+// javaEscape renders s as a Java string literal with every non-ASCII character
+// escaped as UTF-16 \u units, so generated Java stays pure ASCII and compiles
+// identically under any platform default source encoding.
+func javaEscape(s string) string {
+	var b strings.Builder
+	b.WriteByte('"')
+	for _, r := range s {
+		switch {
+		case r == '"':
+			b.WriteString(`\"`)
+		case r == '\\':
+			b.WriteString(`\\`)
+		case r < 0x20 || r > 0x7E:
+			for _, u := range utf16.Encode([]rune{r}) {
+				fmt.Fprintf(&b, `\u%04X`, u)
+			}
+		default:
+			b.WriteRune(r)
+		}
+	}
+	b.WriteByte('"')
+	return b.String()
 }
 
 func joinInts(xs []int64, sep string) string {
@@ -252,6 +289,9 @@ func emitJavaConstants(m *Model) string {
 func javaType(c Constant) string {
 	switch c.Kind {
 	case KindInt:
+		if c.Int > 2147483647 || c.Int < -2147483648 {
+			return "long"
+		}
 		return "int"
 	case KindBool:
 		return "boolean"
@@ -259,6 +299,8 @@ func javaType(c Constant) string {
 		return "String"
 	case KindIntSlice:
 		return "List<Integer>"
+	case KindStringSlice:
+		return "List<String>"
 	}
 	return "Object"
 }
@@ -266,6 +308,9 @@ func javaType(c Constant) string {
 func javaLiteral(c Constant) string {
 	switch c.Kind {
 	case KindInt:
+		if c.Int > 2147483647 || c.Int < -2147483648 {
+			return strconv.FormatInt(c.Int, 10) + "L"
+		}
 		return strconv.FormatInt(c.Int, 10)
 	case KindBool:
 		return strconv.FormatBool(c.Bool)
@@ -273,6 +318,12 @@ func javaLiteral(c Constant) string {
 		return strconv.Quote(c.Str)
 	case KindIntSlice:
 		return "List.of(" + joinInts(c.Ints, ", ") + ")"
+	case KindStringSlice:
+		parts := make([]string, len(c.Strs))
+		for i, v := range c.Strs {
+			parts[i] = javaEscape(v)
+		}
+		return "List.of(" + strings.Join(parts, ", ") + ")"
 	}
 	return ""
 }
@@ -346,8 +397,11 @@ func emitSwift(m *Model) string {
 }
 
 func swiftTypeAnnotation(c Constant) string {
-	if c.Kind == KindIntSlice {
+	switch c.Kind {
+	case KindIntSlice:
 		return ": [Int]"
+	case KindStringSlice:
+		return ": [String]"
 	}
 	return ""
 }
@@ -362,6 +416,8 @@ func swiftLiteral(c Constant) string {
 		return strconv.Quote(c.Str)
 	case KindIntSlice:
 		return "[" + joinInts(c.Ints, ", ") + "]"
+	case KindStringSlice:
+		return "[" + joinQuoted(c.Strs, ", ") + "]"
 	}
 	return ""
 }

@@ -6,7 +6,7 @@
 // GENERATED - DO NOT EDIT. Generator: tools/constantsgen
 // Source register: protocol/constants/lumos_constants.json
 // Baseline: TRS v1.1 Sec. 23 / EDP v1.0 Sec. 4 (ADR-004)
-// constants_hash: sha256:7315f92990eb8e431d0d0c392a73822035bcc96c1c469fc4fa734d75cfa278d5
+// constants_hash: sha256:3e979bd0561766daee1280ca0a7b2d793532573266d01f10a79c2c18009074a4
 // Source schema: protocol/schemas/error_codes.schema.json
 
 // Package lumoserrors holds the stable machine-readable error codes of
@@ -44,6 +44,8 @@ const (
 	ErrCryptoMaxSkipExceeded = "ERR_CRYPTO_MAX_SKIP_EXCEEDED"
 	// ERR_CRYPTO_SKIPPED_KEY_CAP (42, crypto): Stored skipped keys would exceed SKIPPED_KEYS_PER_SESSION_CAP.
 	ErrCryptoSkippedKeyCap = "ERR_CRYPTO_SKIPPED_KEY_CAP"
+	// ERR_CRYPTO_PREKEY_SIGNATURE_INVALID (44, crypto): X3DH prekey bundle signature failed verification (identity-DH binding or signed prekey).
+	ErrCryptoPrekeySignatureInvalid = "ERR_CRYPTO_PREKEY_SIGNATURE_INVALID"
 	// ERR_CRYPTO_REPLAY (43, crypto): message_id already seen within the dedup window.
 	ErrCryptoReplay = "ERR_CRYPTO_REPLAY"
 	// ERR_MESH_HOP_VIOLATION (60, mesh): A relay attempted to raise hop_limit or TTL (TRS-PROTO-012).
@@ -72,33 +74,34 @@ const (
 
 // Numeric maps each stable code to its registry number.
 var Numeric = map[string]int{
-	ErrFrameBadMagic:               1,
-	ErrFrameUnsupportedVersion:     2,
-	ErrFrameUnknownType:            3,
-	ErrFrameBadHeaderLength:        4,
-	ErrFrameTruncated:              5,
-	ErrFrameReservedFlag:           6,
-	ErrFrameReservedField:          7,
-	ErrFramePayloadTooLarge:        8,
-	ErrPayloadDecompressionBomb:    20,
-	ErrPayloadMalformed:            21,
-	ErrTextUnknownEventKind:        22,
-	ErrTextMissingTarget:           23,
-	ErrCryptoAeadAuthFailed:        40,
-	ErrCryptoMaxSkipExceeded:       41,
-	ErrCryptoSkippedKeyCap:         42,
-	ErrCryptoReplay:                43,
-	ErrMeshHopViolation:            60,
-	ErrMeshTTLExpired:              61,
-	ErrTransportLocalOnlyViolation: 62,
-	ErrConfigSignatureInvalid:      80,
-	ErrConfigSchemaInvalid:         81,
-	ErrConfigRollback:              82,
-	ErrConfigExpired:               83,
-	ErrConfigWrongEnvironment:      84,
-	ErrConfigConstantsHashMismatch: 85,
-	ErrVoucherNonceReplay:          86,
-	ErrVoucherRevoked:              87,
+	ErrFrameBadMagic:                1,
+	ErrFrameUnsupportedVersion:      2,
+	ErrFrameUnknownType:             3,
+	ErrFrameBadHeaderLength:         4,
+	ErrFrameTruncated:               5,
+	ErrFrameReservedFlag:            6,
+	ErrFrameReservedField:           7,
+	ErrFramePayloadTooLarge:         8,
+	ErrPayloadDecompressionBomb:     20,
+	ErrPayloadMalformed:             21,
+	ErrTextUnknownEventKind:         22,
+	ErrTextMissingTarget:            23,
+	ErrCryptoAeadAuthFailed:         40,
+	ErrCryptoMaxSkipExceeded:        41,
+	ErrCryptoSkippedKeyCap:          42,
+	ErrCryptoPrekeySignatureInvalid: 44,
+	ErrCryptoReplay:                 43,
+	ErrMeshHopViolation:             60,
+	ErrMeshTTLExpired:               61,
+	ErrTransportLocalOnlyViolation:  62,
+	ErrConfigSignatureInvalid:       80,
+	ErrConfigSchemaInvalid:          81,
+	ErrConfigRollback:               82,
+	ErrConfigExpired:                83,
+	ErrConfigWrongEnvironment:       84,
+	ErrConfigConstantsHashMismatch:  85,
+	ErrVoucherNonceReplay:           86,
+	ErrVoucherRevoked:               87,
 }
 
 // Known reports whether code is in the stable registry.

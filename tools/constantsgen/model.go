@@ -22,6 +22,7 @@ import (
 // are emitted separately as typed enums.
 var GroupOrder = []string{
 	"framing",
+	"crypto_protocol",
 	"identity_discovery",
 	"sessions_remote_text",
 	"mesh_store_forward",
@@ -39,6 +40,7 @@ const (
 	KindBool
 	KindString
 	KindIntSlice
+	KindStringSlice
 )
 
 // Constant is one emitted value with its per-language identifiers.
@@ -50,6 +52,7 @@ type Constant struct {
 	Bool      bool
 	Str       string
 	Ints      []int64
+	Strs      []string
 	SourcePth string // dotted register path, for the doc comment
 }
 
@@ -172,6 +175,20 @@ func newConstant(group, name, field string, v any) (Constant, error) {
 	case string:
 		c.Kind, c.Str = KindString, t
 	case []any:
+		if len(t) == 0 {
+			return c, fmt.Errorf("empty arrays are not permitted in the register")
+		}
+		if _, isStr := t[0].(string); isStr {
+			c.Kind = KindStringSlice
+			for _, e := range t {
+				sv, ok := e.(string)
+				if !ok {
+					return c, fmt.Errorf("mixed array element types")
+				}
+				c.Strs = append(c.Strs, sv)
+			}
+			break
+		}
 		c.Kind = KindIntSlice
 		for _, e := range t {
 			n, ok := e.(json.Number)

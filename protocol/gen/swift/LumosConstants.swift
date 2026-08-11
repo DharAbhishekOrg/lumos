@@ -6,7 +6,7 @@
 /// GENERATED - DO NOT EDIT. Generator: tools/constantsgen
 /// Source register: protocol/constants/lumos_constants.json
 /// Baseline: TRS v1.1 Sec. 23 / EDP v1.0 Sec. 4 (ADR-004)
-/// constants_hash: sha256:7315f92990eb8e431d0d0c392a73822035bcc96c1c469fc4fa734d75cfa278d5
+/// constants_hash: sha256:3e979bd0561766daee1280ca0a7b2d793532573266d01f10a79c2c18009074a4
 
 public enum LumosConstants {
 
@@ -14,7 +14,7 @@ public enum LumosConstants {
     public static let serviceUUID = "E853EB6A-775C-4A49-A6BF-320E6A5CC609"
 
     /// Binds generated code to the register that produced it (TRS-CONST-005).
-    public static let constantsHash = "sha256:7315f92990eb8e431d0d0c392a73822035bcc96c1c469fc4fa734d75cfa278d5"
+    public static let constantsHash = "sha256:3e979bd0561766daee1280ca0a7b2d793532573266d01f10a79c2c18009074a4"
 
     /// Register schema version.
     public static let schemaVersion = 1
@@ -77,6 +77,101 @@ public enum LumosConstants {
 
     /// framing.PROTOCOL_VERSION.overridable
     public static let protocolVersionOverridable = false
+
+    // MARK: - Crypto protocol
+
+    /// crypto_protocol.CHAIN_KEY_SEEDS.message
+    public static let chainKeySeedsMessage = 1
+
+    /// crypto_protocol.CHAIN_KEY_SEEDS.next
+    public static let chainKeySeedsNext = 2
+
+    /// crypto_protocol.CHAIN_KEY_SEEDS.overridable
+    public static let chainKeySeedsOverridable = false
+
+    /// crypto_protocol.RATCHET_HEADER_LAYOUT.dh_len
+    public static let ratchetHeaderLayoutDhLen = 32
+
+    /// crypto_protocol.RATCHET_HEADER_LAYOUT.n_len
+    public static let ratchetHeaderLayoutNLen = 4
+
+    /// crypto_protocol.RATCHET_HEADER_LAYOUT.overridable
+    public static let ratchetHeaderLayoutOverridable = false
+
+    /// crypto_protocol.RATCHET_HEADER_LAYOUT.pn_len
+    public static let ratchetHeaderLayoutPnLen = 4
+
+    /// crypto_protocol.RATCHET_HEADER_LAYOUT.total_len
+    public static let ratchetHeaderLayoutTotalLen = 40
+
+    /// crypto_protocol.RATCHET_MESSAGE_KDF_INFO.overridable
+    public static let ratchetMessageKdfInfoOverridable = false
+
+    /// crypto_protocol.RATCHET_MESSAGE_KDF_INFO.value
+    public static let ratchetMessageKdfInfoValue = "lumos/ratchet/msg/v1"
+
+    /// crypto_protocol.RATCHET_ROOT_KDF_INFO.overridable
+    public static let ratchetRootKdfInfoOverridable = false
+
+    /// crypto_protocol.RATCHET_ROOT_KDF_INFO.value
+    public static let ratchetRootKdfInfoValue = "lumos/ratchet/root/v1"
+
+    /// crypto_protocol.SAFETY_NUMBER_EMOJI_ALPHABET.glyphs
+    public static let safetyNumberEmojiAlphabetGlyphs: [String] = ["🐶", "🐱", "🐴", "🐮", "🐷", "🐸", "🐵", "🐔", "🐧", "🐢", "🐝", "🦋", "🐙", "🐬", "🐘", "🐊", "🍎", "🍌", "🍇", "🍓", "🍉", "🍍", "🌽", "🍄", "🍞", "🍕", "🎂", "🍩", "☕", "🍦", "🌵", "🌲", "🌻", "🌹", "🍁", "⭐", "🌈", "🔥", "💧", "⚡", "🔑", "🔒", "🎈", "🎁", "⚽", "🎸", "🎺", "🎯", "🚀", "⚓", "🚲", "🚂", "⏰", "💡", "🔔", "🎧", "📷", "🔭", "🎨", "🎪", "💙", "🎵", "🏆", "👑"]
+
+    /// crypto_protocol.SAFETY_NUMBER_EMOJI_ALPHABET.overridable
+    public static let safetyNumberEmojiAlphabetOverridable = false
+
+    /// crypto_protocol.SAFETY_NUMBER_ITERATIONS.default
+    public static let safetyNumberIterationsDefault = 5200
+
+    /// crypto_protocol.SAFETY_NUMBER_ITERATIONS.overridable
+    public static let safetyNumberIterationsOverridable = false
+
+    /// crypto_protocol.SAFETY_NUMBER_KDF_INFO.overridable
+    public static let safetyNumberKdfInfoOverridable = false
+
+    /// crypto_protocol.SAFETY_NUMBER_KDF_INFO.value
+    public static let safetyNumberKdfInfoValue = "lumos/safety-number/v1"
+
+    /// crypto_protocol.X3DH_F_PREFIX.fill_byte
+    public static let x3dhFPrefixFillByte = 255
+
+    /// crypto_protocol.X3DH_F_PREFIX.len
+    public static let x3dhFPrefixLen = 32
+
+    /// crypto_protocol.X3DH_F_PREFIX.overridable
+    public static let x3dhFPrefixOverridable = false
+
+    /// crypto_protocol.X3DH_IDENTITY_BINDING_INFO.overridable
+    public static let x3dhIdentityBindingInfoOverridable = false
+
+    /// crypto_protocol.X3DH_IDENTITY_BINDING_INFO.value
+    public static let x3dhIdentityBindingInfoValue = "lumos/x3dh/identity-dh-binding/v1"
+
+    /// crypto_protocol.X3DH_KDF_INFO.overridable
+    public static let x3dhKdfInfoOverridable = false
+
+    /// crypto_protocol.X3DH_KDF_INFO.value
+    public static let x3dhKdfInfoValue = "lumos/x3dh/v1"
+
+    /// crypto_protocol.X3DH_OPK_ID_NONE.default
+    public static let x3dhOpkIDNoneDefault = 4294967295
+
+    /// crypto_protocol.X3DH_OPK_ID_NONE.overridable
+    public static let x3dhOpkIDNoneOverridable = false
+
+    /// crypto_protocol.X3DH_PREKEY_SIGNING_INFO.overridable
+    public static let x3dhPrekeySigningInfoOverridable = false
+
+    /// crypto_protocol.X3DH_PREKEY_SIGNING_INFO.value
+    public static let x3dhPrekeySigningInfoValue = "lumos/x3dh/signed-prekey/v1"
+
+    /// crypto_protocol.X3DH_TRANSCRIPT_INFO.overridable
+    public static let x3dhTranscriptInfoOverridable = false
+
+    /// crypto_protocol.X3DH_TRANSCRIPT_INFO.value
+    public static let x3dhTranscriptInfoValue = "lumos/x3dh/transcript/v1"
 
     // MARK: - Identity discovery
 

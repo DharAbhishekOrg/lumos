@@ -7,7 +7,7 @@
  * GENERATED - DO NOT EDIT. Generator: tools/constantsgen
  * Source register: protocol/constants/lumos_constants.json
  * Baseline: TRS v1.1 Sec. 23 / EDP v1.0 Sec. 4 (ADR-004)
- * constants_hash: sha256:7315f92990eb8e431d0d0c392a73822035bcc96c1c469fc4fa734d75cfa278d5
+ * constants_hash: sha256:3e979bd0561766daee1280ca0a7b2d793532573266d01f10a79c2c18009074a4
  */
 package com.lumos.protocol;
 
@@ -24,7 +24,7 @@ public final class LumosConstants {
     public static final String SERVICE_UUID = "E853EB6A-775C-4A49-A6BF-320E6A5CC609";
 
     /** Binds generated code to the register that produced it (TRS-CONST-005). */
-    public static final String CONSTANTS_HASH = "sha256:7315f92990eb8e431d0d0c392a73822035bcc96c1c469fc4fa734d75cfa278d5";
+    public static final String CONSTANTS_HASH = "sha256:3e979bd0561766daee1280ca0a7b2d793532573266d01f10a79c2c18009074a4";
 
     /** Register schema version. */
     public static final int SCHEMA_VERSION = 1;
@@ -87,6 +87,101 @@ public final class LumosConstants {
 
     /** framing.PROTOCOL_VERSION.overridable */
     public static final boolean PROTOCOL_VERSION_OVERRIDABLE = false;
+
+    // Crypto protocol
+
+    /** crypto_protocol.CHAIN_KEY_SEEDS.message */
+    public static final int CHAIN_KEY_SEEDS_MESSAGE = 1;
+
+    /** crypto_protocol.CHAIN_KEY_SEEDS.next */
+    public static final int CHAIN_KEY_SEEDS_NEXT = 2;
+
+    /** crypto_protocol.CHAIN_KEY_SEEDS.overridable */
+    public static final boolean CHAIN_KEY_SEEDS_OVERRIDABLE = false;
+
+    /** crypto_protocol.RATCHET_HEADER_LAYOUT.dh_len */
+    public static final int RATCHET_HEADER_LAYOUT_DH_LEN = 32;
+
+    /** crypto_protocol.RATCHET_HEADER_LAYOUT.n_len */
+    public static final int RATCHET_HEADER_LAYOUT_N_LEN = 4;
+
+    /** crypto_protocol.RATCHET_HEADER_LAYOUT.overridable */
+    public static final boolean RATCHET_HEADER_LAYOUT_OVERRIDABLE = false;
+
+    /** crypto_protocol.RATCHET_HEADER_LAYOUT.pn_len */
+    public static final int RATCHET_HEADER_LAYOUT_PN_LEN = 4;
+
+    /** crypto_protocol.RATCHET_HEADER_LAYOUT.total_len */
+    public static final int RATCHET_HEADER_LAYOUT_TOTAL_LEN = 40;
+
+    /** crypto_protocol.RATCHET_MESSAGE_KDF_INFO.overridable */
+    public static final boolean RATCHET_MESSAGE_KDF_INFO_OVERRIDABLE = false;
+
+    /** crypto_protocol.RATCHET_MESSAGE_KDF_INFO.value */
+    public static final String RATCHET_MESSAGE_KDF_INFO_VALUE = "lumos/ratchet/msg/v1";
+
+    /** crypto_protocol.RATCHET_ROOT_KDF_INFO.overridable */
+    public static final boolean RATCHET_ROOT_KDF_INFO_OVERRIDABLE = false;
+
+    /** crypto_protocol.RATCHET_ROOT_KDF_INFO.value */
+    public static final String RATCHET_ROOT_KDF_INFO_VALUE = "lumos/ratchet/root/v1";
+
+    /** crypto_protocol.SAFETY_NUMBER_EMOJI_ALPHABET.glyphs */
+    public static final List<String> SAFETY_NUMBER_EMOJI_ALPHABET_GLYPHS = List.of("\uD83D\uDC36", "\uD83D\uDC31", "\uD83D\uDC34", "\uD83D\uDC2E", "\uD83D\uDC37", "\uD83D\uDC38", "\uD83D\uDC35", "\uD83D\uDC14", "\uD83D\uDC27", "\uD83D\uDC22", "\uD83D\uDC1D", "\uD83E\uDD8B", "\uD83D\uDC19", "\uD83D\uDC2C", "\uD83D\uDC18", "\uD83D\uDC0A", "\uD83C\uDF4E", "\uD83C\uDF4C", "\uD83C\uDF47", "\uD83C\uDF53", "\uD83C\uDF49", "\uD83C\uDF4D", "\uD83C\uDF3D", "\uD83C\uDF44", "\uD83C\uDF5E", "\uD83C\uDF55", "\uD83C\uDF82", "\uD83C\uDF69", "\u2615", "\uD83C\uDF66", "\uD83C\uDF35", "\uD83C\uDF32", "\uD83C\uDF3B", "\uD83C\uDF39", "\uD83C\uDF41", "\u2B50", "\uD83C\uDF08", "\uD83D\uDD25", "\uD83D\uDCA7", "\u26A1", "\uD83D\uDD11", "\uD83D\uDD12", "\uD83C\uDF88", "\uD83C\uDF81", "\u26BD", "\uD83C\uDFB8", "\uD83C\uDFBA", "\uD83C\uDFAF", "\uD83D\uDE80", "\u2693", "\uD83D\uDEB2", "\uD83D\uDE82", "\u23F0", "\uD83D\uDCA1", "\uD83D\uDD14", "\uD83C\uDFA7", "\uD83D\uDCF7", "\uD83D\uDD2D", "\uD83C\uDFA8", "\uD83C\uDFAA", "\uD83D\uDC99", "\uD83C\uDFB5", "\uD83C\uDFC6", "\uD83D\uDC51");
+
+    /** crypto_protocol.SAFETY_NUMBER_EMOJI_ALPHABET.overridable */
+    public static final boolean SAFETY_NUMBER_EMOJI_ALPHABET_OVERRIDABLE = false;
+
+    /** crypto_protocol.SAFETY_NUMBER_ITERATIONS.default */
+    public static final int SAFETY_NUMBER_ITERATIONS_DEFAULT = 5200;
+
+    /** crypto_protocol.SAFETY_NUMBER_ITERATIONS.overridable */
+    public static final boolean SAFETY_NUMBER_ITERATIONS_OVERRIDABLE = false;
+
+    /** crypto_protocol.SAFETY_NUMBER_KDF_INFO.overridable */
+    public static final boolean SAFETY_NUMBER_KDF_INFO_OVERRIDABLE = false;
+
+    /** crypto_protocol.SAFETY_NUMBER_KDF_INFO.value */
+    public static final String SAFETY_NUMBER_KDF_INFO_VALUE = "lumos/safety-number/v1";
+
+    /** crypto_protocol.X3DH_F_PREFIX.fill_byte */
+    public static final int X3DH_F_PREFIX_FILL_BYTE = 255;
+
+    /** crypto_protocol.X3DH_F_PREFIX.len */
+    public static final int X3DH_F_PREFIX_LEN = 32;
+
+    /** crypto_protocol.X3DH_F_PREFIX.overridable */
+    public static final boolean X3DH_F_PREFIX_OVERRIDABLE = false;
+
+    /** crypto_protocol.X3DH_IDENTITY_BINDING_INFO.overridable */
+    public static final boolean X3DH_IDENTITY_BINDING_INFO_OVERRIDABLE = false;
+
+    /** crypto_protocol.X3DH_IDENTITY_BINDING_INFO.value */
+    public static final String X3DH_IDENTITY_BINDING_INFO_VALUE = "lumos/x3dh/identity-dh-binding/v1";
+
+    /** crypto_protocol.X3DH_KDF_INFO.overridable */
+    public static final boolean X3DH_KDF_INFO_OVERRIDABLE = false;
+
+    /** crypto_protocol.X3DH_KDF_INFO.value */
+    public static final String X3DH_KDF_INFO_VALUE = "lumos/x3dh/v1";
+
+    /** crypto_protocol.X3DH_OPK_ID_NONE.default */
+    public static final long X3DH_OPK_ID_NONE_DEFAULT = 4294967295L;
+
+    /** crypto_protocol.X3DH_OPK_ID_NONE.overridable */
+    public static final boolean X3DH_OPK_ID_NONE_OVERRIDABLE = false;
+
+    /** crypto_protocol.X3DH_PREKEY_SIGNING_INFO.overridable */
+    public static final boolean X3DH_PREKEY_SIGNING_INFO_OVERRIDABLE = false;
+
+    /** crypto_protocol.X3DH_PREKEY_SIGNING_INFO.value */
+    public static final String X3DH_PREKEY_SIGNING_INFO_VALUE = "lumos/x3dh/signed-prekey/v1";
+
+    /** crypto_protocol.X3DH_TRANSCRIPT_INFO.overridable */
+    public static final boolean X3DH_TRANSCRIPT_INFO_OVERRIDABLE = false;
+
+    /** crypto_protocol.X3DH_TRANSCRIPT_INFO.value */
+    public static final String X3DH_TRANSCRIPT_INFO_VALUE = "lumos/x3dh/transcript/v1";
 
     // Identity discovery
 

@@ -1,0 +1,114 @@
+{
+  "schema_version": 1,
+  "generator": "tools/vectorgen",
+  "constants_hash": "sha256:3e979bd0561766daee1280ca0a7b2d793532573266d01f10a79c2c18009074a4",
+  "implements": [
+    "TRS-CRY-002",
+    "TRS-CRY-006",
+    "TRS-CRY-007",
+    "TRS-CRY-011",
+    "TRS-CRY-015"
+  ],
+  "key_provenance": "TESTONLY-lumos-vectors-v1",
+  "notes": "Double Ratchet sequences. deliver_index is the order in which a consumer feeds messages to its receiver to reproduce out-of-order and skip behaviour; the header carries dh|pn|n. The negative asserts the MAX_SKIP breach fails with its exact stable code.",
+  "shared_secret_hex": "97ff8b3b031c63c9c5967189e2bd38a4b4f52f6cf454fbaad3b7b0af64f2fa1a",
+  "associated_data_hex": "11a70e5e6f7e0531a0be3aa354e0e22c1eac646ca8c606b64ffb73007f1a31e2",
+  "sequences": [
+    {
+      "name": "in_order",
+      "description": "Three in-order A-\u003eB messages on the first sending chain.",
+      "messages": [
+        {
+          "direction": "a2b",
+          "header_hex": "a5087b0adacef82ab696baf2f700b580f0d2ccf7d4b0db3a09239b8f16e70b360000000000000000",
+          "ciphertext_hex": "254919f56a524dc46315a4913106df3206a688dd20cff66f66a1",
+          "plaintext_hex": "696e2d6f726465722d30",
+          "deliver_index": 0
+        },
+        {
+          "direction": "a2b",
+          "header_hex": "a5087b0adacef82ab696baf2f700b580f0d2ccf7d4b0db3a09239b8f16e70b360000000000000001",
+          "ciphertext_hex": "54b2c75707bcde7ecc515d42d5c922e91426477ceadd4ac74029",
+          "plaintext_hex": "696e2d6f726465722d31",
+          "deliver_index": 1
+        },
+        {
+          "direction": "a2b",
+          "header_hex": "a5087b0adacef82ab696baf2f700b580f0d2ccf7d4b0db3a09239b8f16e70b360000000000000002",
+          "ciphertext_hex": "b4aed77d29d651fa9600cafc543ff073c19059fade78bd8341fb",
+          "plaintext_hex": "696e2d6f726465722d32",
+          "deliver_index": 2
+        }
+      ]
+    },
+    {
+      "name": "out_of_order_and_skipped",
+      "description": "Deliver order 0,3,1,2: message 3 stores skipped keys for 1 and 2, later consumed.",
+      "messages": [
+        {
+          "direction": "a2b",
+          "header_hex": "a5087b0adacef82ab696baf2f700b580f0d2ccf7d4b0db3a09239b8f16e70b360000000000000000",
+          "ciphertext_hex": "3f4c5dea3506292552dba3bf9aa1ef3fee6cac15babd",
+          "plaintext_hex": "736b69702d30",
+          "deliver_index": 0
+        },
+        {
+          "direction": "a2b",
+          "header_hex": "a5087b0adacef82ab696baf2f700b580f0d2ccf7d4b0db3a09239b8f16e70b360000000000000003",
+          "ciphertext_hex": "d0f77d1fd1c645e1bdfa1ee3494acd6f2fd789502a6c",
+          "plaintext_hex": "736b69702d33",
+          "deliver_index": 1
+        },
+        {
+          "direction": "a2b",
+          "header_hex": "a5087b0adacef82ab696baf2f700b580f0d2ccf7d4b0db3a09239b8f16e70b360000000000000001",
+          "ciphertext_hex": "4eb7834858e92b753d5e83385fadf555b5c054f632a0",
+          "plaintext_hex": "736b69702d31",
+          "deliver_index": 2
+        },
+        {
+          "direction": "a2b",
+          "header_hex": "a5087b0adacef82ab696baf2f700b580f0d2ccf7d4b0db3a09239b8f16e70b360000000000000002",
+          "ciphertext_hex": "aeab936276809b42bb5bfb327cb49af2e85a861e1372",
+          "plaintext_hex": "736b69702d32",
+          "deliver_index": 3
+        }
+      ]
+    },
+    {
+      "name": "dh_ratchet_turns",
+      "description": "A-\u003eB, B-\u003eA, A-\u003eB: two DH ratchet turns. Consumers replay in delivery order.",
+      "messages": [
+        {
+          "direction": "a2b",
+          "header_hex": "a5087b0adacef82ab696baf2f700b580f0d2ccf7d4b0db3a09239b8f16e70b360000000000000000",
+          "ciphertext_hex": "385246f4385705882c0538cd7725c2fd1bb8008d183fe5c50b5c17db",
+          "plaintext_hex": "7475726e20612d3e62202331",
+          "deliver_index": 0
+        },
+        {
+          "direction": "b2a",
+          "header_hex": "df05a7dc21146313c55527b9e49cc6cc0c9a4a8b843bc6b7733446ffccc20d1a0000000000000000",
+          "ciphertext_hex": "c2fb61f749f8e27f26a1f44186dfaa454cf4555365a80e47ccd27017",
+          "plaintext_hex": "7475726e20622d3e61202331",
+          "deliver_index": 1
+        },
+        {
+          "direction": "a2b",
+          "header_hex": "2cb955b4613a5ee15330f1b54a6856e5a9ad802357bbf4e64a18ed97b8a78f670000000100000000",
+          "ciphertext_hex": "706850c2b560ec2209c408de83011b712c498f2c283928d6dd6bfd80",
+          "plaintext_hex": "7475726e20612d3e62202332",
+          "deliver_index": 2
+        }
+      ]
+    }
+  ],
+  "negatives": [
+    {
+      "name": "max_skip_breach",
+      "description": "A within-chain gap exceeding MAX_SKIP_PER_CHAIN is refused before any key is stored.",
+      "expected_error": "ERR_CRYPTO_MAX_SKIP_EXCEEDED",
+      "gap": 513
+    }
+  ]
+}
