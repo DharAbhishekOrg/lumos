@@ -75,14 +75,24 @@ jobs:
         run: go run ./tools/constantsgen -check
       - name: vector gate (determinism + staleness)
         run: go run ./tools/vectorgen -check
+      # Written to RUNNER_TEMP, never into the working tree: repolint's drift
+      # check inspects the repository root, and a test artefact dropped there
+      # would be flagged by the very run that produced it.
       - name: go test
-        run: go test -count=1 -json ./... > go-test.json || (cat go-test.json | tail -50; exit 1)
+        shell: bash
+        run: |
+          set -o pipefail
+          if ! go test -count=1 -json ./... > "$RUNNER_TEMP/go-test.json"; then
+            echo "--- failing tests ---"
+            grep -oE '"Output":"[^"]*(FAIL|panic)[^"]*"' "$RUNNER_TEMP/go-test.json" | head -40
+            exit 1
+          fi
       - name: upload go test results
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: test-results-go
-          path: go-test.json
+          path: ${{ runner.temp }}/go-test.json
           retention-days: 7
 
   java:
