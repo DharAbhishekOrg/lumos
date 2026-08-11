@@ -39,17 +39,37 @@ func dhFromSeed(label string) (*ecdh.PrivateKey, error) {
 	return ecdh.X25519().NewPrivateKey(cryptoSeed(label))
 }
 
-// deterministicKP replays a fixed sequence of ratchet keys so ratchet vectors
-// reproduce byte-for-byte. TESTONLY only - production uses the CSPRNG.
-type deterministicKP struct {
-	label string
-	n     int
+// listKP replays an explicit, RECORDED sequence of ratchet keys. The list is
+// written into the vector file, so a consumer outside this repository replays
+// the same DH turns without re-deriving any seed. TESTONLY - production
+// generates each turn key from the platform CSPRNG (TRS-CRY-012).
+type listKP struct {
+	keys []*ecdh.PrivateKey
+	n    int
 }
 
-func (k *deterministicKP) GenerateDH() (*ecdh.PrivateKey, error) {
-	key, err := dhFromSeed(fmt.Sprintf("%s|ratchet-kp|%d", k.label, k.n))
+func (k *listKP) GenerateDH() (*ecdh.PrivateKey, error) {
+	if k.n >= len(k.keys) {
+		return nil, fmt.Errorf("ratchet turn key list exhausted at %d", k.n)
+	}
+	key := k.keys[k.n]
 	k.n++
-	return key, err
+	return key, nil
+}
+
+// turnKeys builds and returns a fixed list of DH-turn keys plus their hex form.
+func turnKeys(label string, n int) (*listKP, []string, error) {
+	kp := &listKP{}
+	var hexes []string
+	for i := 0; i < n; i++ {
+		key, err := dhFromSeed(fmt.Sprintf("%s|ratchet-kp|%d", label, i))
+		if err != nil {
+			return nil, nil, err
+		}
+		kp.keys = append(kp.keys, key)
+		hexes = append(hexes, hex.EncodeToString(key.Bytes()))
+	}
+	return kp, hexes, nil
 }
 
 // ---- crypto/x3dh_kat.json ----
@@ -92,6 +112,18 @@ type x3dhCase struct {
 	ResponderOPKHex  string `json:"responder_one_time_prekey_pub_hex,omitempty"`
 	SharedSecretHex  string `json:"shared_secret_hex"`
 	TranscriptADHex  string `json:"transcript_ad_hex"`
+
+	// TESTONLY private halves. Recorded so a consumer OUTSIDE this repository
+	// can recompute the shared secret rather than re-deriving generator seeds -
+	// a consumer that reproduces the seed derivation is agreeing with itself,
+	// not with the protocol. Never real key material.
+	InitiatorIDDHPrivHex string `json:"testonly_initiator_identity_dh_priv_hex"`
+	InitiatorEphPrivHex  string `json:"testonly_initiator_ephemeral_priv_hex"`
+	ResponderIDDHPrivHex string `json:"testonly_responder_identity_dh_priv_hex"`
+	ResponderSPKPrivHex  string `json:"testonly_responder_signed_prekey_priv_hex"`
+	ResponderOPKPrivHex  string `json:"testonly_responder_one_time_prekey_priv_hex,omitempty"`
+	IdentityDHSigHex     string `json:"identity_dh_sig_hex"`
+	SPKSigHex            string `json:"signed_prekey_sig_hex"`
 }
 
 var vectorMatchID = [16]byte{0xA1, 0xA2, 0xA3, 0xA4, 0xA5, 0xA6, 0xA7, 0xA8, 0xB1, 0xB2, 0xB3, 0xB4, 0xB5, 0xB6, 0xB7, 0xB8}
@@ -242,10 +274,18 @@ func oneX3DHCase(withOPK bool) (x3dhCase, error) {
 		ResponderSPKHex:  hex.EncodeToString(bobSPK.PublicKey().Bytes()),
 		SharedSecretHex:  hex.EncodeToString(init.SK),
 		TranscriptADHex:  hex.EncodeToString(init.AD),
+
+		InitiatorIDDHPrivHex: hex.EncodeToString(aliceDH.Bytes()),
+		InitiatorEphPrivHex:  hex.EncodeToString(aliceEph.Bytes()),
+		ResponderIDDHPrivHex: hex.EncodeToString(bobDH.Bytes()),
+		ResponderSPKPrivHex:  hex.EncodeToString(bobSPK.Bytes()),
+		IdentityDHSigHex:     hex.EncodeToString(bundle.IdentityDHSig),
+		SPKSigHex:            hex.EncodeToString(bundle.SPKSig),
 	}
 	if withOPK {
 		c.OPKID = opkID
 		c.ResponderOPKHex = hex.EncodeToString(bobOPK.PublicKey().Bytes())
+		c.ResponderOPKPrivHex = hex.EncodeToString(bobOPK.Bytes())
 	} else {
 		c.OPKID = uint32(lumosconstants.X3dhOpkIDNoneDefault)
 	}
@@ -281,6 +321,14 @@ type ratchetFile struct {
 	ADHex           string            `json:"associated_data_hex"`
 	Sequences       []ratchetSequence `json:"sequences"`
 	Negatives       []ratchetNegative `json:"negatives"`
+
+	// TESTONLY private ratchet material, recorded so a consumer outside this
+	// repository can construct both sides. Without these the file is not
+	// replayable by anyone who cannot re-derive the generator's seeds.
+	InitiatorRatchetPrivHex string   `json:"testonly_initiator_ratchet_priv_hex"`
+	ResponderRatchetPrivHex string   `json:"testonly_responder_ratchet_priv_hex"`
+	InitiatorTurnPrivsHex   []string `json:"testonly_initiator_dh_turn_privs_hex"`
+	ResponderTurnPrivsHex   []string `json:"testonly_responder_dh_turn_privs_hex"`
 }
 
 func buildRatchetSequences(constantsHash string) (*ratchetFile, error) {
@@ -300,6 +348,31 @@ func buildRatchetSequences(constantsHash string) (*ratchetFile, error) {
 		SharedSecretHex: hex.EncodeToString(sk),
 		ADHex:           hex.EncodeToString(ad),
 	}
+	file.Notes += " Every private key needed to replay both sides is recorded under " +
+		"testonly_* fields: a consumer that instead re-derived the generator's seeds " +
+		"would be agreeing with itself rather than with the protocol."
+
+	initRatchet, err := dhFromSeed("ratchet|alice-0")
+	if err != nil {
+		return nil, err
+	}
+	respRatchet, err := dhFromSeed("ratchet|bob-0")
+	if err != nil {
+		return nil, err
+	}
+	file.InitiatorRatchetPrivHex = hex.EncodeToString(initRatchet.Bytes())
+	file.ResponderRatchetPrivHex = hex.EncodeToString(respRatchet.Bytes())
+
+	_, aliceTurnHex, err := turnKeys("alice", ratchetTurnKeyCount)
+	if err != nil {
+		return nil, err
+	}
+	_, bobTurnHex, err := turnKeys("bob", ratchetTurnKeyCount)
+	if err != nil {
+		return nil, err
+	}
+	file.InitiatorTurnPrivsHex = aliceTurnHex
+	file.ResponderTurnPrivsHex = bobTurnHex
 
 	inOrder, err := ratchetInOrder(sk, ad)
 	if err != nil {
@@ -346,6 +419,11 @@ func newRatchetPair(sk, ad []byte) (*ratchet.State, *ratchet.State, error) {
 }
 
 const vectorClock = 1_700_000_000 // fixed unix seconds; never the machine clock
+
+// ratchetTurnKeyCount is how many DH-turn keys each side publishes in the
+// vector file. Generous headroom over what the sequences consume, so a consumer
+// never exhausts the list mid-replay.
+const ratchetTurnKeyCount = 8
 
 func ratchetInOrder(sk, ad []byte) (ratchetSequence, error) {
 	alice, _, err := newRatchetPair(sk, ad)
@@ -401,8 +479,14 @@ func ratchetDHTurns(sk, ad []byte) (ratchetSequence, error) {
 	if err != nil {
 		return ratchetSequence{}, err
 	}
-	kpA := &deterministicKP{label: "alice"}
-	kpB := &deterministicKP{label: "bob"}
+	kpA, _, err := turnKeys("alice", ratchetTurnKeyCount)
+	if err != nil {
+		return ratchetSequence{}, err
+	}
+	kpB, _, err := turnKeys("bob", ratchetTurnKeyCount)
+	if err != nil {
+		return ratchetSequence{}, err
+	}
 	seq := ratchetSequence{Name: "dh_ratchet_turns",
 		Description: "A->B, B->A, A->B: two DH ratchet turns. Consumers replay in delivery order."}
 

@@ -1,0 +1,135 @@
+# Lumos - CI / Tri-language protocol conformance (TRS Sec. 18.4).
+# Author: dhar.abhishek.email@gmail.com
+# Implements: TRS-TST-001, TRS-CICD-001, TRS-PROTO-015, SRS-NFR-CMP-004
+# ADRs: ADR-004
+# Threading: n/a
+# Notes: Three runners consume the SAME committed vector files: Go, pure-JVM
+# Java and Swift on macOS. The Swift job is path-filtered to protocol/,
+# test-vectors/ and the iOS conformance target, because macOS runner minutes are
+# billed at a premium and nothing outside those paths can change what Swift
+# asserts. All three are PR-blocking.
+
+name: conformance
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: conformance-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  # Detects whether this change can affect the Swift conformance result.
+  changes:
+    name: path filter
+    runs-on: ubuntu-latest
+    outputs:
+      swift: ${{ steps.filter.outputs.swift }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - id: filter
+        name: does this change touch protocol, vectors or the iOS target
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ "${{ github.event_name }}" != "pull_request" ]; then
+            echo "swift=true" >> "$GITHUB_OUTPUT"
+            echo "not a pull request - running Swift"
+            exit 0
+          fi
+          base="${{ github.event.pull_request.base.sha }}"
+          head="${{ github.event.pull_request.head.sha }}"
+          changed="$(git diff --name-only "$base" "$head")"
+          echo "changed files:"; echo "$changed"
+          if echo "$changed" | grep -Eq '^(protocol/|test-vectors/|ios-app/protocol-conformance/|Package\.swift|\.github/workflows/conformance\.yml)'; then
+            echo "swift=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "swift=false" >> "$GITHUB_OUTPUT"
+          fi
+
+  go:
+    name: go conformance
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+          cache: true
+      - name: gofmt
+        run: |
+          unformatted="$(gofmt -l .)"
+          if [ -n "$unformatted" ]; then
+            echo "unformatted files:"; echo "$unformatted"; exit 1
+          fi
+      - name: go vet
+        run: go vet ./...
+      - name: constants gate
+        run: go run ./tools/constantsgen -check
+      - name: vector gate (determinism + staleness)
+        run: go run ./tools/vectorgen -check
+      - name: go test
+        run: go test -count=1 ./...
+
+  java:
+    name: java conformance (pure JVM)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: gradle/actions/setup-gradle@v4
+      - name: protocol-conformance test
+        run: ./gradlew :protocol-conformance:test --no-daemon --console=plain
+      - name: upload reports on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: java-conformance-reports
+          path: android-app/protocol-conformance/build/reports/tests/test
+          retention-days: 7
+
+  swift:
+    name: swift conformance (macOS)
+    needs: changes
+    if: needs.changes.outputs.swift == 'true'
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: swift version
+        run: swift --version
+      - name: LumosProtocolConformance test
+        run: swift test --package-path . 2>&1
+
+  # A single required check that stays green when the Swift job is deliberately
+  # skipped by the path filter, so branch protection does not have to encode the
+  # filter logic a second time.
+  conformance-gate:
+    name: conformance gate
+    runs-on: ubuntu-latest
+    needs: [go, java, swift]
+    if: always()
+    steps:
+      - name: assess
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo "go=${{ needs.go.result }} java=${{ needs.java.result }} swift=${{ needs.swift.result }}"
+          if [ "${{ needs.go.result }}" != "success" ] || [ "${{ needs.java.result }}" != "success" ]; then
+            echo "Go and Java conformance are always required."
+            exit 1
+          fi
+          case "${{ needs.swift.result }}" in
+            success) echo "all three runners green" ;;
+            skipped) echo "Swift skipped by path filter - no protocol, vector or iOS change" ;;
+            *) echo "Swift conformance failed"; exit 1 ;;
+          esac

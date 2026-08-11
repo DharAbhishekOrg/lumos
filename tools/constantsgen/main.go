@@ -94,6 +94,11 @@ func run(root string, check, stamp bool) error {
 		return err
 	}
 	files = append(files, wireFiles...)
+	jvmFiles, err := EmitJVMWireFiles(reg, model, wireIn)
+	if err != nil {
+		return err
+	}
+	files = append(files, jvmFiles...)
 
 	if check {
 		return verify(root, files)
