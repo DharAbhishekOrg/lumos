@@ -60,6 +60,10 @@
    "TRS-AI-003",
    "TRS-CICD-007"
   ],
+  "tools/closeout/": [
+   "TRS-AI-003",
+   "TRS-AI-005"
+  ],
   "protocol/schemas/": [
    "TRS-PROTO",
    "TRS-CICD-005"
