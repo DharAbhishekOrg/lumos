@@ -21,6 +21,13 @@ final class CryptoConformanceTests: XCTestCase {
 
     private func utf8(_ s: String) -> Data { Data(s.utf8) }
 
+    /// The case name for assertion messages. Deliberately non-throwing:
+    /// XCTAssert message parameters are non-throwing autoclosures, so a `try`
+    /// inside one does not compile.
+    private func caseName(_ c: [String: Any]) -> String {
+        (c["name"] as? String) ?? "<unnamed case>"
+    }
+
     /// Expands a message key into (key, nonce) as the register defines.
     private func messageKeyMaterial(_ messageKey: Data) -> (key: Data, nonce: Data) {
         let okm = LumosCrypto.hkdf(
@@ -60,7 +67,7 @@ final class CryptoConformanceTests: XCTestCase {
                     key: key, nonce: try Vectors.hex(c, "nonce_hex"),
                     ciphertext: try Vectors.hex(c, "ciphertext_hex"),
                     aad: try Vectors.hex(c, "aad_hex"))
-                XCTFail("tamper case \(try Vectors.string(c, "name")) authenticated")
+                XCTFail("tamper case \(caseName(c)) authenticated")
             } catch let e as LumosCrypto.WireError {
                 XCTAssertEqual(e.code, try Vectors.string(c, "expected_error"))
             }
@@ -87,7 +94,7 @@ final class CryptoConformanceTests: XCTestCase {
             let (lo, hi) = compare(a, b) <= 0 ? (a, b) : (b, a)
 
             XCTAssertEqual(digits(lo) + digits(hi), try Vectors.string(c, "digits"),
-                           "digits for \(try Vectors.string(c, "name"))")
+                           "digits for \(caseName(c))")
 
             let combined = LumosCrypto.sha256(
                 utf8(LumosConstants.safetyNumberKdfInfoValue) + lo + hi)
@@ -202,7 +209,7 @@ final class CryptoConformanceTests: XCTestCase {
                     + (try Vectors.hex(c, "responder_signed_prekey_pub_hex")),
                 signature: try Vectors.hex(c, "signed_prekey_sig_hex"))
             XCTAssertTrue(!idOK || !spkOK,
-                          "negative bundle \(try Vectors.string(c, "name")) verified; must fail closed")
+                          "negative bundle \(caseName(c)) verified; must fail closed")
             negatives += 1
         }
         XCTAssertGreaterThanOrEqual(negatives, 2, "expected both bundle-signature negatives")
@@ -241,7 +248,7 @@ final class CryptoConformanceTests: XCTestCase {
             let payload = try Vectors.hex(c, "adv_v1_hex")
             let epoch = try Vectors.int(c, "epoch")
             XCTAssertFalse(advVerifies(kAdv: kAdv, payload: payload, epoch: epoch),
-                           "negative advertisement \(try Vectors.string(c, "name")) verified")
+                           "negative advertisement \(caseName(c)) verified")
             negatives += 1
         }
         XCTAssertGreaterThanOrEqual(negatives, 5, "expected the full adv negative set")
@@ -323,7 +330,7 @@ final class CryptoConformanceTests: XCTestCase {
                 bitmap[i / 8] |= UInt8(1 << (i % 8))
             }
             XCTAssertEqual(Hex.encode(bitmap), try Vectors.string(c, "bitmap_hex"),
-                           "bitmap for \(try Vectors.string(c, "name"))")
+                           "bitmap for \(caseName(c))")
         }
     }
 
@@ -335,14 +342,14 @@ final class CryptoConformanceTests: XCTestCase {
             guard let payload = c["payload"] as? [String: Any] else { XCTFail("no payload"); continue }
             let canonical = try canonicalPackage(payload)
             XCTAssertEqual(canonical, try Vectors.string(c, "canonical_bytes"),
-                           "canonical bytes for \(try Vectors.string(c, "name"))")
+                           "canonical bytes for \(caseName(c))")
             XCTAssertEqual("sha256:" + Hex.encode(LumosCrypto.sha256(utf8(canonical))),
                            try Vectors.string(c, "payload_hash"), "payload hash")
             XCTAssertTrue(LumosCrypto.ed25519Verify(
                 publicKeyRaw: anchor,
                 message: utf8(LumosConstants.configSigningInfoValue) + utf8(canonical),
                 signature: try Vectors.hex(c, "signature_hex")),
-                "signature for \(try Vectors.string(c, "name"))")
+                "signature for \(caseName(c))")
         }
 
         let invalid = try Vectors.load("test-vectors/config/package_invalid.json", root: root)
@@ -356,7 +363,7 @@ final class CryptoConformanceTests: XCTestCase {
                 publicKeyRaw: anchor2,
                 message: utf8(LumosConstants.configSigningInfoValue) + utf8(canonical),
                 signature: try Vectors.hex(c, "signature_hex")),
-                "negative \(try Vectors.string(c, "name")) verified; must fail closed")
+                "negative \(caseName(c)) verified; must fail closed")
             signatureNegatives += 1
         }
         XCTAssertGreaterThanOrEqual(signatureNegatives, 3, "expected the signature negatives")
@@ -369,7 +376,7 @@ final class CryptoConformanceTests: XCTestCase {
             guard let payload = c["payload"] as? [String: Any] else { XCTFail("no payload"); continue }
             let canonical = try canonicalVoucher(payload)
             XCTAssertEqual(canonical, try Vectors.string(c, "canonical_bytes"),
-                           "voucher canonical bytes for \(try Vectors.string(c, "name"))")
+                           "voucher canonical bytes for \(caseName(c))")
             let sigOK = LumosCrypto.ed25519Verify(
                 publicKeyRaw: vAnchor,
                 message: utf8(LumosConstants.voucherSigningInfoValue) + utf8(canonical),
@@ -390,12 +397,15 @@ final class CryptoConformanceTests: XCTestCase {
 
     /// Rebuilds the canonical signing form: sorted key=value lines, newline-terminated.
     private func canonicalPackage(_ p: [String: Any]) throws -> String {
+        let validFrom = try Vectors.int(p, "valid_from")
+        let validUntil = try Vectors.int(p, "valid_until")
+        let version = try Vectors.int(p, "version")
         var lines = [
             "constants_hash=" + (try Vectors.string(p, "constants_hash")),
             "environment=" + (try Vectors.string(p, "environment")),
-            "valid_from=\(try Vectors.int(p, "valid_from"))",
-            "valid_until=\(try Vectors.int(p, "valid_until"))",
-            "version=\(try Vectors.int(p, "version"))",
+            "valid_from=\(validFrom)",
+            "valid_until=\(validUntil)",
+            "version=\(version)",
         ]
         if let overrides = p["overrides"] as? [String: Any] {
             for (k, v) in overrides {
@@ -413,12 +423,14 @@ final class CryptoConformanceTests: XCTestCase {
 
     /// Rebuilds the voucher canonical signing form.
     private func canonicalVoucher(_ v: [String: Any]) throws -> String {
+        let validFrom = try Vectors.int(v, "valid_from")
+        let validUntil = try Vectors.int(v, "valid_until")
         var lines = [
             "nonce=" + (try Vectors.string(v, "nonce")),
             "perk_id=" + (try Vectors.string(v, "perk_id")),
             "revocable=\(Vectors.bool(v, "revocable"))",
-            "valid_from=\(try Vectors.int(v, "valid_from"))",
-            "valid_until=\(try Vectors.int(v, "valid_until"))",
+            "valid_from=\(validFrom)",
+            "valid_until=\(validUntil)",
             "venue_id=" + (try Vectors.string(v, "venue_id")),
             "voucher_id=" + (try Vectors.string(v, "voucher_id")),
         ]
