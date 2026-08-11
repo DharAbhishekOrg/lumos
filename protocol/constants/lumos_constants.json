@@ -5,7 +5,7 @@
  "$generator": "tools/constantsgen",
  "service_uuid": "E853EB6A-775C-4A49-A6BF-320E6A5CC609",
  "$service_uuid_provenance": "One fixed 128-bit GATT service UUID per ADR-002 / TRS Sec. 9.3, generated once from a CSPRNG as an RFC 4122 version-4 UUID in WP-01 slice S2 and frozen here. Advertised by both platforms and used for scan filtering. No 16-bit alias is registered for flagship. Regenerating this value is a breaking protocol change.",
- "constants_hash": "sha256:12510455720dcc2ff72291f6a428f31930434d3dcb95a8b871ed305edb159855",
+ "constants_hash": "sha256:7315f92990eb8e431d0d0c392a73822035bcc96c1c469fc4fa734d75cfa278d5",
  "constants_hash_algorithm": {
   "digest": "SHA-256",
   "encoding": "lowercase hex, prefixed 'sha256:'",
@@ -24,6 +24,18 @@
    "default": 4, "overridable": false,
    "notes": "Bytes. First 4 bytes of HMAC-SHA-256(K_adv, version|modeFlags|rotatingEid|epoch); Android pre-connection noise rejection only.",
    "anchors": ["ADR-002", "TRS-PROTO-009"], "source": "TRS 23.1"
+  },
+  "ADV_V1_LAYOUT": {
+   "total_len": 18, "version_len": 1, "mode_flags_len": 1, "eid_len": 12, "auth_tag_len": 4,
+   "overridable": false,
+   "notes": "TRS 9.3 adv_v1 = version(1) | modeFlags(1) | rotatingEid(12) | authTag(4). Android Service Data hint only; iOS advertises the service UUID alone and never service data (ADR-002). Content is an unauthenticated routing hint - canonical trust is re-established in HELLO/HELLO_ACK (TRS-PROTO-017).",
+   "anchors": ["ADR-002", "TRS-PROTO-009"], "source": "TRS 9.3"
+  },
+  "ADV_V1_SCAN_RESPONSE_LAYOUT": {
+   "total_len": 6, "capability_bits_len": 2, "venue_hint_len": 4,
+   "overridable": false,
+   "notes": "TRS 9.3 Android scan response = capabilityBits(2) | venueHint(4).",
+   "anchors": ["ADR-002", "TRS-PROTO-009"], "source": "TRS 9.3"
   },
   "PRESENCE_AGEOUT_SEC": {
    "default": 90, "min": 30, "max": 300, "overridable": true,
@@ -229,7 +241,8 @@
    "codec": "AAC-LC mono M4A", "sample_rate_hz": 24000,
    "bitrate_kbps": [24, 32], "max_sec": 120, "max_kb": 600,
    "sec_min": 30, "sec_max": 180, "overridable": true,
-   "notes": "VOICE_NOTE_PROFILE (codec/sample rate/bitrate) is fixed per TRS 23.5; VOICE_NOTE_MAX duration is overridable within 30..180 s.",
+   "overridable_fields": ["max_sec"],
+   "notes": "VOICE_NOTE_PROFILE (codec, sample rate, bitrate, max_kb) is FIXED per TRS 23.5; only VOICE_NOTE_MAX duration is overridable, within 30..180 s. overridable_fields narrows the entry-level flag to that one field so the generated config schema cannot offer the fixed profile as a signed-config target.",
    "anchors": ["TRS-MED-004"], "source": "TRS 23.5"
   },
   "MEDIA_CACHE_QUOTA_MB": {
@@ -304,6 +317,50 @@
    "battery_pct_max": 0, "wake_locks_permitted": false, "overridable": false,
    "notes": "TRS 23.7 states '~0%; no wake locks' for visibility-off idle. Encoded as a 0% ceiling plus an explicit prohibition on wake locks.",
    "anchors": ["SRS-NFR-BAT-005"], "source": "TRS 23.7"
+  }
+ },
+
+ "framing": {
+  "$section_notes": "TRS Sec. 9.1 canonical frame header. Field widths and order are normative; byte offsets follow from them in declaration order, network byte order (big-endian). Flag bit positions are NOT stated by TRS Sec. 9.1 - the TRS names the four flag meanings and leaves the encoding to the implementation (TRS Sec. 19 AI delivery rule). They are fixed here and become frozen wire format once WP-01 slice S4 generates vectors.",
+  "FRAME_MAGIC": {
+   "default": 19533, "overridable": false,
+   "notes": "0x4C4D, ASCII 'LM'.",
+   "anchors": ["TRS-PROTO-001", "TRS-PROTO-002"], "source": "TRS 9.1"
+  },
+  "PROTOCOL_VERSION": {
+   "major": 1, "minor": 0, "encoded": 16, "overridable": false,
+   "notes": "TRS 9.1 says 'current major/minor encoded per schema' without fixing the encoding. Chosen: one u8, high nibble major, low nibble minor, so v1.0 = 0x10. A frame whose major differs from PROTOCOL_VERSION_MAJOR fails closed (TRS-PROTO-006); a differing minor is accepted.",
+   "anchors": ["TRS-PROTO-001", "TRS-PROTO-006", "TRS-PROTO-016"], "source": "TRS 9.1"
+  },
+  "FRAME_HEADER_LEN_BYTES": {
+   "default": 58, "overridable": false,
+   "notes": "Sum of the thirteen TRS 9.1 fields. The complete immutable header is authenticated as AEAD associated data (TRS-PROTO-003), so this is exactly the AAD length for a v1 frame carrying no header extension.",
+   "anchors": ["TRS-PROTO-002", "TRS-PROTO-003"], "source": "TRS 9.1"
+  },
+  "FRAME_FLAG_CRITICAL": {
+   "default": 1, "overridable": false,
+   "notes": "Bit 0. Set means a receiver that does not understand this frame must fail closed rather than skip it (TRS-PROTO-006).",
+   "anchors": ["TRS-PROTO-006"], "source": "TRS 9.1"
+  },
+  "FRAME_FLAG_COMPRESSED": {
+   "default": 2, "overridable": false,
+   "notes": "Bit 1. Compression is optional and negotiated; decompression is bounded against decompression bombs (TRS-PROTO-008).",
+   "anchors": ["TRS-PROTO-008"], "source": "TRS 9.1"
+  },
+  "FRAME_FLAG_RELAY_ELIGIBLE": {
+   "default": 4, "overridable": false,
+   "notes": "Bit 2. Clear means no relay may forward the frame.",
+   "anchors": ["TRS-PROTO-012"], "source": "TRS 9.1"
+  },
+  "FRAME_FLAG_LOCAL_ONLY": {
+   "default": 8, "overridable": false,
+   "notes": "Bit 3. Set means the frame must never traverse the internet relay. Media and voice notes are local-only in flagship (SRS-TRN-009); this flag makes that checkable at the transport boundary rather than trusted by convention.",
+   "anchors": ["SRS-TRN-009", "TRS-PROTO-012"], "source": "TRS 9.1"
+  },
+  "FRAME_FLAGS_RESERVED_MASK": {
+   "default": 65520, "overridable": false,
+   "notes": "0xFFF0 - bits 4..15. A frame setting any reserved bit while also setting FRAME_FLAG_CRITICAL fails closed; otherwise the unknown bits are ignored (TRS-PROTO-006).",
+   "anchors": ["TRS-PROTO-006"], "source": "TRS 9.1"
   }
  },
 

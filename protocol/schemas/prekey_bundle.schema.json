@@ -1,0 +1,70 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://lumos.invalid/schemas/prekey_bundle.schema.json",
+ "title": "Lumos prekey bundle",
+ "$comment": "Public prekey material published for asynchronous session establishment (TRS Sec. 10.1). ONLY PUBLIC MATERIAL APPEARS HERE. The long-term identity private key is hardware-backed, non-exportable and never escrowed (ADR-003); no field of this schema may ever carry private key bytes. prekey_kind is a typed enum rather than a boolean so that adding a future kind - a post-quantum prekey, say - is an additive change under TRS-EXT and TRS-PROTO-016, not a reinterpretation of an existing field.",
+ "x-implements": ["TRS-PROTO-005", "TRS-PROTO-006", "TRS-CRY-005", "TRS-BCK-005"],
+ "x-adrs": ["ADR-001", "ADR-003"],
+ "x-curve": "X25519 for key agreement, Ed25519 for signatures (ADR-001, libsodium).",
+
+ "type": "object",
+ "additionalProperties": false,
+ "required": ["schema_version", "identity_key", "signed_prekey", "one_time_prekey"],
+ "properties": {
+  "schema_version": {"type": "integer", "const": 1},
+
+  "identity_key": {
+   "type": "object",
+   "additionalProperties": false,
+   "required": ["kind", "public_key"],
+   "properties": {
+    "kind": {"type": "string", "const": "IDENTITY_ED25519"},
+    "public_key": {"$ref": "#/$defs/key32"}
+   }
+  },
+
+  "signed_prekey": {
+   "type": "object",
+   "additionalProperties": false,
+   "required": ["kind", "key_id", "public_key", "signature", "created_at"],
+   "properties": {
+    "kind": {"type": "string", "const": "SIGNED_PREKEY_X25519"},
+    "key_id": {"type": "integer", "minimum": 0, "maximum": 4294967295},
+    "public_key": {"$ref": "#/$defs/key32"},
+    "signature": {
+     "$ref": "#/$defs/sig64",
+     "$comment": "Ed25519 over the canonical encoding of kind | key_id | public_key, signed by identity_key. A bundle whose signature does not verify is rejected with ERR_CONFIG_SIGNATURE_INVALID."
+    },
+    "created_at": {
+     "type": "integer", "minimum": 0,
+     "$comment": "Unix seconds. Rotation cadence is sessions_remote_text.SIGNED_PREKEY_ROTATION_DAYS; the register is the only source for that value."
+    }
+   }
+  },
+
+  "one_time_prekey": {
+   "type": "object",
+   "additionalProperties": false,
+   "required": ["kind", "key_id", "public_key"],
+   "$comment": "Consumed once and never re-served. Server-side stock and replenishment thresholds come from ONE_TIME_PREKEYS_UPLOADED and PREKEY_REPLENISH_THRESHOLD.",
+   "properties": {
+    "kind": {"type": "string", "const": "ONE_TIME_PREKEY_X25519"},
+    "key_id": {"type": "integer", "minimum": 0, "maximum": 4294967295},
+    "public_key": {"$ref": "#/$defs/key32"}
+   }
+  }
+ },
+
+ "$defs": {
+  "key32": {
+   "type": "string",
+   "pattern": "^[0-9a-f]{64}$",
+   "$comment": "32 bytes, lowercase hex. Test vectors use keys namespaced TESTONLY- in their surrounding metadata; no production key material ever appears in this repository."
+  },
+  "sig64": {
+   "type": "string",
+   "pattern": "^[0-9a-f]{128}$",
+   "$comment": "64-byte Ed25519 signature, lowercase hex."
+  }
+ }
+}

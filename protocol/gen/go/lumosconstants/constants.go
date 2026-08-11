@@ -6,7 +6,7 @@
 // GENERATED - DO NOT EDIT. Generator: tools/constantsgen
 // Source register: protocol/constants/lumos_constants.json
 // Baseline: TRS v1.1 Sec. 23 / EDP v1.0 Sec. 4 (ADR-004)
-// constants_hash: sha256:12510455720dcc2ff72291f6a428f31930434d3dcb95a8b871ed305edb159855
+// constants_hash: sha256:7315f92990eb8e431d0d0c392a73822035bcc96c1c469fc4fa734d75cfa278d5
 
 package lumosconstants
 
@@ -14,13 +14,69 @@ package lumosconstants
 const ServiceUUID = "E853EB6A-775C-4A49-A6BF-320E6A5CC609"
 
 // ConstantsHash binds generated code to the register that produced it (TRS-CONST-005).
-const ConstantsHash = "sha256:12510455720dcc2ff72291f6a428f31930434d3dcb95a8b871ed305edb159855"
+const ConstantsHash = "sha256:7315f92990eb8e431d0d0c392a73822035bcc96c1c469fc4fa734d75cfa278d5"
 
 // SchemaVersion is the register schema version.
 const SchemaVersion = 1
 
 // Baseline names the specification sections this register was derived from.
 const Baseline = "TRS v1.1 Sec. 23 / EDP v1.0 Sec. 4 (ADR-004)"
+
+// Framing
+
+// FrameFlagsReservedMaskDefault is framing.FRAME_FLAGS_RESERVED_MASK.default.
+const FrameFlagsReservedMaskDefault = 65520
+
+// FrameFlagsReservedMaskOverridable is framing.FRAME_FLAGS_RESERVED_MASK.overridable.
+const FrameFlagsReservedMaskOverridable = false
+
+// FrameFlagCompressedDefault is framing.FRAME_FLAG_COMPRESSED.default.
+const FrameFlagCompressedDefault = 2
+
+// FrameFlagCompressedOverridable is framing.FRAME_FLAG_COMPRESSED.overridable.
+const FrameFlagCompressedOverridable = false
+
+// FrameFlagCriticalDefault is framing.FRAME_FLAG_CRITICAL.default.
+const FrameFlagCriticalDefault = 1
+
+// FrameFlagCriticalOverridable is framing.FRAME_FLAG_CRITICAL.overridable.
+const FrameFlagCriticalOverridable = false
+
+// FrameFlagLocalOnlyDefault is framing.FRAME_FLAG_LOCAL_ONLY.default.
+const FrameFlagLocalOnlyDefault = 8
+
+// FrameFlagLocalOnlyOverridable is framing.FRAME_FLAG_LOCAL_ONLY.overridable.
+const FrameFlagLocalOnlyOverridable = false
+
+// FrameFlagRelayEligibleDefault is framing.FRAME_FLAG_RELAY_ELIGIBLE.default.
+const FrameFlagRelayEligibleDefault = 4
+
+// FrameFlagRelayEligibleOverridable is framing.FRAME_FLAG_RELAY_ELIGIBLE.overridable.
+const FrameFlagRelayEligibleOverridable = false
+
+// FrameHeaderLenBytesDefault is framing.FRAME_HEADER_LEN_BYTES.default.
+const FrameHeaderLenBytesDefault = 58
+
+// FrameHeaderLenBytesOverridable is framing.FRAME_HEADER_LEN_BYTES.overridable.
+const FrameHeaderLenBytesOverridable = false
+
+// FrameMagicDefault is framing.FRAME_MAGIC.default.
+const FrameMagicDefault = 19533
+
+// FrameMagicOverridable is framing.FRAME_MAGIC.overridable.
+const FrameMagicOverridable = false
+
+// ProtocolVersionEncoded is framing.PROTOCOL_VERSION.encoded.
+const ProtocolVersionEncoded = 16
+
+// ProtocolVersionMajor is framing.PROTOCOL_VERSION.major.
+const ProtocolVersionMajor = 1
+
+// ProtocolVersionMinor is framing.PROTOCOL_VERSION.minor.
+const ProtocolVersionMinor = 0
+
+// ProtocolVersionOverridable is framing.PROTOCOL_VERSION.overridable.
+const ProtocolVersionOverridable = false
 
 // Identity discovery
 
@@ -29,6 +85,36 @@ const AdvAuthTagLenDefault = 4
 
 // AdvAuthTagLenOverridable is identity_discovery.ADV_AUTH_TAG_LEN.overridable.
 const AdvAuthTagLenOverridable = false
+
+// AdvV1LayoutAuthTagLen is identity_discovery.ADV_V1_LAYOUT.auth_tag_len.
+const AdvV1LayoutAuthTagLen = 4
+
+// AdvV1LayoutEIDLen is identity_discovery.ADV_V1_LAYOUT.eid_len.
+const AdvV1LayoutEIDLen = 12
+
+// AdvV1LayoutModeFlagsLen is identity_discovery.ADV_V1_LAYOUT.mode_flags_len.
+const AdvV1LayoutModeFlagsLen = 1
+
+// AdvV1LayoutOverridable is identity_discovery.ADV_V1_LAYOUT.overridable.
+const AdvV1LayoutOverridable = false
+
+// AdvV1LayoutTotalLen is identity_discovery.ADV_V1_LAYOUT.total_len.
+const AdvV1LayoutTotalLen = 18
+
+// AdvV1LayoutVersionLen is identity_discovery.ADV_V1_LAYOUT.version_len.
+const AdvV1LayoutVersionLen = 1
+
+// AdvV1ScanResponseLayoutCapabilityBitsLen is identity_discovery.ADV_V1_SCAN_RESPONSE_LAYOUT.capability_bits_len.
+const AdvV1ScanResponseLayoutCapabilityBitsLen = 2
+
+// AdvV1ScanResponseLayoutOverridable is identity_discovery.ADV_V1_SCAN_RESPONSE_LAYOUT.overridable.
+const AdvV1ScanResponseLayoutOverridable = false
+
+// AdvV1ScanResponseLayoutTotalLen is identity_discovery.ADV_V1_SCAN_RESPONSE_LAYOUT.total_len.
+const AdvV1ScanResponseLayoutTotalLen = 6
+
+// AdvV1ScanResponseLayoutVenueHintLen is identity_discovery.ADV_V1_SCAN_RESPONSE_LAYOUT.venue_hint_len.
+const AdvV1ScanResponseLayoutVenueHintLen = 4
 
 // EIDRotationSecDefault is identity_discovery.EID_ROTATION_SEC.default.
 const EIDRotationSecDefault = 600

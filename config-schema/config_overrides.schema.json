@@ -1,0 +1,341 @@
+{
+ "$comment": "GENERATED - DO NOT EDIT. Generator: tools/constantsgen. Derived mechanically from protocol/constants/lumos_constants.json per ADR-004. Every bound below comes from the register; editing this file by hand would reintroduce the duplicated-constant defect ADR-004 exists to prevent.",
+ "$id": "https://lumos.invalid/schemas/config_overrides.schema.json",
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "additionalProperties": false,
+ "properties": {
+  "CONFIG_REFRESH_INTERVAL_HOURS": {
+   "type": "integer",
+   "minimum": 1,
+   "maximum": 24,
+   "description": "config_venue_ops.CONFIG_REFRESH_INTERVAL_HOURS.default (register default 6)"
+  },
+  "DEDUP_CACHE.days": {
+   "type": "integer",
+   "minimum": 3,
+   "maximum": 30,
+   "description": "sessions_remote_text.DEDUP_CACHE.days (register default 7)"
+  },
+  "DEDUP_CACHE.ids": {
+   "type": "integer",
+   "minimum": 5000,
+   "maximum": 50000,
+   "description": "sessions_remote_text.DEDUP_CACHE.ids (register default 10000)"
+  },
+  "EID_ROTATION_SEC": {
+   "type": "integer",
+   "minimum": 300,
+   "maximum": 900,
+   "description": "identity_discovery.EID_ROTATION_SEC.default (register default 600)"
+  },
+  "FILE_MAX_MB": {
+   "type": "integer",
+   "minimum": 5,
+   "maximum": 100,
+   "description": "media.FILE_MAX_MB.default (register default 25)"
+  },
+  "FULL_IMAGE_MAX_MB": {
+   "type": "integer",
+   "minimum": 1,
+   "maximum": 10,
+   "description": "media.FULL_IMAGE_MAX_MB.default (register default 2)"
+  },
+  "INTEREST_RATE_LIMIT_PER_HOUR": {
+   "type": "integer",
+   "minimum": 5,
+   "maximum": 60,
+   "description": "identity_discovery.INTEREST_RATE_LIMIT_PER_HOUR.default (register default 20)"
+  },
+  "MAX_CONCURRENT_GATT_LINKS": {
+   "type": "integer",
+   "minimum": 2,
+   "maximum": 7,
+   "description": "identity_discovery.MAX_CONCURRENT_GATT_LINKS.default (register default 4)"
+  },
+  "MEDIA_CACHE_QUOTA_MB": {
+   "type": "integer",
+   "minimum": 128,
+   "maximum": 2048,
+   "description": "media.MEDIA_CACHE_QUOTA_MB.default (register default 512)"
+  },
+  "MEDIA_CACHE_QUOTA_MB.ttl_days": {
+   "type": "integer",
+   "minimum": 7,
+   "maximum": 90,
+   "description": "media.MEDIA_CACHE_QUOTA_MB.ttl_days (register default 30)"
+  },
+  "MESH_FRAME_TTL_SEC": {
+   "type": "integer",
+   "minimum": 60,
+   "maximum": 900,
+   "description": "mesh_store_forward.MESH_FRAME_TTL_SEC.default (register default 300)"
+  },
+  "MESH_HOP_DEFAULT": {
+   "type": "integer",
+   "minimum": 1,
+   "maximum": 5,
+   "description": "mesh_store_forward.MESH_HOP_DEFAULT.default (register default 3)"
+  },
+  "ONE_TIME_PREKEYS_UPLOADED": {
+   "type": "integer",
+   "minimum": 50,
+   "maximum": 200,
+   "description": "sessions_remote_text.ONE_TIME_PREKEYS_UPLOADED.default (register default 100)"
+  },
+  "PREKEY_REPLENISH_THRESHOLD": {
+   "type": "integer",
+   "minimum": 10,
+   "maximum": 50,
+   "description": "sessions_remote_text.PREKEY_REPLENISH_THRESHOLD.default (register default 20)"
+  },
+  "PRESENCE_AGEOUT_SEC": {
+   "type": "integer",
+   "minimum": 30,
+   "maximum": 300,
+   "description": "identity_discovery.PRESENCE_AGEOUT_SEC.default (register default 90)"
+  },
+  "PREVIEW_MAX_KB": {
+   "type": "integer",
+   "minimum": 32,
+   "maximum": 128,
+   "description": "media.PREVIEW_MAX_KB.default (register default 64)"
+  },
+  "REASSEMBLY_TIMEOUT_SEC.ble": {
+   "type": "integer",
+   "minimum": 60,
+   "maximum": 300,
+   "description": "transport.REASSEMBLY_TIMEOUT_SEC.ble (register default 120)"
+  },
+  "REASSEMBLY_TIMEOUT_SEC.lan": {
+   "type": "integer",
+   "minimum": 15,
+   "maximum": 120,
+   "description": "transport.REASSEMBLY_TIMEOUT_SEC.lan (register default 30)"
+  },
+  "RELAY_ENVELOPE_TTL_DAYS": {
+   "type": "integer",
+   "minimum": 1,
+   "maximum": 45,
+   "description": "sessions_remote_text.RELAY_ENVELOPE_TTL_DAYS.default (register default 30)"
+  },
+  "RELAY_MAILBOX_QUOTA.bytes": {
+   "type": "integer",
+   "minimum": 2097152,
+   "maximum": 33554432,
+   "description": "sessions_remote_text.RELAY_MAILBOX_QUOTA.bytes (register default 8388608)"
+  },
+  "RELAY_MAILBOX_QUOTA.envelopes": {
+   "type": "integer",
+   "minimum": 200,
+   "maximum": 5000,
+   "description": "sessions_remote_text.RELAY_MAILBOX_QUOTA.envelopes (register default 1000)"
+  },
+  "RELAY_TEXT_ENVELOPE_MAX_BYTES": {
+   "type": "integer",
+   "minimum": 8192,
+   "maximum": 65536,
+   "description": "sessions_remote_text.RELAY_TEXT_ENVELOPE_MAX_BYTES.default (register default 32768)"
+  },
+  "RESCAN_LADDER.max_steps": {
+   "type": "integer",
+   "minimum": 1,
+   "maximum": 5,
+   "description": "identity_discovery.RESCAN_LADDER.max_steps (register default 3)"
+  },
+  "RESCAN_LADDER.step_pct": {
+   "type": "integer",
+   "minimum": 25,
+   "maximum": 100,
+   "description": "identity_discovery.RESCAN_LADDER.step_pct (register default 50)"
+  },
+  "RESCAN_LADDER.trigger_empty_cycles": {
+   "type": "integer",
+   "minimum": 1,
+   "maximum": 4,
+   "description": "identity_discovery.RESCAN_LADDER.trigger_empty_cycles (register default 2)"
+  },
+  "RETRY_BUDGET_PER_PATH": {
+   "type": "integer",
+   "minimum": 3,
+   "maximum": 8,
+   "description": "transport.RETRY_BUDGET_PER_PATH.default (register default 5)"
+  },
+  "RSSI_BANDS_DBM.nearby_gte": {
+   "type": "integer",
+   "minimum": -85,
+   "maximum": -65,
+   "description": "identity_discovery.RSSI_BANDS_DBM.nearby_gte (register default -75)"
+  },
+  "RSSI_BANDS_DBM.very_close_gte": {
+   "type": "integer",
+   "minimum": -60,
+   "maximum": -45,
+   "description": "identity_discovery.RSSI_BANDS_DBM.very_close_gte (register default -55)"
+  },
+  "SCAN_WINDOW_FG_MS.off": {
+   "type": "integer",
+   "description": "identity_discovery.SCAN_WINDOW_FG_MS.off (register default 6000)"
+  },
+  "SCAN_WINDOW_FG_MS.on": {
+   "type": "integer",
+   "description": "identity_discovery.SCAN_WINDOW_FG_MS.on (register default 4000)"
+  },
+  "SCAN_WINDOW_VENUE_MS.off": {
+   "type": "integer",
+   "description": "identity_discovery.SCAN_WINDOW_VENUE_MS.off (register default 4000)"
+  },
+  "SCAN_WINDOW_VENUE_MS.on": {
+   "type": "integer",
+   "description": "identity_discovery.SCAN_WINDOW_VENUE_MS.on (register default 6000)"
+  },
+  "SIGNED_PREKEY_ROTATION_DAYS": {
+   "type": "integer",
+   "minimum": 3,
+   "maximum": 30,
+   "description": "sessions_remote_text.SIGNED_PREKEY_ROTATION_DAYS.default (register default 7)"
+  },
+  "SKIPPED_KEY_TTL_DAYS": {
+   "type": "integer",
+   "minimum": 7,
+   "maximum": 45,
+   "description": "sessions_remote_text.SKIPPED_KEY_TTL_DAYS.default (register default 30)"
+  },
+  "SPONSOR_ASSET_MAX_KB": {
+   "type": "integer",
+   "minimum": 100,
+   "maximum": 512,
+   "description": "config_venue_ops.SPONSOR_ASSET_MAX_KB.default (register default 300)"
+  },
+  "SPONSOR_ASSET_MAX_KB.cache_count": {
+   "type": "integer",
+   "minimum": 4,
+   "maximum": 16,
+   "description": "config_venue_ops.SPONSOR_ASSET_MAX_KB.cache_count (register default 8)"
+  },
+  "STORE_FORWARD_QUOTA.bytes": {
+   "type": "integer",
+   "minimum": 524288,
+   "maximum": 8388608,
+   "description": "mesh_store_forward.STORE_FORWARD_QUOTA.bytes (register default 2097152)"
+  },
+  "STORE_FORWARD_QUOTA.envelopes": {
+   "type": "integer",
+   "minimum": 10,
+   "maximum": 200,
+   "description": "mesh_store_forward.STORE_FORWARD_QUOTA.envelopes (register default 50)"
+  },
+  "STORE_FORWARD_TTL_SEC": {
+   "type": "integer",
+   "minimum": 300,
+   "maximum": 7200,
+   "description": "mesh_store_forward.STORE_FORWARD_TTL_SEC.default (register default 1800)"
+  },
+  "SUPPORT_RING_BUFFER_MB": {
+   "type": "integer",
+   "minimum": 1,
+   "maximum": 16,
+   "description": "config_venue_ops.SUPPORT_RING_BUFFER_MB.default (register default 4)"
+  },
+  "THUMBNAIL_MAX_KB": {
+   "type": "integer",
+   "minimum": 8,
+   "maximum": 16,
+   "description": "media.THUMBNAIL_MAX_KB.default (register default 12)"
+  },
+  "VENUE_ROOM_POST_RATE_PER_MIN": {
+   "type": "integer",
+   "minimum": 3,
+   "maximum": 30,
+   "description": "config_venue_ops.VENUE_ROOM_POST_RATE_PER_MIN.default (register default 10)"
+  },
+  "VOICE_NOTE.max_sec": {
+   "type": "integer",
+   "minimum": 30,
+   "maximum": 180,
+   "description": "media.VOICE_NOTE.max_sec (register default 120)"
+  },
+  "VOUCHER_NONCE_CACHE.count": {
+   "type": "integer",
+   "minimum": 1000,
+   "maximum": 20000,
+   "description": "config_venue_ops.VOUCHER_NONCE_CACHE.count (register default 5000)"
+  },
+  "VOUCHER_NONCE_CACHE.days": {
+   "type": "integer",
+   "minimum": 30,
+   "maximum": 365,
+   "description": "config_venue_ops.VOUCHER_NONCE_CACHE.days (register default 90)"
+  }
+ },
+ "title": "Lumos signed-configuration overrides",
+ "type": "object",
+ "x-constants-hash": "sha256:7315f92990eb8e431d0d0c392a73822035bcc96c1c469fc4fa734d75cfa278d5",
+ "x-cross-field-constraints": [
+  {
+   "constant": "SCAN_WINDOW_FG_MS",
+   "duty_max_pct": 60,
+   "duty_min_pct": 20,
+   "enforced_by": "config-client (WP-08). JSON Schema cannot express a cross-property relationship; an override passing schema validation is NOT yet proven in-bounds.",
+   "properties": [
+    "SCAN_WINDOW_FG_MS.on",
+    "SCAN_WINDOW_FG_MS.off"
+   ],
+   "register_default_duty_pct": 40,
+   "rule": "on / (on + off) * 100 must fall within the stated duty-cycle range"
+  },
+  {
+   "constant": "SCAN_WINDOW_VENUE_MS",
+   "duty_max_pct": 70,
+   "enforced_by": "config-client (WP-08). JSON Schema cannot express a cross-property relationship; an override passing schema validation is NOT yet proven in-bounds.",
+   "properties": [
+    "SCAN_WINDOW_VENUE_MS.on",
+    "SCAN_WINDOW_VENUE_MS.off"
+   ],
+   "register_default_duty_pct": 60,
+   "rule": "on / (on + off) * 100 must fall within the stated duty-cycle range"
+  }
+ ],
+ "x-overridable-count": 33,
+ "x-overridable-names": [
+  "CONFIG_REFRESH_INTERVAL_HOURS",
+  "DEDUP_CACHE",
+  "EID_ROTATION_SEC",
+  "FILE_MAX_MB",
+  "FULL_IMAGE_MAX_MB",
+  "INTEREST_RATE_LIMIT_PER_HOUR",
+  "MAX_CONCURRENT_GATT_LINKS",
+  "MEDIA_CACHE_QUOTA_MB",
+  "MESH_FRAME_TTL_SEC",
+  "MESH_HOP_DEFAULT",
+  "ONE_TIME_PREKEYS_UPLOADED",
+  "PREKEY_REPLENISH_THRESHOLD",
+  "PRESENCE_AGEOUT_SEC",
+  "PREVIEW_MAX_KB",
+  "REASSEMBLY_TIMEOUT_SEC",
+  "RELAY_ENVELOPE_TTL_DAYS",
+  "RELAY_MAILBOX_QUOTA",
+  "RELAY_TEXT_ENVELOPE_MAX_BYTES",
+  "RESCAN_LADDER",
+  "RETRY_BUDGET_PER_PATH",
+  "RSSI_BANDS_DBM",
+  "SCAN_WINDOW_FG_MS",
+  "SCAN_WINDOW_VENUE_MS",
+  "SIGNED_PREKEY_ROTATION_DAYS",
+  "SKIPPED_KEY_TTL_DAYS",
+  "SPONSOR_ASSET_MAX_KB",
+  "STORE_FORWARD_QUOTA",
+  "STORE_FORWARD_TTL_SEC",
+  "SUPPORT_RING_BUFFER_MB",
+  "THUMBNAIL_MAX_KB",
+  "VENUE_ROOM_POST_RATE_PER_MIN",
+  "VOICE_NOTE",
+  "VOUCHER_NONCE_CACHE"
+ ],
+ "x-register-baseline": "TRS v1.1 Sec. 23 / EDP v1.0 Sec. 4 (ADR-004)",
+ "x-unbounded-properties": [
+  "SCAN_WINDOW_FG_MS.off",
+  "SCAN_WINDOW_FG_MS.on",
+  "SCAN_WINDOW_VENUE_MS.off",
+  "SCAN_WINDOW_VENUE_MS.on"
+ ]
+}

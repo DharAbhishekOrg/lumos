@@ -50,12 +50,12 @@ func buildModel(t *testing.T) (*Register, *Model, string) {
 
 // TestEmissionIsDeterministic is the property the -check CI gate depends on.
 func TestEmissionIsDeterministic(t *testing.T) {
-	_, m, canon := buildModel(t)
-	first, err := Emit(m, canon)
+	r, m, canon := buildModel(t)
+	first, err := Emit(r, m, canon)
 	if err != nil {
 		t.Fatalf("Emit: %v", err)
 	}
-	second, err := Emit(m, canon)
+	second, err := Emit(r, m, canon)
 	if err != nil {
 		t.Fatalf("Emit (second): %v", err)
 	}
@@ -74,8 +74,8 @@ func TestEmissionIsDeterministic(t *testing.T) {
 
 // TestCommittedFilesMatchRegister is the same assertion the CI gate makes.
 func TestCommittedFilesMatchRegister(t *testing.T) {
-	_, m, canon := buildModel(t)
-	files, err := Emit(m, canon)
+	r, m, canon := buildModel(t)
+	files, err := Emit(r, m, canon)
 	if err != nil {
 		t.Fatalf("Emit: %v", err)
 	}

@@ -41,8 +41,16 @@ func loadRegister(t *testing.T) *Register {
 // expectedRegister is TRS Sec. 23 (plus the EDP Sec. 4.1 row TRS Sec. 23 omits),
 // transcribed by hand.
 var expectedRegister = map[string][]string{
+	// TRS Sec. 9.1 framing, added in slice S3. Flag bit positions are an
+	// implementation choice the TRS leaves open; the rest is normative.
+	"framing": {
+		"FRAME_FLAGS_RESERVED_MASK", "FRAME_FLAG_COMPRESSED", "FRAME_FLAG_CRITICAL",
+		"FRAME_FLAG_LOCAL_ONLY", "FRAME_FLAG_RELAY_ELIGIBLE", "FRAME_HEADER_LEN_BYTES",
+		"FRAME_MAGIC", "PROTOCOL_VERSION",
+	},
 	"identity_discovery": {
-		"ADV_AUTH_TAG_LEN", "EID_ROTATION_SEC", "INTEREST_RATE_LIMIT_PER_HOUR",
+		"ADV_AUTH_TAG_LEN", "ADV_V1_LAYOUT", "ADV_V1_SCAN_RESPONSE_LAYOUT",
+		"EID_ROTATION_SEC", "INTEREST_RATE_LIMIT_PER_HOUR",
 		"MAX_CONCURRENT_GATT_LINKS", "NEARBY_SYNTHETIC_LOAD_TARGET",
 		"PRESENCE_AGEOUT_SEC", "RESCAN_LADDER", "RSSI_BANDS_DBM",
 		"SCAN_WINDOW_FG_MS", "SCAN_WINDOW_VENUE_MS",
@@ -112,6 +120,16 @@ var goldenValues = map[string]int64{
 	"config_venue_ops.CONFIG_PACKAGE_MAX_KB.default":             512,
 	"resource_budgets.COLD_LAUNCH_P95_MS.default":                2000,
 	"resource_budgets.STEADY_STATE_RAM_MAX_MB.default":           220,
+	"framing.FRAME_MAGIC.default":                                19533,
+	"framing.PROTOCOL_VERSION.major":                             1,
+	"framing.PROTOCOL_VERSION.minor":                             0,
+	"framing.PROTOCOL_VERSION.encoded":                           16,
+	"framing.FRAME_HEADER_LEN_BYTES.default":                     58,
+	"framing.FRAME_FLAGS_RESERVED_MASK.default":                  65520,
+	"identity_discovery.ADV_V1_LAYOUT.total_len":                 18,
+	"identity_discovery.ADV_V1_LAYOUT.eid_len":                   12,
+	"identity_discovery.ADV_V1_LAYOUT.auth_tag_len":              4,
+	"identity_discovery.ADV_V1_SCAN_RESPONSE_LAYOUT.total_len":   6,
 }
 
 func TestRegisterCoversTRSSection23(t *testing.T) {
@@ -235,21 +253,6 @@ var dutyBoundedEntries = map[string]bool{
 	"media.VOICE_NOTE":                        true,
 }
 
-// isBoundField reports whether a field name states a bound rather than a value.
-func isBoundField(name string) bool {
-	switch name {
-	case "min", "max", "duty_min_pct", "duty_max_pct", "sec_min", "sec_max":
-		return true
-	}
-	return strings.HasSuffix(name, "_min") || strings.HasSuffix(name, "_max")
-}
-
-// metaFields describe a constant rather than carrying a tunable value.
-var metaFields = map[string]bool{
-	"overridable": true, "calibrated": true, "budget": true,
-	"test_only": true, "jitter": true,
-}
-
 // unboundedValueFields returns the tunable numeric fields of an entry that state
 // no range a signed config could be validated against (TRS-CONST-002).
 func unboundedValueFields(path string, fields map[string]any) []string {
@@ -258,7 +261,7 @@ func unboundedValueFields(path string, fields map[string]any) []string {
 	}
 	var missing []string
 	for name := range fields {
-		if excluded(name) || metaFields[name] || isBoundField(name) {
+		if excluded(name) || metaFieldNames[name] || isBoundFieldName(name) {
 			continue
 		}
 		if _, numeric := intField(fields, name); !numeric {

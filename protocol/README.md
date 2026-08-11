@@ -16,7 +16,33 @@ a numeric definition (TRS-REP-002, SRS-NFR-MNT-002).
 | `gen/go/lumosconstants/` | **Generated** — `constants.go`, `message_class.go` |
 | `gen/java/com/lumos/protocol/` | **Generated** — `LumosConstants.java`, `MessageClass.java`, `TextEventKind.java` |
 | `gen/swift/LumosConstants.swift` | **Generated** |
-| schemas (frame header, `adv_v1`, prekey bundle, envelopes) | WP-01 slice S3 |
+| `schemas/frame_header.schema.json` | **Present** — TRS Sec. 9.1 binary layout |
+| `schemas/message_payloads.schema.json` | **Present** — per-class bounds + AMD-005 event envelope |
+| `schemas/adv_v1.schema.json` | **Present** — TRS Sec. 9.3 BLE hint (ADR-002) |
+| `schemas/prekey_bundle.schema.json` | **Present** — typed prekey kinds, public material only |
+| `schemas/error_codes.schema.json` | **Present** — stable registry (TRS-PROTO-013) |
+| `schema/` | **Present** — Go loader and invariant checks |
+
+## How the schemas stay honest
+
+- **Byte offsets are never written down.** The loader derives them from field
+  widths in declaration order, so an offset cannot drift out of step with a
+  width, and the derived total is cross-checked against
+  `framing.FRAME_HEADER_LEN_BYTES`.
+- **Schemas reference constants by register path**, never by value. A test
+  resolves every `*_ref` against the register, so a stale path fails the build.
+- **Every message class needs a payload bound.** Adding a class to the register
+  without giving it a `max_payload_ref` fails the build (TRS-PROTO-007).
+- **Error codes are checked both ways**: every code a schema names must exist in
+  the registry, and user-facing strings are scanned for protocol jargon on word
+  boundaries (TRS-UX-005). The jargon detector has its own test, because a
+  regex that silently matches nothing would pass every leak.
+
+## Not yet built
+
+The wire **codec** — the encoder and decoder that these schemas describe — is not
+implemented. S3 delivers the schemas, their register bindings and their
+invariants; the codecs and their golden vectors arrive in slices S4 and S5.
 
 ## Frozen values
 

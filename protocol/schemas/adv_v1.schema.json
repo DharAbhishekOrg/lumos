@@ -1,0 +1,58 @@
+{
+ "$comment": "Lumos BLE advertisement hint, TRS Sec. 9.3 as replaced by ADR-002. Binary layout description, not JSON Schema. THIS PAYLOAD IS AN UNAUTHENTICATED ROUTING HINT. Nothing here may be trusted: peer EID, capabilities, protocol version and venue context are (re)established inside the authenticated GATT HELLO/HELLO_ACK (TRS-PROTO-017). Presence dedup and aging key on authenticated post-handshake identity, so a hintless peer - every iOS peer, and any Android peer in degraded mode - behaves identically in the Nearby feed.",
+ "schema_id": "lumos.adv_v1",
+ "schema_version": 1,
+ "source": "TRS Sec. 9.3",
+ "implements": ["TRS-PROTO-009", "TRS-PROTO-017", "TRS-PROTO-018"],
+ "adrs": ["ADR-002"],
+ "byte_order": "big_endian",
+
+ "service_identity": {
+  "constant_ref": "service_uuid",
+  "note": "One fixed 128-bit GATT service UUID, advertised by both platforms and used for scan filtering. No 16-bit alias is registered for flagship."
+ },
+
+ "platform_behaviour": {
+  "android_primary": {
+   "mode": "service_data_hint",
+   "payload": "adv_v1",
+   "scan_response": "adv_v1_scan_response"
+  },
+  "android_degraded": {
+   "mode": "uuid_only",
+   "note": "If an OEM stack rejects the service-data combination, the adapter degrades to UUID-only advertising identical to iOS. This is a SUPPORTED MODE, not an error, and must not be reported as a failure."
+  },
+  "ios": {
+   "mode": "uuid_only",
+   "note": "CoreBluetooth cannot advertise arbitrary service or manufacturer data. No EID on air. Never attempt service-data advertising on iOS, and never work around this with a private API. Discoverability of a backgrounded iPhone by an Android scanner is NOT promised (TRS-PROTO-018)."
+  }
+ },
+
+ "adv_v1": {
+  "total_width_ref": "identity_discovery.ADV_V1_LAYOUT.total_len",
+  "fields": [
+   {"name": "version", "type": "u8", "width_ref": "identity_discovery.ADV_V1_LAYOUT.version_len", "value": 1},
+   {"name": "mode_flags", "type": "u8", "width_ref": "identity_discovery.ADV_V1_LAYOUT.mode_flags_len"},
+   {"name": "rotating_eid", "type": "bytes", "width_ref": "identity_discovery.ADV_V1_LAYOUT.eid_len",
+    "rotation_ref": "identity_discovery.EID_ROTATION_SEC"},
+   {"name": "auth_tag", "type": "bytes", "width_ref": "identity_discovery.ADV_V1_LAYOUT.auth_tag_len",
+    "derivation": "First ADV_AUTH_TAG_LEN bytes of HMAC-SHA-256(K_adv, version | mode_flags | rotating_eid | epoch)",
+    "purpose": "Cheap pre-connection noise rejection on Android only. It is NOT authentication and confers no trust.",
+    "width_constant_ref": "identity_discovery.ADV_AUTH_TAG_LEN"}
+  ]
+ },
+
+ "adv_v1_scan_response": {
+  "total_width_ref": "identity_discovery.ADV_V1_SCAN_RESPONSE_LAYOUT.total_len",
+  "fields": [
+   {"name": "capability_bits", "type": "u16", "width_ref": "identity_discovery.ADV_V1_SCAN_RESPONSE_LAYOUT.capability_bits_len"},
+   {"name": "venue_hint", "type": "bytes", "width_ref": "identity_discovery.ADV_V1_SCAN_RESPONSE_LAYOUT.venue_hint_len"}
+  ]
+ },
+
+ "prohibited_content": {
+  "rule": "No alias, photo, gender, orientation, phone number, exact location or persistent store account ID is permitted in any advertisement or scan response.",
+  "enforcement": "Fields are fixed-width and enumerated above; the layout admits no free-form area in which such data could be carried.",
+  "anchors": ["TRS-PROTO-009", "SRS-NFR-PRI-001"]
+ }
+}

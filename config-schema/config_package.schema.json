@@ -1,0 +1,104 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://lumos.invalid/schemas/config_package.schema.json",
+ "title": "Lumos signed configuration package",
+ "$comment": "Envelope for a signed configuration package (TRS Sec. 13, TRS-CFG-001). Configuration may ONLY alter behaviour that is already implemented. It never carries executable content of any kind - no scripts, no HTML, no templates, no expressions (TRS-ARCH-006). The schema admits no free-form object anywhere, which is what makes that enforceable rather than merely stated. The overrides member is validated by config_overrides.schema.json, which is GENERATED from the constants register so its bounds cannot drift from TRS Sec. 23 (ADR-004).",
+ "x-implements": ["TRS-CFG-001", "TRS-CONST-002", "TRS-CONST-005", "TRS-ARCH-006", "TRS-ARCH-010", "TRS-CICD-005"],
+ "x-adrs": ["ADR-004", "ADR-006"],
+ "x-fail-closed": "An invalid, expired, rolled-back, wrong-environment or hash-mismatched package is REJECTED and the last-known-good package stays active. Never fail open, and never activate a partially valid package.",
+
+ "type": "object",
+ "additionalProperties": false,
+ "required": ["schema_version", "payload", "signature"],
+ "properties": {
+  "schema_version": {"type": "integer", "const": 1},
+
+  "signature": {
+   "type": "object",
+   "additionalProperties": false,
+   "required": ["algorithm", "key_id", "value"],
+   "$comment": "Computed over the canonical encoding of payload. Production private signing keys live only in owner-controlled KMS/HSM (ADR-001, gate G-05); the agent never holds one.",
+   "properties": {
+    "algorithm": {"type": "string", "enum": ["ED25519", "ECDSA_P256"]},
+    "key_id": {"type": "string", "minLength": 1, "maxLength": 128},
+    "value": {"type": "string", "pattern": "^[0-9a-f]+$"}
+   }
+  },
+
+  "payload": {
+   "type": "object",
+   "additionalProperties": false,
+   "required": ["version", "environment", "constants_hash", "valid_from", "valid_until", "payload_hash"],
+   "properties": {
+    "version": {
+     "type": "integer", "minimum": 1,
+     "$comment": "Monotonic. A package whose version is not greater than the active one is rejected with ERR_CONFIG_ROLLBACK."
+    },
+    "environment": {"type": "string", "enum": ["development", "test", "staging", "production"]},
+    "constants_hash": {
+     "type": "string", "pattern": "^sha256:[0-9a-f]{64}$",
+     "$comment": "Must equal this build's register hash, else ERR_CONFIG_CONSTANTS_HASH_MISMATCH (TRS-CONST-005). This is what makes constant drift mechanically detectable."
+    },
+    "valid_from": {"type": "integer", "minimum": 0},
+    "valid_until": {"type": "integer", "minimum": 0},
+    "payload_hash": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+
+    "overrides": {
+     "$ref": "https://lumos.invalid/schemas/config_overrides.schema.json",
+     "$comment": "GENERATED bounds. Only constants marked overridable appear, each with its register min/max; additionalProperties is false, so naming a frozen constant is rejected rather than ignored (TRS-CONST-002)."
+    },
+
+    "kill_switches": {
+     "type": "object",
+     "additionalProperties": false,
+     "$comment": "Feature disablement only. A kill switch may turn something OFF; it can never turn on a capability that is not already built, and it fails to the documented safe baseline (TRS-ARCH-010).",
+     "properties": {
+      "disable_venue_rooms": {"type": "boolean"},
+      "disable_sponsor_assets": {"type": "boolean"},
+      "disable_vouchers": {"type": "boolean"},
+      "disable_remote_relay": {"type": "boolean"},
+      "disable_fast_local_path": {"type": "boolean"}
+     }
+    },
+
+    "venue": {
+     "type": "object",
+     "additionalProperties": false,
+     "required": ["venue_id"],
+     "properties": {
+      "venue_id": {"type": "string", "pattern": "^[A-Za-z0-9_-]{1,64}$"},
+      "display_name": {"type": "string", "maxLength": 96},
+      "rooms": {
+       "type": "array", "maxItems": 32,
+       "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["room_id"],
+        "properties": {
+         "room_id": {"type": "string", "pattern": "^[A-Za-z0-9_-]{1,64}$"},
+         "display_name": {"type": "string", "maxLength": 96},
+         "moderated": {"type": "boolean"}
+        }
+       }
+      },
+      "sponsor_assets": {
+       "type": "array", "maxItems": 8,
+       "$comment": "maxItems mirrors SPONSOR_ASSET_MAX_KB.cache_count. Assets are static images with alt text; alt text is required because sponsor content is subject to the same accessibility bar as the rest of the product (SRS-NFR-A11Y).",
+       "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["asset_id", "sha256", "alt_text"],
+        "properties": {
+         "asset_id": {"type": "string", "pattern": "^[A-Za-z0-9_-]{1,64}$"},
+         "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+         "alt_text": {"type": "string", "minLength": 1, "maxLength": 200},
+         "size_kb": {"type": "integer", "minimum": 1, "maximum": 512}
+        }
+       }
+      }
+     }
+    }
+   }
+  }
+ }
+}

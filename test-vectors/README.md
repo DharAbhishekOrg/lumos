@@ -39,3 +39,23 @@ generated in slice S4 and consumed by the runners in slice S5.
   least one vector that must fail with the **exact** stable error code of
   TRS-PROTO-013.
 - All key material is namespaced `TESTONLY-`. A skipped file is a failed gate.
+
+## Carried into slice S4: the safety-number emoji alphabet
+
+ADR-005 fixes `SAFETY_NUMBER_FORMAT` at 60 digits plus 6 emoji from a **64-emoji
+alphabet**. S4 freezes the alphabet itself in `crypto/safety_number.json`.
+
+**Selecting those 64 emoji is a security decision, not a cosmetic one.** The emoji
+code is a surface two people compare by eye to detect a man-in-the-middle. Two
+criteria are binding:
+
+- **Cross-platform font survival** — a glyph that renders as a replacement box, or
+  differently enough on Android and iOS to look like a different symbol, breaks the
+  comparison for the pair that needs it most.
+- **Non-confusability** — near-duplicate glyphs (skin-tone or gender variants, the
+  same object in two colours, visually similar faces) let an attacker search for a
+  colliding fingerprint that *looks* right at a glance. Distinct silhouettes matter
+  more than variety.
+
+Both criteria must be recorded as rationale alongside the frozen alphabet, so a
+later change cannot quietly reintroduce a confusable pair.

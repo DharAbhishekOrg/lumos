@@ -1,0 +1,59 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://lumos.invalid/schemas/voucher_token.schema.json",
+ "title": "Lumos signed voucher / bootstrap token",
+ "$comment": "Signed voucher token, carried by message class 0x42 VOUCHER_TOKEN and by QR bootstrap. Single-use: the nonce is checked against VOUCHER_NONCE_CACHE and a repeat is rejected with ERR_VOUCHER_NONCE_REPLAY. The token carries NO personal data - not an alias, not a profile reference, not a device identifier - because it may be displayed, photographed and shared in a venue (SRS-NFR-PRI).",
+ "x-implements": ["TRS-CFG-009", "TRS-PROTO-005", "TRS-TRN-014"],
+ "x-adrs": ["ADR-001"],
+ "x-size-bound": "A token embedded in a QR bootstrap must fit transport.QR_BOOTSTRAP_MAX_BYTES once canonically encoded and signed.",
+
+ "type": "object",
+ "additionalProperties": false,
+ "required": ["schema_version", "payload", "signature"],
+ "properties": {
+  "schema_version": {"type": "integer", "const": 1},
+
+  "signature": {
+   "type": "object",
+   "additionalProperties": false,
+   "required": ["algorithm", "key_id", "value"],
+   "properties": {
+    "algorithm": {"type": "string", "enum": ["ED25519", "ECDSA_P256"]},
+    "key_id": {"type": "string", "minLength": 1, "maxLength": 128},
+    "value": {"type": "string", "pattern": "^[0-9a-f]+$"}
+   }
+  },
+
+  "payload": {
+   "type": "object",
+   "additionalProperties": false,
+   "required": ["voucher_id", "venue_id", "nonce", "valid_from", "valid_until"],
+   "properties": {
+    "voucher_id": {"type": "string", "pattern": "^[A-Za-z0-9_-]{1,64}$"},
+    "venue_id": {"type": "string", "pattern": "^[A-Za-z0-9_-]{1,64}$"},
+    "nonce": {
+     "type": "string", "pattern": "^[0-9a-f]{32}$",
+     "$comment": "128-bit random, single use. Replay is detected against VOUCHER_NONCE_CACHE (count and days from the register)."
+    },
+    "valid_from": {"type": "integer", "minimum": 0},
+    "valid_until": {
+     "type": "integer", "minimum": 0,
+     "$comment": "Expiry is evaluated against a monotonic-clock-corrected time with CLOCK_SKEW_TOLERANCE_SEC applied. An expired token yields ERR_CONFIG_EXPIRED."
+    },
+    "perk": {
+     "type": "object",
+     "additionalProperties": false,
+     "required": ["perk_id"],
+     "properties": {
+      "perk_id": {"type": "string", "pattern": "^[A-Za-z0-9_-]{1,64}$"},
+      "display_text": {"type": "string", "maxLength": 140}
+     }
+    },
+    "revocable": {
+     "type": "boolean",
+     "$comment": "When true the client consults the revocation set before honouring; a revoked token yields ERR_VOUCHER_REVOKED."
+    }
+   }
+  }
+ }
+}

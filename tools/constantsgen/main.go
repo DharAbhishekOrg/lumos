@@ -78,7 +78,7 @@ func run(root string, check, stamp bool) error {
 	if err != nil {
 		return err
 	}
-	files, err := Emit(model, canonical)
+	files, err := Emit(reg, model, canonical)
 	if err != nil {
 		return err
 	}
