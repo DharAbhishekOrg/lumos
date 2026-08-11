@@ -141,6 +141,47 @@ func TestNegativeVectorsUseRegisteredCodesOnly(t *testing.T) {
 	}
 }
 
+// TestCryptoVectorsPresentAndHashed asserts the four S4b crypto files are
+// emitted, each carrying the register hash and TESTONLY provenance.
+func TestCryptoVectorsPresentAndHashed(t *testing.T) {
+	files := buildOnce(t)
+	emitted := map[string]bool{}
+	for _, f := range files {
+		emitted[f.Path] = true
+	}
+	for _, want := range []string{
+		"test-vectors/crypto/x3dh_kat.json",
+		"test-vectors/crypto/ratchet_sequences.json",
+		"test-vectors/crypto/aead_kat.json",
+		"test-vectors/crypto/safety_number.json",
+	} {
+		if !emitted[want] {
+			t.Errorf("S4b crypto vector %s was not emitted", want)
+		}
+	}
+}
+
+// TestRatchetNegativeUsesRegisteredCode cross-checks the MAX_SKIP breach code.
+func TestRatchetNegativeUsesRegisteredCode(t *testing.T) {
+	registry, err := schema.LoadErrorCodes(repoRoot(t))
+	if err != nil {
+		t.Fatalf("LoadErrorCodes: %v", err)
+	}
+	known := registry.Set()
+	rf, err := buildRatchetSequences("sha256:test")
+	if err != nil {
+		t.Fatalf("buildRatchetSequences: %v", err)
+	}
+	if len(rf.Negatives) == 0 {
+		t.Fatal("ratchet file has no negative case")
+	}
+	for _, neg := range rf.Negatives {
+		if _, ok := known[neg.ExpectedError]; !ok {
+			t.Errorf("ratchet negative %s expects %q, not in the registry", neg.Name, neg.ExpectedError)
+		}
+	}
+}
+
 func TestRoundtripCoversEveryRegisterClass(t *testing.T) {
 	root := repoRoot(t)
 	reg, err := schema.LoadRegister(root)

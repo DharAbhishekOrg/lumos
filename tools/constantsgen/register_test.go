@@ -48,6 +48,13 @@ var expectedRegister = map[string][]string{
 		"FRAME_FLAG_LOCAL_ONLY", "FRAME_FLAG_RELAY_ELIGIBLE", "FRAME_HEADER_LEN_BYTES",
 		"FRAME_MAGIC", "PROTOCOL_VERSION",
 	},
+	"crypto_protocol": {
+		"CHAIN_KEY_SEEDS", "RATCHET_HEADER_LAYOUT", "RATCHET_MESSAGE_KDF_INFO",
+		"RATCHET_ROOT_KDF_INFO", "SAFETY_NUMBER_EMOJI_ALPHABET",
+		"SAFETY_NUMBER_ITERATIONS", "SAFETY_NUMBER_KDF_INFO", "X3DH_F_PREFIX", "X3DH_IDENTITY_BINDING_INFO",
+		"X3DH_KDF_INFO", "X3DH_OPK_ID_NONE", "X3DH_PREKEY_SIGNING_INFO",
+		"X3DH_TRANSCRIPT_INFO",
+	},
 	"identity_discovery": {
 		"ADV_AUTH_TAG_LEN", "ADV_V1_LAYOUT", "ADV_V1_SCAN_RESPONSE_LAYOUT",
 		"EID_ROTATION_SEC", "INTEREST_RATE_LIMIT_PER_HOUR",
@@ -130,6 +137,13 @@ var goldenValues = map[string]int64{
 	"identity_discovery.ADV_V1_LAYOUT.eid_len":                   12,
 	"identity_discovery.ADV_V1_LAYOUT.auth_tag_len":              4,
 	"identity_discovery.ADV_V1_SCAN_RESPONSE_LAYOUT.total_len":   6,
+	"crypto_protocol.SAFETY_NUMBER_ITERATIONS.default":           5200,
+	"crypto_protocol.CHAIN_KEY_SEEDS.message":                    1,
+	"crypto_protocol.CHAIN_KEY_SEEDS.next":                       2,
+	"crypto_protocol.RATCHET_HEADER_LAYOUT.total_len":            40,
+	"crypto_protocol.X3DH_F_PREFIX.len":                          32,
+	"crypto_protocol.X3DH_F_PREFIX.fill_byte":                    255,
+	"crypto_protocol.X3DH_OPK_ID_NONE.default":                   4294967295,
 }
 
 func TestRegisterCoversTRSSection23(t *testing.T) {

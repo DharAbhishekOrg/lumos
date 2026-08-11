@@ -32,7 +32,9 @@
    "TRS-CICD-005"
   ],
   "tools/vectorgen/": [
-   "TRS-TST-001"
+   "TRS-TST-001",
+   "TRS-CRY-015",
+   "TRS-PROTO-015"
   ],
   "tools/repolint/": [
    "TRS-REP-001"
@@ -70,6 +72,10 @@
   ],
   "protocol/wire/": [
    "TRS-PROTO"
+  ],
+  "protocol/crypto/": [
+   "TRS-CRY",
+   "SRS-IDN-005"
   ]
  }
 }

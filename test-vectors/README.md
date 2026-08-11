@@ -16,10 +16,10 @@ with itself. Java and Swift never generate vectors.
 | `framing/frame_roundtrip.json` | every message class: fields -> exact bytes; decode-only skippable cases | **Present** (S4a) — 26 cases |
 | `framing/frame_invalid.json` | truncation, bad magic/lengths, unknown critical type, reserved bits, oversize | **Present** (S4a) — 12 negatives, exact codes |
 | `errors/error_codes.json` | stable code registry snapshot | **Present** (S4a) — 27 codes |
-| `crypto/x3dh_kat.json` | identity+prekeys -> shared secret, first-message binding | S4b |
-| `crypto/ratchet_sequences.json` | in-order, out-of-order, skipped, DH turns, MAX_SKIP breach | S4b |
-| `crypto/aead_kat.json` | ChaCha20-Poly1305 with header-as-AAD; tamper cases | S4b |
-| `crypto/safety_number.json` | identity pairs -> 60-digit + emoji output; freezes the 64-emoji alphabet | S4b |
+| `crypto/x3dh_kat.json` | identity+prekeys -> shared secret + transcript AD; with/without OPK | **Present** (S4b) |
+| `crypto/ratchet_sequences.json` | in-order, out-of-order, skipped, DH turns, MAX_SKIP-breach negative | **Present** (S4b) |
+| `crypto/aead_kat.json` | ChaCha20-Poly1305 over the real frame header as AAD; 3 tamper cases | **Present** (S4b) |
+| `crypto/safety_number.json` | identity pairs -> 60 digits + 6 emoji; embeds the frozen 64-glyph alphabet | **Present** (S4b) |
 | `adv/ble_advertisement.json` | EID schedule + authTag derivation per ADR-002 | S4c |
 | `media/object_pipeline.json` | object key wrap, whole-object AEAD, SHA-256, chunk plan, ACK | S4c |
 | `config/package_valid.json` | canonical bytes, payloadHash, signatures | S4c |

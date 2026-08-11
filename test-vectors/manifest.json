@@ -1,10 +1,10 @@
 {
   "schema_version": 1,
   "generator": "tools/vectorgen",
-  "generator_commit": "ab21e9a",
-  "constants_hash": "sha256:7315f92990eb8e431d0d0c392a73822035bcc96c1c469fc4fa734d75cfa278d5",
+  "generator_commit": "d3e505f",
+  "constants_hash": "sha256:3e979bd0561766daee1280ca0a7b2d793532573266d01f10a79c2c18009074a4",
   "key_provenance": "TESTONLY-lumos-vectors-v1",
-  "notes": "Golden-vector manifest (TRS Sec. 18.4). generator_commit is the HEAD at generation time, same convention as the trace matrix. The crypto, adv, media, config and voucher trees arrive in slices S4b/S4c; their absence here is deliberate scope, not an omission.",
+  "notes": "Golden-vector manifest (TRS Sec. 18.4). generator_commit is the HEAD at generation time, same convention as the trace matrix. The adv, media, config and voucher trees arrive in slice S4c; their absence here is deliberate scope, not an omission.",
   "files": [
     {
       "path": "test-vectors/framing/frame_roundtrip.json",
@@ -29,6 +29,43 @@
       "path": "test-vectors/errors/error_codes.json",
       "implements": [
         "TRS-PROTO-013"
+      ]
+    },
+    {
+      "path": "test-vectors/crypto/x3dh_kat.json",
+      "implements": [
+        "TRS-CRY-001",
+        "TRS-CRY-005",
+        "TRS-CRY-014",
+        "TRS-CRY-015"
+      ]
+    },
+    {
+      "path": "test-vectors/crypto/ratchet_sequences.json",
+      "implements": [
+        "TRS-CRY-002",
+        "TRS-CRY-006",
+        "TRS-CRY-007",
+        "TRS-CRY-011",
+        "TRS-CRY-015"
+      ]
+    },
+    {
+      "path": "test-vectors/crypto/aead_kat.json",
+      "implements": [
+        "TRS-CRY-003",
+        "TRS-CRY-011",
+        "TRS-CRY-013",
+        "TRS-PROTO-003",
+        "TRS-CRY-015"
+      ]
+    },
+    {
+      "path": "test-vectors/crypto/safety_number.json",
+      "implements": [
+        "SRS-IDN-005",
+        "TRS-CRY-014",
+        "TRS-CRY-015"
       ]
     }
   ]

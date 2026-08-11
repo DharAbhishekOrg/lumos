@@ -6,7 +6,7 @@
 // GENERATED - DO NOT EDIT. Generator: tools/constantsgen
 // Source register: protocol/constants/lumos_constants.json
 // Baseline: TRS v1.1 Sec. 23 / EDP v1.0 Sec. 4 (ADR-004)
-// constants_hash: sha256:7315f92990eb8e431d0d0c392a73822035bcc96c1c469fc4fa734d75cfa278d5
+// constants_hash: sha256:3e979bd0561766daee1280ca0a7b2d793532573266d01f10a79c2c18009074a4
 
 package lumosconstants
 
@@ -14,7 +14,7 @@ package lumosconstants
 const ServiceUUID = "E853EB6A-775C-4A49-A6BF-320E6A5CC609"
 
 // ConstantsHash binds generated code to the register that produced it (TRS-CONST-005).
-const ConstantsHash = "sha256:7315f92990eb8e431d0d0c392a73822035bcc96c1c469fc4fa734d75cfa278d5"
+const ConstantsHash = "sha256:3e979bd0561766daee1280ca0a7b2d793532573266d01f10a79c2c18009074a4"
 
 // SchemaVersion is the register schema version.
 const SchemaVersion = 1
@@ -77,6 +77,98 @@ const ProtocolVersionMinor = 0
 
 // ProtocolVersionOverridable is framing.PROTOCOL_VERSION.overridable.
 const ProtocolVersionOverridable = false
+
+// Crypto protocol
+
+// ChainKeySeedsMessage is crypto_protocol.CHAIN_KEY_SEEDS.message.
+const ChainKeySeedsMessage = 1
+
+// ChainKeySeedsNext is crypto_protocol.CHAIN_KEY_SEEDS.next.
+const ChainKeySeedsNext = 2
+
+// ChainKeySeedsOverridable is crypto_protocol.CHAIN_KEY_SEEDS.overridable.
+const ChainKeySeedsOverridable = false
+
+// RatchetHeaderLayoutDhLen is crypto_protocol.RATCHET_HEADER_LAYOUT.dh_len.
+const RatchetHeaderLayoutDhLen = 32
+
+// RatchetHeaderLayoutNLen is crypto_protocol.RATCHET_HEADER_LAYOUT.n_len.
+const RatchetHeaderLayoutNLen = 4
+
+// RatchetHeaderLayoutOverridable is crypto_protocol.RATCHET_HEADER_LAYOUT.overridable.
+const RatchetHeaderLayoutOverridable = false
+
+// RatchetHeaderLayoutPnLen is crypto_protocol.RATCHET_HEADER_LAYOUT.pn_len.
+const RatchetHeaderLayoutPnLen = 4
+
+// RatchetHeaderLayoutTotalLen is crypto_protocol.RATCHET_HEADER_LAYOUT.total_len.
+const RatchetHeaderLayoutTotalLen = 40
+
+// RatchetMessageKdfInfoOverridable is crypto_protocol.RATCHET_MESSAGE_KDF_INFO.overridable.
+const RatchetMessageKdfInfoOverridable = false
+
+// RatchetMessageKdfInfoValue is crypto_protocol.RATCHET_MESSAGE_KDF_INFO.value.
+const RatchetMessageKdfInfoValue = "lumos/ratchet/msg/v1"
+
+// RatchetRootKdfInfoOverridable is crypto_protocol.RATCHET_ROOT_KDF_INFO.overridable.
+const RatchetRootKdfInfoOverridable = false
+
+// RatchetRootKdfInfoValue is crypto_protocol.RATCHET_ROOT_KDF_INFO.value.
+const RatchetRootKdfInfoValue = "lumos/ratchet/root/v1"
+
+// SafetyNumberEmojiAlphabetOverridable is crypto_protocol.SAFETY_NUMBER_EMOJI_ALPHABET.overridable.
+const SafetyNumberEmojiAlphabetOverridable = false
+
+// SafetyNumberIterationsDefault is crypto_protocol.SAFETY_NUMBER_ITERATIONS.default.
+const SafetyNumberIterationsDefault = 5200
+
+// SafetyNumberIterationsOverridable is crypto_protocol.SAFETY_NUMBER_ITERATIONS.overridable.
+const SafetyNumberIterationsOverridable = false
+
+// SafetyNumberKdfInfoOverridable is crypto_protocol.SAFETY_NUMBER_KDF_INFO.overridable.
+const SafetyNumberKdfInfoOverridable = false
+
+// SafetyNumberKdfInfoValue is crypto_protocol.SAFETY_NUMBER_KDF_INFO.value.
+const SafetyNumberKdfInfoValue = "lumos/safety-number/v1"
+
+// X3dhFPrefixFillByte is crypto_protocol.X3DH_F_PREFIX.fill_byte.
+const X3dhFPrefixFillByte = 255
+
+// X3dhFPrefixLen is crypto_protocol.X3DH_F_PREFIX.len.
+const X3dhFPrefixLen = 32
+
+// X3dhFPrefixOverridable is crypto_protocol.X3DH_F_PREFIX.overridable.
+const X3dhFPrefixOverridable = false
+
+// X3dhIdentityBindingInfoOverridable is crypto_protocol.X3DH_IDENTITY_BINDING_INFO.overridable.
+const X3dhIdentityBindingInfoOverridable = false
+
+// X3dhIdentityBindingInfoValue is crypto_protocol.X3DH_IDENTITY_BINDING_INFO.value.
+const X3dhIdentityBindingInfoValue = "lumos/x3dh/identity-dh-binding/v1"
+
+// X3dhKdfInfoOverridable is crypto_protocol.X3DH_KDF_INFO.overridable.
+const X3dhKdfInfoOverridable = false
+
+// X3dhKdfInfoValue is crypto_protocol.X3DH_KDF_INFO.value.
+const X3dhKdfInfoValue = "lumos/x3dh/v1"
+
+// X3dhOpkIDNoneDefault is crypto_protocol.X3DH_OPK_ID_NONE.default.
+const X3dhOpkIDNoneDefault = 4294967295
+
+// X3dhOpkIDNoneOverridable is crypto_protocol.X3DH_OPK_ID_NONE.overridable.
+const X3dhOpkIDNoneOverridable = false
+
+// X3dhPrekeySigningInfoOverridable is crypto_protocol.X3DH_PREKEY_SIGNING_INFO.overridable.
+const X3dhPrekeySigningInfoOverridable = false
+
+// X3dhPrekeySigningInfoValue is crypto_protocol.X3DH_PREKEY_SIGNING_INFO.value.
+const X3dhPrekeySigningInfoValue = "lumos/x3dh/signed-prekey/v1"
+
+// X3dhTranscriptInfoOverridable is crypto_protocol.X3DH_TRANSCRIPT_INFO.overridable.
+const X3dhTranscriptInfoOverridable = false
+
+// X3dhTranscriptInfoValue is crypto_protocol.X3DH_TRANSCRIPT_INFO.value.
+const X3dhTranscriptInfoValue = "lumos/x3dh/transcript/v1"
 
 // Identity discovery
 
@@ -817,6 +909,9 @@ const SteadyStateRAMMaxMBDefault = 220
 
 // SteadyStateRAMMaxMBOverridable is resource_budgets.STEADY_STATE_RAM_MAX_MB.overridable.
 const SteadyStateRAMMaxMBOverridable = false
+
+// SafetyNumberEmojiAlphabetGlyphs is crypto_protocol.SAFETY_NUMBER_EMOJI_ALPHABET.glyphs. It is a var because Go has no array constants; treat it as read-only.
+var SafetyNumberEmojiAlphabetGlyphs = [...]string{"🐶", "🐱", "🐴", "🐮", "🐷", "🐸", "🐵", "🐔", "🐧", "🐢", "🐝", "🦋", "🐙", "🐬", "🐘", "🐊", "🍎", "🍌", "🍇", "🍓", "🍉", "🍍", "🌽", "🍄", "🍞", "🍕", "🎂", "🍩", "☕", "🍦", "🌵", "🌲", "🌻", "🌹", "🍁", "⭐", "🌈", "🔥", "💧", "⚡", "🔑", "🔒", "🎈", "🎁", "⚽", "🎸", "🎺", "🎯", "🚀", "⚓", "🚲", "🚂", "⏰", "💡", "🔔", "🎧", "📷", "🔭", "🎨", "🎪", "💙", "🎵", "🏆", "👑"}
 
 // VoiceNoteBitrateKbps is media.VOICE_NOTE.bitrate_kbps. It is a var because Go has no array constants; treat it as read-only.
 var VoiceNoteBitrateKbps = [...]int{24, 32}

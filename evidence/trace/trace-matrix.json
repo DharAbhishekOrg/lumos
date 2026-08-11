@@ -394,13 +394,24 @@
   },
   {
    "req_id": "SRS-IDN-005",
-   "status": "not_started",
-   "code": [],
-   "tests": [],
+   "status": "tested",
+   "code": [
+    "protocol/crypto/safety/safety.go",
+    "test-vectors/crypto/safety_number.json"
+   ],
+   "tests": [
+    "go:protocol/crypto/safety:TestAlphabetMeetsADR009MechanicalCriteria",
+    "go:protocol/crypto/safety:TestDistinctIdentitiesDiverge",
+    "go:protocol/crypto/safety:TestShapeAndSymmetry",
+    "go:protocol/crypto:TestConformanceSafetyNumber"
+   ],
    "evidence": [],
-   "adr": [],
-   "last_commit": null,
-   "updated": null
+   "adr": [
+    "ADR-005",
+    "ADR-009"
+   ],
+   "last_commit": "d3e505f",
+   "updated": "2026-08-11"
   },
   {
    "req_id": "SRS-IDN-006",
@@ -4964,7 +4975,7 @@
     "ADR-005",
     "ADR-006"
    ],
-   "last_commit": "ab21e9a",
+   "last_commit": "d3e505f",
    "updated": "2026-08-11"
   },
   {
@@ -5009,7 +5020,7 @@
    "adr": [
     "ADR-004"
    ],
-   "last_commit": "ab21e9a",
+   "last_commit": "d3e505f",
    "updated": "2026-08-11"
   },
   {
@@ -5043,7 +5054,7 @@
    "adr": [
     "ADR-004"
    ],
-   "last_commit": "ab21e9a",
+   "last_commit": "d3e505f",
    "updated": "2026-08-11"
   },
   {
@@ -5058,33 +5069,72 @@
   },
   {
    "req_id": "TRS-CRY-001",
-   "status": "not_started",
-   "code": [],
-   "tests": [],
+   "status": "tested",
+   "code": [
+    "protocol/crypto/x3dh/x3dh.go",
+    "test-vectors/crypto/aead_kat.json",
+    "test-vectors/crypto/ratchet_sequences.json",
+    "test-vectors/crypto/safety_number.json",
+    "test-vectors/crypto/x3dh_kat.json",
+    "tools/vectorgen/crypto.go"
+   ],
+   "tests": [
+    "go:protocol/crypto/x3dh:TestBothSidesDeriveTheSameSessionWithOPK",
+    "go:protocol/crypto/x3dh:TestBothSidesDeriveTheSameSessionWithoutOPK",
+    "go:protocol/crypto/x3dh:TestTamperedSignaturesAreRejected",
+    "go:protocol/crypto:TestConformanceX3DHKAT"
+   ],
    "evidence": [],
-   "adr": [],
-   "last_commit": null,
-   "updated": null
+   "adr": [
+    "ADR-001",
+    "ADR-008"
+   ],
+   "last_commit": "d3e505f",
+   "updated": "2026-08-11"
   },
   {
    "req_id": "TRS-CRY-002",
-   "status": "not_started",
-   "code": [],
-   "tests": [],
+   "status": "tested",
+   "code": [
+    "protocol/crypto/ratchet/ratchet.go",
+    "test-vectors/crypto/aead_kat.json",
+    "test-vectors/crypto/ratchet_sequences.json",
+    "test-vectors/crypto/safety_number.json",
+    "test-vectors/crypto/x3dh_kat.json",
+    "tools/vectorgen/crypto.go"
+   ],
+   "tests": [
+    "go:protocol/crypto/ratchet:TestConversationWithDHTurns",
+    "go:protocol/crypto/ratchet:TestHeaderRoundtrip",
+    "go:protocol/crypto/ratchet:TestOutOfOrderWithinChain",
+    "go:protocol/crypto/ratchet:TestSkippedAcrossDHTurn",
+    "go:protocol/crypto:TestConformanceRatchetSequences"
+   ],
    "evidence": [],
-   "adr": [],
-   "last_commit": null,
-   "updated": null
+   "adr": [
+    "ADR-001"
+   ],
+   "last_commit": "d3e505f",
+   "updated": "2026-08-11"
   },
   {
    "req_id": "TRS-CRY-003",
-   "status": "not_started",
-   "code": [],
-   "tests": [],
+   "status": "tested",
+   "code": [
+    "protocol/crypto/aead/aead.go",
+    "protocol/crypto/x3dh/x3dh.go"
+   ],
+   "tests": [
+    "go:protocol/crypto/aead:TestEveryTamperFailsIdentically",
+    "go:protocol/crypto/aead:TestRFC8439KnownAnswer",
+    "go:protocol/crypto:TestConformanceAEADKAT"
+   ],
    "evidence": [],
-   "adr": [],
-   "last_commit": null,
-   "updated": null
+   "adr": [
+    "ADR-001"
+   ],
+   "last_commit": "d3e505f",
+   "updated": "2026-08-11"
   },
   {
    "req_id": "TRS-CRY-004",
@@ -5108,23 +5158,46 @@
   },
   {
    "req_id": "TRS-CRY-006",
-   "status": "not_started",
-   "code": [],
-   "tests": [],
+   "status": "tested",
+   "code": [
+    "protocol/crypto/aead/aead.go",
+    "protocol/crypto/ratchet/ratchet.go"
+   ],
+   "tests": [
+    "go:protocol/crypto/ratchet:TestMessageKeyDeletionByReplay",
+    "go:protocol/crypto/ratchet:TestOutOfOrderWithinChain",
+    "go:protocol/crypto/ratchet:TestSkippedAcrossDHTurn"
+   ],
    "evidence": [],
-   "adr": [],
-   "last_commit": null,
-   "updated": null
+   "adr": [
+    "ADR-001"
+   ],
+   "last_commit": "d3e505f",
+   "updated": "2026-08-11"
   },
   {
    "req_id": "TRS-CRY-007",
-   "status": "not_started",
-   "code": [],
-   "tests": [],
+   "status": "tested",
+   "code": [
+    "protocol/crypto/ratchet/ratchet.go",
+    "test-vectors/crypto/aead_kat.json",
+    "test-vectors/crypto/ratchet_sequences.json",
+    "test-vectors/crypto/safety_number.json",
+    "test-vectors/crypto/x3dh_kat.json",
+    "tools/vectorgen/crypto.go"
+   ],
+   "tests": [
+    "go:protocol/crypto/ratchet:TestMaxSkipBreach",
+    "go:protocol/crypto/ratchet:TestSkippedKeyTTLExpiry",
+    "go:protocol/crypto/ratchet:TestSkippedSessionCapFromRegister",
+    "go:protocol/crypto:TestConformanceRatchetSequences"
+   ],
    "evidence": [],
-   "adr": [],
-   "last_commit": null,
-   "updated": null
+   "adr": [
+    "ADR-001"
+   ],
+   "last_commit": "d3e505f",
+   "updated": "2026-08-11"
   },
   {
    "req_id": "TRS-CRY-008",
@@ -5158,13 +5231,21 @@
   },
   {
    "req_id": "TRS-CRY-011",
-   "status": "not_started",
-   "code": [],
-   "tests": [],
+   "status": "tested",
+   "code": [
+    "protocol/crypto/aead/aead.go",
+    "protocol/crypto/ratchet/ratchet.go"
+   ],
+   "tests": [
+    "go:protocol/crypto/aead:TestDerivationIsDeterministicAndKeySeparated",
+    "go:protocol/crypto/aead:TestRFC8439KnownAnswer"
+   ],
    "evidence": [],
-   "adr": [],
-   "last_commit": null,
-   "updated": null
+   "adr": [
+    "ADR-001"
+   ],
+   "last_commit": "d3e505f",
+   "updated": "2026-08-11"
   },
   {
    "req_id": "TRS-CRY-012",
@@ -5178,33 +5259,66 @@
   },
   {
    "req_id": "TRS-CRY-013",
-   "status": "not_started",
-   "code": [],
-   "tests": [],
+   "status": "tested",
+   "code": [
+    "protocol/crypto/aead/aead.go",
+    "protocol/crypto/ratchet/ratchet.go"
+   ],
+   "tests": [
+    "go:protocol/crypto/aead:TestEveryTamperFailsIdentically",
+    "go:protocol/crypto/ratchet:TestMessageKeyDeletionByReplay"
+   ],
    "evidence": [],
-   "adr": [],
-   "last_commit": null,
-   "updated": null
+   "adr": [
+    "ADR-001"
+   ],
+   "last_commit": "d3e505f",
+   "updated": "2026-08-11"
   },
   {
    "req_id": "TRS-CRY-014",
-   "status": "not_started",
-   "code": [],
-   "tests": [],
+   "status": "tested",
+   "code": [
+    "protocol/crypto/safety/safety.go",
+    "protocol/crypto/x3dh/x3dh.go"
+   ],
+   "tests": [
+    "go:protocol/crypto/safety:TestShapeAndSymmetry",
+    "go:protocol/crypto/x3dh:TestTranscriptBindsEveryMandatedInput",
+    "go:protocol/crypto:TestConformanceX3DHKAT"
+   ],
    "evidence": [],
-   "adr": [],
-   "last_commit": null,
-   "updated": null
+   "adr": [
+    "ADR-001",
+    "ADR-005",
+    "ADR-008"
+   ],
+   "last_commit": "d3e505f",
+   "updated": "2026-08-11"
   },
   {
    "req_id": "TRS-CRY-015",
-   "status": "not_started",
-   "code": [],
-   "tests": [],
+   "status": "implemented",
+   "code": [
+    "protocol/crypto/vectors_test.go",
+    "test-vectors/crypto/aead_kat.json",
+    "test-vectors/crypto/ratchet_sequences.json",
+    "test-vectors/crypto/safety_number.json",
+    "test-vectors/crypto/x3dh_kat.json",
+    "tools/vectorgen/crypto.go"
+   ],
+   "tests": [
+    "go:protocol/crypto:TestConformanceAEADKAT",
+    "go:protocol/crypto:TestConformanceRatchetSequences",
+    "go:protocol/crypto:TestConformanceSafetyNumber",
+    "go:protocol/crypto:TestConformanceX3DHKAT"
+   ],
    "evidence": [],
-   "adr": [],
-   "last_commit": null,
-   "updated": null
+   "adr": [
+    "ADR-001"
+   ],
+   "last_commit": "d3e505f",
+   "updated": "2026-08-11"
   },
   {
    "req_id": "TRS-CRY-016",
@@ -5956,7 +6070,7 @@
    ],
    "evidence": [],
    "adr": [],
-   "last_commit": "ab21e9a",
+   "last_commit": "d3e505f",
    "updated": "2026-08-11"
   },
   {
@@ -6135,7 +6249,7 @@
    ],
    "evidence": [],
    "adr": [],
-   "last_commit": "ab21e9a",
+   "last_commit": "d3e505f",
    "updated": "2026-08-11"
   },
   {
@@ -6155,7 +6269,7 @@
    ],
    "evidence": [],
    "adr": [],
-   "last_commit": "ab21e9a",
+   "last_commit": "d3e505f",
    "updated": "2026-08-11"
   },
   {
@@ -6244,7 +6358,7 @@
    "adr": [
     "ADR-004"
    ],
-   "last_commit": "ab21e9a",
+   "last_commit": "d3e505f",
    "updated": "2026-08-11"
   },
   {
@@ -6254,7 +6368,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "19e7093",
+   "last_commit": "d3e505f",
    "updated": "2026-08-11"
   },
   {

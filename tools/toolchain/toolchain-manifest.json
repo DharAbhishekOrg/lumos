@@ -87,8 +87,27 @@
       "note": "Not a project dependency and not required by any build. Used only to read the baselined specification PDFs (pypdf 6.15.0, BSD-3-Clause). Must not appear in any lockfile or bootstrap script."
     }
   },
+  "go_dependencies": {
+    "note": "Go module dependencies are locked in go.mod + go.sum (checksummed, 'go mod verify' green). Added as needed per slice with owner approval; this list mirrors the lockfile for auditability.",
+    "modules": [
+      {
+        "path": "golang.org/x/crypto",
+        "version": "v0.54.0",
+        "license": "BSD-3-Clause",
+        "why": "ChaCha20-Poly1305 (IETF) AEAD per ADR-001; the Go standard library provides X25519, Ed25519, HKDF-SHA-256 and SHA-256 but not this AEAD. Owner-approved for WP-01 slice S4b.",
+        "approved": "owner, 2026-08-11"
+      },
+      {
+        "path": "golang.org/x/sys",
+        "version": "v0.47.0",
+        "license": "BSD-3-Clause",
+        "why": "Indirect dependency of golang.org/x/crypto.",
+        "indirect": true
+      }
+    ]
+  },
   "not_yet_pinned": {
-    "note": "Dependency versions and checksums are locked in slice S7 per TRS-REP-003. This manifest pins the toolchains only; it is not a lockfile and must not be mistaken for one.",
-    "pending": ["gradle_wrapper", "agp", "swiftpm_resolved", "go_sum", "npm_lockfile", "sbom"]
+    "note": "The remaining lockfiles are established in slice S7 per TRS-REP-003. This manifest pins the toolchains and now the Go module set; the mobile/admin lockfiles follow.",
+    "pending": ["gradle_wrapper", "agp", "swiftpm_resolved", "npm_lockfile", "sbom"]
   }
 }

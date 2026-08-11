@@ -5,7 +5,7 @@
  "$generator": "tools/constantsgen",
  "service_uuid": "E853EB6A-775C-4A49-A6BF-320E6A5CC609",
  "$service_uuid_provenance": "One fixed 128-bit GATT service UUID per ADR-002 / TRS Sec. 9.3, generated once from a CSPRNG as an RFC 4122 version-4 UUID in WP-01 slice S2 and frozen here. Advertised by both platforms and used for scan filtering. No 16-bit alias is registered for flagship. Regenerating this value is a breaking protocol change.",
- "constants_hash": "sha256:7315f92990eb8e431d0d0c392a73822035bcc96c1c469fc4fa734d75cfa278d5",
+ "constants_hash": "sha256:3e979bd0561766daee1280ca0a7b2d793532573266d01f10a79c2c18009074a4",
  "constants_hash_algorithm": {
   "digest": "SHA-256",
   "encoding": "lowercase hex, prefixed 'sha256:'",
@@ -361,6 +361,76 @@
    "default": 65520, "overridable": false,
    "notes": "0xFFF0 - bits 4..15. A frame setting any reserved bit while also setting FRAME_FLAG_CRITICAL fails closed; otherwise the unknown bits are ignored (TRS-PROTO-006).",
    "anchors": ["TRS-PROTO-006"], "source": "TRS 9.1"
+  }
+ },
+
+ "crypto_protocol": {
+  "$section_notes": "Cryptographic domain-separation strings, transcript-binding constants and the safety-number alphabet (TRS-CRY-014, ADR-001, ADR-005). All frozen: none is overridable by signed configuration. These are protocol constants shared by all three platforms and therefore live in the register, not in source (TRS-CONST-001). The X3DH identity-DH key model is ADR-008 (provisional).",
+  "X3DH_KDF_INFO": {
+   "value": "lumos/x3dh/v1", "overridable": false,
+   "notes": "HKDF-SHA-256 info string for the X3DH shared-secret derivation.",
+   "anchors": ["TRS-CRY-014", "TRS-CRY-001"], "adr": ["ADR-001", "ADR-008"], "source": "TRS 10.1"
+  },
+  "X3DH_TRANSCRIPT_INFO": {
+   "value": "lumos/x3dh/transcript/v1", "overridable": false,
+   "notes": "Domain prefix of the transcript hash binding identity keys, identity-DH keys, signed-prekey ID, one-time-prekey ID, protocol version and match ID. The transcript hash is the associated data of the first ratchet message (TRS Sec. 10.1 first-message binding).",
+   "anchors": ["TRS-CRY-014"], "adr": ["ADR-008"], "source": "TRS 10.1"
+  },
+  "X3DH_IDENTITY_BINDING_INFO": {
+   "value": "lumos/x3dh/identity-dh-binding/v1", "overridable": false,
+   "notes": "Domain prefix of the Ed25519 signature binding a device identity-DH X25519 key to its Ed25519 identity (ADR-008).",
+   "anchors": ["TRS-CRY-014"], "adr": ["ADR-008"], "source": "ADR-008"
+  },
+  "X3DH_PREKEY_SIGNING_INFO": {
+   "value": "lumos/x3dh/signed-prekey/v1", "overridable": false,
+   "notes": "Domain prefix of the Ed25519 signature over (info | spk_id | spk_pub).",
+   "anchors": ["TRS-CRY-014", "TRS-CRY-003"], "adr": ["ADR-001"], "source": "TRS 10.1"
+  },
+  "X3DH_F_PREFIX": {
+   "fill_byte": 255, "len": 32, "overridable": false,
+   "notes": "Per the X3DH spec, HKDF input is F || DH1..DHn where F is 32 bytes of 0xFF for Curve25519, providing cryptographic domain separation from the curve encoding.",
+   "anchors": ["TRS-CRY-014"], "adr": ["ADR-001"], "source": "Signal X3DH Sec. 2.2"
+  },
+  "X3DH_OPK_ID_NONE": {
+   "default": 4294967295, "overridable": false,
+   "notes": "Sentinel one-time-prekey ID in the transcript when the responder had no one-time prekey available (documented fallback per TRS-CRY-005).",
+   "anchors": ["TRS-CRY-005", "TRS-CRY-014"], "source": "TRS 10.1"
+  },
+  "RATCHET_ROOT_KDF_INFO": {
+   "value": "lumos/ratchet/root/v1", "overridable": false,
+   "notes": "HKDF-SHA-256 info string of KDF_RK(root_key, dh_output) -> (root_key, chain_key).",
+   "anchors": ["TRS-CRY-002", "TRS-CRY-014"], "adr": ["ADR-001"], "source": "Signal Double Ratchet Sec. 5.2"
+  },
+  "RATCHET_MESSAGE_KDF_INFO": {
+   "value": "lumos/ratchet/msg/v1", "overridable": false,
+   "notes": "HKDF-SHA-256 info string deriving (encryption key 32 | nonce 12) from a message key. Nonces never repeat under a key because every message key is used exactly once (TRS-CRY-011).",
+   "anchors": ["TRS-CRY-011", "TRS-CRY-014"], "adr": ["ADR-001"], "source": "Signal Double Ratchet Sec. 5.2"
+  },
+  "CHAIN_KEY_SEEDS": {
+   "message": 1, "next": 2, "overridable": false,
+   "notes": "KDF_CK per the Double Ratchet spec: message_key = HMAC-SHA-256(chain_key, 0x01), next chain_key = HMAC-SHA-256(chain_key, 0x02).",
+   "anchors": ["TRS-CRY-002"], "adr": ["ADR-001"], "source": "Signal Double Ratchet Sec. 5.2"
+  },
+  "RATCHET_HEADER_LAYOUT": {
+   "dh_len": 32, "pn_len": 4, "n_len": 4, "total_len": 40, "overridable": false,
+   "notes": "Ratchet message header: dh_public(32) | pn(4,BE) | n(4,BE). Rides at the head of the frame payload; the AEAD associated data is frame_header(58) || ratchet_header(40), satisfying TRS-PROTO-003 and authenticated ratchet headers simultaneously.",
+   "anchors": ["TRS-CRY-002", "TRS-PROTO-003"], "source": "Signal Double Ratchet Sec. 4"
+  },
+  "SAFETY_NUMBER_KDF_INFO": {
+   "value": "lumos/safety-number/v1", "overridable": false,
+   "notes": "Domain prefix of both the per-identity fingerprint iteration and the emoji-index derivation.",
+   "anchors": ["SRS-IDN-005", "TRS-CRY-014"], "adr": ["ADR-005"], "source": "TRS 10.1"
+  },
+  "SAFETY_NUMBER_ITERATIONS": {
+   "default": 5200, "overridable": false,
+   "notes": "Iterated-hash count per identity fingerprint, matching the Signal safety-number hardening factor.",
+   "anchors": ["SRS-IDN-005"], "adr": ["ADR-005"], "source": "TRS 23.2"
+  },
+  "SAFETY_NUMBER_EMOJI_ALPHABET": {
+   "glyphs": ["🐶", "🐱", "🐴", "🐮", "🐷", "🐸", "🐵", "🐔", "🐧", "🐢", "🐝", "🦋", "🐙", "🐬", "🐘", "🐊", "🍎", "🍌", "🍇", "🍓", "🍉", "🍍", "🌽", "🍄", "🍞", "🍕", "🎂", "🍩", "☕", "🍦", "🌵", "🌲", "🌻", "🌹", "🍁", "⭐", "🌈", "🔥", "💧", "⚡", "🔑", "🔒", "🎈", "🎁", "⚽", "🎸", "🎺", "🎯", "🚀", "⚓", "🚲", "🚂", "⏰", "💡", "🔔", "🎧", "📷", "🔭", "🎨", "🎪", "💙", "🎵", "🏆", "👑"],
+   "overridable": false,
+   "notes": "The frozen 64-glyph alphabet of ADR-005, selected under the ADR-009 security criterion: single-codepoint default-emoji-presentation glyphs only (no ZWJ, no variation selectors, no skin-tone or gender variants), distinct silhouettes, no colour-only distinctions. Per-glyph rationale in docs/adrs/ADR-009-safety-number-emoji-alphabet.md. 64 glyphs = 6 bits each; 6 glyphs carry 36 bits.",
+   "anchors": ["SRS-IDN-005", "SRS-MAT-008"], "adr": ["ADR-005", "ADR-009"], "source": "ADR-005"
   }
  },
 

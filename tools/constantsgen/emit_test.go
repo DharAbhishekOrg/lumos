@@ -176,8 +176,8 @@ func TestGeneratedGoValuesMatchRegister(t *testing.T) {
 
 	checked := 0
 	for _, c := range m.Constants {
-		if c.Kind == KindIntSlice {
-			continue // emitted as a var, covered by the byte-comparison test
+		if c.Kind == KindIntSlice || c.Kind == KindStringSlice {
+			continue // emitted as vars, covered by the byte-comparison test
 		}
 		got, ok := found[c.GoName()]
 		if !ok {
