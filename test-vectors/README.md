@@ -20,11 +20,17 @@ with itself. Java and Swift never generate vectors.
 | `crypto/ratchet_sequences.json` | in-order, out-of-order, skipped, DH turns, MAX_SKIP-breach negative | **Present** (S4b) |
 | `crypto/aead_kat.json` | ChaCha20-Poly1305 over the real frame header as AAD; 3 tamper cases | **Present** (S4b) |
 | `crypto/safety_number.json` | identity pairs -> 60 digits + 6 emoji; embeds the frozen 64-glyph alphabet | **Present** (S4b) |
-| `adv/ble_advertisement.json` | EID schedule + authTag derivation per ADR-002 | S4c |
-| `media/object_pipeline.json` | object key wrap, whole-object AEAD, SHA-256, chunk plan, ACK | S4c |
-| `config/package_valid.json` | canonical bytes, payloadHash, signatures | S4c |
-| `config/package_invalid.json` | tampered, expired, wrong env, rollback attempt | S4c |
-| `voucher/voucher_tokens.json` | valid, replayed nonce, revoked, expired | S4c |
+| `adv/ble_advertisement.json` | EID rotation schedule + authTag derivation per ADR-002; 6 negatives | **Present** (S4c) |
+| `media/object_pipeline.json` | object-key wrap, whole-object AEAD, SHA-256, chunk plan, SACK bitmap/ranges; 4 negatives | **Present** (S4c) |
+| `config/package_valid.json` | canonical bytes, payloadHash, TESTONLY Ed25519 signatures | **Present** (S4c) |
+| `config/package_invalid.json` | tampered, foreign signer, hash mismatch, wrong env, expired, rollback - 9 negatives | **Present** (S4c) |
+| `voucher/voucher_tokens.json` | valid, replayed nonce, revoked, expired, tampered, non-revocable | **Present** (S4c) |
+
+**The suite is complete.** `assertSuiteComplete` enforces that the emitted set is
+exactly the TRS Sec. 18.4 tree, transcribed by hand from the specification table.
+A missing file **fails generation** rather than producing a quietly smaller
+suite - Sec. 18.4 is explicit that "a skipped file is a failed gate" - and an
+unlisted file fails too, so the tree cannot grow by accident.
 
 Regenerate with `go run ./tools/vectorgen`; CI verifies with
 `go run ./tools/vectorgen -check`. Generation always double-builds and

@@ -1,0 +1,56 @@
+{
+  "schema_version": 1,
+  "generator": "tools/vectorgen",
+  "constants_hash": "sha256:99beeffb52f9b5b65afd53bb875175171e0e920e802b0927dd4f34db9cffc23c",
+  "implements": [
+    "TRS-CFG-001",
+    "TRS-CRY-009",
+    "TRS-CONST-005"
+  ],
+  "key_provenance": "TESTONLY-lumos-vectors-v1",
+  "notes": "Signed configuration packages that MUST validate. canonical_bytes is the deterministic sorted key=value signing form - sorted flat text rather than JSON so Java and Swift reproduce it without depending on key ordering. The signature covers a domain prefix plus those bytes, so a config signature can never be replayed as a voucher signature. TESTONLY signing key; production keys live only in owner-controlled KMS/HSM (gate G-05).",
+  "trust_anchor_ed25519_pub_hex": "3f5742b966b6badb7ed3d491757facab3069b174fc8da21c7402a089e9b2c510",
+  "cases": [
+    {
+      "name": "full_package",
+      "description": "Overrides plus a kill switch, superseding an older active version.",
+      "payload": {
+        "version": 5,
+        "environment": "staging",
+        "constants_hash": "sha256:99beeffb52f9b5b65afd53bb875175171e0e920e802b0927dd4f34db9cffc23c",
+        "valid_from": 1699000000,
+        "valid_until": 1800000000,
+        "overrides": {
+          "EID_ROTATION_SEC": 900,
+          "MESH_HOP_DEFAULT": 4
+        },
+        "kill_switches": {
+          "disable_venue_rooms": true
+        }
+      },
+      "canonical_bytes": "constants_hash=sha256:99beeffb52f9b5b65afd53bb875175171e0e920e802b0927dd4f34db9cffc23c\nenvironment=staging\nkill_switches.disable_venue_rooms=true\noverrides.EID_ROTATION_SEC=900\noverrides.MESH_HOP_DEFAULT=4\nvalid_from=1699000000\nvalid_until=1800000000\nversion=5\n",
+      "payload_hash": "sha256:fc291c0b1b7755b2fa7a1f89d1588c28c60c7557a42bf7d06b79b1afb9131414",
+      "signature_hex": "49607ea7117022db86f7b9799ec661d22be6abbc4e4db6d6a6bb817c75b6fed42f54cdb737c26efa39c4ffb7b1a032a4aac0700ab38f32aa8678badde0c3a400",
+      "now_unix": 1700000000,
+      "active_version": 4
+    },
+    {
+      "name": "minimal_package",
+      "description": "No overrides and no kill switches; the envelope alone must still validate.",
+      "payload": {
+        "version": 2,
+        "environment": "production",
+        "constants_hash": "sha256:99beeffb52f9b5b65afd53bb875175171e0e920e802b0927dd4f34db9cffc23c",
+        "valid_from": 1699000000,
+        "valid_until": 1800000000,
+        "overrides": {},
+        "kill_switches": {}
+      },
+      "canonical_bytes": "constants_hash=sha256:99beeffb52f9b5b65afd53bb875175171e0e920e802b0927dd4f34db9cffc23c\nenvironment=production\nvalid_from=1699000000\nvalid_until=1800000000\nversion=2\n",
+      "payload_hash": "sha256:e22d188cd1df13e4c7e38a66054d0fda255b8ddcfab9b90702756b2c07d542c8",
+      "signature_hex": "fcff025a563892de0132984bc2913704d0317658e4b554531baee104d380ef05db9dc01b4c23cbbe5bf1587af046992a5170d96fbd6d83c8bced642647004d0f",
+      "now_unix": 1700000000,
+      "active_version": 1
+    }
+  ]
+}

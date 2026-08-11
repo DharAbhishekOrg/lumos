@@ -6,7 +6,7 @@
 /// GENERATED - DO NOT EDIT. Generator: tools/constantsgen
 /// Source register: protocol/constants/lumos_constants.json
 /// Baseline: TRS v1.1 Sec. 23 / EDP v1.0 Sec. 4 (ADR-004)
-/// constants_hash: sha256:3e979bd0561766daee1280ca0a7b2d793532573266d01f10a79c2c18009074a4
+/// constants_hash: sha256:99beeffb52f9b5b65afd53bb875175171e0e920e802b0927dd4f34db9cffc23c
 
 public enum LumosConstants {
 
@@ -14,7 +14,7 @@ public enum LumosConstants {
     public static let serviceUUID = "E853EB6A-775C-4A49-A6BF-320E6A5CC609"
 
     /// Binds generated code to the register that produced it (TRS-CONST-005).
-    public static let constantsHash = "sha256:3e979bd0561766daee1280ca0a7b2d793532573266d01f10a79c2c18009074a4"
+    public static let constantsHash = "sha256:99beeffb52f9b5b65afd53bb875175171e0e920e802b0927dd4f34db9cffc23c"
 
     /// Register schema version.
     public static let schemaVersion = 1
@@ -80,6 +80,24 @@ public enum LumosConstants {
 
     // MARK: - Crypto protocol
 
+    /// crypto_protocol.ADV_AUTH_TAG_INFO.overridable
+    public static let advAuthTagInfoOverridable = false
+
+    /// crypto_protocol.ADV_AUTH_TAG_INFO.value
+    public static let advAuthTagInfoValue = "lumos/adv/auth-tag/v1"
+
+    /// crypto_protocol.ADV_EID_KDF_INFO.overridable
+    public static let advEIDKdfInfoOverridable = false
+
+    /// crypto_protocol.ADV_EID_KDF_INFO.value
+    public static let advEIDKdfInfoValue = "lumos/adv/eid/v1"
+
+    /// crypto_protocol.ADV_KEY_KDF_INFO.overridable
+    public static let advKeyKdfInfoOverridable = false
+
+    /// crypto_protocol.ADV_KEY_KDF_INFO.value
+    public static let advKeyKdfInfoValue = "lumos/adv/k-adv/v1"
+
     /// crypto_protocol.CHAIN_KEY_SEEDS.message
     public static let chainKeySeedsMessage = 1
 
@@ -88,6 +106,24 @@ public enum LumosConstants {
 
     /// crypto_protocol.CHAIN_KEY_SEEDS.overridable
     public static let chainKeySeedsOverridable = false
+
+    /// crypto_protocol.CONFIG_SIGNING_INFO.overridable
+    public static let configSigningInfoOverridable = false
+
+    /// crypto_protocol.CONFIG_SIGNING_INFO.value
+    public static let configSigningInfoValue = "lumos/config/signed-package/v1"
+
+    /// crypto_protocol.MEDIA_OBJECT_KEY_INFO.overridable
+    public static let mediaObjectKeyInfoOverridable = false
+
+    /// crypto_protocol.MEDIA_OBJECT_KEY_INFO.value
+    public static let mediaObjectKeyInfoValue = "lumos/media/object-key/v1"
+
+    /// crypto_protocol.MEDIA_OBJECT_KEY_WRAP_INFO.overridable
+    public static let mediaObjectKeyWrapInfoOverridable = false
+
+    /// crypto_protocol.MEDIA_OBJECT_KEY_WRAP_INFO.value
+    public static let mediaObjectKeyWrapInfoValue = "lumos/media/object-key-wrap/v1"
 
     /// crypto_protocol.RATCHET_HEADER_LAYOUT.dh_len
     public static let ratchetHeaderLayoutDhLen = 32
@@ -133,6 +169,12 @@ public enum LumosConstants {
 
     /// crypto_protocol.SAFETY_NUMBER_KDF_INFO.value
     public static let safetyNumberKdfInfoValue = "lumos/safety-number/v1"
+
+    /// crypto_protocol.VOUCHER_SIGNING_INFO.overridable
+    public static let voucherSigningInfoOverridable = false
+
+    /// crypto_protocol.VOUCHER_SIGNING_INFO.value
+    public static let voucherSigningInfoValue = "lumos/voucher/token/v1"
 
     /// crypto_protocol.X3DH_F_PREFIX.fill_byte
     public static let x3dhFPrefixFillByte = 255

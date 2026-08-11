@@ -7,7 +7,7 @@
  * GENERATED - DO NOT EDIT. Generator: tools/constantsgen
  * Source register: protocol/constants/lumos_constants.json
  * Baseline: TRS v1.1 Sec. 23 / EDP v1.0 Sec. 4 (ADR-004)
- * constants_hash: sha256:3e979bd0561766daee1280ca0a7b2d793532573266d01f10a79c2c18009074a4
+ * constants_hash: sha256:99beeffb52f9b5b65afd53bb875175171e0e920e802b0927dd4f34db9cffc23c
  */
 package com.lumos.protocol;
 
@@ -24,7 +24,7 @@ public final class LumosConstants {
     public static final String SERVICE_UUID = "E853EB6A-775C-4A49-A6BF-320E6A5CC609";
 
     /** Binds generated code to the register that produced it (TRS-CONST-005). */
-    public static final String CONSTANTS_HASH = "sha256:3e979bd0561766daee1280ca0a7b2d793532573266d01f10a79c2c18009074a4";
+    public static final String CONSTANTS_HASH = "sha256:99beeffb52f9b5b65afd53bb875175171e0e920e802b0927dd4f34db9cffc23c";
 
     /** Register schema version. */
     public static final int SCHEMA_VERSION = 1;
@@ -90,6 +90,24 @@ public final class LumosConstants {
 
     // Crypto protocol
 
+    /** crypto_protocol.ADV_AUTH_TAG_INFO.overridable */
+    public static final boolean ADV_AUTH_TAG_INFO_OVERRIDABLE = false;
+
+    /** crypto_protocol.ADV_AUTH_TAG_INFO.value */
+    public static final String ADV_AUTH_TAG_INFO_VALUE = "lumos/adv/auth-tag/v1";
+
+    /** crypto_protocol.ADV_EID_KDF_INFO.overridable */
+    public static final boolean ADV_EID_KDF_INFO_OVERRIDABLE = false;
+
+    /** crypto_protocol.ADV_EID_KDF_INFO.value */
+    public static final String ADV_EID_KDF_INFO_VALUE = "lumos/adv/eid/v1";
+
+    /** crypto_protocol.ADV_KEY_KDF_INFO.overridable */
+    public static final boolean ADV_KEY_KDF_INFO_OVERRIDABLE = false;
+
+    /** crypto_protocol.ADV_KEY_KDF_INFO.value */
+    public static final String ADV_KEY_KDF_INFO_VALUE = "lumos/adv/k-adv/v1";
+
     /** crypto_protocol.CHAIN_KEY_SEEDS.message */
     public static final int CHAIN_KEY_SEEDS_MESSAGE = 1;
 
@@ -98,6 +116,24 @@ public final class LumosConstants {
 
     /** crypto_protocol.CHAIN_KEY_SEEDS.overridable */
     public static final boolean CHAIN_KEY_SEEDS_OVERRIDABLE = false;
+
+    /** crypto_protocol.CONFIG_SIGNING_INFO.overridable */
+    public static final boolean CONFIG_SIGNING_INFO_OVERRIDABLE = false;
+
+    /** crypto_protocol.CONFIG_SIGNING_INFO.value */
+    public static final String CONFIG_SIGNING_INFO_VALUE = "lumos/config/signed-package/v1";
+
+    /** crypto_protocol.MEDIA_OBJECT_KEY_INFO.overridable */
+    public static final boolean MEDIA_OBJECT_KEY_INFO_OVERRIDABLE = false;
+
+    /** crypto_protocol.MEDIA_OBJECT_KEY_INFO.value */
+    public static final String MEDIA_OBJECT_KEY_INFO_VALUE = "lumos/media/object-key/v1";
+
+    /** crypto_protocol.MEDIA_OBJECT_KEY_WRAP_INFO.overridable */
+    public static final boolean MEDIA_OBJECT_KEY_WRAP_INFO_OVERRIDABLE = false;
+
+    /** crypto_protocol.MEDIA_OBJECT_KEY_WRAP_INFO.value */
+    public static final String MEDIA_OBJECT_KEY_WRAP_INFO_VALUE = "lumos/media/object-key-wrap/v1";
 
     /** crypto_protocol.RATCHET_HEADER_LAYOUT.dh_len */
     public static final int RATCHET_HEADER_LAYOUT_DH_LEN = 32;
@@ -143,6 +179,12 @@ public final class LumosConstants {
 
     /** crypto_protocol.SAFETY_NUMBER_KDF_INFO.value */
     public static final String SAFETY_NUMBER_KDF_INFO_VALUE = "lumos/safety-number/v1";
+
+    /** crypto_protocol.VOUCHER_SIGNING_INFO.overridable */
+    public static final boolean VOUCHER_SIGNING_INFO_OVERRIDABLE = false;
+
+    /** crypto_protocol.VOUCHER_SIGNING_INFO.value */
+    public static final String VOUCHER_SIGNING_INFO_VALUE = "lumos/voucher/token/v1";
 
     /** crypto_protocol.X3DH_F_PREFIX.fill_byte */
     public static final int X3DH_F_PREFIX_FILL_BYTE = 255;

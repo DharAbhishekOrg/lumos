@@ -1,10 +1,10 @@
 {
   "schema_version": 1,
   "generator": "tools/vectorgen",
-  "generator_commit": "9b06f88",
-  "constants_hash": "sha256:3e979bd0561766daee1280ca0a7b2d793532573266d01f10a79c2c18009074a4",
+  "generator_commit": "a9f1686",
+  "constants_hash": "sha256:99beeffb52f9b5b65afd53bb875175171e0e920e802b0927dd4f34db9cffc23c",
   "key_provenance": "TESTONLY-lumos-vectors-v1",
-  "notes": "Golden-vector manifest (TRS Sec. 18.4). generator_commit is the HEAD at generation time, same convention as the trace matrix. The adv, media, config and voucher trees arrive in slice S4c; their absence here is deliberate scope, not an omission.",
+  "notes": "Golden-vector manifest (TRS Sec. 18.4). generator_commit is the HEAD at generation time, same convention as the trace matrix. The suite is COMPLETE: assertSuiteComplete enforces that the emitted set is exactly the Sec. 18.4 tree, so a missing file fails generation rather than producing a quietly smaller suite.",
   "files": [
     {
       "path": "test-vectors/framing/frame_roundtrip.json",
@@ -66,6 +66,48 @@
         "SRS-IDN-005",
         "TRS-CRY-014",
         "TRS-CRY-015"
+      ]
+    },
+    {
+      "path": "test-vectors/adv/ble_advertisement.json",
+      "implements": [
+        "TRS-PROTO-009",
+        "TRS-PROTO-017",
+        "TRS-PROTO-018",
+        "SRS-IDN-004"
+      ]
+    },
+    {
+      "path": "test-vectors/media/object_pipeline.json",
+      "implements": [
+        "TRS-CRY-008",
+        "TRS-PROTO-010",
+        "TRS-PROTO-011",
+        "TRS-MED-002"
+      ]
+    },
+    {
+      "path": "test-vectors/config/package_valid.json",
+      "implements": [
+        "TRS-CFG-001",
+        "TRS-CRY-009",
+        "TRS-CONST-005"
+      ]
+    },
+    {
+      "path": "test-vectors/config/package_invalid.json",
+      "implements": [
+        "TRS-CFG-001",
+        "TRS-CONST-005",
+        "TRS-ARCH-010"
+      ]
+    },
+    {
+      "path": "test-vectors/voucher/voucher_tokens.json",
+      "implements": [
+        "TRS-CFG-009",
+        "TRS-CRY-009",
+        "TRS-TRN-014"
       ]
     }
   ]

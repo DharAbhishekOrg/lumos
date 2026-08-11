@@ -6,7 +6,7 @@
 // GENERATED - DO NOT EDIT. Generator: tools/constantsgen
 // Source register: protocol/constants/lumos_constants.json
 // Baseline: TRS v1.1 Sec. 23 / EDP v1.0 Sec. 4 (ADR-004)
-// constants_hash: sha256:3e979bd0561766daee1280ca0a7b2d793532573266d01f10a79c2c18009074a4
+// constants_hash: sha256:99beeffb52f9b5b65afd53bb875175171e0e920e802b0927dd4f34db9cffc23c
 // Source schema: protocol/schemas/error_codes.schema.json
 
 // Package lumoserrors holds the stable machine-readable error codes of
@@ -54,6 +54,14 @@ const (
 	ErrMeshTTLExpired = "ERR_MESH_TTL_EXPIRED"
 	// ERR_TRANSPORT_LOCAL_ONLY_VIOLATION (62, mesh): A frame flagged local-only was offered to the internet relay (SRS-TRN-009).
 	ErrTransportLocalOnlyViolation = "ERR_TRANSPORT_LOCAL_ONLY_VIOLATION"
+	// ERR_MEDIA_DIGEST_MISMATCH (100, media): Reassembled object did not match the SHA-256 digest declared in OBJECT_META.
+	ErrMediaDigestMismatch = "ERR_MEDIA_DIGEST_MISMATCH"
+	// ERR_MEDIA_OBJECT_KEY_UNWRAP_FAILED (101, media): The object key could not be unwrapped from the active match session.
+	ErrMediaObjectKeyUnwrapFailed = "ERR_MEDIA_OBJECT_KEY_UNWRAP_FAILED"
+	// ERR_MEDIA_CHUNK_OUT_OF_RANGE (102, media): A chunk index fell outside the plan declared in OBJECT_META.
+	ErrMediaChunkOutOfRange = "ERR_MEDIA_CHUNK_OUT_OF_RANGE"
+	// ERR_ADV_AUTH_TAG_MISMATCH (110, adv): Advertisement authTag did not match the expected HMAC prefix for the epoch; the advertisement is discarded before connection.
+	ErrAdvAuthTagMismatch = "ERR_ADV_AUTH_TAG_MISMATCH"
 	// ERR_CONFIG_SIGNATURE_INVALID (80, config): Signed configuration or voucher failed signature verification.
 	ErrConfigSignatureInvalid = "ERR_CONFIG_SIGNATURE_INVALID"
 	// ERR_CONFIG_SCHEMA_INVALID (81, config): Configuration failed schema validation, including an out-of-bounds override (TRS-CONST-002).
@@ -94,6 +102,10 @@ var Numeric = map[string]int{
 	ErrMeshHopViolation:             60,
 	ErrMeshTTLExpired:               61,
 	ErrTransportLocalOnlyViolation:  62,
+	ErrMediaDigestMismatch:          100,
+	ErrMediaObjectKeyUnwrapFailed:   101,
+	ErrMediaChunkOutOfRange:         102,
+	ErrAdvAuthTagMismatch:           110,
 	ErrConfigSignatureInvalid:       80,
 	ErrConfigSchemaInvalid:          81,
 	ErrConfigRollback:               82,

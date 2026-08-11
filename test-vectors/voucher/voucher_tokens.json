@@ -1,0 +1,135 @@
+{
+  "schema_version": 1,
+  "generator": "tools/vectorgen",
+  "constants_hash": "sha256:99beeffb52f9b5b65afd53bb875175171e0e920e802b0927dd4f34db9cffc23c",
+  "implements": [
+    "TRS-CFG-009",
+    "TRS-CRY-009",
+    "TRS-TRN-014"
+  ],
+  "key_provenance": "TESTONLY-lumos-vectors-v1",
+  "notes": "Voucher tokens. expected_error is empty for the case that must redeem and a stable code for every case that must not. The token carries no personal data because it may be displayed, photographed and shared in a venue. TESTONLY signing key.",
+  "trust_anchor_ed25519_pub_hex": "94a8ea7d66fd401262f2102d49dfd77a89ad341bcaa7efbf229ebabf16754a13",
+  "cases": [
+    {
+      "name": "valid",
+      "description": "A fresh single-use voucher inside its window.",
+      "payload": {
+        "voucher_id": "welcome-drink",
+        "venue_id": "the-blue-room",
+        "nonce": "321f3171e26787eb2016b7e6e36ea850",
+        "valid_from": 1699000000,
+        "valid_until": 1800000000,
+        "perk_id": "free-first-drink",
+        "revocable": true
+      },
+      "canonical_bytes": "nonce=321f3171e26787eb2016b7e6e36ea850\nperk_id=free-first-drink\nrevocable=true\nvalid_from=1699000000\nvalid_until=1800000000\nvenue_id=the-blue-room\nvoucher_id=welcome-drink\n",
+      "signature_hex": "8f7421867e1e8c0513a998d3d998effd0c781b6ddb309c51a1fb573d4df99079a8cb396fca07b5760c7fbad38eef86727569b46c45b0a1f7dc2895831144f90f",
+      "now_unix": 1700000000,
+      "seen_nonces": [],
+      "revoked_voucher_ids": [],
+      "expected_error": ""
+    },
+    {
+      "name": "replayed_nonce",
+      "description": "The same nonce presented twice; the second redemption is refused.",
+      "payload": {
+        "voucher_id": "welcome-drink",
+        "venue_id": "the-blue-room",
+        "nonce": "321f3171e26787eb2016b7e6e36ea850",
+        "valid_from": 1699000000,
+        "valid_until": 1800000000,
+        "perk_id": "free-first-drink",
+        "revocable": true
+      },
+      "canonical_bytes": "nonce=321f3171e26787eb2016b7e6e36ea850\nperk_id=free-first-drink\nrevocable=true\nvalid_from=1699000000\nvalid_until=1800000000\nvenue_id=the-blue-room\nvoucher_id=welcome-drink\n",
+      "signature_hex": "8f7421867e1e8c0513a998d3d998effd0c781b6ddb309c51a1fb573d4df99079a8cb396fca07b5760c7fbad38eef86727569b46c45b0a1f7dc2895831144f90f",
+      "now_unix": 1700000000,
+      "seen_nonces": [
+        "321f3171e26787eb2016b7e6e36ea850"
+      ],
+      "revoked_voucher_ids": [],
+      "expected_error": "ERR_VOUCHER_NONCE_REPLAY"
+    },
+    {
+      "name": "revoked",
+      "description": "A revocable voucher listed in the revocation set.",
+      "payload": {
+        "voucher_id": "welcome-drink",
+        "venue_id": "the-blue-room",
+        "nonce": "321f3171e26787eb2016b7e6e36ea850",
+        "valid_from": 1699000000,
+        "valid_until": 1800000000,
+        "perk_id": "free-first-drink",
+        "revocable": true
+      },
+      "canonical_bytes": "nonce=321f3171e26787eb2016b7e6e36ea850\nperk_id=free-first-drink\nrevocable=true\nvalid_from=1699000000\nvalid_until=1800000000\nvenue_id=the-blue-room\nvoucher_id=welcome-drink\n",
+      "signature_hex": "8f7421867e1e8c0513a998d3d998effd0c781b6ddb309c51a1fb573d4df99079a8cb396fca07b5760c7fbad38eef86727569b46c45b0a1f7dc2895831144f90f",
+      "now_unix": 1700000000,
+      "seen_nonces": [],
+      "revoked_voucher_ids": [
+        "welcome-drink"
+      ],
+      "expected_error": "ERR_VOUCHER_REVOKED"
+    },
+    {
+      "name": "expired",
+      "description": "Validity window closed beyond the clock-skew tolerance.",
+      "payload": {
+        "voucher_id": "welcome-drink",
+        "venue_id": "the-blue-room",
+        "nonce": "321f3171e26787eb2016b7e6e36ea850",
+        "valid_from": 1699000000,
+        "valid_until": 1699997000,
+        "perk_id": "free-first-drink",
+        "revocable": true
+      },
+      "canonical_bytes": "nonce=321f3171e26787eb2016b7e6e36ea850\nperk_id=free-first-drink\nrevocable=true\nvalid_from=1699000000\nvalid_until=1699997000\nvenue_id=the-blue-room\nvoucher_id=welcome-drink\n",
+      "signature_hex": "92d4a6506d180bf33f2fbc08e08b96d8da5c32c6f571be3c00b2a4e6d6e5d18e96e70514dc0a8514a0b44e15f96914019ea8152275d17ab12269d5a62abf2402",
+      "now_unix": 1700000000,
+      "seen_nonces": [],
+      "revoked_voucher_ids": [],
+      "expected_error": "ERR_CONFIG_EXPIRED"
+    },
+    {
+      "name": "tampered_signature",
+      "description": "One signature byte flipped.",
+      "payload": {
+        "voucher_id": "welcome-drink",
+        "venue_id": "the-blue-room",
+        "nonce": "321f3171e26787eb2016b7e6e36ea850",
+        "valid_from": 1699000000,
+        "valid_until": 1800000000,
+        "perk_id": "free-first-drink",
+        "revocable": true
+      },
+      "canonical_bytes": "nonce=321f3171e26787eb2016b7e6e36ea850\nperk_id=free-first-drink\nrevocable=true\nvalid_from=1699000000\nvalid_until=1800000000\nvenue_id=the-blue-room\nvoucher_id=welcome-drink\n",
+      "signature_hex": "8e7421867e1e8c0513a998d3d998effd0c781b6ddb309c51a1fb573d4df99079a8cb396fca07b5760c7fbad38eef86727569b46c45b0a1f7dc2895831144f90f",
+      "now_unix": 1700000000,
+      "seen_nonces": [],
+      "revoked_voucher_ids": [],
+      "expected_error": "ERR_CONFIG_SIGNATURE_INVALID"
+    },
+    {
+      "name": "non_revocable_ignores_revocation_set",
+      "description": "A non-revocable voucher is not checked against the revocation set and still redeems.",
+      "payload": {
+        "voucher_id": "permanent-perk",
+        "venue_id": "the-blue-room",
+        "nonce": "321f3171e26787eb2016b7e6e36ea850",
+        "valid_from": 1699000000,
+        "valid_until": 1800000000,
+        "perk_id": "free-first-drink",
+        "revocable": false
+      },
+      "canonical_bytes": "nonce=321f3171e26787eb2016b7e6e36ea850\nperk_id=free-first-drink\nrevocable=false\nvalid_from=1699000000\nvalid_until=1800000000\nvenue_id=the-blue-room\nvoucher_id=permanent-perk\n",
+      "signature_hex": "d7fa995a6fcfc82b5f9f4ab36d75f21da58a0cbd2a724189d8c0e8967baedf0c67cdf55f9c7cdd23a12d562e921b866d7fb69fd0d4f733d15e912b6b8b081f0b",
+      "now_unix": 1700000000,
+      "seen_nonces": [],
+      "revoked_voucher_ids": [
+        "permanent-perk"
+      ],
+      "expected_error": ""
+    }
+  ]
+}

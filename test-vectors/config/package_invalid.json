@@ -1,0 +1,222 @@
+{
+  "schema_version": 1,
+  "generator": "tools/vectorgen",
+  "constants_hash": "sha256:99beeffb52f9b5b65afd53bb875175171e0e920e802b0927dd4f34db9cffc23c",
+  "implements": [
+    "TRS-CFG-001",
+    "TRS-CONST-005",
+    "TRS-ARCH-010"
+  ],
+  "key_provenance": "TESTONLY-lumos-vectors-v1",
+  "notes": "Packages that MUST be rejected, each with its exact stable code. Validation is fail closed and ORDERED - signature, constants hash, environment, validity window, rollback - so a package failing several gates reports the first. Rejecting a package leaves the last-known-good active; there is no partial activation and no fail-open path (TRS-ARCH-010).",
+  "trust_anchor_ed25519_pub_hex": "3f5742b966b6badb7ed3d491757facab3069b174fc8da21c7402a089e9b2c510",
+  "cases": [
+    {
+      "name": "tampered_signature",
+      "description": "One signature byte flipped.",
+      "payload": {
+        "version": 5,
+        "environment": "staging",
+        "constants_hash": "sha256:99beeffb52f9b5b65afd53bb875175171e0e920e802b0927dd4f34db9cffc23c",
+        "valid_from": 1699000000,
+        "valid_until": 1800000000,
+        "overrides": {
+          "EID_ROTATION_SEC": 900,
+          "MESH_HOP_DEFAULT": 4
+        },
+        "kill_switches": {
+          "disable_venue_rooms": true
+        }
+      },
+      "signature_hex": "48607ea7117022db86f7b9799ec661d22be6abbc4e4db6d6a6bb817c75b6fed42f54cdb737c26efa39c4ffb7b1a032a4aac0700ab38f32aa8678badde0c3a400",
+      "now_unix": 1700000000,
+      "active_version": 4,
+      "expected_environment": "staging",
+      "expected_error": "ERR_CONFIG_SIGNATURE_INVALID"
+    },
+    {
+      "name": "foreign_signer",
+      "description": "Correctly formed but signed by a key that is not the trust anchor.",
+      "payload": {
+        "version": 5,
+        "environment": "staging",
+        "constants_hash": "sha256:99beeffb52f9b5b65afd53bb875175171e0e920e802b0927dd4f34db9cffc23c",
+        "valid_from": 1699000000,
+        "valid_until": 1800000000,
+        "overrides": {
+          "EID_ROTATION_SEC": 900,
+          "MESH_HOP_DEFAULT": 4
+        },
+        "kill_switches": {
+          "disable_venue_rooms": true
+        }
+      },
+      "signature_hex": "c72f2d372ca670c4aec3fe303c58eb52fa1971a2c78001944f173f9786bf701b5f70f26a0be5983dfaa77fef1785d5f33f153acc527c7a30b17f791efafae800",
+      "now_unix": 1700000000,
+      "active_version": 4,
+      "expected_environment": "staging",
+      "expected_error": "ERR_CONFIG_SIGNATURE_INVALID"
+    },
+    {
+      "name": "mutated_override_after_signing",
+      "description": "An override value changed after signing; every field is covered by the signature.",
+      "payload": {
+        "version": 5,
+        "environment": "staging",
+        "constants_hash": "sha256:99beeffb52f9b5b65afd53bb875175171e0e920e802b0927dd4f34db9cffc23c",
+        "valid_from": 1699000000,
+        "valid_until": 1800000000,
+        "overrides": {
+          "EID_ROTATION_SEC": 300,
+          "MESH_HOP_DEFAULT": 4
+        },
+        "kill_switches": {
+          "disable_venue_rooms": true
+        }
+      },
+      "signature_hex": "49607ea7117022db86f7b9799ec661d22be6abbc4e4db6d6a6bb817c75b6fed42f54cdb737c26efa39c4ffb7b1a032a4aac0700ab38f32aa8678badde0c3a400",
+      "now_unix": 1700000000,
+      "active_version": 4,
+      "expected_environment": "staging",
+      "expected_error": "ERR_CONFIG_SIGNATURE_INVALID"
+    },
+    {
+      "name": "constants_hash_mismatch",
+      "description": "Built against a different constants register (TRS-CONST-005).",
+      "payload": {
+        "version": 5,
+        "environment": "staging",
+        "constants_hash": "sha256:24f622f6e5b730881d7472576303a7d2ef495ebbf62d6af85306e3c119de51b6",
+        "valid_from": 1699000000,
+        "valid_until": 1800000000,
+        "overrides": {
+          "EID_ROTATION_SEC": 900,
+          "MESH_HOP_DEFAULT": 4
+        },
+        "kill_switches": {
+          "disable_venue_rooms": true
+        }
+      },
+      "signature_hex": "b774296884fcb48806b3d18f55a7fdc94536627aac5bf63c7ca66c4d149a01000f0bceeda039b51d3cb8b053947280990de0afc3ad20f2d3d96f747279e1c109",
+      "now_unix": 1700000000,
+      "active_version": 4,
+      "expected_environment": "staging",
+      "expected_error": "ERR_CONFIG_CONSTANTS_HASH_MISMATCH"
+    },
+    {
+      "name": "wrong_environment",
+      "description": "A production package offered to a staging build.",
+      "payload": {
+        "version": 5,
+        "environment": "production",
+        "constants_hash": "sha256:99beeffb52f9b5b65afd53bb875175171e0e920e802b0927dd4f34db9cffc23c",
+        "valid_from": 1699000000,
+        "valid_until": 1800000000,
+        "overrides": {
+          "EID_ROTATION_SEC": 900,
+          "MESH_HOP_DEFAULT": 4
+        },
+        "kill_switches": {
+          "disable_venue_rooms": true
+        }
+      },
+      "signature_hex": "9ccacc091cbce6ea58c891c88c56ee58cf9ea6dd83ac26a9d277f9662f86525ff5318da9fb73eac469f322a240a0bfdf0717b47056a8e8ee2440e817dc43400e",
+      "now_unix": 1700000000,
+      "active_version": 4,
+      "expected_environment": "staging",
+      "expected_error": "ERR_CONFIG_WRONG_ENVIRONMENT"
+    },
+    {
+      "name": "expired",
+      "description": "Validity window closed, beyond the clock-skew tolerance.",
+      "payload": {
+        "version": 5,
+        "environment": "staging",
+        "constants_hash": "sha256:99beeffb52f9b5b65afd53bb875175171e0e920e802b0927dd4f34db9cffc23c",
+        "valid_from": 1699000000,
+        "valid_until": 1699997000,
+        "overrides": {
+          "EID_ROTATION_SEC": 900,
+          "MESH_HOP_DEFAULT": 4
+        },
+        "kill_switches": {
+          "disable_venue_rooms": true
+        }
+      },
+      "signature_hex": "3669fbe6a462c615d29502c8d43d559eee39a5f63580db8aee2b677bdea1a3feccba7726fc10c7278701aad81ec463c604cdcf8bebdcc575c661ccc02601900b",
+      "now_unix": 1700000000,
+      "active_version": 4,
+      "expected_environment": "staging",
+      "expected_error": "ERR_CONFIG_EXPIRED"
+    },
+    {
+      "name": "not_yet_valid",
+      "description": "Validity window has not opened yet.",
+      "payload": {
+        "version": 5,
+        "environment": "staging",
+        "constants_hash": "sha256:99beeffb52f9b5b65afd53bb875175171e0e920e802b0927dd4f34db9cffc23c",
+        "valid_from": 1700003000,
+        "valid_until": 1800000000,
+        "overrides": {
+          "EID_ROTATION_SEC": 900,
+          "MESH_HOP_DEFAULT": 4
+        },
+        "kill_switches": {
+          "disable_venue_rooms": true
+        }
+      },
+      "signature_hex": "1b539e9d4579384f8fc999f8872476206fa2dee48094fc1e580ea3be6b7ae5bcbe0fdf1246ef981ea231a7fc8628b2916e5cef457d294d12094c1421fb288e08",
+      "now_unix": 1700000000,
+      "active_version": 4,
+      "expected_environment": "staging",
+      "expected_error": "ERR_CONFIG_EXPIRED"
+    },
+    {
+      "name": "rollback_attempt",
+      "description": "Re-offering a version that does not supersede the active one.",
+      "payload": {
+        "version": 5,
+        "environment": "staging",
+        "constants_hash": "sha256:99beeffb52f9b5b65afd53bb875175171e0e920e802b0927dd4f34db9cffc23c",
+        "valid_from": 1699000000,
+        "valid_until": 1800000000,
+        "overrides": {
+          "EID_ROTATION_SEC": 900,
+          "MESH_HOP_DEFAULT": 4
+        },
+        "kill_switches": {
+          "disable_venue_rooms": true
+        }
+      },
+      "signature_hex": "49607ea7117022db86f7b9799ec661d22be6abbc4e4db6d6a6bb817c75b6fed42f54cdb737c26efa39c4ffb7b1a032a4aac0700ab38f32aa8678badde0c3a400",
+      "now_unix": 1700000000,
+      "active_version": 5,
+      "expected_environment": "staging",
+      "expected_error": "ERR_CONFIG_ROLLBACK"
+    },
+    {
+      "name": "older_version",
+      "description": "An older package replayed against a newer active version.",
+      "payload": {
+        "version": 2,
+        "environment": "staging",
+        "constants_hash": "sha256:99beeffb52f9b5b65afd53bb875175171e0e920e802b0927dd4f34db9cffc23c",
+        "valid_from": 1699000000,
+        "valid_until": 1800000000,
+        "overrides": {
+          "EID_ROTATION_SEC": 900,
+          "MESH_HOP_DEFAULT": 4
+        },
+        "kill_switches": {
+          "disable_venue_rooms": true
+        }
+      },
+      "signature_hex": "9720babb952a79180a5fb3bf0768f8320f9b1e70f3cc4b600a198655c2c6ea2c91e3293b9ffd908c27103a0c01fd04ce6e209e410f70b207b270d900b5427b0c",
+      "now_unix": 1700000000,
+      "active_version": 9,
+      "expected_environment": "staging",
+      "expected_error": "ERR_CONFIG_ROLLBACK"
+    }
+  ]
+}

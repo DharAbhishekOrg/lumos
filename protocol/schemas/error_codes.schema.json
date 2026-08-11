@@ -80,6 +80,21 @@
    "user_message": null,
    "user_message_note": "Silent to the user, but this is a P0 privacy invariant: the send is refused, not downgraded."},
 
+  {"code": "ERR_MEDIA_DIGEST_MISMATCH", "numeric": 100, "category": "media",
+   "meaning": "Reassembled object did not match the SHA-256 digest declared in OBJECT_META.",
+   "user_message": "That file didn't arrive correctly. Ask them to send it again."},
+  {"code": "ERR_MEDIA_OBJECT_KEY_UNWRAP_FAILED", "numeric": 101, "category": "media",
+   "meaning": "The object key could not be unwrapped from the active match session.",
+   "user_message": "That file couldn't be opened."},
+  {"code": "ERR_MEDIA_CHUNK_OUT_OF_RANGE", "numeric": 102, "category": "media",
+   "meaning": "A chunk index fell outside the plan declared in OBJECT_META.",
+   "user_message": "That file didn't arrive correctly. Ask them to send it again."},
+
+  {"code": "ERR_ADV_AUTH_TAG_MISMATCH", "numeric": 110, "category": "adv",
+   "meaning": "Advertisement authTag did not match the expected HMAC prefix for the epoch; the advertisement is discarded before connection.",
+   "user_message": null,
+   "user_message_note": "Silent by design - this is cheap pre-connection noise rejection on Android (ADR-002), not a user-visible failure. The peer is simply not shown."},
+
   {"code": "ERR_CONFIG_SIGNATURE_INVALID", "numeric": 80, "category": "config",
    "meaning": "Signed configuration or voucher failed signature verification.",
    "user_message": "Couldn't load venue information."},
