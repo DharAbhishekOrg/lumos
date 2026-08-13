@@ -239,15 +239,14 @@ public struct ProfileFieldPolicy: Equatable, Sendable {
         }
     }
 
+    /// Empty means "every field at its default", which is the most private
+    /// audience - see `threshold`. The memberwise initializer is synthesized
+    /// and private, because this property is; there is nothing to write.
     private var minimumAudience: [ProfileField: Audience]
 
     /// The safe default: every field visible to matches only.
     public static var privateByDefault: ProfileFieldPolicy {
         ProfileFieldPolicy(minimumAudience: [:])
-    }
-
-    private init(minimumAudience: [ProfileField: Audience]) {
-        self.minimumAudience = minimumAudience
     }
 
     /// This policy with one field's threshold changed.
