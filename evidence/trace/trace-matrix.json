@@ -244,7 +244,7 @@
   },
   {
    "req_id": "SRS-DAT-002",
-   "status": "implemented",
+   "status": "tested",
    "code": [
     "android-app/app/src/main/java/com/lumos/app/store/SealedRecordCodec.java",
     "android-app/app/src/main/java/com/lumos/app/store/LocalStore.java",
@@ -5869,7 +5869,7 @@
   },
   {
    "req_id": "TRS-LOC-002",
-   "status": "implemented",
+   "status": "tested",
    "code": [
     "android-app/app/src/main/java/com/lumos/app/store/SealedRecordCodec.java",
     "android-app/app/src/main/java/com/lumos/app/data/DataKeyHierarchy.java",
@@ -5893,7 +5893,7 @@
   },
   {
    "req_id": "TRS-LOC-003",
-   "status": "implemented",
+   "status": "tested",
    "code": [
     "android-app/app/src/main/java/com/lumos/app/store/LocalSchema.java",
     "android-app/app/src/main/java/com/lumos/app/store/Migration.java",
@@ -5971,7 +5971,7 @@
   },
   {
    "req_id": "TRS-LOC-009",
-   "status": "implemented",
+   "status": "tested",
    "code": [
     "android-app/app/src/main/res/xml/data_extraction_rules.xml",
     "android-app/app/src/main/res/xml/backup_rules.xml",
@@ -5997,7 +5997,7 @@
   },
   {
    "req_id": "TRS-LOC-010",
-   "status": "implemented",
+   "status": "tested",
    "code": [
     "android-app/app/src/main/java/com/lumos/app/store/LocalStore.java",
     "android-app/app/src/main/java/com/lumos/app/store/LocalSchema.java",
