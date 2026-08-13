@@ -29,7 +29,7 @@ Same content, easier to query:
 | --- | --- |
 | `prompts/` | Per-work-package kickoff prompts |
 | `handover/` | Original handover pack archive, retained for provenance |
-| `adrs/` | ADR-005..009, all **Accepted**. ADR-001..004 remain in the EDP; back-porting them as standalone records is not a WP-01 deliverable |
+| `adrs/` | ADR-005..011, all **Accepted**. ADR-001..004 remain in the EDP; back-porting them as standalone records is not a WP-01 deliverable |
 | [`security/threat-model.md`](security/threat-model.md) | **Seeded** in WP-02 slice S0 (TRS-REP-008 phase 1). Covers the Zone-A device-compromise surface, key storage and the WP-02 constraints that follow from them |
 | [`privacy/data-map.md`](privacy/data-map.md) | **Seeded** in WP-02 slice S0 (TRS-REP-008 phase 1). Classifies locally held personal data and maps it to purpose, lawful basis, retention and data-subject rights |
 
@@ -50,6 +50,8 @@ request — with the final documentation audit in WP-11.
 | [ADR-007](adrs/ADR-007-wire-encoding-choices.md) | **Accepted** 2026-08-11 | Version-byte nibbles and the four frame flag bit positions |
 | [ADR-008](adrs/ADR-008-identity-dh-key.md) | **Accepted** 2026-08-11, 2 conditions | Separate X25519 identity-DH key; Ed25519 stays the sole root of trust. **Flagged for G-07** |
 | [ADR-009](adrs/ADR-009-safety-number-emoji-alphabet.md) | **Accepted** 2026-08-11 | The 64-emoji alphabet; non-confusability reasoned, not human-tested. **Flagged for G-07** |
+| [ADR-010](adrs/ADR-010-keystore-authentication-policy.md) | **Accepted** 2026-08-14 | Keystore auth policy: no key-level gating; App Lock + action-level device auth for wipe, export, reset |
+| [ADR-011](adrs/ADR-011-screenshot-policy.md) | **Accepted** 2026-08-14 | Screenshot policy: recents always redacted, detect-and-warn in chat, no global FLAG_SECURE |
 
 ## Note on `handover/Lumos_Codex_Handover_Pack.zip`
 

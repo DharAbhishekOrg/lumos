@@ -3,15 +3,15 @@
 /// Implements: TRS-REP-001, TRS-REP-004, TRS-REP-007
 /// ADRs: ADR-002, ADR-004
 /// Threading: main-safe
-/// Notes: An EMPTY shell: no SwiftUI views, no CoreBluetooth, no feature code -
-/// WP-01 forbids all of it. It exists to prove the iOS toolchain compiles this
-/// target against the Swift 6 language mode and that the four environments of
-/// TRS-REP-004 are separated by construction.
+/// Notes: The WP-01 shell held build provenance and nothing else; WP-02 S1
+/// added the first feature code beside it (the key hierarchy: Identity,
+/// KekStore, DataKeyHierarchy, KeysFirstWipe, KeychainBlobStore). This file
+/// still carries only provenance and the TRS-REP-004 environment separation.
 ///
 /// This is a SwiftPM library, not an .app bundle. A bundle needs an Xcode
 /// project and a signing identity, and signing material never exists in source
-/// or CI (TRS-REP-005) - so the bundle arrives in WP-02 alongside the app shell
-/// that justifies it. What CI proves here is that the code compiles for iOS.
+/// or CI (TRS-REP-005) - so the bundle arrives with the WP-02 UI slices that
+/// justify it. What CI proves here is that the code compiles for iOS.
 
 import Foundation
 

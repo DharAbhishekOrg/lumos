@@ -14,6 +14,8 @@ onward are raised during implementation per TRS-AI-006 and captured here.
 | [007](ADR-007-wire-encoding-choices.md) | **Accepted** | Frozen wire encodings: protocol-version byte and flag bit positions |
 | [008](ADR-008-identity-dh-key.md) | **Accepted** | Separate X25519 identity-DH key, Ed25519-signed; Ed25519 sole root of trust, verify-before-DH (2 conditions) |
 | [009](ADR-009-safety-number-emoji-alphabet.md) | **Accepted** | The frozen 64-emoji safety-number alphabet and its selection criteria |
+| [010](ADR-010-keystore-authentication-policy.md) | **Accepted** | No key-level auth gating (background decrypt requires it); App Lock + action-level device auth for wipe, export, reset; StrongBox/SE capability-probed |
+| [011](ADR-011-screenshot-policy.md) | **Accepted** | Recents snapshots always redacted; detect-and-warn in chat where the platform permits; no global FLAG_SECURE (SRS-SAF-004 evidence capture) |
 
 **ADR-008 was ratified** with two binding conditions (Ed25519 as sole root of
 trust; signature verification fails closed before any DH), both enforced by test.

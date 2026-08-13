@@ -5,7 +5,11 @@
 **Baseline:** SRS v1.1 / TRS v1.1 / EDP v1.0
 **Scope of this revision:** personal data held **locally on the user's device** (Zone A)
 after WP-02 — identity, profile, consent, safety state and the recovery export.
-**Status:** seeded before WP-02 feature code exists. Living document.
+**Status:** living document. Seeded before WP-02 feature code (S0). **Owner
+ruling 2026-08-14: the special-category classification in this document —
+including the stricter treatment of free text and profile media in §2.2 — is
+ACCEPTED, pending the G-09 legal review.** The classification is now the working
+basis for design, not a proposal awaiting one.
 
 ---
 
@@ -243,9 +247,11 @@ than guessed, per AGENTS.md §6.
    market; SRS-NFR-COM-011 refers to "launch markets" without naming them.
 4. **Minimum age**, described in SRS-ONB-001 as "the configured minimum age" —
    configured to what, and does it vary by jurisdiction?
-5. **Free text and images as special-category data** (§2.2). This document takes
-   the stricter reading under SRS §2.4. A narrower position is possible but is an
-   owner and legal call, not an implementer's.
+5. **Free text and images as special-category data** (§2.2). ~~This document
+   takes the stricter reading under SRS §2.4. A narrower position is possible
+   but is an owner and legal call, not an implementer's.~~ **Resolved
+   2026-08-14: accepted by the owner, pending G-09.** The stricter reading is
+   the working basis; only the G-09 legal review can narrow it now.
 
 ---
 

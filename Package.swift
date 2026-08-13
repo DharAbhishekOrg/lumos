@@ -45,17 +45,20 @@ let package = Package(
             swiftSettings: [.swiftLanguageMode(.v6)]
         ),
 
-        // The empty iOS application shell. A SwiftPM library rather than an .app
+        // The iOS application shell. A SwiftPM library rather than an .app
         // bundle: a bundle needs an Xcode project and a signing identity, and
-        // signing material never exists in source or CI (TRS-REP-005).
+        // signing material never exists in source or CI (TRS-REP-005). WP-02 S1
+        // adds the key hierarchy here, which consumes the generated constants
+        // (ADR-004: the X3DH binding info string is never copied).
         .target(
             name: "LumosAppShell",
+            dependencies: ["LumosProtocolGenerated"],
             path: "ios-app/shell/Sources/LumosAppShell",
             swiftSettings: [.swiftLanguageMode(.v6)]
         ),
         .testTarget(
             name: "LumosAppShellTests",
-            dependencies: ["LumosAppShell"],
+            dependencies: ["LumosAppShell", "LumosProtocolGenerated"],
             path: "ios-app/shell/Tests/LumosAppShellTests",
             swiftSettings: [.swiftLanguageMode(.v6)]
         )
