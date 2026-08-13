@@ -176,7 +176,12 @@
   "ios-app/shell/Sources/LumosAppShell/": [
    "SRS-IDN-001",
    "SRS-NFR-SEC-003",
-   "TRS-IOS-007"
+   "TRS-IOS-007",
+   "TRS-LOC-009"
+  ],
+  "android-app/app/src/main/res/xml/": [
+   "TRS-LOC-009",
+   "SRS-DAT-012"
   ],
   "android-app/app/src/main/java/com/lumos/app/store/": [
    "SRS-DAT-002",
