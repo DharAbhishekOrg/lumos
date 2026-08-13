@@ -243,14 +243,36 @@ final class MediaSanitizerTests: XCTestCase {
         let reencoded = try MediaSanitizer.reencode(stripped)
 
         XCTAssertNil(reencoded.range(of: Data(DirtyImages.plantedLocation.utf8)))
-        XCTAssertNotNil(CGImageSourceCreateWithData(reencoded as CFData, nil),
-                        "the re-encoded bytes must still be a decodable image")
+        guard let source = CGImageSourceCreateWithData(reencoded as CFData, nil) else {
+            return XCTFail("the re-encoded bytes must still be a decodable image")
+        }
 
-        // And the platform's own metadata reader must find nothing identifying.
-        let source = CGImageSourceCreateWithData(reencoded as CFData, nil)!
+        // And the platform's own metadata reader must find nothing IDENTIFYING.
+        //
+        // Not "no EXIF dictionary at all": ImageIO always writes ColorSpace,
+        // PixelXDimension and PixelYDimension for a JPEG, and those are
+        // rendering facts rather than metadata about the photographer. The
+        // assertion is SRS-PRO-005's own three categories - location, device,
+        // timestamp - which is what the requirement actually forbids. An
+        // earlier version of this test demanded the dictionary be absent
+        // entirely and failed against a platform that will never do that.
         let properties = CGImageSourceCopyPropertiesAtIndex(source, 0, nil) as? [CFString: Any] ?? [:]
-        XCTAssertNil(properties[kCGImagePropertyGPSDictionary], "no GPS block may survive")
-        XCTAssertNil(properties[kCGImagePropertyExifDictionary], "no EXIF block may survive")
+        XCTAssertNil(properties[kCGImagePropertyGPSDictionary], "location: no GPS block may survive")
+
+        let tiff = properties[kCGImagePropertyTIFFDictionary] as? [CFString: Any] ?? [:]
+        for deviceTag in [kCGImagePropertyTIFFMake, kCGImagePropertyTIFFModel,
+                          kCGImagePropertyTIFFDateTime] {
+            XCTAssertNil(tiff[deviceTag], "device/timestamp tag \(deviceTag) must not survive")
+        }
+
+        let exif = properties[kCGImagePropertyExifDictionary] as? [CFString: Any] ?? [:]
+        for identifyingTag in [kCGImagePropertyExifDateTimeOriginal,
+                               kCGImagePropertyExifDateTimeDigitized,
+                               kCGImagePropertyExifLensMake,
+                               kCGImagePropertyExifLensModel,
+                               kCGImagePropertyExifBodySerialNumber] {
+            XCTAssertNil(exif[identifyingTag], "identifying tag \(identifyingTag) must not survive")
+        }
     }
 
     /// Encodes a real, decodable JPEG using the platform codec.
