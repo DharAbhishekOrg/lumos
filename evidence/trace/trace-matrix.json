@@ -3104,7 +3104,7 @@
   },
   {
    "req_id": "SRS-PRO-001",
-   "status": "implemented",
+   "status": "tested",
    "code": [
     "android-app/app/src/main/java/com/lumos/app/profile/LocalProfile.java",
     "android-app/app/src/main/java/com/lumos/app/profile/ProfileRepository.java",
@@ -3124,7 +3124,7 @@
   },
   {
    "req_id": "SRS-PRO-002",
-   "status": "implemented",
+   "status": "tested",
    "code": [
     "android-app/app/src/main/java/com/lumos/app/profile/FieldValue.java",
     "android-app/app/src/main/java/com/lumos/app/profile/ProfileField.java",
@@ -3143,7 +3143,7 @@
   },
   {
    "req_id": "SRS-PRO-003",
-   "status": "implemented",
+   "status": "tested",
    "code": [
     "android-app/app/src/main/java/com/lumos/app/profile/ProfileFieldPolicy.java",
     "ios-app/shell/Sources/LumosAppShell/Profile.swift"
@@ -3172,7 +3172,7 @@
   },
   {
    "req_id": "SRS-PRO-005",
-   "status": "implemented",
+   "status": "tested",
    "code": [
     "android-app/app/src/main/java/com/lumos/app/media/MediaSanitizer.java",
     "ios-app/shell/Sources/LumosAppShell/MediaSanitizer.swift"
@@ -3192,7 +3192,7 @@
   },
   {
    "req_id": "SRS-PRO-006",
-   "status": "implemented",
+   "status": "tested",
    "code": [
     "android-app/app/src/main/java/com/lumos/app/media/MediaSanitizer.java",
     "ios-app/shell/Sources/LumosAppShell/MediaSanitizer.swift"
@@ -3211,7 +3211,7 @@
   },
   {
    "req_id": "SRS-PRO-007",
-   "status": "implemented",
+   "status": "tested",
    "code": [
     "android-app/app/src/main/java/com/lumos/app/profile/ProfilePreview.java",
     "ios-app/shell/Sources/LumosAppShell/Profile.swift"
@@ -3229,7 +3229,7 @@
   },
   {
    "req_id": "SRS-PRO-008",
-   "status": "implemented",
+   "status": "tested",
    "code": [
     "android-app/app/src/main/java/com/lumos/app/profile/ProfilePreview.java",
     "android-app/app/src/main/java/com/lumos/app/profile/ProfileRepository.java"
@@ -3246,7 +3246,7 @@
   },
   {
    "req_id": "SRS-PRO-009",
-   "status": "implemented",
+   "status": "tested",
    "code": [
     "android-app/app/src/main/java/com/lumos/app/profile/LocalProfile.java",
     "ios-app/shell/Sources/LumosAppShell/Profile.swift"
@@ -3262,7 +3262,7 @@
   },
   {
    "req_id": "SRS-PRO-010",
-   "status": "implemented",
+   "status": "tested",
    "code": [
     "android-app/app/src/main/java/com/lumos/app/profile/LocalProfile.java",
     "android-app/app/src/main/java/com/lumos/app/profile/ProfileField.java"
@@ -3279,7 +3279,7 @@
   },
   {
    "req_id": "SRS-PRO-011",
-   "status": "implemented",
+   "status": "tested",
    "code": [
     "android-app/app/src/main/java/com/lumos/app/profile/LocalProfile.java",
     "android-app/app/src/main/java/com/lumos/app/profile/ProfileRepository.java"
@@ -4327,7 +4327,7 @@
   },
   {
    "req_id": "TRS-AND-004",
-   "status": "implemented",
+   "status": "tested",
    "code": [
     "android-app/app/src/main/java/com/lumos/app/store/room/LumosRoomDatabase.java",
     "android-app/app/src/main/java/com/lumos/app/store/room/RoomSqlDatabase.java",
