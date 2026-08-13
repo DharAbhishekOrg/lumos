@@ -159,13 +159,13 @@ var goldenValues = map[string]int64{
 	"crypto_protocol.X3DH_OPK_ID_NONE.default":                   4294967295,
 	// Argon2id work factors, transcribed by hand so a slip in the register is
 	// caught here rather than by a user whose export turns out cheap to crack.
-	"crypto_protocol.RECOVERY_ARGON2ID.memory_kib":               65536,
-	"crypto_protocol.RECOVERY_ARGON2ID.memory_kib_min":           32768,
-	"crypto_protocol.RECOVERY_ARGON2ID.iterations":               3,
-	"crypto_protocol.RECOVERY_ARGON2ID.iterations_min":           2,
-	"crypto_protocol.RECOVERY_ARGON2ID.parallelism":              1,
-	"crypto_protocol.RECOVERY_ARGON2ID.salt_bytes":               16,
-	"crypto_protocol.RECOVERY_ARGON2ID.key_bytes":                32,
+	"crypto_protocol.RECOVERY_ARGON2ID.memory_kib":     65536,
+	"crypto_protocol.RECOVERY_ARGON2ID.memory_kib_min": 32768,
+	"crypto_protocol.RECOVERY_ARGON2ID.iterations":     3,
+	"crypto_protocol.RECOVERY_ARGON2ID.iterations_min": 2,
+	"crypto_protocol.RECOVERY_ARGON2ID.parallelism":    1,
+	"crypto_protocol.RECOVERY_ARGON2ID.salt_bytes":     16,
+	"crypto_protocol.RECOVERY_ARGON2ID.key_bytes":      32,
 }
 
 func TestRegisterCoversTRSSection23(t *testing.T) {

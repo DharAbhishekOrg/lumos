@@ -46,6 +46,10 @@ const (
 	ErrCryptoSkippedKeyCap = "ERR_CRYPTO_SKIPPED_KEY_CAP"
 	// ERR_CRYPTO_PREKEY_SIGNATURE_INVALID (44, crypto): X3DH prekey bundle signature failed verification (identity-DH binding or signed prekey).
 	ErrCryptoPrekeySignatureInvalid = "ERR_CRYPTO_PREKEY_SIGNATURE_INVALID"
+	// ERR_CRYPTO_RECOVERY_OPEN_FAILED (45, crypto): A RecoveryRecord could not be opened. ONE code for every cause - wrong passphrase, tampered header, corrupted ciphertext, unknown format - because distinguishing them is an oracle over the passphrase (TRS-CRY-013).
+	ErrCryptoRecoveryOpenFailed = "ERR_CRYPTO_RECOVERY_OPEN_FAILED"
+	// ERR_CRYPTO_RECOVERY_PARAMS_REJECTED (46, crypto): A RecoveryRecord declares Argon2id work factors below the register minima. Reported separately from OPEN_FAILED on purpose: this is a property of the FILE, readable without any passphrase attempt, so naming it discloses nothing and warning the user their old backup is too weak to trust is worth more than uniformity.
+	ErrCryptoRecoveryParamsRejected = "ERR_CRYPTO_RECOVERY_PARAMS_REJECTED"
 	// ERR_CRYPTO_REPLAY (43, crypto): message_id already seen within the dedup window.
 	ErrCryptoReplay = "ERR_CRYPTO_REPLAY"
 	// ERR_MESH_HOP_VIOLATION (60, mesh): A relay attempted to raise hop_limit or TTL (TRS-PROTO-012).
@@ -98,6 +102,8 @@ var Numeric = map[string]int{
 	ErrCryptoMaxSkipExceeded:        41,
 	ErrCryptoSkippedKeyCap:          42,
 	ErrCryptoPrekeySignatureInvalid: 44,
+	ErrCryptoRecoveryOpenFailed:     45,
+	ErrCryptoRecoveryParamsRejected: 46,
 	ErrCryptoReplay:                 43,
 	ErrMeshHopViolation:             60,
 	ErrMeshTTLExpired:               61,

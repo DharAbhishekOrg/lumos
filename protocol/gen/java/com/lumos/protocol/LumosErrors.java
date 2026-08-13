@@ -68,6 +68,12 @@ public final class LumosErrors {
     /** ERR_CRYPTO_PREKEY_SIGNATURE_INVALID (44, crypto): X3DH prekey bundle signature failed verification (identity-DH binding or signed prekey). */
     public static final String ERR_CRYPTO_PREKEY_SIGNATURE_INVALID = "ERR_CRYPTO_PREKEY_SIGNATURE_INVALID";
 
+    /** ERR_CRYPTO_RECOVERY_OPEN_FAILED (45, crypto): A RecoveryRecord could not be opened. ONE code for every cause - wrong passphrase, tampered header, corrupted ciphertext, unknown format - because distinguishing them is an oracle over the passphrase (TRS-CRY-013). */
+    public static final String ERR_CRYPTO_RECOVERY_OPEN_FAILED = "ERR_CRYPTO_RECOVERY_OPEN_FAILED";
+
+    /** ERR_CRYPTO_RECOVERY_PARAMS_REJECTED (46, crypto): A RecoveryRecord declares Argon2id work factors below the register minima. Reported separately from OPEN_FAILED on purpose: this is a property of the FILE, readable without any passphrase attempt, so naming it discloses nothing and warning the user their old backup is too weak to trust is worth more than uniformity. */
+    public static final String ERR_CRYPTO_RECOVERY_PARAMS_REJECTED = "ERR_CRYPTO_RECOVERY_PARAMS_REJECTED";
+
     /** ERR_CRYPTO_REPLAY (43, crypto): message_id already seen within the dedup window. */
     public static final String ERR_CRYPTO_REPLAY = "ERR_CRYPTO_REPLAY";
 
@@ -134,6 +140,8 @@ public final class LumosErrors {
         Map.entry(ERR_CRYPTO_MAX_SKIP_EXCEEDED, 41),
         Map.entry(ERR_CRYPTO_SKIPPED_KEY_CAP, 42),
         Map.entry(ERR_CRYPTO_PREKEY_SIGNATURE_INVALID, 44),
+        Map.entry(ERR_CRYPTO_RECOVERY_OPEN_FAILED, 45),
+        Map.entry(ERR_CRYPTO_RECOVERY_PARAMS_REJECTED, 46),
         Map.entry(ERR_CRYPTO_REPLAY, 43),
         Map.entry(ERR_MESH_HOP_VIOLATION, 60),
         Map.entry(ERR_MESH_TTL_EXPIRED, 61),
