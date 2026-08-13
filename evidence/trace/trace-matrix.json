@@ -354,11 +354,30 @@
   },
   {
    "req_id": "SRS-IDN-001",
-   "status": "not_started",
-   "code": [],
-   "tests": [],
+   "status": "implemented",
+   "code": [
+    "android-app/app/src/main/java/com/lumos/app/identity/IdentityKeyGenerator.java",
+    "android-app/app/src/main/java/com/lumos/app/identity/IdentityKeyRecord.java",
+    "android-app/app/src/main/java/com/lumos/app/keystore/AndroidKekStore.java",
+    "android-app/app/src/main/java/com/lumos/app/keystore/SoftwareKekStore.java",
+    "ios-app/shell/Sources/LumosAppShell/Identity.swift",
+    "ios-app/shell/Sources/LumosAppShell/KekStore.swift"
+   ],
+   "tests": [
+    "java:app-dev:IdentityKeyGeneratorTest.bindingSignatureVerifies",
+    "java:app-dev:IdentityKeyGeneratorTest.verificationFailsClosedOnEveryTamperedInput",
+    "java:app-dev:IdentityKeyGeneratorTest.destroyingTheKekErasesTheIdentity",
+    "java:app-dev:IdentityKeyGeneratorTest.twoIdentitiesAreDistinct",
+    "swift:LumosAppShell:IdentityKeyTests.testBindingSignatureVerifies",
+    "swift:LumosAppShell:IdentityKeyTests.testVerificationFailsClosedOnEveryTamperedInput",
+    "swift:LumosAppShell:IdentityKeyTests.testDestroyingTheKekErasesTheIdentity",
+    "swift:LumosAppShell:IdentityKeyTests.testBindingMessageIsInfoThenRawKey"
+   ],
    "evidence": [],
-   "adr": [],
+   "adr": [
+    "ADR-008",
+    "ADR-010"
+   ],
    "last_commit": null,
    "updated": null
   },
@@ -2543,11 +2562,27 @@
   },
   {
    "req_id": "SRS-NFR-SEC-003",
-   "status": "not_started",
-   "code": [],
-   "tests": [],
+   "status": "implemented",
+   "code": [
+    "android-app/app/src/main/java/com/lumos/app/keystore/KekStore.java",
+    "android-app/app/src/main/java/com/lumos/app/keystore/AndroidKekStore.java",
+    "android-app/app/src/main/java/com/lumos/app/identity/PrivateKeyEnvelope.java",
+    "ios-app/shell/Sources/LumosAppShell/KekStore.swift",
+    "ios-app/shell/Sources/LumosAppShell/KeychainBlobStore.swift"
+   ],
+   "tests": [
+    "java:app-dev:KekStoreContractTest.interfaceCarriesExactlyTheNarrowOperationSet",
+    "java:app-dev:KekStoreContractTest.noMethodReturnsKeyMaterialTypes",
+    "java:app-dev:IdentityKeyGeneratorTest.privateKeysExistOnlyInsideTheWrappedEnvelope",
+    "java:app-dev:SoftwareKekStoreTest.destroyedStoreRefusesEverything",
+    "swift:LumosAppShell:IdentityKeyTests.testPrivateKeysExistOnlyInsideTheWrappedEnvelope",
+    "swift:LumosAppShell:KekStoreTests.testDestroyedStoreRefusesEverything"
+   ],
    "evidence": [],
-   "adr": [],
+   "adr": [
+    "ADR-003",
+    "ADR-010"
+   ],
    "last_commit": null,
    "updated": null
   },
@@ -5736,11 +5771,23 @@
   },
   {
    "req_id": "TRS-IOS-007",
-   "status": "not_started",
-   "code": [],
-   "tests": [],
+   "status": "implemented",
+   "code": [
+    "ios-app/shell/Sources/LumosAppShell/KekStore.swift",
+    "ios-app/shell/Sources/LumosAppShell/KeychainBlobStore.swift",
+    "ios-app/shell/Sources/LumosAppShell/Identity.swift"
+   ],
+   "tests": [
+    "swift:LumosAppShell:KekStoreTests.testWrapUnwrapRoundtrips",
+    "swift:LumosAppShell:KekStoreTests.testProtectionTierIsHonest",
+    "swift:LumosAppShell:KekStoreTests.testTamperingAnywhereIsRejected",
+    "swift:LumosAppShell:KekStoreTests.testDestroyedStoreRefusesEverything"
+   ],
    "evidence": [],
-   "adr": [],
+   "adr": [
+    "ADR-003",
+    "ADR-010"
+   ],
    "last_commit": "24b7913",
    "updated": "2026-08-13"
   },
@@ -6813,7 +6860,9 @@
    ],
    "adr": [
     "ADR-003",
-    "ADR-008"
+    "ADR-008",
+    "ADR-010",
+    "ADR-011"
    ],
    "last_commit": "24b7913",
    "updated": "2026-08-13"

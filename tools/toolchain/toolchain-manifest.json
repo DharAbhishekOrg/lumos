@@ -33,14 +33,15 @@
    "why": "TRS Sec. 5.3 mandates a Java 17 toolchain. Drives the pure-JVM :protocol-conformance module (slice S5)."
   },
   "node": {
-   "version": "24.19.0",
-   "npm": "11.17.0",
-   "channel": "LTS",
-   "verified": "v24.19.0",
+   "version": "26.7.0",
+   "npm": "11.19.0",
+   "channel": "current",
+   "verified": "v26.7.0",
    "path": "C:\\Program Files\\nodejs\\node.exe",
    "license": "MIT",
    "install": "winget install --id OpenJS.NodeJS.LTS --exact",
-   "why": "admin-console empty-shell build (TypeScript, ESLint + tsc strict) in slice S7."
+   "why": "admin-console empty-shell build (TypeScript, ESLint + tsc strict) in slice S7.",
+   "version_note": "This entry records the AUTHORING HOST, which moved to v26.7.0 between WP-01 and WP-02 S1; updated on owner ruling 2026-08-14. The CI pin is separate and deliberately stays on the 24 LTS line: both workflows set node-version '24', and @types/node 24.x in admin-console describes that runtime. Moving CI is a TRS-CICD-006 controlled update, not a side effect of the host drifting."
   },
   "swift": {
    "version": null,

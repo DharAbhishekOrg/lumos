@@ -120,8 +120,12 @@ jobs:
           packages: 'platforms;android-36 build-tools;36.1.0 platform-tools'
       - name: checkstyle + spotbugs (pure-JVM module)
         run: ./gradlew :protocol-conformance:staticAnalysis --no-daemon --console=plain
-      - name: checkstyle (Android module)
-        run: ./gradlew -PlumosAndroid=true :app:checkstyleApp --no-daemon --console=plain
+      # spotbugsApp joined in WP-02 S1, the slice that gave the module its first
+      # production bytecode; the WP-01 exemption was conditional on the module
+      # being empty and TestAppModuleWiresSpotbugsOnceItHasProductionCode is the
+      # test that ended it.
+      - name: checkstyle + spotbugs (Android module)
+        run: ./gradlew -PlumosAndroid=true :app:checkstyleApp :app:spotbugsApp --no-daemon --console=plain
       - name: upload reports on failure
         if: failure()
         uses: actions/upload-artifact@v7
@@ -131,6 +135,7 @@ jobs:
             android-app/protocol-conformance/build/reports/checkstyle
             android-app/protocol-conformance/build/reports/spotbugs
             android-app/app/build/reports/checkstyle
+            android-app/app/build/reports/spotbugs
           retention-days: 7
 
   # --------------------------------------------------------- secret scan ----

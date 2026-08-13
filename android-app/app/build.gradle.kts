@@ -14,6 +14,7 @@
 plugins {
     alias(libs.plugins.android.application)
     checkstyle
+    alias(libs.plugins.spotbugs)
 }
 
 android {
@@ -76,6 +77,16 @@ android {
         buildConfig = true
     }
 
+    sourceSets {
+        getByName("main") {
+            // Generated constants, message classes and error codes, consumed from
+            // the generator's output directory exactly as :protocol-conformance
+            // does. ADR-004: no constant is copied, anywhere, ever - the KDF info
+            // strings the key hierarchy signs under come from here.
+            java.directories.add(rootProject.file("protocol/gen/java").absolutePath)
+        }
+    }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
@@ -101,6 +112,17 @@ android {
         // kind of stub that later ships unnoticed (AGENTS.md Sec. 3). Re-enable
         // this check when the app shell gains an activity in WP-02.
         disable += setOf("OldTargetApi", "GradleDependency", "MissingApplicationIcon")
+
+        // BidiSpoofing: AGP 9.3.1's bundled lint CRASHES (NoSuchMethodError in
+        // JavaDocParser.parseDataItem) when this detector forces a parse of any
+        // Javadoc containing block tags - and TRS-CODE-002 requires @param and
+        // @return on every public method, so the two cannot coexist. The only
+        // AGP releases past 9.3.1 are alphas, which the pinned-toolchain rule
+        // rejects. Disabled narrowly, not by relaxing warningsAsErrors; what is
+        // lost is Trojan-Source bidi detection in Java sources, and Checkstyle
+        // still rejects non-ASCII surprises indirectly via its parse. Re-enable
+        // on the first stable AGP where lint parses block tags without dying.
+        disable += "BidiSpoofing"
     }
 
     testOptions {
@@ -124,20 +146,19 @@ dependencies {
     testRuntimeOnly(libs.junit.platform.launcher)
 }
 
-// ---- TRS-CODE-006: Checkstyle over the Android module ----------------------
+// ---- TRS-CODE-006: Checkstyle + SpotBugs over the Android module -----------
 //
-// The Gradle checkstyle plugin creates tasks from the `java` plugin's source
-// sets, which an Android module does not have, so the task is registered by
-// hand over this module's Java sources. SpotBugs is deliberately NOT wired here
-// yet and the reason is worth stating rather than leaving as an omission:
-// SpotBugs analyses compiled bytecode, and this module has no main source set
-// at all - it is still the empty WP-01 shell. A SpotBugs task over an empty
-// class directory would report success while checking nothing, which is exactly
-// the kind of green this project has been bitten by three times.
+// The Gradle checkstyle and spotbugs plugins create their tasks from the `java`
+// plugin's source sets, which an Android module does not have, so both tasks
+// are registered by hand. Checkstyle reads the sources; SpotBugs analyses the
+// devDebug variant's bytecode - one variant is enough, because the Java sources
+// are identical across flavours and only BuildConfig differs.
 //
-// TestAppModuleWiresSpotbugsOnceItHasProductionCode in tools/staticanalysis
-// fails the moment android-app/app/src/main/java appears, so the omission
-// cannot outlive the condition that justifies it.
+// The WP-01 shell deliberately did NOT wire SpotBugs here, because a SpotBugs
+// task over an empty class directory reports success while checking nothing.
+// That exemption was conditional on the module being empty, enforced by
+// TestAppModuleWiresSpotbugsOnceItHasProductionCode - and this slice adds the
+// first production sources (the key hierarchy), so the task arrives with them.
 checkstyle {
     toolVersion = libs.versions.checkstyle.get()
     configFile = rootProject.file("tools/staticanalysis/checkstyle/checkstyle.xml")
@@ -155,4 +176,33 @@ tasks.register<Checkstyle>("checkstyleApp") {
         xml.required.set(true)
         html.required.set(true)
     }
+}
+
+spotbugs {
+    toolVersion = libs.versions.spotbugs.get()
+    // Mirrors :protocol-conformance: `low` + `max` is the setting under which
+    // SpotBugs reports everything it is willing to say.
+    reportLevel.set(com.github.spotbugs.snom.Confidence.LOW)
+    effort.set(com.github.spotbugs.snom.Effort.MAX)
+    excludeFilter.set(rootProject.file("tools/staticanalysis/spotbugs/exclude.xml"))
+    ignoreFailures.set(false)
+}
+
+tasks.register<com.github.spotbugs.snom.SpotBugsTask>("spotbugsApp") {
+    group = "verification"
+    description = "TRS-CODE-006: SpotBugs over the Android module's devDebug bytecode."
+    dependsOn("compileDevDebugJavaWithJavac")
+    classDirs = files(layout.buildDirectory.dir("intermediates/javac/devDebug/compileDevDebugJavaWithJavac/classes"))
+    sourceDirs = files("src/main/java")
+    // android.jar, so SpotBugs can resolve the framework types instead of
+    // degrading its analysis around gaps. AGP 9 removed bootClasspath and
+    // sdkDirectory from the android {} DSL; the components extension is the
+    // supported way to reach the SDK location now.
+    auxClassPaths = files(
+        androidComponents.sdkComponents.sdkDirectory.map {
+            it.file("platforms/android-${android.compileSdk}/android.jar")
+        }
+    )
+    reports.create("xml") { required.set(true) }
+    reports.create("html") { required.set(true) }
 }

@@ -5,7 +5,36 @@
 **Baseline:** SRS v1.1 / TRS v1.1 / EDP v1.0
 **Scope of this revision:** WP-02 — device-bound cryptographic identity, the local
 profile, encrypted persistence, backup exclusion, emergency wipe and offline onboarding.
-**Status:** seeded before WP-02 feature code exists. Living document.
+**Status:** living document. Seeded before WP-02 feature code (S0); §0.2 records
+owner rulings received 2026-08-14, before the S1 key-hierarchy implementation.
+
+### 0.2 Corrections and owner rulings (2026-08-14)
+
+Recorded as dated corrections rather than silent edits, so the document's history
+of what was believed when stays legible.
+
+1. **Keys-first wipe order is CONFIRMED NORMATIVE — and it supersedes the
+   ADR-003 phrasing.** This document's §4.2 (LT-14) and §7.3 proposed destroying
+   key material first so that an interrupted wipe leaves ciphertext without a
+   key; the owner confirmed the ordering as normative on crypto-erasure
+   rationale. Where ADR-003's wording describes wipe as content deletion with
+   key destruction alongside, **the keys-first ordering governs**: destruction
+   of the key material *is* the erasure of everything it protects, and content
+   clearing that follows is hygiene, not the mechanism. This is a correction of
+   precedence recorded here per the owner's instruction, not an edit to
+   ADR-003's text.
+2. **§7.4 (keystore authentication policy) is RESOLVED** by
+   [ADR-010](../adrs/ADR-010-keystore-authentication-policy.md), Accepted:
+   identity/ratchet keys are not auth-gated at key level; user-facing protection
+   is App Lock plus action-level device authentication for wipe, RecoveryRecord
+   export and identity reset; StrongBox/Secure Enclave capability-probed.
+3. **§7.5 (screenshot policy) is RESOLVED** by
+   [ADR-011](../adrs/ADR-011-screenshot-policy.md), Accepted: recents snapshots
+   always redacted on both platforms; screenshot detect-and-warn in chat where
+   the platform permits; no global FLAG_SECURE, because SRS-SAF-004 evidence
+   capture must remain possible.
+4. **The data map's special-category classification is accepted pending G-09**
+   (see `docs/privacy/data-map.md` §0/§7).
 
 ---
 
@@ -250,29 +279,30 @@ proceeding past it.
 
 ### 7.3 Wipe
 - **Key material is destroyed first**, then content (LT-14). The ordering is
-  normative and its test asserts the order, not just the end state.
+  normative — **owner-confirmed 2026-08-14 on crypto-erasure rationale, and it
+  supersedes the ADR-003 phrasing** (§0.2, correction 1). Its test asserts the
+  order, not just the end state.
 - Wipe covers the documented platform limit and says so; SRS-SAF-010 names the
   set. What cannot be reached is named in the UI rather than implied to be gone.
 
-### 7.4 Open decision — keystore authentication policy (LT-07)
-Requiring user presence for every identity-key operation defends ADV-1 and
-partially ADV-2, but breaks background operation, which WP-03's BLE work needs.
-The documents do not settle it.
+### 7.4 Keystore authentication policy (LT-07) — DECIDED
+Resolved by [ADR-010](../adrs/ADR-010-keystore-authentication-policy.md)
+(Accepted 2026-08-14). Identity and ratchet keys carry **no key-level auth
+gating** — background decrypt requires it; user-facing protection is **App Lock
+plus action-level device authentication** for emergency wipe, RecoveryRecord
+export and identity reset; StrongBox/Secure Enclave use is capability-probed
+and the achieved tier persisted. The original tension — per-operation auth
+versus WP-03/WP-05 background operation, with the parameter fixed at key
+generation — is preserved in the ADR's context section.
 
-**This is an ADR, not an implementation choice.** WP-02 must raise it before the
-keystore integration merges (TRS-AI-006), because the parameter is set at key
-generation and changing it later means a new identity — the exact event ADR-003
-makes deliberately expensive.
-
-### 7.5 Open decision — screenshot policy (LT-22)
-`FLAG_SECURE` on Android and an iOS screenshot-obscuring approach defend ADV-1,
-ADV-2 and ADV-4 at a real accessibility and usability cost — including for
-screen-reader and screen-sharing users. The SRS requires exclusion "according to
-policy" (SRS-NFR-SEC-013) without stating the policy.
-
-**Raise as an ADR in WP-02.** The default, pending that decision, is the stricter
-privacy reading per SRS §2.4: protect profile surfaces, and record what protection
-is not available on each platform rather than assuming it applies everywhere.
+### 7.5 Screenshot policy (LT-22) — DECIDED
+Resolved by [ADR-011](../adrs/ADR-011-screenshot-policy.md) (Accepted
+2026-08-14). Recents/app-switcher snapshots are **always redacted on both
+platforms** (the snapshot is OS-written at-rest data); screenshot
+**detect-and-warn in chat** where the platform permits; **no global
+FLAG_SECURE**, because evidence capture per SRS-SAF-004 must remain possible —
+a capture block that suppresses evidence of harassment protects the harasser.
+The accessibility and no-overclaiming constraints are recorded in the ADR.
 
 ### 7.6 Owner-executed, not ours to close
 - **G-07** — external penetration test and cryptographic review. ADR-008 and
