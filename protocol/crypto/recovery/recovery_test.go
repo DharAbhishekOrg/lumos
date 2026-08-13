@@ -13,6 +13,7 @@ import (
 	"crypto/ed25519"
 	"crypto/rand"
 	"encoding/binary"
+	"errors"
 	"testing"
 
 	"github.com/dharabhishekemail-ops/lumos/protocol/gen/go/lumosconstants"
@@ -22,18 +23,15 @@ import (
 
 var passphrase = []byte("correct horse battery staple")
 
+// codeOf extracts the stable error code, via errors.As rather than a type
+// assertion so a wrapped error still resolves.
 func codeOf(t *testing.T, err error) string {
 	t.Helper()
 	var werr *wire.Error
-	if !bytes.Contains([]byte(err.Error()), []byte("ERR_")) {
-		t.Fatalf("expected a coded error, got %v", err)
+	if !errors.As(err, &werr) {
+		t.Fatalf("expected a coded *wire.Error, got %T: %v", err, err)
 	}
-	if e, ok := err.(*wire.Error); ok {
-		werr = e
-		return werr.Code
-	}
-	t.Fatalf("expected *wire.Error, got %T", err)
-	return ""
+	return werr.Code
 }
 
 func TestExportOpenRoundTrips(t *testing.T) {
