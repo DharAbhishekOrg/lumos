@@ -3104,9 +3104,19 @@
   },
   {
    "req_id": "SRS-PRO-001",
-   "status": "not_started",
-   "code": [],
-   "tests": [],
+   "status": "implemented",
+   "code": [
+    "android-app/app/src/main/java/com/lumos/app/profile/LocalProfile.java",
+    "android-app/app/src/main/java/com/lumos/app/profile/ProfileRepository.java",
+    "android-app/app/src/main/java/com/lumos/app/profile/ProfileCodec.java",
+    "ios-app/shell/Sources/LumosAppShell/Profile.swift"
+   ],
+   "tests": [
+    "java:app-dev:ProfileRepositoryTest.aProfileRoundTripsThroughTheSealedStore",
+    "java:app-dev:ProfileRepositoryTest.mediaOrderIsPreservedAndTheFirstEntryIsPrimary",
+    "swift:LumosAppShell:ProfileTests.testMediaOrderIsPreservedAndTheFirstEntryIsPrimary",
+    "java:app-instrumented:RoomStoreInstrumentedTest.theGeneratedDaoRoundTripsASealedRow"
+   ],
    "evidence": [],
    "adr": [],
    "last_commit": null,
@@ -3114,9 +3124,18 @@
   },
   {
    "req_id": "SRS-PRO-002",
-   "status": "not_started",
-   "code": [],
-   "tests": [],
+   "status": "implemented",
+   "code": [
+    "android-app/app/src/main/java/com/lumos/app/profile/FieldValue.java",
+    "android-app/app/src/main/java/com/lumos/app/profile/ProfileField.java",
+    "ios-app/shell/Sources/LumosAppShell/Profile.swift"
+   ],
+   "tests": [
+    "java:app-dev:ProfileRepositoryTest.theThreeAnswerStatesStayDistinct",
+    "java:app-dev:ProfileRepositoryTest.selfDescriptionIsFreeTextNotAFixedOption",
+    "swift:LumosAppShell:ProfileTests.testTheThreeAnswerStatesAreDistinct",
+    "swift:LumosAppShell:ProfileTests.testSelfDescriptionIsFreeTextNotAFixedOption"
+   ],
    "evidence": [],
    "adr": [],
    "last_commit": null,
@@ -3124,9 +3143,18 @@
   },
   {
    "req_id": "SRS-PRO-003",
-   "status": "not_started",
-   "code": [],
-   "tests": [],
+   "status": "implemented",
+   "code": [
+    "android-app/app/src/main/java/com/lumos/app/profile/ProfileFieldPolicy.java",
+    "ios-app/shell/Sources/LumosAppShell/Profile.swift"
+   ],
+   "tests": [
+    "java:app-dev:ProfilePreviewTest.everyAudienceSeesExactlyWhatThePolicyAdmits",
+    "java:app-dev:ProfilePreviewTest.noPreviewEverExposesAFieldThePolicyHides",
+    "java:app-dev:ProfileRepositoryTest.policyRoundTripsAndDefaultsPrivateWhenAbsent",
+    "swift:LumosAppShell:ProfileTests.testEveryAudienceSeesExactlyWhatThePolicyAdmits",
+    "swift:LumosAppShell:ProfileTests.testNoPreviewEverExposesAFieldThePolicyHides"
+   ],
    "evidence": [],
    "adr": [],
    "last_commit": null,
@@ -3144,9 +3172,19 @@
   },
   {
    "req_id": "SRS-PRO-005",
-   "status": "not_started",
-   "code": [],
-   "tests": [],
+   "status": "implemented",
+   "code": [
+    "android-app/app/src/main/java/com/lumos/app/media/MediaSanitizer.java",
+    "ios-app/shell/Sources/LumosAppShell/MediaSanitizer.swift"
+   ],
+   "tests": [
+    "java:app-dev:MediaSanitizerTest.jpegStripRemovesEverySecret",
+    "java:app-dev:MediaSanitizerTest.pngStripRemovesEverySecret",
+    "java:app-dev:MediaSanitizerTest.theFixtureActuallyContainsTheMetadata",
+    "swift:LumosAppShell:MediaSanitizerTests.testJpegStripRemovesEverySecret",
+    "swift:LumosAppShell:MediaSanitizerTests.testPngStripRemovesEverySecret",
+    "swift:LumosAppShell:MediaSanitizerTests.testReencodeProducesADecodableImageWithNoMetadata"
+   ],
    "evidence": [],
    "adr": [],
    "last_commit": null,
@@ -3154,9 +3192,18 @@
   },
   {
    "req_id": "SRS-PRO-006",
-   "status": "not_started",
-   "code": [],
-   "tests": [],
+   "status": "implemented",
+   "code": [
+    "android-app/app/src/main/java/com/lumos/app/media/MediaSanitizer.java",
+    "ios-app/shell/Sources/LumosAppShell/MediaSanitizer.swift"
+   ],
+   "tests": [
+    "java:app-dev:MediaSanitizerTest.typeComesFromMagicBytesNotFromAClaim",
+    "java:app-dev:MediaSanitizerTest.aDecompressionBombIsRejectedOnDimensions",
+    "java:app-dev:MediaSanitizerTest.aTruncatedSegmentIsRejectedRatherThanReadPastTheEnd",
+    "swift:LumosAppShell:MediaSanitizerTests.testTypeComesFromMagicBytesNotFromAClaim",
+    "swift:LumosAppShell:MediaSanitizerTests.testADecompressionBombIsRejectedOnDimensions"
+   ],
    "evidence": [],
    "adr": [],
    "last_commit": null,
@@ -3164,19 +3211,34 @@
   },
   {
    "req_id": "SRS-PRO-007",
-   "status": "not_started",
-   "code": [],
-   "tests": [],
+   "status": "implemented",
+   "code": [
+    "android-app/app/src/main/java/com/lumos/app/profile/ProfilePreview.java",
+    "ios-app/shell/Sources/LumosAppShell/Profile.swift"
+   ],
+   "tests": [
+    "java:app-dev:ProfilePreviewTest.thePreviewCarriesAnObjectIdentifierAndNeverImageBytes",
+    "swift:LumosAppShell:ProfileTests.testThePreviewCarriesAnObjectIdentifierAndNeverImageBytes"
+   ],
    "evidence": [],
-   "adr": [],
+   "adr": [
+    "ADR-002"
+   ],
    "last_commit": null,
    "updated": null
   },
   {
    "req_id": "SRS-PRO-008",
-   "status": "not_started",
-   "code": [],
-   "tests": [],
+   "status": "implemented",
+   "code": [
+    "android-app/app/src/main/java/com/lumos/app/profile/ProfilePreview.java",
+    "android-app/app/src/main/java/com/lumos/app/profile/ProfileRepository.java"
+   ],
+   "tests": [
+    "java:app-dev:ProfileRepositoryTest.theStoredPreviewPathAgreesWithDirectDerivation",
+    "java:app-dev:ProfilePreviewTest.tighteningThePolicyChangesTheNextPreviewImmediately",
+    "swift:LumosAppShell:ProfileTests.testTighteningThePolicyChangesTheNextPreviewImmediately"
+   ],
    "evidence": [],
    "adr": [],
    "last_commit": null,
@@ -3184,9 +3246,15 @@
   },
   {
    "req_id": "SRS-PRO-009",
-   "status": "not_started",
-   "code": [],
-   "tests": [],
+   "status": "implemented",
+   "code": [
+    "android-app/app/src/main/java/com/lumos/app/profile/LocalProfile.java",
+    "ios-app/shell/Sources/LumosAppShell/Profile.swift"
+   ],
+   "tests": [
+    "java:app-dev:ProfileRepositoryTest.mediaOrderIsPreservedAndTheFirstEntryIsPrimary",
+    "swift:LumosAppShell:ProfileTests.testMediaOrderIsPreservedAndTheFirstEntryIsPrimary"
+   ],
    "evidence": [],
    "adr": [],
    "last_commit": null,
@@ -3194,9 +3262,16 @@
   },
   {
    "req_id": "SRS-PRO-010",
-   "status": "not_started",
-   "code": [],
-   "tests": [],
+   "status": "implemented",
+   "code": [
+    "android-app/app/src/main/java/com/lumos/app/profile/LocalProfile.java",
+    "android-app/app/src/main/java/com/lumos/app/profile/ProfileField.java"
+   ],
+   "tests": [
+    "java:app-dev:ProfileRepositoryTest.anEmptyProfileIsNotShowable",
+    "java:app-dev:ProfileRepositoryTest.decliningSensitiveFieldsNeverMakesAProfileIncomplete",
+    "swift:LumosAppShell:ProfileTests.testAnEmptyProfileIsNotShowable"
+   ],
    "evidence": [],
    "adr": [],
    "last_commit": null,
@@ -3204,9 +3279,16 @@
   },
   {
    "req_id": "SRS-PRO-011",
-   "status": "not_started",
-   "code": [],
-   "tests": [],
+   "status": "implemented",
+   "code": [
+    "android-app/app/src/main/java/com/lumos/app/profile/LocalProfile.java",
+    "android-app/app/src/main/java/com/lumos/app/profile/ProfileRepository.java"
+   ],
+   "tests": [
+    "java:app-dev:ProfileRepositoryTest.pausingAndHidingSuppressVisibilityWithoutLosingData",
+    "java:app-dev:ProfileRepositoryTest.permanentDeletionLeavesNoRow",
+    "swift:LumosAppShell:ProfileTests.testPausingAndHidingSuppressVisibilityWithoutLosingData"
+   ],
    "evidence": [],
    "adr": [],
    "last_commit": null,
@@ -4245,11 +4327,25 @@
   },
   {
    "req_id": "TRS-AND-004",
-   "status": "not_started",
-   "code": [],
-   "tests": [],
+   "status": "implemented",
+   "code": [
+    "android-app/app/src/main/java/com/lumos/app/store/room/LumosRoomDatabase.java",
+    "android-app/app/src/main/java/com/lumos/app/store/room/RoomSqlDatabase.java",
+    "android-app/app/src/main/java/com/lumos/app/store/room/ProfileDao.java",
+    "android-app/app/src/main/java/com/lumos/app/store/room/SealedRecordEntity.java"
+   ],
+   "tests": [
+    "java:app-instrumented:RoomStoreInstrumentedTest.roomCreatesEveryCanonicalTableWithTheCanonicalColumns",
+    "java:app-instrumented:RoomStoreInstrumentedTest.theGeneratedDaoRoundTripsASealedRow",
+    "java:app-instrumented:RoomStoreInstrumentedTest.theGenericStoreWorksOverRoomForEveryKind",
+    "java:app-instrumented:RoomStoreInstrumentedTest.aFailedTransactionOverRoomLeavesNothing",
+    "java:app-dev:RoomSchemaParityTest.everyRoomTableCarriesTheCanonicalColumnsInOrder",
+    "java:app-dev:RoomSchemaParityTest.roomAgreesWithTheCanonicalCreateStatement"
+   ],
    "evidence": [],
-   "adr": [],
+   "adr": [
+    "ADR-003"
+   ],
    "last_commit": "8fffeb6",
    "updated": "2026-08-13"
   },

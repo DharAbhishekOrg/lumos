@@ -94,24 +94,49 @@ public final class RoomSqlDatabase implements SqlDatabase {
         }
     }
 
+    /**
+     * Carries a checked StoreException out through Room's Runnable-shaped
+     * transaction API, which cannot declare one.
+     *
+     * <p>A dedicated type rather than a general RuntimeException: this must be
+     * caught precisely, and catching something broader would also swallow a
+     * genuine defect thrown by the body.
+     */
+    private static final class TransactionAbort extends RuntimeException {
+        private static final long serialVersionUID = 1L;
+
+        /** Not transient: StoreException is serializable, and a deserialised
+         * carrier with a null payload would lose the only thing it carries. */
+        private final StoreException carried;
+
+        TransactionAbort(final StoreException carried) {
+            super(carried);
+            this.carried = carried;
+        }
+    }
+
     @Override
     public <T> T inTransaction(final TransactionBody<T> body) throws StoreException {
         // Room's own transaction bookkeeping, not raw BEGIN/COMMIT: a
         // hand-rolled transaction here would sit outside Room's invariants.
-        final List<StoreException> failure = new ArrayList<>(1);
+        //
+        // runInTransaction takes a Runnable and RETHROWS whatever escapes it,
+        // so the checked failure has to ride out inside an unchecked carrier
+        // and be unwrapped here. The first version of this method collected the
+        // exception in a list and read it after the call - which never ran,
+        // because the carrier propagated first. The emulator job caught it on
+        // its first execution, which is precisely why that job exists.
         final List<T> result = new ArrayList<>(1);
-        room.runInTransaction(() -> {
-            try {
-                result.add(body.run());
-            } catch (StoreException e) {
-                failure.add(e);
-                // Rethrow so Room marks the transaction unsuccessful; the
-                // checked exception is carried out in `failure`.
-                throw new IllegalStateException(e);
-            }
-        });
-        if (!failure.isEmpty()) {
-            throw failure.get(0);
+        try {
+            room.runInTransaction(() -> {
+                try {
+                    result.add(body.run());
+                } catch (StoreException e) {
+                    throw new TransactionAbort(e);
+                }
+            });
+        } catch (TransactionAbort abort) {
+            throw abort.carried;
         }
         return result.isEmpty() ? null : result.get(0);
     }

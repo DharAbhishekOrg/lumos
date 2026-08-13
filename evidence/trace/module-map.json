@@ -192,6 +192,25 @@
   "tools/schemacheck/": [
    "TRS-LOC-002",
    "TRS-LOC-003"
+  ],
+  "android-app/app/src/main/java/com/lumos/app/profile/": [
+   "SRS-PRO-001",
+   "SRS-PRO-002",
+   "SRS-PRO-003",
+   "SRS-PRO-007",
+   "SRS-PRO-008",
+   "SRS-PRO-009",
+   "SRS-PRO-010",
+   "SRS-PRO-011"
+  ],
+  "android-app/app/src/main/java/com/lumos/app/media/": [
+   "SRS-PRO-005",
+   "SRS-PRO-006"
+  ],
+  "android-app/app/src/main/java/com/lumos/app/store/room/": [
+   "TRS-AND-004",
+   "SRS-DAT-002",
+   "TRS-LOC-003"
   ]
  },
  "last_commit_convention": "A commit cannot contain its own hash, so last_commit records the HEAD the entry's evidence was produced against - the commit the author stamped from. Freshness proves the field CHANGED between the PR base and head, which is what EDP Sec. 6.2 actually requires ('must also modify those entries' last_commit') and needs no self-referential SHA."
