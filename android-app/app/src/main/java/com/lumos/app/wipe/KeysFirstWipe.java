@@ -23,6 +23,7 @@
 
 package com.lumos.app.wipe;
 
+import com.lumos.app.store.StoreException;
 import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -37,9 +38,17 @@ public final class KeysFirstWipe {
         /**
          * Performs the stage's destruction.
          *
-         * @throws GeneralSecurityException on failure; the wipe records it and continues
+         * <p>The two checked types are named rather than widened to Exception:
+         * a wipe stage destroys key material ({@link GeneralSecurityException})
+         * or clears a store ({@link StoreException}), and listing them keeps
+         * the executor's tolerance explicit. A RuntimeException is deliberately
+         * NOT tolerated - that is a defect in the wipe itself, and swallowing
+         * it would turn a broken wipe into a quiet one.
+         *
+         * @throws GeneralSecurityException on key-destruction failure; recorded, not fatal
+         * @throws StoreException on store-clearing failure; recorded, not fatal
          */
-        void run() throws GeneralSecurityException;
+        void run() throws GeneralSecurityException, StoreException;
     }
 
     /** The two phases, in their normative order. */
@@ -220,7 +229,7 @@ public final class KeysFirstWipe {
             String failure = null;
             try {
                 stage.action.run();
-            } catch (GeneralSecurityException e) {
+            } catch (GeneralSecurityException | StoreException e) {
                 failure = e.getMessage() == null ? e.getClass().getSimpleName() : e.getMessage();
             }
             results.add(new StageResult(phase, stage.name, failure));

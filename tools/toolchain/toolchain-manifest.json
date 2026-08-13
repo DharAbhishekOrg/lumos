@@ -142,6 +142,14 @@
    "npm_lockfile": "admin-console/package-lock.json committed at lockfileVersion 3; every entry carries a sha512 integrity hash and npm ci verifies it.",
    "sbom": "tools/sbomgen emits evidence/sbom/lumos-sbom.json (CycloneDX 1.5). A STUB, and it says so in its own metadata: direct dependencies only, no transitive closure, no provenance. The release SBOM is WP-11's."
   },
+  "owner_ruled_pending": {
+   "lazysodium_android": {
+    "ruling": "Owner, 2026-08-14: the Android API 26-32 identity-crypto gap is resolved per ADR-001, which already names Lazysodium-android / libsodium-JNI as the Android binding. Adopt it, pinned and checksummed in this manifest, IN THE FIRST SLICE THAT EXECUTES IDENTITY CRYPTO ON-DEVICE. minSdk stays 26.",
+    "why_not_yet": "WP-02 S2 is persistence; nothing in it executes identity crypto on a device. Adding a native binding now would pin and ship a dependency no gate exercises, which is the opposite of the pinning discipline. The condition is a slice, not a date, and it is recorded here so the adoption cannot be forgotten or brought forward without noticing.",
+    "when": "the first WP-02/WP-03 slice running identity key generation or X3DH on an Android device",
+    "licence_to_verify_on_adoption": "Lazysodium-android is Mozilla Public License 2.0 and libsodium is ISC; both must be read from the shipped artefacts at adoption time, not assumed from documentation, exactly as gitleaks' MIT was."
+   }
+  },
   "not_applicable": {
    "swiftpm_resolved": "The SwiftPM package declares no external dependencies - only Foundation, CryptoKit and XCTest - so SwiftPM generates no Package.resolved. There is nothing to pin. If a Swift dependency is ever added, Package.resolved must be committed and this entry removed."
   }

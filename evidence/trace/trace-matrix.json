@@ -244,11 +244,27 @@
   },
   {
    "req_id": "SRS-DAT-002",
-   "status": "not_started",
-   "code": [],
-   "tests": [],
+   "status": "implemented",
+   "code": [
+    "android-app/app/src/main/java/com/lumos/app/store/SealedRecordCodec.java",
+    "android-app/app/src/main/java/com/lumos/app/store/LocalStore.java",
+    "android-app/app/src/main/java/com/lumos/app/store/AndroidSqlDatabase.java",
+    "ios-app/shell/Sources/LumosAppShell/LocalStore.swift",
+    "ios-app/shell/Sources/LumosAppShell/SqlDatabase.swift"
+   ],
+   "tests": [
+    "java:app-dev:StorageEncryptionTest.noSensitiveValueAppearsInTheDatabaseFile",
+    "java:app-dev:StorageEncryptionTest.aDifferentDatabaseKeyCannotOpenTheRecords",
+    "java:app-dev:StorageEncryptionTest.aRowMovedToAnotherIdCannotBeOpened",
+    "java:app-dev:StorageEncryptionTest.aRowMovedToAnotherTableCannotBeOpened",
+    "swift:LumosAppShell:LocalStoreTests.testNoSensitiveValueAppearsInTheDatabaseFile",
+    "swift:LumosAppShell:LocalStoreTests.testADifferentKeyCannotOpenTheRecords",
+    "swift:LumosAppShell:LocalStoreTests.testRelocatedRowCannotBeOpened"
+   ],
    "evidence": [],
-   "adr": [],
+   "adr": [
+    "ADR-003"
+   ],
    "last_commit": null,
    "updated": null
   },
@@ -5853,19 +5869,51 @@
   },
   {
    "req_id": "TRS-LOC-002",
-   "status": "not_started",
-   "code": [],
-   "tests": [],
+   "status": "implemented",
+   "code": [
+    "android-app/app/src/main/java/com/lumos/app/store/SealedRecordCodec.java",
+    "android-app/app/src/main/java/com/lumos/app/data/DataKeyHierarchy.java",
+    "ios-app/shell/Sources/LumosAppShell/LocalStore.swift",
+    "ios-app/shell/Sources/LumosAppShell/DataKeyHierarchy.swift"
+   ],
+   "tests": [
+    "java:app-dev:StorageEncryptionTest.noSensitiveValueAppearsInTheDatabaseFile",
+    "java:app-dev:StorageEncryptionTest.aDifferentDatabaseKeyCannotOpenTheRecords",
+    "java:app-dev:LocalStoreTest.blockEntriesAreFoundByBlindIndexWithoutStoringThePeerIdentifier",
+    "swift:LumosAppShell:LocalStoreTests.testNoSensitiveValueAppearsInTheDatabaseFile",
+    "swift:LumosAppShell:LocalStoreTests.testBlockEntriesAreFoundByBlindIndexWithoutStoringThePeerIdentifier",
+    "go:tools/schemacheck:TestBothPlatformsDeclareTheSameSchema"
+   ],
    "evidence": [],
-   "adr": [],
+   "adr": [
+    "ADR-003"
+   ],
    "last_commit": null,
    "updated": null
   },
   {
    "req_id": "TRS-LOC-003",
-   "status": "not_started",
-   "code": [],
-   "tests": [],
+   "status": "implemented",
+   "code": [
+    "android-app/app/src/main/java/com/lumos/app/store/LocalSchema.java",
+    "android-app/app/src/main/java/com/lumos/app/store/Migration.java",
+    "android-app/app/src/main/java/com/lumos/app/store/LocalStore.java",
+    "ios-app/shell/Sources/LumosAppShell/LocalSchema.swift",
+    "ios-app/shell/Sources/LumosAppShell/LocalStore.swift"
+   ],
+   "tests": [
+    "java:app-dev:MigrationTest.emptyDatabaseMigratesToCurrentVersion",
+    "java:app-dev:MigrationTest.aFailingStepLeavesThePreviousVersionIntact",
+    "java:app-dev:MigrationTest.aDatabaseFromTheFutureIsRefusedNotDowngraded",
+    "java:app-dev:MigrationTest.theLadderIsContiguousAndForwardOnly",
+    "java:app-dev:MigrationTest.everyRecordTableCarriesTheCanonicalColumns",
+    "java:app-dev:LocalStoreTest.aFailedTransactionLeavesNoPartialWrite",
+    "swift:LumosAppShell:LocalStoreTests.testEmptyDatabaseMigratesToCurrentVersion",
+    "swift:LumosAppShell:LocalStoreTests.testFailingStepRollsBackWholeAndLeavesTheVersion",
+    "swift:LumosAppShell:LocalStoreTests.testDatabaseFromTheFutureIsRefusedNotDowngraded",
+    "swift:LumosAppShell:LocalStoreTests.testFailedTransactionLeavesNoPartialWrite",
+    "go:tools/schemacheck:TestBothPlatformsDeclareTheSameSchema"
+   ],
    "evidence": [],
    "adr": [],
    "last_commit": null,
@@ -5923,19 +5971,44 @@
   },
   {
    "req_id": "TRS-LOC-009",
-   "status": "not_started",
-   "code": [],
-   "tests": [],
+   "status": "implemented",
+   "code": [
+    "android-app/app/src/main/res/xml/data_extraction_rules.xml",
+    "android-app/app/src/main/res/xml/backup_rules.xml",
+    "android-app/app/src/main/AndroidManifest.xml",
+    "ios-app/shell/Sources/LumosAppShell/BackupExclusion.swift",
+    "ios-app/shell/Sources/LumosAppShell/KeychainBlobStore.swift"
+   ],
+   "tests": [
+    "java:app-dev:BackupExclusionTest.dataExtractionRulesExcludeEveryDomainInBothSections",
+    "java:app-dev:BackupExclusionTest.legacyBackupRulesExcludeEveryDomain",
+    "java:app-dev:BackupExclusionTest.theManifestKeepsBackupOff",
+    "java:app-dev:BackupExclusionTest.theDatabaseLivesUnderAnExcludedDomain",
+    "swift:LumosAppShell:BackupExclusionTests.testMarkingAFileExcludesItFromBackup",
+    "swift:LumosAppShell:BackupExclusionTests.testSqliteSidecarsAreExcludedAlongsideTheDatabase",
+    "swift:LumosAppShell:BackupExclusionTests.testARealStoreDatabaseCanBeExcluded"
+   ],
    "evidence": [],
-   "adr": [],
+   "adr": [
+    "ADR-003"
+   ],
    "last_commit": null,
    "updated": null
   },
   {
    "req_id": "TRS-LOC-010",
-   "status": "not_started",
-   "code": [],
-   "tests": [],
+   "status": "implemented",
+   "code": [
+    "android-app/app/src/main/java/com/lumos/app/store/LocalStore.java",
+    "android-app/app/src/main/java/com/lumos/app/store/LocalSchema.java",
+    "ios-app/shell/Sources/LumosAppShell/LocalStore.swift",
+    "ios-app/shell/Sources/LumosAppShell/LocalSchema.swift"
+   ],
+   "tests": [
+    "java:app-dev:LocalStoreTest.mintedIdentifiersAreUuids",
+    "java:app-dev:LocalStoreTest.timestampsAreUtcMillisFromTheInjectedClock",
+    "swift:LumosAppShell:LocalStoreTests.testMintedIdentifiersAreUuidsAndTimestampsAreFromTheClock"
+   ],
    "evidence": [],
    "adr": [],
    "last_commit": null,

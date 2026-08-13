@@ -31,6 +31,13 @@ junit = "5.11.3"
 checkstyle = "12.3.1"
 spotbugs = "4.10.3"
 spotbugsPlugin = "6.5.10"
+# sqlite-jdbc, Apache-2.0, TEST SCOPE ONLY. The persistence layer runs against a
+# narrow SqlDatabase seam; on a device that seam is android.database.sqlite,
+# which no JVM unit test can load. This driver puts a REAL SQLite engine behind
+# the same seam in CI, so the migration DDL and the encryption-at-rest
+# assertions execute against the engine that will run them on a device rather
+# than against a hand-written fake that would only ever agree with its author.
+sqliteJdbc = "3.53.2.1"
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "androidGradlePlugin" }
@@ -47,3 +54,4 @@ junit-bom = { module = "org.junit:junit-bom", version.ref = "junit" }
 # controlled-update path (TRS-REP-003) cannot see.
 junit-jupiter = { module = "org.junit.jupiter:junit-jupiter" }
 junit-platform-launcher = { module = "org.junit.platform:junit-platform-launcher" }
+sqlite-jdbc = { module = "org.xerial:sqlite-jdbc", version.ref = "sqliteJdbc" }

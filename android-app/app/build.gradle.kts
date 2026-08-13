@@ -120,8 +120,14 @@ android {
         // AGP releases past 9.3.1 are alphas, which the pinned-toolchain rule
         // rejects. Disabled narrowly, not by relaxing warningsAsErrors; what is
         // lost is Trojan-Source bidi detection in Java sources, and Checkstyle
-        // still rejects non-ASCII surprises indirectly via its parse. Re-enable
-        // on the first stable AGP where lint parses block tags without dying.
+        // still rejects non-ASCII surprises indirectly via its parse.
+        //
+        // TRACKING (owner ruling 2026-08-14: keep stable AGP, the disable
+        // stands with its reason). RE-ENABLE at the first STABLE AGP release
+        // whose bundled lint parses Javadoc block tags without crashing.
+        // Re-check when androidGradlePlugin in gradle/libs.versions.toml is
+        // next raised: delete this line, run :app:lintDevDebug, and if it
+        // survives a file with @param/@return the detector is fixed.
         disable += "BidiSpoofing"
     }
 
@@ -144,6 +150,13 @@ dependencies {
     testImplementation(platform(libs.junit.bom))
     testImplementation(libs.junit.jupiter)
     testRuntimeOnly(libs.junit.platform.launcher)
+
+    // sqlite-jdbc, Apache-2.0, test scope only - never in an APK. It puts a REAL
+    // SQLite engine behind the SqlDatabase seam so the migration DDL and the
+    // encryption-at-rest assertions execute against the engine family that runs
+    // them on a device, instead of against a fake that would only ever agree
+    // with its author (WP-01 closeout Sec. 5.2).
+    testImplementation(libs.sqlite.jdbc)
 }
 
 // ---- TRS-CODE-006: Checkstyle + SpotBugs over the Android module -----------
