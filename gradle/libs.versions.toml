@@ -38,6 +38,15 @@ spotbugsPlugin = "6.5.10"
 # assertions execute against the engine that will run them on a device rather
 # than against a hand-written fake that would only ever agree with its author.
 sqliteJdbc = "3.53.2.1"
+# Room, Apache-2.0. Adopted in WP-02 S3 per the owner's ruling of 2026-08-14:
+# the SqlDatabase seam stays the cross-platform storage contract, and Room sits
+# BEHIND it as the Android production store. TRS-AND-004 is what it satisfies.
+room = "2.8.4"
+# AndroidX test, Apache-2.0. Instrumented-test scope only, never shipped. They
+# exist so the Room half can be executed on an emulator in CI rather than
+# asserted about - the condition the same ruling attached to TRS-AND-004.
+androidxTestJunit = "1.3.0"
+androidxTestRunner = "1.7.0"
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "androidGradlePlugin" }
@@ -55,3 +64,8 @@ junit-bom = { module = "org.junit:junit-bom", version.ref = "junit" }
 junit-jupiter = { module = "org.junit.jupiter:junit-jupiter" }
 junit-platform-launcher = { module = "org.junit.platform:junit-platform-launcher" }
 sqlite-jdbc = { module = "org.xerial:sqlite-jdbc", version.ref = "sqliteJdbc" }
+room-runtime = { module = "androidx.room:room-runtime", version.ref = "room" }
+room-compiler = { module = "androidx.room:room-compiler", version.ref = "room" }
+room-testing = { module = "androidx.room:room-testing", version.ref = "room" }
+androidx-test-junit = { module = "androidx.test.ext:junit", version.ref = "androidxTestJunit" }
+androidx-test-runner = { module = "androidx.test:runner", version.ref = "androidxTestRunner" }

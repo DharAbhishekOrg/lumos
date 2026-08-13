@@ -56,6 +56,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       swift: ${{ steps.filter.outputs.swift }}
+      android: ${{ steps.filter.outputs.android }}
     steps:
       - uses: actions/checkout@v7
         with:
@@ -67,7 +68,8 @@ jobs:
           set -euo pipefail
           if [ "${{ github.event_name }}" != "pull_request" ]; then
             echo "swift=true" >> "$GITHUB_OUTPUT"
-            echo "not a pull request - running Swift"
+            echo "android=true" >> "$GITHUB_OUTPUT"
+            echo "not a pull request - running the path-filtered jobs"
             exit 0
           fi
           base="${{ github.event.pull_request.base.sha }}"
@@ -78,6 +80,13 @@ jobs:
             echo "swift=true" >> "$GITHUB_OUTPUT"
           else
             echo "swift=false" >> "$GITHUB_OUTPUT"
+          fi
+          # The emulator job is minutes of runner time; only an Android or
+          # protocol change can alter what it asserts.
+          if echo "$changed" | grep -Eq '^(android-app/|protocol/gen/java/|gradle/|settings\.gradle\.kts|\.github/workflows/conformance\.yml)'; then
+            echo "android=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "android=false" >> "$GITHUB_OUTPUT"
           fi
 
   go:
@@ -227,6 +236,66 @@ jobs:
           path: android-app/app/build/reports/tests
           retention-days: 7
 
+  # The Room half of TRS-AND-004, on a real Android runtime.
+  #
+  # Owner ruling 2026-08-14: Room sits behind the SqlDatabase seam as the
+  # Android production store, and TRS-AND-004 may only graduate on EXECUTED
+  # evidence - which for Room means an emulator, because Room's generated DAOs
+  # and its schema creation cannot run on a JVM. The JVM seam tests remain the
+  # fast path and cover everything with a decision in it; this job covers what
+  # only a device can.
+  #
+  # Path-filtered like the Swift job and for the same reason: an emulator boot
+  # is minutes of runner time, and nothing outside these paths can change what
+  # it asserts. KVM is enabled explicitly - without it the emulator falls back
+  # to software rendering and takes long enough to time out.
+  android-instrumented:
+    name: android instrumented (Room, emulator)
+    needs: changes
+    if: needs.changes.outputs.android == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: android-actions/setup-android@v4
+        with:
+          packages: 'platforms;android-36 build-tools;36.1.0 platform-tools'
+      - uses: gradle/actions/setup-gradle@v6
+
+      - name: enable KVM
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' \
+            | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+
+      - name: instrumented tests on an emulator
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          # API 30 with the ATD (automated test device) image: the smallest,
+          # fastest image that still runs a real Android runtime. The store's
+          # minSdk is 26 and its behaviour here is API-independent, so the
+          # image is chosen for boot time rather than for coverage.
+          api-level: 30
+          target: aosp_atd
+          arch: x86_64
+          profile: pixel
+          ram-size: 2048M
+          disable-animations: true
+          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+          script: ./gradlew -PlumosAndroid=true :app:connectedDevDebugAndroidTest --no-daemon --console=plain
+
+      - name: upload instrumented results
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: test-results-android-instrumented
+          path: android-app/app/build/outputs/androidTest-results/connected
+          retention-days: 7
+
   # This job carries BOTH Swift deliverables - the protocol conformance runner
   # and the empty iOS application shell - because they are targets of one
   # SwiftPM package and macOS runner minutes are billed at a premium. A second
@@ -346,10 +415,11 @@ jobs:
   trace:
     name: traceability gate
     runs-on: ubuntu-latest
-    needs: [go, java, android, swift, ts]
+    needs: [go, java, android, android-instrumented, swift, ts]
     if: >-
       always() && needs.go.result == 'success' && needs.java.result == 'success'
       && needs.android.result == 'success' && needs.ts.result == 'success'
+      && needs.android-instrumented.result != 'failure'
     steps:
       - uses: actions/checkout@v7
         with:
@@ -377,6 +447,14 @@ jobs:
             lower="$(echo "$variant" | tr '[:upper:]' '[:lower:]')"
             junit="$junit,java=app-$lower=test-results/test-results-android/test${variant}DebugUnitTest"
           done
+          # The emulator job is path-filtered, so its results may be absent -
+          # which the tightened identifier gate treats as a skipped runner
+          # rather than as drift.
+          if [ -d test-results/test-results-android-instrumented ]; then
+            junit="$junit,java=app-instrumented=test-results/test-results-android-instrumented"
+          else
+            echo "instrumented results absent (emulator job skipped by the path filter)"
+          fi
           if [ -d test-results/test-results-swift ]; then
             junit="$junit,swift=LumosProtocolConformance=test-results/test-results-swift"
           else
@@ -410,14 +488,19 @@ jobs:
   conformance-gate:
     name: conformance gate
     runs-on: ubuntu-latest
-    needs: [go, java, android, swift, ts, trace]
+    needs: [go, java, android, android-instrumented, swift, ts, trace]
     if: always()
     steps:
       - name: assess
         shell: bash
         run: |
           set -euo pipefail
-          echo "go=${{ needs.go.result }} java=${{ needs.java.result }} android=${{ needs.android.result }} swift=${{ needs.swift.result }} trace=${{ needs.trace.result }}"
+          echo "go=${{ needs.go.result }} java=${{ needs.java.result }} android=${{ needs.android.result }} instrumented=${{ needs.android-instrumented.result }} swift=${{ needs.swift.result }} trace=${{ needs.trace.result }}"
+          case "${{ needs.android-instrumented.result }}" in
+            success) echo "instrumented (emulator) green" ;;
+            skipped) echo "instrumented skipped by path filter - no Android change" ;;
+            *) echo "instrumented tests failed"; exit 1 ;;
+          esac
           if [ "${{ needs.go.result }}" != "success" ] || [ "${{ needs.java.result }}" != "success" ]; then
             echo "Go and Java conformance are always required."
             exit 1

@@ -28,6 +28,22 @@ android {
         targetSdk = 36
         versionCode = 1
         versionName = "0.0.0-dev"
+
+        // Instrumented tests run the Room half on a real Android runtime. The
+        // JVM seam tests stay the fast path; these exist so TRS-AND-004 rests
+        // on execution rather than on assertion (owner ruling 2026-08-14).
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        // Room exports the schema it derived from the entities. The export is
+        // COMMITTED and compared against the canonical LocalSchema DDL by
+        // RoomSchemaParityTest, so adopting Room cannot fork the schema: Room's
+        // own compiler output is the cross-check, and it is produced on any
+        // host without a device.
+        javaCompileOptions {
+            annotationProcessorOptions {
+                arguments["room.schemaLocation"] = "$projectDir/schemas"
+            }
+        }
     }
 
     // TRS-REP-004: development, test, staging and production are separated by
@@ -91,6 +107,7 @@ android {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
     }
+
 
     lint {
         warningsAsErrors = true
@@ -157,6 +174,19 @@ dependencies {
     // them on a device, instead of against a fake that would only ever agree
     // with its author (WP-01 closeout Sec. 5.2).
     testImplementation(libs.sqlite.jdbc)
+
+    // Room, Apache-2.0. The Android production store, behind the SqlDatabase
+    // seam (owner ruling 2026-08-14). room-compiler is an annotation processor:
+    // it generates the DAO implementations and, with the schema-location
+    // argument below, exports the schema JSON that RoomSchemaParityTest
+    // compares against the canonical DDL.
+    implementation(libs.room.runtime)
+    annotationProcessor(libs.room.compiler)
+
+    // Instrumented-test scope only; never in a release APK.
+    androidTestImplementation(libs.androidx.test.junit)
+    androidTestImplementation(libs.androidx.test.runner)
+    androidTestImplementation(libs.room.testing)
 }
 
 // ---- TRS-CODE-006: Checkstyle + SpotBugs over the Android module -----------
