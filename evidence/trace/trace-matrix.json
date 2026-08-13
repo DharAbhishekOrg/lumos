@@ -5023,7 +5023,7 @@
   },
   {
    "req_id": "TRS-CODE-006",
-   "status": "implemented",
+   "status": "tested",
    "code": [
     ".golangci.yml",
     ".swiftlint.yml",
@@ -5047,7 +5047,10 @@
     "go:tools/staticanalysis:TestSwiftTargetsAreAllInSwift6LanguageMode",
     "go:tools/staticanalysis:TestAppModuleWiresSpotbugsOnceItHasProductionCode"
    ],
-   "evidence": [],
+   "evidence": [
+    "ci:conformance#31737418403",
+    "ci:pipeline#31737418465"
+   ],
    "adr": [],
    "last_commit": "24b7913",
    "updated": "2026-08-13"
@@ -6705,7 +6708,7 @@
   },
   {
    "req_id": "TRS-REP-004",
-   "status": "implemented",
+   "status": "tested",
    "code": [
     "android-app/app/build.gradle.kts",
     "android-app/app/src/test/java/com/lumos/app/BuildVariantTest.java",
