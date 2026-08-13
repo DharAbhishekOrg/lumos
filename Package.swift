@@ -21,7 +21,7 @@ let package = Package(
         // iOS 17 is declared so the app shell is compiled against the platform
         // it actually ships to, not merely against the host.
         .macOS(.v13),
-        .iOS(.v17),
+        .iOS(.v17)
     ],
     targets: [
         // Generated constants, message classes, error codes and class limits.
@@ -58,6 +58,6 @@ let package = Package(
             dependencies: ["LumosAppShell"],
             path: "ios-app/shell/Tests/LumosAppShellTests",
             swiftSettings: [.swiftLanguageMode(.v6)]
-        ),
+        )
     ]
 )

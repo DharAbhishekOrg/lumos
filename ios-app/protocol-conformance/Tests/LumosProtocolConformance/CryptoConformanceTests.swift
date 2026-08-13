@@ -405,7 +405,7 @@ final class CryptoConformanceTests: XCTestCase {
             "environment=" + (try Vectors.string(p, "environment")),
             "valid_from=\(validFrom)",
             "valid_until=\(validUntil)",
-            "version=\(version)",
+            "version=\(version)"
         ]
         if let overrides = p["overrides"] as? [String: Any] {
             for (k, v) in overrides {
@@ -432,7 +432,7 @@ final class CryptoConformanceTests: XCTestCase {
             "valid_from=\(validFrom)",
             "valid_until=\(validUntil)",
             "venue_id=" + (try Vectors.string(v, "venue_id")),
-            "voucher_id=" + (try Vectors.string(v, "voucher_id")),
+            "voucher_id=" + (try Vectors.string(v, "voucher_id"))
         ]
         lines.sort()
         return lines.joined(separator: "\n") + "\n"
