@@ -135,82 +135,10 @@ func CheckHonesty(m *Matrix, cat *Catalogue, executed *ExecutedTests) []Finding 
 
 	for i := range m.Entries {
 		e := &m.Entries[i]
-
-		// An owner-executed gate may never be claimed as tested by an agent.
-		if g, isGate := gates[e.ReqID]; isGate {
-			if e.Status == StatusTested {
-				out = append(out, Finding{
-					Rule:  "owner-gate-claimed-tested",
-					ReqID: e.ReqID,
-					Detail: fmt.Sprintf("%s (%s) is owner-executed; simulated or asserted substitutes are release-blocking (TRS-AI-009/010/014)",
-						g.ID, g.Title),
-				})
-			}
-			if e.Status == StatusUnproven && (e.OwnerSignoff == nil || strings.TrimSpace(*e.OwnerSignoff) == "") {
-				out = append(out, Finding{
-					Rule:   "unproven-without-signoff",
-					ReqID:  e.ReqID,
-					Detail: fmt.Sprintf("%s is unproven and must carry an owner_signoff field until the owner attaches evidence", g.ID),
-				})
-			}
-		}
-
-		// unproven is reserved for owner-executed gates; using it elsewhere
-		// would let ordinary unfinished work masquerade as blocked-on-owner.
-		if e.Status == StatusUnproven {
-			if _, isGate := gates[e.ReqID]; !isGate {
-				out = append(out, Finding{
-					Rule:   "unproven-outside-owner-gate",
-					ReqID:  e.ReqID,
-					Detail: "unproven is reserved for EDP Sec. 8 owner-executed gates",
-				})
-			}
-		}
-
-		// A status that claims work must point at the work.
-		switch e.Status {
-		case StatusTested:
-			if len(e.Tests) == 0 {
-				out = append(out, Finding{"tested-without-tests", e.ReqID, "status tested with no linked test"})
-			}
-			if len(e.Code) == 0 {
-				out = append(out, Finding{"tested-without-code", e.ReqID, "status tested with no linked code path"})
-			}
-		case StatusImplemented:
-			if len(e.Code) == 0 {
-				out = append(out, Finding{"implemented-without-code", e.ReqID, "status implemented with no linked code path"})
-			}
-		case StatusNotStarted:
-			if len(e.Code) > 0 || len(e.Tests) > 0 {
-				out = append(out, Finding{
-					Rule:   "not-started-with-links",
-					ReqID:  e.ReqID,
-					Detail: "status not_started but code or tests are linked; the status understates the work",
-				})
-			}
-		}
-
-		// Anything past not_started must record when it was last touched.
-		if e.Status != StatusNotStarted {
-			if e.LastCommit == nil || strings.TrimSpace(*e.LastCommit) == "" {
-				out = append(out, Finding{"missing-last-commit", e.ReqID, "non-default status with no last_commit"})
-			}
-			if e.Updated == nil || strings.TrimSpace(*e.Updated) == "" {
-				out = append(out, Finding{"missing-updated", e.ReqID, "non-default status with no updated date"})
-			}
-		}
-
-		// The run-linked half: 'tested' requires a test that actually executed.
-		if e.Status == StatusTested && executed != nil && len(e.Tests) > 0 {
-			if !anyExecuted(e.Tests, executed) {
-				out = append(out, Finding{
-					Rule:  "tested-without-executed-test",
-					ReqID: e.ReqID,
-					Detail: fmt.Sprintf("none of the %d linked tests appear in the executed set for run %s",
-						len(e.Tests), executed.RunID),
-				})
-			}
-		}
+		out = append(out, checkOwnerGateClaims(e, gates)...)
+		out = append(out, checkStatusLinks(e)...)
+		out = append(out, checkStatusTimestamps(e)...)
+		out = append(out, checkTestedActuallyRan(e, executed)...)
 	}
 
 	out = append(out, checkGateRegister(m)...)
@@ -218,6 +146,110 @@ func CheckHonesty(m *Matrix, cat *Catalogue, executed *ExecutedTests) []Finding 
 
 	SortFindings(out)
 	return out
+}
+
+// checkOwnerGateClaims enforces the two rules that separate agent work from
+// owner-executed evidence: an agent may not claim a gate tested, and it may not
+// use `unproven` for its own unfinished work.
+func checkOwnerGateClaims(e *Entry, gates map[string]OwnerGate) []Finding {
+	var out []Finding
+	g, isGate := gates[e.ReqID]
+
+	if isGate {
+		if e.Status == StatusTested {
+			out = append(out, Finding{
+				Rule:  "owner-gate-claimed-tested",
+				ReqID: e.ReqID,
+				Detail: fmt.Sprintf("%s (%s) is owner-executed; simulated or asserted substitutes are release-blocking (TRS-AI-009/010/014)",
+					g.ID, g.Title),
+			})
+		}
+		if e.Status == StatusUnproven && blank(e.OwnerSignoff) {
+			out = append(out, Finding{
+				Rule:   "unproven-without-signoff",
+				ReqID:  e.ReqID,
+				Detail: fmt.Sprintf("%s is unproven and must carry an owner_signoff field until the owner attaches evidence", g.ID),
+			})
+		}
+		return out
+	}
+
+	// unproven is reserved for owner-executed gates; using it elsewhere would
+	// let ordinary unfinished work masquerade as blocked-on-owner.
+	if e.Status == StatusUnproven {
+		out = append(out, Finding{
+			Rule:   "unproven-outside-owner-gate",
+			ReqID:  e.ReqID,
+			Detail: "unproven is reserved for EDP Sec. 8 owner-executed gates",
+		})
+	}
+	return out
+}
+
+// checkStatusLinks enforces that a status which claims work points at the work,
+// and that a status which claims none does not quietly link some.
+func checkStatusLinks(e *Entry) []Finding {
+	var out []Finding
+	switch e.Status {
+	case StatusTested:
+		if len(e.Tests) == 0 {
+			out = append(out, Finding{"tested-without-tests", e.ReqID, "status tested with no linked test"})
+		}
+		if len(e.Code) == 0 {
+			out = append(out, Finding{"tested-without-code", e.ReqID, "status tested with no linked code path"})
+		}
+	case StatusImplemented:
+		if len(e.Code) == 0 {
+			out = append(out, Finding{"implemented-without-code", e.ReqID, "status implemented with no linked code path"})
+		}
+	case StatusNotStarted:
+		if len(e.Code) > 0 || len(e.Tests) > 0 {
+			out = append(out, Finding{
+				Rule:   "not-started-with-links",
+				ReqID:  e.ReqID,
+				Detail: "status not_started but code or tests are linked; the status understates the work",
+			})
+		}
+	}
+	return out
+}
+
+// checkStatusTimestamps requires anything past not_started to record when it
+// was last touched, which is what makes the freshness rule provable.
+func checkStatusTimestamps(e *Entry) []Finding {
+	if e.Status == StatusNotStarted {
+		return nil
+	}
+	var out []Finding
+	if blank(e.LastCommit) {
+		out = append(out, Finding{"missing-last-commit", e.ReqID, "non-default status with no last_commit"})
+	}
+	if blank(e.Updated) {
+		out = append(out, Finding{"missing-updated", e.ReqID, "non-default status with no updated date"})
+	}
+	return out
+}
+
+// checkTestedActuallyRan is the run-linked half of the honesty rule: `tested`
+// requires a linked test that appears in this pipeline run's executed set.
+func checkTestedActuallyRan(e *Entry, executed *ExecutedTests) []Finding {
+	if e.Status != StatusTested || executed == nil || len(e.Tests) == 0 {
+		return nil
+	}
+	if anyExecuted(e.Tests, executed) {
+		return nil
+	}
+	return []Finding{{
+		Rule:  "tested-without-executed-test",
+		ReqID: e.ReqID,
+		Detail: fmt.Sprintf("none of the %d linked tests appear in the executed set for run %s",
+			len(e.Tests), executed.RunID),
+	}}
+}
+
+// blank reports whether an optional string field is absent or whitespace.
+func blank(s *string) bool {
+	return s == nil || strings.TrimSpace(*s) == ""
 }
 
 // checkIdentifierShapes catches a runner whose identifier FORMAT has drifted

@@ -1,0 +1,82 @@
+# Lumos - build / SwiftLint configuration for the Swift half of TRS-CODE-006.
+# Author: dhar.abhishek.email@gmail.com
+# Implements: TRS-CODE-006, TRS-CODE-004, TRS-CODE-005, TRS-CODE-007
+# ADRs: ADR-004
+# Threading: n/a
+# Notes: TRS-CODE-006 pairs SwiftLint with "Swift 6 strict concurrency
+# diagnostics". Those are two separate mechanisms and only one of them lives
+# here: the strict-concurrency half is already enforced by Package.swift, which
+# builds every target with .swiftLanguageMode(.v6), and the CI job compiles with
+# -warnings-as-errors so a concurrency diagnostic fails the build. This file is
+# the linter half, run with --strict so that a warning is a failure.
+#
+# Budgets below are the TRS Sec. 24 numbers, not SwiftLint's defaults, which are
+# lower and would fail this repository for reasons the specification does not
+# ask for.
+
+# protocol/gen/swift is the generated register - LumosConstants.swift alone is
+# 1058 lines with a 572-character line. It is emitted by tools/constantsgen and
+# byte-compared by the constants gate, so a lint finding there names something
+# nobody may edit in place: the file is overwritten on the next generation and
+# the gate would reject the edit. If the generator ever emits something a linter
+# should reject, the fix belongs in the emitter.
+excluded:
+  - protocol/gen/swift
+  - .build
+  - .swiftpm
+
+# No `analyzer_rules` block. SwiftLint's analyzer rules need a full compiler log
+# from `swiftlint analyze`, and listing them under a `lint` invocation would put
+# rule names in this file that never run - a configuration that reads stricter
+# than the gate it configures.
+
+# TRS-CODE-004: the specification's budgets, applied as hard failures. Warning
+# and error are set to the same value on purpose - with --strict a warning
+# already fails the job, and a two-tier budget would suggest a tolerance band
+# the requirement does not have.
+file_length:
+  warning: 800
+  error: 800
+  ignore_comment_only_lines: false
+
+type_body_length:
+  warning: 500
+  error: 500
+
+cyclomatic_complexity:
+  warning: 15
+  error: 15
+
+# TRS Sec. 24 sets no per-function line budget. 150 lines matches the
+# MethodLength ceiling the Checkstyle configuration applies to the Java half, so
+# the two JVM-adjacent languages are held to one number rather than to whichever
+# default each tool happened to ship.
+function_body_length:
+  warning: 150
+  error: 150
+
+# TRS Sec. 24 sets no line-length budget either. 130 is a formatting guard
+# rather than a specification value: it binds new code while clearing the
+# longest line the repository currently has (122, in
+# CryptoConformanceTests.swift), so the gate does not open by demanding a reflow
+# of lines that carry vector bytes.
+line_length:
+  warning: 130
+  error: 130
+  ignores_urls: true
+
+# SwiftLint's default minimum identifier length is three characters. The codecs
+# are full of two- and one-character names that are correct at their scope - the
+# byte-reader parameters `b` and `at`, the `mc` message class, the `u16`/`u32`
+# helpers - and renaming them to satisfy a length rule would make the wire code
+# read less like TRS Sec. 9.1, not more. The length check is switched off; every
+# other identifier_name check (leading lowercase, no snake_case, no type-name
+# collisions) stays on, and those are the ones TRS-CODE-007 is about.
+identifier_name:
+  min_length:
+    warning: 1
+    error: 1
+
+# TRS-CODE-005: a bare TODO/FIXME is a finding.
+todo:
+  severity: error

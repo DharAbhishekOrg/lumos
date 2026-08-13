@@ -31,7 +31,8 @@ func CollectGoTests(path string) ([]string, error) {
 	if err != nil {
 		return nil, fmt.Errorf("open go test json: %w", err)
 	}
-	defer f.Close()
+	// Read-only: nothing was buffered, so a Close error carries no lost data.
+	defer func() { _ = f.Close() }()
 
 	out := map[string]bool{}
 	sc := bufio.NewScanner(f)
@@ -112,7 +113,11 @@ func CollectJUnitTests(dir, lang, module string) ([]string, error) {
 			Suites []junitSuite `xml:"testsuite"`
 		}
 		if err := xml.Unmarshal(raw, &multi); err != nil {
-			return nil // not a report we understand; ignore rather than fail the run
+			// Not a report we understand. A results directory legitimately holds
+			// other XML (Gradle writes binary-format companions), so skipping is
+			// correct; the collector's fail-on-empty rule catches the case where
+			// skipping means nothing at all was harvested.
+			return nil //nolint:nilerr // an unparseable sibling file is not this walk's failure
 		}
 		for _, s := range multi.Suites {
 			addJUnit(out, s, lang, module)

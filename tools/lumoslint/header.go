@@ -36,7 +36,8 @@ func CheckHeader(path string) []Finding {
 	if err != nil {
 		return []Finding{{"header-unreadable", path, err.Error()}}
 	}
-	defer f.Close()
+	// Read-only: nothing was buffered, so a Close error carries no lost data.
+	defer func() { _ = f.Close() }()
 
 	var head []string
 	sc := bufio.NewScanner(f)

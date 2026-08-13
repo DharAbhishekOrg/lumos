@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Lumos - tools/staticanalysis / SpotBugs exclusion filter for TRS-CODE-006.
+  Author: dhar.abhishek.email@gmail.com
+  Implements: TRS-CODE-006
+  ADRs: ADR-004
+  Threading: n/a
+  Notes: One exclusion, and it is a scope decision rather than a suppressed
+  finding. `com.lumos.protocol` is the generated register - LumosConstants,
+  LumosErrors, MessageClass, MessageClassLimits and TextEventKind, all emitted by
+  tools/constantsgen from protocol/constants/lumos_constants.json. A SpotBugs
+  finding there is not something a person can fix in place: the file is
+  overwritten on every generation, and the constants gate byte-compares it
+  against the generator's output, so an edit would fail CI rather than land.
+  If the generator ever emits a genuine defect, the fix belongs in the emitter.
+
+  The exclusion names the package EXACTLY, so `com.lumos.protocol.conformance` -
+  the hand-written Frame and LumosCrypto codecs this module exists to check - is
+  fully analysed, as is anything else added under a sub-package later.
+
+  The second exclusion is narrower still: `throws Exception` on a JUnit test
+  method. It is the framework's own idiom - JUnit invokes tests reflectively and
+  treats any throwable as a failure - so narrowing the clause would list the
+  checked exceptions of whatever the test happens to call today and have to be
+  rewritten whenever that changes. It is scoped to test classes and to that one
+  pattern; every other SpotBugs rule still applies to test code.
+-->
+<FindBugsFilter>
+  <Match>
+    <Package name="com.lumos.protocol"/>
+  </Match>
+  <Match>
+    <Class name="~.*Test$"/>
+    <Bug pattern="THROWS_METHOD_THROWS_CLAUSE_BASIC_EXCEPTION"/>
+  </Match>
+</FindBugsFilter>

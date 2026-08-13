@@ -26,6 +26,9 @@ const (
 	ErrorCodesPath     = "protocol/schemas/error_codes.schema.json"
 	PrekeyBundlePath   = "protocol/schemas/prekey_bundle.schema.json"
 	ConfigPackagePath  = "config-schema/config_package.schema.json"
+	// #nosec G101 -- a schema file path, not a credential. gosec's entropy rule
+	// matches the word "Token" in the identifier; the value is the name of the
+	// voucher-token JSON Schema and no secret exists in this repository.
 	VoucherTokenPath   = "config-schema/voucher_token.schema.json"
 	ConfigOverridePath = "config-schema/config_overrides.schema.json"
 	RegisterPath       = "protocol/constants/lumos_constants.json"

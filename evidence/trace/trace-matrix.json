@@ -5023,9 +5023,30 @@
   },
   {
    "req_id": "TRS-CODE-006",
-   "status": "not_started",
-   "code": [],
-   "tests": [],
+   "status": "implemented",
+   "code": [
+    ".golangci.yml",
+    ".swiftlint.yml",
+    "tools/staticanalysis/stack.go",
+    "tools/staticanalysis/checkstyle/checkstyle.xml",
+    "tools/staticanalysis/spotbugs/exclude.xml",
+    "android-app/protocol-conformance/build.gradle.kts",
+    "android-app/app/build.gradle.kts",
+    "gradle/libs.versions.toml",
+    ".github/workflows/pipeline.yml",
+    ".github/workflows/conformance.yml"
+   ],
+   "tests": [
+    "go:tools/staticanalysis:TestEveryAnalyserIsConfiguredAndInvoked",
+    "go:tools/staticanalysis:TestEveryPinnedAnalyserIsDeclaredInTheManifest",
+    "go:tools/staticanalysis:TestStackCoversEveryLanguageTheRepositoryOwns",
+    "go:tools/staticanalysis:TestGolangciEnforcesTheComplexityBudgetAndReportsEverything",
+    "go:tools/staticanalysis:TestGosecExclusionsAreScopedToBuildTooling",
+    "go:tools/staticanalysis:TestCheckstyleCarriesTheSpecifiedBudgets",
+    "go:tools/staticanalysis:TestSwiftLintCarriesTheSpecifiedBudgets",
+    "go:tools/staticanalysis:TestSwiftTargetsAreAllInSwift6LanguageMode",
+    "go:tools/staticanalysis:TestAppModuleWiresSpotbugsOnceItHasProductionCode"
+   ],
    "evidence": [],
    "adr": [],
    "last_commit": null,
@@ -6687,6 +6708,7 @@
    "status": "implemented",
    "code": [
     "android-app/app/build.gradle.kts",
+    "android-app/app/src/test/java/com/lumos/app/BuildVariantTest.java",
     "ios-app/shell/Sources/LumosAppShell/LumosAppShell.swift",
     "admin-console/src/shell.ts",
     "backend/cmd/lumosd/main.go",
@@ -6695,7 +6717,16 @@
    "tests": [
     "ts:admin-console:AdminShell.fourBuildEnvironmentsAreSeparated",
     "swift:LumosAppShell:LumosAppShellTests.testFourEnvironmentsAreSeparated",
-    "go:tools/bootstrap:TestSampleEnvironmentSeparatesTheFourVariants"
+    "go:tools/bootstrap:TestSampleEnvironmentSeparatesTheFourVariants",
+    "go:tools/staticanalysis:TestAndroidVariantTestsCoverAllFourEnvironments",
+    "java:app-dev:BuildVariantTest.environmentMatchesTheFlavourUnderTest",
+    "java:app-dev:BuildVariantTest.applicationIdSeparatesThisEnvironmentFromTheOthers",
+    "java:app-qa:BuildVariantTest.environmentMatchesTheFlavourUnderTest",
+    "java:app-qa:BuildVariantTest.applicationIdSeparatesThisEnvironmentFromTheOthers",
+    "java:app-staging:BuildVariantTest.environmentMatchesTheFlavourUnderTest",
+    "java:app-staging:BuildVariantTest.applicationIdSeparatesThisEnvironmentFromTheOthers",
+    "java:app-prod:BuildVariantTest.environmentMatchesTheFlavourUnderTest",
+    "java:app-prod:BuildVariantTest.applicationIdSeparatesThisEnvironmentFromTheOthers"
    ],
    "evidence": [],
    "adr": [],
@@ -6765,11 +6796,22 @@
   },
   {
    "req_id": "TRS-REP-008",
-   "status": "not_started",
-   "code": [],
+   "status": "implemented",
+   "code": [
+    "docs/security/threat-model.md",
+    "docs/privacy/data-map.md",
+    "docs/adrs/README.md",
+    "docs/README.md"
+   ],
    "tests": [],
-   "evidence": [],
-   "adr": [],
+   "evidence": [
+    "docs/security/threat-model.md",
+    "docs/privacy/data-map.md"
+   ],
+   "adr": [
+    "ADR-003",
+    "ADR-008"
+   ],
    "last_commit": null,
    "updated": null
   },

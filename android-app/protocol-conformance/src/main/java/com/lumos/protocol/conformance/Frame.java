@@ -83,12 +83,20 @@ public final class Frame {
     private final byte[] payload;
 
     /**
+     * Creates a frame, copying the payload in.
+     *
+     * <p>The copy is not ceremony. A frame is the unit the conformance runner
+     * compares against a golden vector, and a caller that kept a reference to
+     * the array it passed could mutate the frame's bytes after the comparison
+     * had been set up - which would show as an unreproducible vector failure
+     * rather than as the aliasing bug it is.
+     *
      * @param header decoded header
-     * @param payload frame payload
+     * @param payload frame payload; copied, never retained
      */
     public Frame(final Header header, final byte[] payload) {
         this.header = header;
-        this.payload = payload;
+        this.payload = payload.clone();
     }
 
     /** @return the header */
@@ -96,9 +104,9 @@ public final class Frame {
         return header;
     }
 
-    /** @return the payload */
+    /** @return a copy of the payload; mutating it does not affect this frame */
     public byte[] payload() {
-        return payload;
+        return payload.clone();
     }
 
     private static void putU16(final byte[] out, final int at, final int v) {
@@ -180,6 +188,42 @@ public final class Frame {
     }
 
     /**
+     * Applies the header rules that do not depend on the payload, in the order
+     * the negative golden vectors assert: version major, header_length, then the
+     * three conditions that are fatal ONLY on a critical frame. That ordering is
+     * part of the wire contract, because each vector pins the exact error code
+     * for a frame that violates several rules at once. The Go codec's
+     * validateHeader is the same sequence; keeping the two structurally parallel
+     * is what makes a divergence visible in review rather than only in a vector.
+     *
+     * @param h the parsed header
+     * @param declaredHeaderLen the header_length field as read off the wire
+     * @param reserved the reserved byte as read off the wire
+     * @throws WireException with the stable code for the first rule violated
+     */
+    private static void validateHeader(final Header h, final int declaredHeaderLen, final int reserved)
+            throws WireException {
+        if ((h.version >>> 4) != LumosConstants.PROTOCOL_VERSION_MAJOR) {
+            throw new WireException(LumosErrors.ERR_FRAME_UNSUPPORTED_VERSION, "major version");
+        }
+        if (declaredHeaderLen != HEADER_LEN) {
+            throw new WireException(LumosErrors.ERR_FRAME_BAD_HEADER_LENGTH, "header length");
+        }
+        if (!h.critical()) {
+            return;
+        }
+        if (MessageClass.fromCode(h.type) == null) {
+            throw new WireException(LumosErrors.ERR_FRAME_UNKNOWN_TYPE, "unknown critical class");
+        }
+        if ((h.flags & LumosConstants.FRAME_FLAGS_RESERVED_MASK_DEFAULT) != 0) {
+            throw new WireException(LumosErrors.ERR_FRAME_RESERVED_FLAG, "reserved flag");
+        }
+        if (reserved != 0) {
+            throw new WireException(LumosErrors.ERR_FRAME_RESERVED_FIELD, "reserved byte");
+        }
+    }
+
+    /**
      * Parses one complete frame.
      *
      * @param data encoded frame bytes
@@ -211,23 +255,9 @@ public final class Frame {
         h.hopLimit = data[56] & 0xFF;
         final int reserved = data[57] & 0xFF;
 
-        if ((h.version >>> 4) != LumosConstants.PROTOCOL_VERSION_MAJOR) {
-            throw new WireException(LumosErrors.ERR_FRAME_UNSUPPORTED_VERSION, "major version");
-        }
-        if (declaredHeaderLen != HEADER_LEN) {
-            throw new WireException(LumosErrors.ERR_FRAME_BAD_HEADER_LENGTH, "header length");
-        }
-        final boolean critical = h.critical();
+        validateHeader(h, declaredHeaderLen, reserved);
+
         final MessageClass mc = MessageClass.fromCode(h.type);
-        if (mc == null && critical) {
-            throw new WireException(LumosErrors.ERR_FRAME_UNKNOWN_TYPE, "unknown critical class");
-        }
-        if ((h.flags & LumosConstants.FRAME_FLAGS_RESERVED_MASK_DEFAULT) != 0 && critical) {
-            throw new WireException(LumosErrors.ERR_FRAME_RESERVED_FLAG, "reserved flag");
-        }
-        if (reserved != 0 && critical) {
-            throw new WireException(LumosErrors.ERR_FRAME_RESERVED_FIELD, "reserved byte");
-        }
         if (mc != null) {
             final Long max = MessageClassLimits.maxPayloadBytes(mc);
             if (max != null && payloadLen > max) {

@@ -244,9 +244,10 @@ public final class LumosCrypto {
     }
 
     /**
-     * @param a first array
-     * @param b second array
-     * @return the concatenation
+     * Concatenates byte arrays in argument order.
+     *
+     * @param a the arrays to join, in order
+     * @return a new array holding every input's bytes end to end
      */
     public static byte[] concat(final byte[]... a) {
         int n = 0;

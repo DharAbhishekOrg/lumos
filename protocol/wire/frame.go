@@ -104,6 +104,9 @@ func Encode(f *Frame) ([]byte, error) {
 	copy(out[24:40], f.Header.MessageID[:])
 	binary.BigEndian.PutUint32(out[40:44], f.Header.Sequence)
 	binary.BigEndian.PutUint32(out[44:48], f.Header.AckBase)
+	// #nosec G115 -- len(f.Payload) is bounded above by the class payload check
+	// a few lines up, and every MAX_PAYLOAD in the Sec. 23 register is far below
+	// 2^32; the bound is asserted by TestMaxPayloadBoundsFitTheWireField.
 	binary.BigEndian.PutUint32(out[48:52], uint32(len(f.Payload)))
 	binary.BigEndian.PutUint32(out[52:56], f.Header.ExpirySeconds)
 	out[56] = f.Header.HopLimit
@@ -121,6 +124,39 @@ func HeaderBytes(encoded []byte) ([]byte, error) {
 			"%d bytes, header needs %d", len(encoded), headerLen)
 	}
 	return encoded[:headerLen], nil
+}
+
+// validateHeader applies the header rules that do not depend on the payload, in
+// the order the negative golden vectors assert: version major, header_length,
+// then the three conditions that are fatal ONLY on a critical frame - unknown
+// class, reserved flag bits and a non-zero reserved byte. That ordering is part
+// of the wire contract, because each vector pins the exact error code returned
+// for a frame that violates several rules at once (TRS-PROTO-006, ADR-007).
+func validateHeader(h Header, declaredHeaderLen uint16, reserved byte) error {
+	if h.Version>>4 != lumosconstants.ProtocolVersionMajor {
+		return wireErr(lumoserrors.ErrFrameUnsupportedVersion,
+			"version 0x%02X, this build speaks major %d", h.Version, lumosconstants.ProtocolVersionMajor)
+	}
+	if int(declaredHeaderLen) != headerLen {
+		return wireErr(lumoserrors.ErrFrameBadHeaderLength,
+			"declared %d, protocol v1 header is %d", declaredHeaderLen, headerLen)
+	}
+	if !h.Critical() {
+		return nil
+	}
+	if !h.Type.Known() {
+		return wireErr(lumoserrors.ErrFrameUnknownType,
+			"unknown class 0x%02X on a critical frame", uint8(h.Type))
+	}
+	if h.Flags&lumosconstants.FrameFlagsReservedMaskDefault != 0 {
+		return wireErr(lumoserrors.ErrFrameReservedFlag,
+			"reserved flag bits 0x%04X on a critical frame", h.Flags&lumosconstants.FrameFlagsReservedMaskDefault)
+	}
+	if reserved != 0 {
+		return wireErr(lumoserrors.ErrFrameReservedField,
+			"reserved byte 0x%02X on a critical frame", reserved)
+	}
+	return nil
 }
 
 // Decode parses one complete frame. A frame whose message class is unknown but
@@ -152,26 +188,8 @@ func Decode(data []byte) (*Frame, error) {
 	h.HopLimit = data[56]
 	reserved := data[57]
 
-	if h.Version>>4 != lumosconstants.ProtocolVersionMajor {
-		return nil, wireErr(lumoserrors.ErrFrameUnsupportedVersion,
-			"version 0x%02X, this build speaks major %d", h.Version, lumosconstants.ProtocolVersionMajor)
-	}
-	if int(declaredHeaderLen) != headerLen {
-		return nil, wireErr(lumoserrors.ErrFrameBadHeaderLength,
-			"declared %d, protocol v1 header is %d", declaredHeaderLen, headerLen)
-	}
-	critical := h.Critical()
-	if !h.Type.Known() && critical {
-		return nil, wireErr(lumoserrors.ErrFrameUnknownType,
-			"unknown class 0x%02X on a critical frame", uint8(h.Type))
-	}
-	if h.Flags&lumosconstants.FrameFlagsReservedMaskDefault != 0 && critical {
-		return nil, wireErr(lumoserrors.ErrFrameReservedFlag,
-			"reserved flag bits 0x%04X on a critical frame", h.Flags&lumosconstants.FrameFlagsReservedMaskDefault)
-	}
-	if reserved != 0 && critical {
-		return nil, wireErr(lumoserrors.ErrFrameReservedField,
-			"reserved byte 0x%02X on a critical frame", reserved)
+	if err := validateHeader(h, declaredHeaderLen, reserved); err != nil {
+		return nil, err
 	}
 	if h.Type.Known() {
 		// Bound checked before any allocation (TRS-PROTO-007).
@@ -181,13 +199,20 @@ func Decode(data []byte) (*Frame, error) {
 				"declared payload %d exceeds class %s bound %d", payloadLen, h.Type, max)
 		}
 	}
-	if uint64(len(data)-headerLen) < uint64(payloadLen) {
+	// Both sides widen into int64 rather than meeting in uint64. len(data) is at
+	// least headerLen by the truncation check above, so present cannot be
+	// negative, and a uint32 always fits an int64 - so neither conversion can
+	// wrap, and the subtraction below cannot underflow into a vast trailing-byte
+	// count the way an unsigned one would on a malformed frame.
+	present := int64(len(data) - headerLen)
+	declared := int64(payloadLen)
+	if present < declared {
 		return nil, wireErr(lumoserrors.ErrFrameTruncated,
-			"payload declares %d bytes, %d present", payloadLen, len(data)-headerLen)
+			"payload declares %d bytes, %d present", payloadLen, present)
 	}
-	if uint64(len(data)-headerLen) > uint64(payloadLen) {
+	if present > declared {
 		return nil, wireErr(lumoserrors.ErrPayloadMalformed,
-			"%d trailing bytes after the declared payload", uint64(len(data)-headerLen)-uint64(payloadLen))
+			"%d trailing bytes after the declared payload", present-declared)
 	}
 
 	payload := make([]byte, payloadLen)

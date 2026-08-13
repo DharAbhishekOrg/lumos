@@ -131,7 +131,8 @@ func CheckConstants(path string, values map[int64][]string) []Finding {
 	if err != nil {
 		return []Finding{{"constants-unreadable", path, err.Error()}}
 	}
-	defer f.Close()
+	// Read-only: nothing was buffered, so a Close error carries no lost data.
+	defer func() { _ = f.Close() }()
 
 	var out []Finding
 	sc := bufio.NewScanner(f)

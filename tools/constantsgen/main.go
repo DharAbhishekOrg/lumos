@@ -48,16 +48,7 @@ func run(root string, check, stamp bool) error {
 	}
 
 	if stamp {
-		updated, err := reg.WithHash(hash)
-		if err != nil {
-			return err
-		}
-		if err := writeIfChanged(registerPath, updated); err != nil {
-			return err
-		}
-		fmt.Println("constants_hash:", hash)
-		reg, err = LoadRegister(registerPath)
-		if err != nil {
+		if reg, err = restamp(registerPath, reg, hash); err != nil {
 			return err
 		}
 	}
@@ -70,39 +61,73 @@ func run(root string, check, stamp bool) error {
 		return fmt.Errorf("constants_hash is stale: register declares %q but its content hashes to %q; run 'go run ./tools/constantsgen -stamp'", declared, hash)
 	}
 
-	canonical, err := reg.CanonicalForm()
+	model, files, err := emitAll(root, reg, hash)
 	if err != nil {
 		return err
 	}
-	model, err := BuildModel(reg, hash)
-	if err != nil {
-		return err
-	}
-	files, err := Emit(reg, model, canonical)
-	if err != nil {
-		return err
-	}
-	wireIn, err := LoadWireInputs(root)
-	if err != nil {
-		return err
-	}
-	if err := ValidateWireCoverage(reg, model, wireIn); err != nil {
-		return err
-	}
-	wireFiles, err := EmitWireFiles(reg, model, wireIn)
-	if err != nil {
-		return err
-	}
-	files = append(files, wireFiles...)
-	jvmFiles, err := EmitJVMWireFiles(reg, model, wireIn)
-	if err != nil {
-		return err
-	}
-	files = append(files, jvmFiles...)
 
 	if check {
 		return verify(root, files)
 	}
+	if err := writeAll(root, files); err != nil {
+		return err
+	}
+	fmt.Printf("generated %d files from %d constants (hash %s)\n", len(files), len(model.Constants), hash)
+	return nil
+}
+
+// restamp writes the freshly computed hash back into the register and reloads
+// it, so everything downstream reads the stamped file rather than the in-memory
+// value it was derived from.
+func restamp(registerPath string, reg *Register, hash string) (*Register, error) {
+	updated, err := reg.WithHash(hash)
+	if err != nil {
+		return nil, err
+	}
+	if err := writeIfChanged(registerPath, updated); err != nil {
+		return nil, err
+	}
+	fmt.Println("constants_hash:", hash)
+	return LoadRegister(registerPath)
+}
+
+// emitAll builds the model and every generated artefact: the tri-language
+// constant files, the wire codecs and their JVM counterparts. The model is
+// returned alongside the files because the caller reports the constant count.
+func emitAll(root string, reg *Register, hash string) (*Model, []File, error) {
+	canonical, err := reg.CanonicalForm()
+	if err != nil {
+		return nil, nil, err
+	}
+	model, err := BuildModel(reg, hash)
+	if err != nil {
+		return nil, nil, err
+	}
+	files, err := Emit(reg, model, canonical)
+	if err != nil {
+		return nil, nil, err
+	}
+	wireIn, err := LoadWireInputs(root)
+	if err != nil {
+		return nil, nil, err
+	}
+	if err := ValidateWireCoverage(reg, model, wireIn); err != nil {
+		return nil, nil, err
+	}
+	wireFiles, err := EmitWireFiles(reg, model, wireIn)
+	if err != nil {
+		return nil, nil, err
+	}
+	files = append(files, wireFiles...)
+	jvmFiles, err := EmitJVMWireFiles(reg, model, wireIn)
+	if err != nil {
+		return nil, nil, err
+	}
+	return model, append(files, jvmFiles...), nil
+}
+
+// writeAll writes every generated artefact, creating parent directories.
+func writeAll(root string, files []File) error {
 	for _, f := range files {
 		out := filepath.Join(root, filepath.FromSlash(f.Path))
 		if err := os.MkdirAll(filepath.Dir(out), 0o755); err != nil {
@@ -112,7 +137,6 @@ func run(root string, check, stamp bool) error {
 			return err
 		}
 	}
-	fmt.Printf("generated %d files from %d constants (hash %s)\n", len(files), len(model.Constants), hash)
 	return nil
 }
 

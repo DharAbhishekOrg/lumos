@@ -37,6 +37,14 @@ env:
   # licence key; a pinned binary also means CI runs the exact version whose
   # rules were exercised against planted fixtures on the authoring host.
   GITLEAKS_VERSION: 8.30.1
+  # TRS-CODE-006's Go analyser. Installed as a pinned release binary for the
+  # same reason gitleaks is: CI then runs the exact version whose findings were
+  # worked through on the authoring host, rather than whichever version an
+  # action resolved on the day. golangci-lint is GPL-3.0 - copyleft, and
+  # declared as such in tools/toolchain/toolchain-manifest.json. It is a CI
+  # analyser: never linked, bundled or shipped, and it places no obligation on
+  # the sources it reads.
+  GOLANGCI_LINT_VERSION: 2.12.2
 
 jobs:
   # ---------------------------------------------------------------- lint ----
@@ -61,6 +69,21 @@ jobs:
       - name: repository layout
         run: go test ./tools/repolint/ -count=1
 
+      # TRS-CODE-006, Go. Pinned binary rather than the action, matching the
+      # gitleaks step below. --max-issues-per-linter and --max-same-issues are
+      # zeroed in .golangci.yml, which is what makes "zero-warning" mean every
+      # warning rather than the first fifty of each kind.
+      - name: install golangci-lint
+        run: |
+          set -euo pipefail
+          curl -sSfL -o /tmp/golangci-lint.tar.gz \
+            "https://github.com/golangci/golangci-lint/releases/download/v${GOLANGCI_LINT_VERSION}/golangci-lint-${GOLANGCI_LINT_VERSION}-linux-amd64.tar.gz"
+          tar -xzf /tmp/golangci-lint.tar.gz -C /tmp
+          sudo install "/tmp/golangci-lint-${GOLANGCI_LINT_VERSION}-linux-amd64/golangci-lint" /usr/local/bin/golangci-lint
+          golangci-lint --version
+      - name: golangci-lint (zero warnings)
+        run: golangci-lint run ./...
+
       - uses: actions/setup-node@v7
         with:
           node-version: '24'
@@ -72,6 +95,43 @@ jobs:
           npm ci
           npm run lint
           npm run typecheck
+
+  # ----------------------------------------------- Java static analysis ----
+  # TRS-CODE-006's Java half. Checkstyle and SpotBugs run over
+  # :protocol-conformance, which is where the hand-written Java lives, and over
+  # the Android module's sources; Android Lint is the third Java analyser and
+  # runs beside the shell build below, where the variant it inspects is built.
+  #
+  # This is a job of its own rather than a step of `lint` because it needs a JDK
+  # and the Gradle cache, and because a Checkstyle failure should read as a
+  # static-analysis failure rather than as part of a job whose name says eslint.
+  java-static-analysis:
+    name: static analysis - Checkstyle + SpotBugs
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: gradle/actions/setup-gradle@v6
+      - uses: android-actions/setup-android@v4
+        with:
+          packages: 'platforms;android-36 build-tools;36.1.0 platform-tools'
+      - name: checkstyle + spotbugs (pure-JVM module)
+        run: ./gradlew :protocol-conformance:staticAnalysis --no-daemon --console=plain
+      - name: checkstyle (Android module)
+        run: ./gradlew -PlumosAndroid=true :app:checkstyleApp --no-daemon --console=plain
+      - name: upload reports on failure
+        if: failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: java-static-analysis-reports
+          path: |
+            android-app/protocol-conformance/build/reports/checkstyle
+            android-app/protocol-conformance/build/reports/spotbugs
+            android-app/app/build/reports/checkstyle
+          retention-days: 7
 
   # --------------------------------------------------------- secret scan ----
   secret-scan:
@@ -342,7 +402,17 @@ jobs:
   pipeline-gate:
     name: pipeline gate
     runs-on: ubuntu-latest
-    needs: [lint, secret-scan, dependencies, sbom, shell-backend, shell-admin, shell-android]
+    needs:
+      [
+        lint,
+        java-static-analysis,
+        secret-scan,
+        dependencies,
+        sbom,
+        shell-backend,
+        shell-admin,
+        shell-android,
+      ]
     if: always()
     steps:
       - name: assess
@@ -351,6 +421,7 @@ jobs:
           set -euo pipefail
           results=(
             "lint=${{ needs.lint.result }}"
+            "java-static-analysis=${{ needs.java-static-analysis.result }}"
             "secret-scan=${{ needs.secret-scan.result }}"
             "dependencies=${{ needs.dependencies.result }}"
             "sbom=${{ needs.sbom.result }}"

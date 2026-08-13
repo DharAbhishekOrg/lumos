@@ -17,10 +17,33 @@
 androidGradlePlugin = "9.3.1"
 gson = "2.11.0"
 junit = "5.11.3"
+# TRS-CODE-006 names Checkstyle and SpotBugs. Both are LGPL-2.1 - copyleft
+# family - so they are declared loudly here as AGENTS.md Sec. 3 requires. Both
+# are build-time analysers: never linked into, bundled with or shipped in any
+# artefact, and LGPL-2.1 places no obligation on the sources they read.
+#
+# Checkstyle is held at the 12.x line deliberately. 13.10.0 was tried first and
+# refused to run: "Checkstyle 13.10.0 is not compatible with the configured JVM
+# (17)". TRS Sec. 5.3 pins the Java 17 toolchain, and a specification value is a
+# change request against the TRS rather than something a build file may raise on
+# a tool's behalf - the same call TRS-CICD-006 already owns for the Android SDK
+# baseline. 12.3.1 is the newest release that runs on 17.
+checkstyle = "12.3.1"
+spotbugs = "4.10.3"
+spotbugsPlugin = "6.5.10"
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "androidGradlePlugin" }
+spotbugs = { id = "com.github.spotbugs", version.ref = "spotbugsPlugin" }
 
 [libraries]
 gson = { module = "com.google.code.gson:gson", version.ref = "gson" }
 junit-bom = { module = "org.junit:junit-bom", version.ref = "junit" }
+# Versionless on purpose: both resolve through the junit-bom platform above, so
+# the BOM stays the single place the JUnit 5 version is written down. They are
+# catalogued rather than written as strings in a build file because Android
+# Lint's UseTomlInstead check is an error under warningsAsErrors, and it is
+# right to be - a dependency declared in a build file is one the catalogue's
+# controlled-update path (TRS-REP-003) cannot see.
+junit-jupiter = { module = "org.junit.jupiter:junit-jupiter" }
+junit-platform-launcher = { module = "org.junit.platform:junit-platform-launcher" }

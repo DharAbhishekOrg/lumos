@@ -327,7 +327,7 @@ func matrixAtRef(root, ref string) (*Matrix, error) {
 	out, err := gitOutput(root, "show", ref+":"+MatrixPath)
 	if err != nil {
 		// The matrix may not exist on the base at all (the seeding commit).
-		return nil, nil //nolint:nilnil // absence is a meaningful, non-error state
+		return nil, nil //nolint:nilerr,nilnil // absence is a meaningful, non-error state
 	}
 	var m Matrix
 	if err := json.Unmarshal([]byte(out), &m); err != nil {

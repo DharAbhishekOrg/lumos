@@ -13,6 +13,8 @@
 
 plugins {
     `java-library`
+    checkstyle
+    alias(libs.plugins.spotbugs)
 }
 
 java {
@@ -45,13 +47,72 @@ dependencies {
     // module. EPL-2.0 is weak copyleft limited to the library's own files and
     // is not linked into any shipped artefact - this is a test-only dependency.
     testImplementation(platform(libs.junit.bom))
-    testImplementation("org.junit.jupiter:junit-jupiter")
-    testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+    testImplementation(libs.junit.jupiter)
+    testRuntimeOnly(libs.junit.platform.launcher)
 }
 
 tasks.withType<JavaCompile>().configureEach {
     options.encoding = "UTF-8"
     options.compilerArgs.addAll(listOf("-Xlint:all", "-Werror"))
+}
+
+// ---- TRS-CODE-006: Checkstyle + SpotBugs, zero warnings --------------------
+//
+// The generated register at protocol/gen/java is on this module's main source
+// path (see sourceSets above) so that no constant is ever copied. It is
+// therefore also, by default, on the analysers' input path - and it must not be:
+// the files are overwritten on every generation and byte-compared by the
+// constants gate, so a finding there names a defect nobody may fix in place.
+// Both analysers exclude it, Checkstyle by source directory and SpotBugs by
+// package, and both leave com.lumos.protocol.conformance fully analysed.
+val generatedJavaDir = rootProject.file("protocol/gen/java")
+
+checkstyle {
+    toolVersion = libs.versions.checkstyle.get()
+    configFile = rootProject.file("tools/staticanalysis/checkstyle/checkstyle.xml")
+    // TRS-CODE-006 is a ZERO-warning gate, and Checkstyle's own default is to
+    // tolerate an unbounded number of warnings. Both ceilings are pinned at
+    // zero so the requirement is enforced by the build rather than by reading
+    // the report.
+    maxWarnings = 0
+    maxErrors = 0
+    isIgnoreFailures = false
+}
+
+tasks.withType<Checkstyle>().configureEach {
+    exclude { it.file.toPath().startsWith(generatedJavaDir.toPath()) }
+    reports {
+        xml.required.set(true)
+        html.required.set(true)
+    }
+}
+
+spotbugs {
+    toolVersion = libs.versions.spotbugs.get()
+    // `low` reports everything SpotBugs is willing to say. A higher threshold
+    // would let the gate pass while findings it chose not to print still exist,
+    // which is the shape of green this project has already been bitten by.
+    reportLevel.set(com.github.spotbugs.snom.Confidence.LOW)
+    effort.set(com.github.spotbugs.snom.Effort.MAX)
+    excludeFilter.set(rootProject.file("tools/staticanalysis/spotbugs/exclude.xml"))
+    ignoreFailures.set(false)
+}
+
+tasks.withType<com.github.spotbugs.snom.SpotBugsTask>().configureEach {
+    reports.create("xml") { required.set(true) }
+    reports.create("html") { required.set(true) }
+}
+
+// One task a human (and CI) can run for the whole Java analysis stack.
+tasks.register("staticAnalysis") {
+    group = "verification"
+    description = "TRS-CODE-006: Checkstyle and SpotBugs over every Java source set."
+    dependsOn(
+        "checkstyleMain",
+        "checkstyleTest",
+        "spotbugsMain",
+        "spotbugsTest",
+    )
 }
 
 tasks.test {

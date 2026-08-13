@@ -414,8 +414,27 @@ type manifest struct {
 	Files           []manifestEntry `json:"files"`
 }
 
+// jsonVectorFile encodes one vector document into the committed file form. Every
+// vector file in the suite is produced through this single function, so
+// indentation and the trailing newline cannot drift between domains - which
+// would show up as a spurious determinism failure rather than as a formatting
+// difference.
+func jsonVectorFile(path string, implements []string, doc any) (VectorFile, error) {
+	content, err := json.MarshalIndent(doc, "", "  ")
+	if err != nil {
+		return VectorFile{}, fmt.Errorf("marshal %s: %w", path, err)
+	}
+	return VectorFile{Path: path, Implements: implements, Content: append(content, '\n')}, nil
+}
+
 // Build produces the complete S4a vector set. It is pure: same inputs, same
 // bytes, every time.
+//
+// The per-domain builders below exist to keep this assembly within the
+// TRS-CODE-004 complexity budget: emitting twelve files inline puts two error
+// branches per file in one function. The grouping is by protocol domain rather
+// than by an arbitrary split, so a reader looking for the crypto vectors finds
+// them together.
 func Build(root, generatorCommit string) ([]VectorFile, error) {
 	reg, err := schema.LoadRegister(root)
 	if err != nil {
@@ -426,6 +445,36 @@ func Build(root, generatorCommit string) ([]VectorFile, error) {
 		return nil, err
 	}
 
+	var files []VectorFile
+	for _, group := range []func(string, *schema.Register, string) ([]VectorFile, error){
+		buildFramingVectors,
+		buildCryptoVectors,
+		buildRadioAndMediaVectors,
+		buildConfigVectors,
+	} {
+		got, err := group(root, reg, constantsHash)
+		if err != nil {
+			return nil, err
+		}
+		files = append(files, got...)
+	}
+
+	// TRS Sec. 18.4 completeness gate: the emitted set must be exactly the
+	// prescribed tree. A missing file is a FAILED GATE, not a smaller suite.
+	if err := assertSuiteComplete(files); err != nil {
+		return nil, err
+	}
+
+	manifestFile, err := buildManifestFile(files, generatorCommit, constantsHash)
+	if err != nil {
+		return nil, err
+	}
+	return append(files, manifestFile), nil
+}
+
+// buildFramingVectors emits the frame round-trip, frame negative and error-code
+// files. It is the only group that needs the register and the repository root.
+func buildFramingVectors(root string, reg *schema.Register, constantsHash string) ([]VectorFile, error) {
 	roundtrips, err := buildRoundtrips(reg, constantsHash)
 	if err != nil {
 		return nil, err
@@ -438,97 +487,102 @@ func Build(root, generatorCommit string) ([]VectorFile, error) {
 	if err != nil {
 		return nil, err
 	}
+	return collectVectorFiles(
+		vectorDoc{"test-vectors/framing/frame_roundtrip.json", roundtrips.Implements, roundtrips},
+		vectorDoc{"test-vectors/framing/frame_invalid.json", invalids.Implements, invalids},
+		vectorDoc{"test-vectors/errors/error_codes.json", errSnapshot.Implements, errSnapshot},
+	)
+}
 
-	var files []VectorFile
-	appendJSON := func(path string, implements []string, v any) error {
-		content, err := json.MarshalIndent(v, "", "  ")
+// buildCryptoVectors emits the four TRS Sec. 18.4 cryptographic vector files.
+func buildCryptoVectors(_ string, _ *schema.Register, constantsHash string) ([]VectorFile, error) {
+	x3dh, err := buildX3DHKAT(constantsHash)
+	if err != nil {
+		return nil, err
+	}
+	ratchet, err := buildRatchetSequences(constantsHash)
+	if err != nil {
+		return nil, err
+	}
+	aead, err := buildAEADKAT(constantsHash)
+	if err != nil {
+		return nil, err
+	}
+	safety, err := buildSafetyNumber(constantsHash)
+	if err != nil {
+		return nil, err
+	}
+	return collectVectorFiles(
+		vectorDoc{"test-vectors/crypto/x3dh_kat.json", x3dh.Implements, x3dh},
+		vectorDoc{"test-vectors/crypto/ratchet_sequences.json", ratchet.Implements, ratchet},
+		vectorDoc{"test-vectors/crypto/aead_kat.json", aead.Implements, aead},
+		vectorDoc{"test-vectors/crypto/safety_number.json", safety.Implements, safety},
+	)
+}
+
+// buildRadioAndMediaVectors emits the BLE advertisement and object-pipeline
+// files.
+func buildRadioAndMediaVectors(_ string, _ *schema.Register, constantsHash string) ([]VectorFile, error) {
+	adv, err := buildAdvVectors(constantsHash)
+	if err != nil {
+		return nil, err
+	}
+	media, err := buildMediaVectors(constantsHash)
+	if err != nil {
+		return nil, err
+	}
+	return collectVectorFiles(
+		vectorDoc{"test-vectors/adv/ble_advertisement.json", adv.Implements, adv},
+		vectorDoc{"test-vectors/media/object_pipeline.json", media.Implements, media},
+	)
+}
+
+// buildConfigVectors emits the signed-config positive and negative files and the
+// voucher-token file.
+func buildConfigVectors(_ string, _ *schema.Register, constantsHash string) ([]VectorFile, error) {
+	valid, err := buildConfigValid(constantsHash)
+	if err != nil {
+		return nil, err
+	}
+	invalid, err := buildConfigInvalid(constantsHash)
+	if err != nil {
+		return nil, err
+	}
+	voucher, err := buildVoucherVectors(constantsHash)
+	if err != nil {
+		return nil, err
+	}
+	return collectVectorFiles(
+		vectorDoc{"test-vectors/config/package_valid.json", valid.Implements, valid},
+		vectorDoc{"test-vectors/config/package_invalid.json", invalid.Implements, invalid},
+		vectorDoc{"test-vectors/voucher/voucher_tokens.json", voucher.Implements, voucher},
+	)
+}
+
+// vectorDoc pairs a built document with the path and requirement IDs it is
+// emitted under.
+type vectorDoc struct {
+	path       string
+	implements []string
+	doc        any
+}
+
+// collectVectorFiles encodes a group's documents in declaration order.
+func collectVectorFiles(docs ...vectorDoc) ([]VectorFile, error) {
+	out := make([]VectorFile, 0, len(docs))
+	for _, d := range docs {
+		f, err := jsonVectorFile(d.path, d.implements, d.doc)
 		if err != nil {
-			return fmt.Errorf("marshal %s: %w", path, err)
+			return nil, err
 		}
-		files = append(files, VectorFile{Path: path, Implements: implements, Content: append(content, '\n')})
-		return nil
+		out = append(out, f)
 	}
-	if err := appendJSON("test-vectors/framing/frame_roundtrip.json", roundtrips.Implements, roundtrips); err != nil {
-		return nil, err
-	}
-	if err := appendJSON("test-vectors/framing/frame_invalid.json", invalids.Implements, invalids); err != nil {
-		return nil, err
-	}
-	if err := appendJSON("test-vectors/errors/error_codes.json", errSnapshot.Implements, errSnapshot); err != nil {
-		return nil, err
-	}
+	return out, nil
+}
 
-	x3dhFile, err := buildX3DHKAT(constantsHash)
-	if err != nil {
-		return nil, err
-	}
-	if err := appendJSON("test-vectors/crypto/x3dh_kat.json", x3dhFile.Implements, x3dhFile); err != nil {
-		return nil, err
-	}
-	ratchetFile, err := buildRatchetSequences(constantsHash)
-	if err != nil {
-		return nil, err
-	}
-	if err := appendJSON("test-vectors/crypto/ratchet_sequences.json", ratchetFile.Implements, ratchetFile); err != nil {
-		return nil, err
-	}
-	aeadFile, err := buildAEADKAT(constantsHash)
-	if err != nil {
-		return nil, err
-	}
-	if err := appendJSON("test-vectors/crypto/aead_kat.json", aeadFile.Implements, aeadFile); err != nil {
-		return nil, err
-	}
-	safetyFile, err := buildSafetyNumber(constantsHash)
-	if err != nil {
-		return nil, err
-	}
-	if err := appendJSON("test-vectors/crypto/safety_number.json", safetyFile.Implements, safetyFile); err != nil {
-		return nil, err
-	}
-
-	advFile, err := buildAdvVectors(constantsHash)
-	if err != nil {
-		return nil, err
-	}
-	if err := appendJSON("test-vectors/adv/ble_advertisement.json", advFile.Implements, advFile); err != nil {
-		return nil, err
-	}
-	mediaFile, err := buildMediaVectors(constantsHash)
-	if err != nil {
-		return nil, err
-	}
-	if err := appendJSON("test-vectors/media/object_pipeline.json", mediaFile.Implements, mediaFile); err != nil {
-		return nil, err
-	}
-	cfgValid, err := buildConfigValid(constantsHash)
-	if err != nil {
-		return nil, err
-	}
-	if err := appendJSON("test-vectors/config/package_valid.json", cfgValid.Implements, cfgValid); err != nil {
-		return nil, err
-	}
-	cfgInvalid, err := buildConfigInvalid(constantsHash)
-	if err != nil {
-		return nil, err
-	}
-	if err := appendJSON("test-vectors/config/package_invalid.json", cfgInvalid.Implements, cfgInvalid); err != nil {
-		return nil, err
-	}
-	voucherFile, err := buildVoucherVectors(constantsHash)
-	if err != nil {
-		return nil, err
-	}
-	if err := appendJSON("test-vectors/voucher/voucher_tokens.json", voucherFile.Implements, voucherFile); err != nil {
-		return nil, err
-	}
-
-	// TRS Sec. 18.4 completeness gate: the emitted set must be exactly the
-	// prescribed tree. A missing file is a FAILED GATE, not a smaller suite.
-	if err := assertSuiteComplete(files); err != nil {
-		return nil, err
-	}
-
+// buildManifestFile indexes the emitted suite. It runs after
+// assertSuiteComplete, so the manifest can never describe a partial tree.
+func buildManifestFile(files []VectorFile, generatorCommit, constantsHash string) (VectorFile, error) {
 	man := manifest{
 		SchemaVersion:   1,
 		Generator:       GeneratorName,
@@ -543,14 +597,9 @@ func Build(root, generatorCommit string) ([]VectorFile, error) {
 	for _, f := range files {
 		man.Files = append(man.Files, manifestEntry{Path: f.Path, Implements: f.Implements})
 	}
-	manContent, err := json.MarshalIndent(man, "", "  ")
-	if err != nil {
-		return nil, err
-	}
-	files = append(files, VectorFile{
-		Path:       "test-vectors/manifest.json",
-		Implements: []string{"TRS-TST-001", "TRS-CONST-005"},
-		Content:    append(manContent, '\n'),
-	})
-	return files, nil
+	return jsonVectorFile(
+		"test-vectors/manifest.json",
+		[]string{"TRS-TST-001", "TRS-CONST-005"},
+		man,
+	)
 }
