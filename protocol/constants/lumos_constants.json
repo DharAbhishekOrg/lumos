@@ -5,7 +5,7 @@
  "$generator": "tools/constantsgen",
  "service_uuid": "E853EB6A-775C-4A49-A6BF-320E6A5CC609",
  "$service_uuid_provenance": "One fixed 128-bit GATT service UUID per ADR-002 / TRS Sec. 9.3, generated once from a CSPRNG as an RFC 4122 version-4 UUID in WP-01 slice S2 and frozen here. Advertised by both platforms and used for scan filtering. No 16-bit alias is registered for flagship. Regenerating this value is a breaking protocol change.",
- "constants_hash": "sha256:99beeffb52f9b5b65afd53bb875175171e0e920e802b0927dd4f34db9cffc23c",
+ "constants_hash": "sha256:568eb8489beb092351d802a9f7ab88eb6eecc62376b39f75eb2e22361d48d37b",
  "constants_hash_algorithm": {
   "digest": "SHA-256",
   "encoding": "lowercase hex, prefixed 'sha256:'",
@@ -466,6 +466,23 @@
    "overridable": false,
    "notes": "The frozen 64-glyph alphabet of ADR-005, selected under the ADR-009 security criterion: single-codepoint default-emoji-presentation glyphs only (no ZWJ, no variation selectors, no skin-tone or gender variants), distinct silhouettes, no colour-only distinctions. Per-glyph rationale in docs/adrs/ADR-009-safety-number-emoji-alphabet.md. 64 glyphs = 6 bits each; 6 glyphs carry 36 bits.",
    "anchors": ["SRS-IDN-005", "SRS-MAT-008"], "adr": ["ADR-005", "ADR-009"], "source": "ADR-005"
+  },
+
+  "RECOVERY_ARGON2ID": {
+   "memory_kib": 65536,
+   "memory_kib_min": 32768,
+   "memory_kib_max": 262144,
+   "iterations": 3,
+   "iterations_min": 2,
+   "iterations_max": 10,
+   "parallelism": 1,
+   "parallelism_min": 1,
+   "parallelism_max": 4,
+   "salt_bytes": 16,
+   "key_bytes": 32,
+   "overridable": false,
+   "notes": "Argon2id parameters for the ADR-003 content-only RecoveryRecord, added in WP-02 slice S4. NOT overridable by signed configuration: a config that lowered them would weaken every export made afterwards, and the whole point of a passphrase-derived key is that its cost is fixed by us rather than by whoever controls a config feed. 64 MiB / 3 passes / 1 lane is the OWASP-shaped balance for a mobile device that must also do this while the user waits. The bounds exist for a different reason from every other bounded entry here: a RecoveryRecord CARRIES its own parameters so that a record written today still opens after the defaults move, and import refuses any record whose parameters fall below these minima - which is what stops an attacker who can edit the file from downgrading the work factor before a passphrase guess. salt_bytes and key_bytes are fixed and unbounded because changing either is a format change, not a tuning knob.",
+   "anchors": ["SRS-ONB-007", "SRS-IDN-008", "SRS-DAT-004"], "adr": ["ADR-003"], "source": "ADR-003 / WP-02 S4"
   }
  },
 

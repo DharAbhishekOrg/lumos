@@ -7,7 +7,7 @@
  * GENERATED - DO NOT EDIT. Generator: tools/constantsgen
  * Source register: protocol/constants/lumos_constants.json
  * Baseline: TRS v1.1 Sec. 23 / EDP v1.0 Sec. 4 (ADR-004)
- * constants_hash: sha256:99beeffb52f9b5b65afd53bb875175171e0e920e802b0927dd4f34db9cffc23c
+ * constants_hash: sha256:568eb8489beb092351d802a9f7ab88eb6eecc62376b39f75eb2e22361d48d37b
  */
 package com.lumos.protocol;
 
@@ -24,7 +24,7 @@ public final class LumosConstants {
     public static final String SERVICE_UUID = "E853EB6A-775C-4A49-A6BF-320E6A5CC609";
 
     /** Binds generated code to the register that produced it (TRS-CONST-005). */
-    public static final String CONSTANTS_HASH = "sha256:99beeffb52f9b5b65afd53bb875175171e0e920e802b0927dd4f34db9cffc23c";
+    public static final String CONSTANTS_HASH = "sha256:568eb8489beb092351d802a9f7ab88eb6eecc62376b39f75eb2e22361d48d37b";
 
     /** Register schema version. */
     public static final int SCHEMA_VERSION = 1;
@@ -161,6 +161,42 @@ public final class LumosConstants {
 
     /** crypto_protocol.RATCHET_ROOT_KDF_INFO.value */
     public static final String RATCHET_ROOT_KDF_INFO_VALUE = "lumos/ratchet/root/v1";
+
+    /** crypto_protocol.RECOVERY_ARGON2ID.iterations */
+    public static final int RECOVERY_ARGON2ID_ITERATIONS = 3;
+
+    /** crypto_protocol.RECOVERY_ARGON2ID.iterations_max */
+    public static final int RECOVERY_ARGON2ID_ITERATIONS_MAX = 10;
+
+    /** crypto_protocol.RECOVERY_ARGON2ID.iterations_min */
+    public static final int RECOVERY_ARGON2ID_ITERATIONS_MIN = 2;
+
+    /** crypto_protocol.RECOVERY_ARGON2ID.key_bytes */
+    public static final int RECOVERY_ARGON2ID_KEY_BYTES = 32;
+
+    /** crypto_protocol.RECOVERY_ARGON2ID.memory_kib */
+    public static final int RECOVERY_ARGON2ID_MEMORY_KIB = 65536;
+
+    /** crypto_protocol.RECOVERY_ARGON2ID.memory_kib_max */
+    public static final int RECOVERY_ARGON2ID_MEMORY_KIB_MAX = 262144;
+
+    /** crypto_protocol.RECOVERY_ARGON2ID.memory_kib_min */
+    public static final int RECOVERY_ARGON2ID_MEMORY_KIB_MIN = 32768;
+
+    /** crypto_protocol.RECOVERY_ARGON2ID.overridable */
+    public static final boolean RECOVERY_ARGON2ID_OVERRIDABLE = false;
+
+    /** crypto_protocol.RECOVERY_ARGON2ID.parallelism */
+    public static final int RECOVERY_ARGON2ID_PARALLELISM = 1;
+
+    /** crypto_protocol.RECOVERY_ARGON2ID.parallelism_max */
+    public static final int RECOVERY_ARGON2ID_PARALLELISM_MAX = 4;
+
+    /** crypto_protocol.RECOVERY_ARGON2ID.parallelism_min */
+    public static final int RECOVERY_ARGON2ID_PARALLELISM_MIN = 1;
+
+    /** crypto_protocol.RECOVERY_ARGON2ID.salt_bytes */
+    public static final int RECOVERY_ARGON2ID_SALT_BYTES = 16;
 
     /** crypto_protocol.SAFETY_NUMBER_EMOJI_ALPHABET.glyphs */
     public static final List<String> SAFETY_NUMBER_EMOJI_ALPHABET_GLYPHS = List.of("\uD83D\uDC36", "\uD83D\uDC31", "\uD83D\uDC34", "\uD83D\uDC2E", "\uD83D\uDC37", "\uD83D\uDC38", "\uD83D\uDC35", "\uD83D\uDC14", "\uD83D\uDC27", "\uD83D\uDC22", "\uD83D\uDC1D", "\uD83E\uDD8B", "\uD83D\uDC19", "\uD83D\uDC2C", "\uD83D\uDC18", "\uD83D\uDC0A", "\uD83C\uDF4E", "\uD83C\uDF4C", "\uD83C\uDF47", "\uD83C\uDF53", "\uD83C\uDF49", "\uD83C\uDF4D", "\uD83C\uDF3D", "\uD83C\uDF44", "\uD83C\uDF5E", "\uD83C\uDF55", "\uD83C\uDF82", "\uD83C\uDF69", "\u2615", "\uD83C\uDF66", "\uD83C\uDF35", "\uD83C\uDF32", "\uD83C\uDF3B", "\uD83C\uDF39", "\uD83C\uDF41", "\u2B50", "\uD83C\uDF08", "\uD83D\uDD25", "\uD83D\uDCA7", "\u26A1", "\uD83D\uDD11", "\uD83D\uDD12", "\uD83C\uDF88", "\uD83C\uDF81", "\u26BD", "\uD83C\uDFB8", "\uD83C\uDFBA", "\uD83C\uDFAF", "\uD83D\uDE80", "\u2693", "\uD83D\uDEB2", "\uD83D\uDE82", "\u23F0", "\uD83D\uDCA1", "\uD83D\uDD14", "\uD83C\uDFA7", "\uD83D\uDCF7", "\uD83D\uDD2D", "\uD83C\uDFA8", "\uD83C\uDFAA", "\uD83D\uDC99", "\uD83C\uDFB5", "\uD83C\uDFC6", "\uD83D\uDC51");

@@ -6,7 +6,7 @@
 // GENERATED - DO NOT EDIT. Generator: tools/constantsgen
 // Source register: protocol/constants/lumos_constants.json
 // Baseline: TRS v1.1 Sec. 23 / EDP v1.0 Sec. 4 (ADR-004)
-// constants_hash: sha256:99beeffb52f9b5b65afd53bb875175171e0e920e802b0927dd4f34db9cffc23c
+// constants_hash: sha256:568eb8489beb092351d802a9f7ab88eb6eecc62376b39f75eb2e22361d48d37b
 
 package lumosconstants
 
@@ -14,7 +14,7 @@ package lumosconstants
 const ServiceUUID = "E853EB6A-775C-4A49-A6BF-320E6A5CC609"
 
 // ConstantsHash binds generated code to the register that produced it (TRS-CONST-005).
-const ConstantsHash = "sha256:99beeffb52f9b5b65afd53bb875175171e0e920e802b0927dd4f34db9cffc23c"
+const ConstantsHash = "sha256:568eb8489beb092351d802a9f7ab88eb6eecc62376b39f75eb2e22361d48d37b"
 
 // SchemaVersion is the register schema version.
 const SchemaVersion = 1
@@ -151,6 +151,42 @@ const RatchetRootKdfInfoOverridable = false
 
 // RatchetRootKdfInfoValue is crypto_protocol.RATCHET_ROOT_KDF_INFO.value.
 const RatchetRootKdfInfoValue = "lumos/ratchet/root/v1"
+
+// RecoveryArgon2idIterations is crypto_protocol.RECOVERY_ARGON2ID.iterations.
+const RecoveryArgon2idIterations = 3
+
+// RecoveryArgon2idIterationsMax is crypto_protocol.RECOVERY_ARGON2ID.iterations_max.
+const RecoveryArgon2idIterationsMax = 10
+
+// RecoveryArgon2idIterationsMin is crypto_protocol.RECOVERY_ARGON2ID.iterations_min.
+const RecoveryArgon2idIterationsMin = 2
+
+// RecoveryArgon2idKeyBytes is crypto_protocol.RECOVERY_ARGON2ID.key_bytes.
+const RecoveryArgon2idKeyBytes = 32
+
+// RecoveryArgon2idMemoryKib is crypto_protocol.RECOVERY_ARGON2ID.memory_kib.
+const RecoveryArgon2idMemoryKib = 65536
+
+// RecoveryArgon2idMemoryKibMax is crypto_protocol.RECOVERY_ARGON2ID.memory_kib_max.
+const RecoveryArgon2idMemoryKibMax = 262144
+
+// RecoveryArgon2idMemoryKibMin is crypto_protocol.RECOVERY_ARGON2ID.memory_kib_min.
+const RecoveryArgon2idMemoryKibMin = 32768
+
+// RecoveryArgon2idOverridable is crypto_protocol.RECOVERY_ARGON2ID.overridable.
+const RecoveryArgon2idOverridable = false
+
+// RecoveryArgon2idParallelism is crypto_protocol.RECOVERY_ARGON2ID.parallelism.
+const RecoveryArgon2idParallelism = 1
+
+// RecoveryArgon2idParallelismMax is crypto_protocol.RECOVERY_ARGON2ID.parallelism_max.
+const RecoveryArgon2idParallelismMax = 4
+
+// RecoveryArgon2idParallelismMin is crypto_protocol.RECOVERY_ARGON2ID.parallelism_min.
+const RecoveryArgon2idParallelismMin = 1
+
+// RecoveryArgon2idSaltBytes is crypto_protocol.RECOVERY_ARGON2ID.salt_bytes.
+const RecoveryArgon2idSaltBytes = 16
 
 // SafetyNumberEmojiAlphabetOverridable is crypto_protocol.SAFETY_NUMBER_EMOJI_ALPHABET.overridable.
 const SafetyNumberEmojiAlphabetOverridable = false
