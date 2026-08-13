@@ -50,6 +50,56 @@
   },
   {
    "type": "library",
+   "name": "androidx.room:room-compiler",
+   "version": "2.8.4",
+   "purl": "pkg:maven/androidx.room/room-compiler@2.8.4",
+   "scope": "required",
+   "x-ecosystem": "gradle",
+   "x-locked-in": "gradle/libs.versions.toml",
+   "x-license-note": "not declared in the toolchain manifest"
+  },
+  {
+   "type": "library",
+   "name": "androidx.room:room-runtime",
+   "version": "2.8.4",
+   "purl": "pkg:maven/androidx.room/room-runtime@2.8.4",
+   "scope": "required",
+   "x-ecosystem": "gradle",
+   "x-locked-in": "gradle/libs.versions.toml",
+   "x-license-note": "not declared in the toolchain manifest"
+  },
+  {
+   "type": "library",
+   "name": "androidx.room:room-testing",
+   "version": "2.8.4",
+   "purl": "pkg:maven/androidx.room/room-testing@2.8.4",
+   "scope": "required",
+   "x-ecosystem": "gradle",
+   "x-locked-in": "gradle/libs.versions.toml",
+   "x-license-note": "not declared in the toolchain manifest"
+  },
+  {
+   "type": "library",
+   "name": "androidx.test.ext:junit",
+   "version": "1.3.0",
+   "purl": "pkg:maven/androidx.test.ext/junit@1.3.0",
+   "scope": "required",
+   "x-ecosystem": "gradle",
+   "x-locked-in": "gradle/libs.versions.toml",
+   "x-license-note": "not declared in the toolchain manifest"
+  },
+  {
+   "type": "library",
+   "name": "androidx.test:runner",
+   "version": "1.7.0",
+   "purl": "pkg:maven/androidx.test/runner@1.7.0",
+   "scope": "required",
+   "x-ecosystem": "gradle",
+   "x-locked-in": "gradle/libs.versions.toml",
+   "x-license-note": "not declared in the toolchain manifest"
+  },
+  {
+   "type": "library",
    "name": "com.android.application",
    "version": "9.3.1",
    "purl": "pkg:maven/com.android.application@9.3.1",

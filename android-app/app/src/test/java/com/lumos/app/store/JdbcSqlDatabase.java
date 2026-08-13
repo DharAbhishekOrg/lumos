@@ -30,8 +30,14 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-/** SqlDatabase backed by sqlite-jdbc. */
-final class JdbcSqlDatabase implements SqlDatabase {
+/**
+ * SqlDatabase backed by sqlite-jdbc.
+ *
+ * <p>Public because test sources in other packages - the profile domain's, for
+ * one - need a real engine behind the seam. It is a test source itself, so this
+ * widens no production API.
+ */
+public final class JdbcSqlDatabase implements SqlDatabase {
 
     private final Connection connection;
 
@@ -46,7 +52,7 @@ final class JdbcSqlDatabase implements SqlDatabase {
      * @return the adapter
      * @throws StoreException if the driver refuses
      */
-    static JdbcSqlDatabase atPath(final String path) throws StoreException {
+    public static JdbcSqlDatabase atPath(final String path) throws StoreException {
         try {
             final Connection connection = DriverManager.getConnection("jdbc:sqlite:" + path);
             connection.setAutoCommit(true);
@@ -62,7 +68,7 @@ final class JdbcSqlDatabase implements SqlDatabase {
      * @return the adapter
      * @throws StoreException if the driver refuses
      */
-    static JdbcSqlDatabase inMemory() throws StoreException {
+    public static JdbcSqlDatabase inMemory() throws StoreException {
         return atPath(":memory:");
     }
 

@@ -67,6 +67,13 @@
       <!-- A one-line accessor documents itself; the rule is aimed at behaviour
            a caller cannot infer from the signature. -->
       <property name="minLineCount" value="1"/>
+      <!-- A test method's name IS its documentation, and this project names
+           them as sentences. The exemption also removes an accidental
+           inconsistency: JUnit 5 tests may be package-private and so never
+           reached this rule, while JUnit 4 REQUIRES public methods, so the
+           instrumented tests were being held to a standard the JVM tests
+           escaped by an accident of framework rather than by a decision. -->
+      <property name="allowedAnnotations" value="Override,Test,Before,After,BeforeEach,AfterEach,BeforeClass,AfterClass"/>
     </module>
 
     <!-- TRS-CODE-004: complexity budget. -->

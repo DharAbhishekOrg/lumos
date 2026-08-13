@@ -33,4 +33,37 @@
     <Class name="~.*Test$"/>
     <Bug pattern="THROWS_METHOD_THROWS_CLAUSE_BASIC_EXCEPTION"/>
   </Match>
+
+  <!--
+    Room's generated implementations. Same reasoning as the generated register
+    above: `_Impl` classes are written by the Room annotation processor on every
+    build, a finding in one names a defect nobody can fix in place, and an edit
+    would simply be overwritten. If Room ever generates a genuine defect, the
+    fix is a Room version bump or a change to the entity that produced it.
+
+    The pattern matches the processor's own suffix and the anonymous inner
+    classes it emits inside them (ProfileDao_Impl$1 and friends), so
+    hand-written classes in the same package - RoomSqlDatabase,
+    LumosRoomDatabase, ProfileDao - are fully analysed.
+  -->
+  <Match>
+    <Class name="~.*_Impl(\$.*)?$"/>
+  </Match>
+
+  <!--
+    Constructor-injected collaborators, one class at a time.
+
+    EI_EXPOSE_REP2 fires whenever a constructor stores a reference to a mutable
+    object, which is exactly what TRS Sec. 24.2's mandated constructor injection
+    does with every collaborator. It is NOT blanket-excluded, because the same
+    pattern also catches a genuine defect - a constructor retaining a caller's
+    array - and SpotBugs caught precisely that in the Java Frame during WP-02
+    S1. So each collaborator is listed explicitly and a new one has to be
+    thought about rather than absorbed.
+  -->
+  <Match>
+    <Class name="com.lumos.app.profile.ProfileRepository"/>
+    <Method name="&lt;init&gt;"/>
+    <Bug pattern="EI_EXPOSE_REP2"/>
+  </Match>
 </FindBugsFilter>
