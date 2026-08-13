@@ -86,14 +86,24 @@ final class KekStoreTests: XCTestCase {
                              "an unknown wrap-format version is refused, never guessed at")
     }
 
-    func testSecureEnclaveRoundtripWhereHardwareExists() throws {
-        try XCTSkipUnless(SecureEnclaveKekStore.isAvailable,
-                          "no Secure Enclave on this host; the hardware tier is owner-verified on devices")
-        let kek = try SecureEnclaveKekStore()
-        XCTAssertEqual(kek.protection, .secureEnclave)
-        let wrapped = try kek.wrap(dataKey, aad: aad)
-        XCTAssertEqual(try kek.unwrap(wrapped, aad: aad), dataKey)
-        kek.destroy()
-        XCTAssertThrowsError(try kek.unwrap(wrapped, aad: aad))
+    /// Not an XCTSkip, deliberately. SwiftPM's xUnit reporter writes a skipped
+    /// test as a bare passing testcase - the traceability collector cannot tell
+    /// it from a pass, which is the WP-01 §5.1 evidence-fidelity defect in a
+    /// new coat. So this test asserts a real property on EVERY host: where an
+    /// enclave exists, the store round-trips; where none exists, the store must
+    /// REFUSE TO EXIST rather than silently degrade to software - which is the
+    /// capability-gate honesty rule (threat model LT-05) stated as a test.
+    func testSecureEnclaveStoreEitherWorksOrRefusesToExist() throws {
+        if SecureEnclaveKekStore.isAvailable {
+            let kek = try SecureEnclaveKekStore()
+            XCTAssertEqual(kek.protection, .secureEnclave)
+            let wrapped = try kek.wrap(dataKey, aad: aad)
+            XCTAssertEqual(try kek.unwrap(wrapped, aad: aad), dataKey)
+            kek.destroy()
+            XCTAssertThrowsError(try kek.unwrap(wrapped, aad: aad))
+        } else {
+            XCTAssertThrowsError(try SecureEnclaveKekStore(),
+                                 "off-hardware the enclave store must fail loudly, never degrade to software")
+        }
     }
 }
