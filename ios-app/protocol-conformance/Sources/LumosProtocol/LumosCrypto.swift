@@ -151,7 +151,7 @@ public enum LumosCrypto {
     public static func be32(_ value: UInt32) -> Data {
         Data([
             UInt8((value >> 24) & 0xFF), UInt8((value >> 16) & 0xFF),
-            UInt8((value >> 8) & 0xFF), UInt8(value & 0xFF),
+            UInt8((value >> 8) & 0xFF), UInt8(value & 0xFF)
         ])
     }
 

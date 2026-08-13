@@ -141,6 +141,33 @@
   ".gitleaks.toml": [
    "TRS-REP-005",
    "TRS-CICD-001"
+  ],
+  "tools/staticanalysis/": [
+   "TRS-CODE-006",
+   "TRS-CODE-004",
+   "TRS-CICD-001"
+  ],
+  ".golangci.yml": [
+   "TRS-CODE-006",
+   "TRS-CODE-004",
+   "TRS-CICD-001"
+  ],
+  ".swiftlint.yml": [
+   "TRS-CODE-006",
+   "TRS-CODE-004",
+   "TRS-CICD-001"
+  ],
+  "gradle/": [
+   "TRS-REP-003"
+  ],
+  "docs/security/": [
+   "TRS-REP-008"
+  ],
+  "docs/privacy/": [
+   "TRS-REP-008"
+  ],
+  "docs/adrs/": [
+   "TRS-REP-008"
   ]
  },
  "last_commit_convention": "A commit cannot contain its own hash, so last_commit records the HEAD the entry's evidence was produced against - the commit the author stamped from. Freshness proves the field CHANGED between the PR base and head, which is what EDP Sec. 6.2 actually requires ('must also modify those entries' last_commit') and needs no self-referential SHA."

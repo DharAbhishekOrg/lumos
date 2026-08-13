@@ -66,6 +66,16 @@
   },
   {
    "type": "library",
+   "name": "com.github.spotbugs",
+   "version": "6.5.10",
+   "purl": "pkg:maven/com.github.spotbugs@6.5.10",
+   "scope": "required",
+   "x-ecosystem": "gradle",
+   "x-locked-in": "gradle/libs.versions.toml",
+   "x-license-note": "not declared in the toolchain manifest"
+  },
+  {
+   "type": "library",
    "name": "com.google.code.gson:gson",
    "version": "2.11.0",
    "purl": "pkg:maven/com.google.code.gson/gson@2.11.0",

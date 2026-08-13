@@ -100,48 +100,11 @@ func BuildModel(r *Register, hash string) (*Model, error) {
 	}
 
 	for _, group := range GroupOrder {
-		raw, ok := r.Decode[group]
-		if !ok {
-			return nil, fmt.Errorf("register is missing group %q", group)
+		constants, err := groupConstants(r, group)
+		if err != nil {
+			return nil, err
 		}
-		entries, ok := raw.(map[string]any)
-		if !ok {
-			return nil, fmt.Errorf("register group %q is not an object", group)
-		}
-		names := make([]string, 0, len(entries))
-		for name := range entries {
-			if excluded(name) {
-				continue
-			}
-			names = append(names, name)
-		}
-		sort.Strings(names)
-
-		for _, name := range names {
-			fields, ok := entries[name].(map[string]any)
-			if !ok {
-				return nil, fmt.Errorf("register entry %s.%s is not an object", group, name)
-			}
-			fieldNames := make([]string, 0, len(fields))
-			for f := range fields {
-				if excluded(f) || f == "overridable_fields" {
-					// overridable_fields narrows signed-config scope and is consumed by
-					// the config-schema emitter. It is hashed, because it is policy, but
-					// it is not a tunable value and has no generated symbol.
-					continue
-				}
-				fieldNames = append(fieldNames, f)
-			}
-			sort.Strings(fieldNames)
-
-			for _, f := range fieldNames {
-				c, err := newConstant(group, name, f, fields[f])
-				if err != nil {
-					return nil, fmt.Errorf("%s.%s.%s: %w", group, name, f, err)
-				}
-				m.Constants = append(m.Constants, c)
-			}
-		}
+		m.Constants = append(m.Constants, constants...)
 	}
 
 	if m.MessageClass, err = enumMembers(r, "classes"); err != nil {
@@ -155,6 +118,70 @@ func BuildModel(r *Register, hash string) (*Model, error) {
 		return nil, err
 	}
 	return m, nil
+}
+
+// groupConstants extracts one register group's constants in a deterministic
+// order. Entry and field names are sorted rather than ranged over directly:
+// Go's map iteration order is randomised, and an emitter fed in map order would
+// produce different bytes on every run, which the Sec. 18.4 determinism
+// self-check would report as non-determinism without saying where it came from.
+func groupConstants(r *Register, group string) ([]Constant, error) {
+	raw, ok := r.Decode[group]
+	if !ok {
+		return nil, fmt.Errorf("register is missing group %q", group)
+	}
+	entries, ok := raw.(map[string]any)
+	if !ok {
+		return nil, fmt.Errorf("register group %q is not an object", group)
+	}
+
+	names := make([]string, 0, len(entries))
+	for name := range entries {
+		if excluded(name) {
+			continue
+		}
+		names = append(names, name)
+	}
+	sort.Strings(names)
+
+	var out []Constant
+	for _, name := range names {
+		fields, ok := entries[name].(map[string]any)
+		if !ok {
+			return nil, fmt.Errorf("register entry %s.%s is not an object", group, name)
+		}
+		got, err := entryConstants(group, name, fields)
+		if err != nil {
+			return nil, err
+		}
+		out = append(out, got...)
+	}
+	return out, nil
+}
+
+// entryConstants turns one register entry's fields into constants.
+func entryConstants(group, name string, fields map[string]any) ([]Constant, error) {
+	fieldNames := make([]string, 0, len(fields))
+	for f := range fields {
+		if excluded(f) || f == "overridable_fields" {
+			// overridable_fields narrows signed-config scope and is consumed by
+			// the config-schema emitter. It is hashed, because it is policy, but
+			// it is not a tunable value and has no generated symbol.
+			continue
+		}
+		fieldNames = append(fieldNames, f)
+	}
+	sort.Strings(fieldNames)
+
+	out := make([]Constant, 0, len(fieldNames))
+	for _, f := range fieldNames {
+		c, err := newConstant(group, name, f, fields[f])
+		if err != nil {
+			return nil, fmt.Errorf("%s.%s.%s: %w", group, name, f, err)
+		}
+		out = append(out, c)
+	}
+	return out, nil
 }
 
 func newConstant(group, name, field string, v any) (Constant, error) {

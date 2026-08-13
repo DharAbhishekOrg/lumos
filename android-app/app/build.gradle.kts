@@ -13,6 +13,7 @@
 
 plugins {
     alias(libs.plugins.android.application)
+    checkstyle
 }
 
 android {
@@ -100,5 +101,58 @@ android {
         // kind of stub that later ships unnoticed (AGENTS.md Sec. 3). Re-enable
         // this check when the app shell gains an activity in WP-02.
         disable += setOf("OldTargetApi", "GradleDependency", "MissingApplicationIcon")
+    }
+
+    testOptions {
+        unitTests.all {
+            // JUnit 5, the same platform :protocol-conformance uses. One test
+            // framework across the JVM half of the repository means one set of
+            // report shapes for the traceability collector to parse.
+            it.useJUnitPlatform()
+            it.testLogging {
+                events("passed", "skipped", "failed")
+            }
+        }
+    }
+}
+
+dependencies {
+    // JUnit 5, EPL-2.0. Test scope only, never linked into an APK. Already
+    // declared for :protocol-conformance in tools/toolchain/toolchain-manifest.json.
+    testImplementation(platform(libs.junit.bom))
+    testImplementation(libs.junit.jupiter)
+    testRuntimeOnly(libs.junit.platform.launcher)
+}
+
+// ---- TRS-CODE-006: Checkstyle over the Android module ----------------------
+//
+// The Gradle checkstyle plugin creates tasks from the `java` plugin's source
+// sets, which an Android module does not have, so the task is registered by
+// hand over this module's Java sources. SpotBugs is deliberately NOT wired here
+// yet and the reason is worth stating rather than leaving as an omission:
+// SpotBugs analyses compiled bytecode, and this module has no main source set
+// at all - it is still the empty WP-01 shell. A SpotBugs task over an empty
+// class directory would report success while checking nothing, which is exactly
+// the kind of green this project has been bitten by three times.
+//
+// TestAppModuleWiresSpotbugsOnceItHasProductionCode in tools/staticanalysis
+// fails the moment android-app/app/src/main/java appears, so the omission
+// cannot outlive the condition that justifies it.
+checkstyle {
+    toolVersion = libs.versions.checkstyle.get()
+    configFile = rootProject.file("tools/staticanalysis/checkstyle/checkstyle.xml")
+    maxWarnings = 0
+    maxErrors = 0
+    isIgnoreFailures = false
+}
+
+tasks.register<Checkstyle>("checkstyleApp") {
+    group = "verification"
+    description = "TRS-CODE-006: Checkstyle over every Java source in the Android module."
+    source = fileTree("src") { include("**/*.java") }
+    classpath = files()
+    reports {
+        xml.required.set(true)
+        html.required.set(true)
     }
 }

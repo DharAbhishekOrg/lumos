@@ -1,0 +1,157 @@
+# Lumos - build / golangci-lint configuration for the Go half of TRS-CODE-006.
+# Author: dhar.abhishek.email@gmail.com
+# Implements: TRS-CODE-006, TRS-CODE-004, TRS-CODE-005, TRS-CODE-008, TRS-CICD-001
+# ADRs: ADR-004
+# Threading: n/a
+# Notes: TRS-CODE-006 asks for a ZERO-WARNING gate, and the two settings that
+# actually deliver that live in `issues` rather than in the linter list.
+# golangci-lint defaults to reporting at most 50 issues per linter and at most 3
+# occurrences of the same issue; both are set to 0 (unlimited) here, because a
+# capped report is a gate that hides findings past the cap while still exiting
+# non-zero for the ones it showed. Zero-warning has to mean every warning, not
+# the first fifty.
+#
+# The linter selection is deliberately the TRS Sec. 24 rule set rather than
+# "all". Each entry names the requirement it serves; a linter that serves no
+# requirement is noise, and noise is what teaches reviewers to skip a gate.
+#
+# Every exclusion below is scoped to a path and carries its reason. A blanket
+# disable would leave a gate whose green means nothing, which is the failure
+# mode this repository has already met three times.
+
+version: "2"
+
+run:
+  # Test files are linted too: they are the evidence this project's status claims
+  # rest on, so holding them to a lower standard than the code would invert the
+  # priority.
+  tests: true
+
+linters:
+  # `standard` is errcheck, govet, ineffassign, staticcheck and unused.
+  default: standard
+  enable:
+    # TRS-CODE-004: cyclomatic complexity budget.
+    - gocyclo
+    # TRS-CODE-005: no TODO/FIXME without an issue reference. The magic-number
+    # clause of the same requirement is policed by tools/lumoslint against the
+    # actual Sec. 23 register, which is the narrow and trustworthy form of that
+    # rule; `mnd` flags every integer literal in the repository and would bury
+    # the register findings that matter under thousands that do not.
+    - godox
+    # TRS-CODE-008: explicit error handling.
+    - errorlint
+    - nilerr
+    # Security-relevant defects in a codebase that handles key material.
+    - gosec
+    # Correctness checks that catch defects review does not.
+    - bodyclose
+    - copyloopvar
+    - durationcheck
+    - makezero
+    - nakedret
+    - noctx
+    - unconvert
+    - usestdlibvars
+    - wastedassign
+
+  settings:
+    gocyclo:
+      # TRS-CODE-004 budgets complexity at <= 15 per function. gocyclo reports a
+      # function whose complexity is GREATER than this value, so 15 is the
+      # budget itself and 16 is the first failure.
+      min-complexity: 15
+
+    godox:
+      keywords: [TODO, FIXME, HACK, XXX, BUG]
+
+    staticcheck:
+      # ST1000 wants a package comment in its own prescribed form. The TRS
+      # Sec. 24.1 header IS this repository's package comment and has its own
+      # lint (tools/lumoslint -headers) which checks fields staticcheck knows
+      # nothing about. Two rules over one artefact means one of them loses.
+      #
+      # QF1012 rewrites b.WriteString(fmt.Sprintf(...)) into fmt.Fprintf(&b,
+      # ...). On a strings.Builder that trade is backwards: WriteString cannot
+      # fail, while Fprintf returns an error that cannot occur and therefore has
+      # to be discarded at all 42 call sites in tools/constantsgen. Taking the
+      # advice would convert a style preference into 42 deliberately ignored
+      # error returns, which is the thing TRS-CODE-008 exists to prevent.
+      checks: ["all", "-ST1000", "-QF1012"]
+
+  exclusions:
+    # `strict` refuses to guess: only files carrying a real generated-code
+    # marker are exempt, and every generator in this repository writes one.
+    generated: strict
+
+    paths:
+      # Third-party Go source vendored inside an npm package. `./...` reaches it
+      # because it sits under the module root with no go.mod of its own. Nobody
+      # in this repository wrote it and nobody here can fix it.
+      - admin-console/node_modules
+
+    rules:
+      # ---- gosec and noctx, scoped to the build tooling ---------------------
+      #
+      # Everything under tools/ is a single-shot build-time program that reads
+      # and writes paths IT computed from the repository root, shells out to git
+      # with arguments it built itself, and walks directories the same CI job
+      # just created. None of it takes a path, an argument or a byte from a
+      # network, a request or a user, which is the threat every rule below is
+      # written about:
+      #
+      #   G115  integer conversions of values read from the Sec. 23 register
+      #   G122  a filesystem read inside a WalkDir over a freshly downloaded dir
+      #   G204  git invoked with arguments the tool itself assembled
+      #   G301  directories holding artefacts that must be world-readable
+      #   G304  os.Open/os.ReadFile on repository-relative paths
+      #   G306  committed generated files, which 0600 would make unreadable
+      #
+      # The scope is `tools/` and nothing else. gosec stays fully armed over
+      # backend/ and protocol/ - the code that will handle untrusted bytes - so
+      # the first request-supplied path this project ever opens is still a
+      # finding.
+      - path: ^tools/
+        linters: [gosec]
+        text: "^G(115|122|204|301|304|306):"
+
+      # noctx's exec rule is written for long-lived servers, where a cancelled
+      # request must be able to kill the subprocess it spawned. These are CLI
+      # tools whose own process IS the lifetime: there is no context to thread
+      # and nothing to cancel from. noctx stays enabled over backend/, where its
+      # HTTP rules are the ones that matter.
+      - path: ^tools/
+        linters: [noctx]
+
+      # protocol/schema reads schema files by a path it computes from the
+      # repository root, exactly as the tools above do. It is listed separately
+      # rather than folded into a wider prefix so that the rest of protocol/ -
+      # the wire, crypto, adv, media and config packages - is not covered.
+      - path: ^protocol/schema/schema\.go$
+        linters: [gosec]
+        text: "^G304:"
+
+      # ---- test files -------------------------------------------------------
+      #
+      # gocyclo on a table-driven conformance test measures its assertion count.
+      # Extracting those assertions into helpers moves the branches somewhere
+      # else and makes a failing vector harder to trace to the line that failed;
+      # it does not make the test simpler. TRS-CODE-004's budget exists to keep
+      # production logic reviewable and testable, and a test is already both.
+      # tools/lumoslint exempts test files from the constants rule for the same
+      # shape of reason and says so at length.
+      #
+      # errcheck and noctx: test scaffolding ignores errors from helpers whose
+      # failure the following assertion catches anyway. gosec's rules are
+      # written about production paths.
+      - path: _test\.go
+        linters: [gocyclo, errcheck, gosec, noctx]
+
+issues:
+  # See the note at the top of this file: 0 means unlimited, and unlimited is
+  # what "zero-warning" requires.
+  max-issues-per-linter: 0
+  max-same-issues: 0
+  # A warning that appears only for changed lines is a warning the next commit
+  # inherits silently. The gate reports the whole tree, every run.
+  new: false

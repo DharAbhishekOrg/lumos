@@ -145,6 +145,69 @@
    "swiftpm_resolved": "The SwiftPM package declares no external dependencies - only Foundation, CryptoKit and XCTest - so SwiftPM generates no Package.resolved. There is nothing to pin. If a Swift dependency is ever added, Package.resolved must be committed and this entry removed."
   }
  },
+ "static_analysis": {
+  "note": "The TRS-CODE-006 analyser stack, added in WP-02 slice S0. Every entry is pinned, and the pin is asserted against this file by tools/staticanalysis. Three of the six carry copyleft licences and are flagged accordingly per AGENTS.md Sec. 3: all are CI analysers that read source and emit reports. None is linked into, bundled with or distributed alongside any artefact, and none places an obligation on the code it analyses. TRS-CODE-006 names each of these tools by name, so the requirement itself is the approval record.",
+  "modules": [
+   {
+    "path": "com.puppycrawl.tools:checkstyle",
+    "version": "12.3.1",
+    "license": "LGPL-2.1-or-later",
+    "license_note": "Copyleft-family, flagged explicitly. Build-time analyser only; never distributed.",
+    "why": "Java source rules of TRS Sec. 24: the TRS-CODE-004 file and complexity budgets, TRS-CODE-002 public-API Javadoc, TRS-CODE-008 error handling and TRS-CODE-007 naming.",
+    "pinned_in": "gradle/libs.versions.toml",
+    "config": "tools/staticanalysis/checkstyle/checkstyle.xml",
+    "version_note": "Held on 12.x. 13.10.0 was installed first and refused to run: 'Checkstyle 13.10.0 is not compatible with the configured JVM (17)'. TRS Sec. 5.3 pins the Java 17 toolchain, so moving to 13.x would mean provisioning a second JDK to satisfy a linter - a specification change dressed up as a tool upgrade. 12.3.1 is the newest release that runs on 17."
+   },
+   {
+    "path": "com.github.spotbugs:spotbugs",
+    "version": "4.10.3",
+    "license": "LGPL-2.1-or-later",
+    "license_note": "Copyleft-family, flagged explicitly. Build-time analyser only; never distributed.",
+    "why": "Bytecode defect analysis for the Java half of TRS-CODE-006. Found the Frame payload aliasing (EI_EXPOSE_REP/EI_EXPOSE_REP2) on its first run.",
+    "pinned_in": "gradle/libs.versions.toml",
+    "config": "tools/staticanalysis/spotbugs/exclude.xml",
+    "effort": "max, report level low - the settings under which SpotBugs reports everything it is willing to say."
+   },
+   {
+    "path": "com.github.spotbugs:spotbugs-gradle-plugin",
+    "version": "6.5.10",
+    "license": "Apache-2.0",
+    "why": "Gradle integration for SpotBugs. Registers the spotbugsMain/spotbugsTest tasks the staticAnalysis task depends on.",
+    "pinned_in": "gradle/libs.versions.toml",
+    "catalogue_alias": "spotbugsPlugin"
+   },
+   {
+    "path": "realm/SwiftLint",
+    "version": "0.65.0",
+    "license": "MIT",
+    "why": "Swift source rules of TRS Sec. 24, run with --strict so a warning fails the job. Installed from the pinned portable_swiftlint.zip release rather than the macOS runner image's preinstalled copy, whose version changes whenever the image is rebuilt.",
+    "pinned_in": ".github/workflows/conformance.yml",
+    "config": ".swiftlint.yml",
+    "execution_surface": "github-actions:macos-latest"
+   },
+   {
+    "path": "golangci/golangci-lint",
+    "version": "2.12.2",
+    "license": "GPL-3.0-only",
+    "license_note": "COPYLEFT, and the strongest licence in this repository. Flagged prominently. It is a standalone CI binary: invoked as a process, never imported, never linked and never shipped, and GPL-3.0 places no obligation on the Go sources it reads. TRS-CODE-006 names golangci-lint explicitly, which is the requirement-level approval for it; the owner's WP-02 S0 instruction names it again.",
+    "why": "Go analyser stack of TRS-CODE-006. Enabled linters map one-to-one onto TRS Sec. 24 clauses; see .golangci.yml, where each carries the requirement it serves.",
+    "pinned_in": ".github/workflows/pipeline.yml",
+    "config": ".golangci.yml"
+   },
+   {
+    "path": "eslint",
+    "version": "9.39.5",
+    "license": "MIT",
+    "why": "Already pinned for the admin console in npm_dependencies above; listed here too because TRS-CODE-006 counts it as a member of the analyser stack and the stack should be readable in one place.",
+    "pinned_in": "admin-console/package.json",
+    "config": "admin-console/eslint.config.js"
+   }
+  ],
+  "not_pinned_by_version": {
+   "android_lint": "Ships inside the Android Gradle Plugin and is versioned with it (androidGradlePlugin 9.3.1 in build_dependencies below). It is configured in android-app/app/build.gradle.kts with warningsAsErrors = true.",
+   "swift_6_strict_concurrency": "A compiler mode, not a tool: Package.swift puts every target in .swiftLanguageMode(.v6) and the macOS CI job builds with -Xswiftc -warnings-as-errors. Its version is the Swift toolchain's, which is the macos-latest image's."
+  }
+ },
  "build_dependencies": {
   "note": "Build-time plugins. Not linked into any shipped artefact, but they determine what is produced, so they are pinned and declared like any other dependency.",
   "modules": [

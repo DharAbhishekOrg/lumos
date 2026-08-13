@@ -29,8 +29,16 @@ Same content, easier to query:
 | --- | --- |
 | `prompts/` | Per-work-package kickoff prompts |
 | `handover/` | Original handover pack archive, retained for provenance |
-| `adrs/` | ADR-005 and ADR-006, both **Accepted**. ADR-001..004 remain in the EDP; back-porting them as standalone records is not a WP-01 deliverable |
-| threat model, privacy data map | Not yet created (TRS-REP-008); not a WP-01 deliverable |
+| `adrs/` | ADR-005..009, all **Accepted**. ADR-001..004 remain in the EDP; back-porting them as standalone records is not a WP-01 deliverable |
+| [`security/threat-model.md`](security/threat-model.md) | **Seeded** in WP-02 slice S0 (TRS-REP-008 phase 1). Covers the Zone-A device-compromise surface, key storage and the WP-02 constraints that follow from them |
+| [`privacy/data-map.md`](privacy/data-map.md) | **Seeded** in WP-02 slice S0 (TRS-REP-008 phase 1). Classifies locally held personal data and maps it to purpose, lawful basis, retention and data-subject rights |
+
+Both documents are **design inputs, written before WP-02 feature code**: the
+threat model's §7 lists decisions WP-02 is no longer free to make, and the data
+map classifies fields the persistence layer has yet to create. Per the owner's
+2026-08-12 TRS-REP-008 assignment they then live per work package — the package
+that changes the attack surface or the data map updates them in the same pull
+request — with the final documentation audit in WP-11.
 
 ## Architecture decision records
 
@@ -39,6 +47,9 @@ Same content, easier to query:
 | ADR-001..004 | Accepted | Recorded in `Lumos_EDP_v1_0.pdf` — crypto, BLE asymmetry, recovery, constants freeze |
 | [ADR-005](adrs/ADR-005-safety-number-format.md) | **Accepted** 2026-08-11 | `SAFETY_NUMBER_FORMAT` = 60 digits + 6 emoji from a 64-emoji alphabet |
 | [ADR-006](adrs/ADR-006-override-bounds.md) | **Accepted** 2026-08-11 | Override bounds for the eleven constants TRS §23 left unbounded |
+| [ADR-007](adrs/ADR-007-wire-encoding-choices.md) | **Accepted** 2026-08-11 | Version-byte nibbles and the four frame flag bit positions |
+| [ADR-008](adrs/ADR-008-identity-dh-key.md) | **Accepted** 2026-08-11, 2 conditions | Separate X25519 identity-DH key; Ed25519 stays the sole root of trust. **Flagged for G-07** |
+| [ADR-009](adrs/ADR-009-safety-number-emoji-alphabet.md) | **Accepted** 2026-08-11 | The 64-emoji alphabet; non-confusability reasoned, not human-tested. **Flagged for G-07** |
 
 ## Note on `handover/Lumos_Codex_Handover_Pack.zip`
 

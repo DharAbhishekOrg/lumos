@@ -1,0 +1,136 @@
+<?xml version="1.0"?>
+<!DOCTYPE module PUBLIC
+    "-//Checkstyle//DTD Checkstyle Configuration 1.3//EN"
+    "https://checkstyle.org/dtds/configuration_1_3.dtd">
+
+<!--
+  Lumos - tools/staticanalysis / Checkstyle rules for the Java half of TRS-CODE-006.
+  Author: dhar.abhishek.email@gmail.com
+  Implements: TRS-CODE-006, TRS-CODE-002, TRS-CODE-004, TRS-CODE-005, TRS-CODE-007, TRS-CODE-008
+  ADRs: -
+  Threading: n/a
+  Notes: This file encodes the parts of TRS Sec. 24 that Checkstyle can decide by
+  reading source. Three of its clauses are deliberately NOT here:
+
+    * the Sec. 24.1 file header is checked by tools/lumoslint across all four
+      languages at once, so a Java-only copy of that rule could drift from the
+      Go, Swift and TypeScript sources it must stay identical to;
+    * the <= 500 lines per class budget has no Checkstyle module - Checkstyle
+      measures files, methods and coupling, but not type length - so FileLength
+      below is the closest enforceable proxy and the class budget stays a review
+      item until a check exists that can decide it;
+    * the no-magic-number clause is policed by tools/lumoslint against the actual
+      Sec. 23 register. Checkstyle's MagicNumber flags every literal and would
+      bury the register findings that matter.
+
+  Severity is `error` throughout on purpose: with maxWarnings = 0 in the build
+  script, a warning already fails, and a rule set where some findings are
+  advisory teaches readers to sort them into the ones that count and the ones
+  that do not.
+-->
+
+<module name="Checker">
+  <property name="severity" value="error"/>
+  <property name="charset" value="UTF-8"/>
+  <property name="fileExtensions" value="java"/>
+
+  <!-- TRS-CODE-004: <= 800 lines per file. -->
+  <module name="FileLength">
+    <property name="max" value="800"/>
+  </module>
+
+  <module name="FileTabCharacter"/>
+  <module name="NewlineAtEndOfFile"/>
+
+  <!-- TRS-CODE-005: no TODO/FIXME without an issue reference. The pattern
+       matches the bare keyword; a marker that cites an issue does not match. -->
+  <module name="RegexpSingleline">
+    <property name="format" value="(TODO|FIXME|HACK|XXX)(?!\s*\(#\d+\))"/>
+    <property name="message"
+              value="TRS-CODE-005: a TODO/FIXME must cite an issue, e.g. TODO(#123)."/>
+  </module>
+
+  <module name="TreeWalker">
+
+    <!-- TRS-CODE-002: public API documentation. -->
+    <module name="JavadocType">
+      <property name="scope" value="public"/>
+    </module>
+    <module name="JavadocMethod">
+      <property name="accessModifiers" value="public"/>
+      <property name="allowMissingParamTags" value="false"/>
+      <property name="allowMissingReturnTag" value="false"/>
+    </module>
+    <module name="MissingJavadocMethod">
+      <property name="scope" value="public"/>
+      <property name="allowMissingPropertyJavadoc" value="true"/>
+      <!-- A one-line accessor documents itself; the rule is aimed at behaviour
+           a caller cannot infer from the signature. -->
+      <property name="minLineCount" value="1"/>
+    </module>
+
+    <!-- TRS-CODE-004: complexity budget. -->
+    <module name="CyclomaticComplexity">
+      <property name="max" value="15"/>
+    </module>
+    <module name="MethodLength">
+      <property name="max" value="150"/>
+    </module>
+
+    <!-- TRS-CODE-008: explicit error handling. -->
+    <!-- A caught exception that is neither used nor rethrown is the swallowed
+         exception TRS-CODE-008 forbids. -->
+    <module name="EmptyCatchBlock">
+      <property name="exceptionVariableName" value="expected|ignored"/>
+    </module>
+    <module name="IllegalCatch"/>
+    <module name="IllegalThrows"/>
+    <module name="EqualsHashCode"/>
+    <module name="CovariantEquals"/>
+    <module name="StringLiteralEquality"/>
+    <module name="NoFinalizer"/>
+    <module name="SimplifyBooleanExpression"/>
+    <module name="SimplifyBooleanReturn"/>
+    <module name="FallThrough"/>
+    <module name="MissingSwitchDefault"/>
+    <module name="DefaultComesLast"/>
+    <module name="MultipleVariableDeclarations"/>
+    <module name="OneStatementPerLine"/>
+    <module name="EmptyStatement"/>
+
+    <!-- TRS-CODE-007: platform naming conventions. -->
+    <module name="PackageName"/>
+    <module name="TypeName"/>
+    <module name="MethodName"/>
+    <module name="ParameterName"/>
+    <module name="LocalVariableName"/>
+    <module name="MemberName"/>
+    <module name="StaticVariableName"/>
+    <module name="ConstantName"/>
+    <module name="AbbreviationAsWordInName">
+      <!-- Four, not the default three: the domain vocabulary of Sec. 4.2 is
+           full of legitimate three-letter acronyms - EID, AAD, KDF, BLE - and a
+           limit of three renames them all. -->
+      <property name="allowedAbbreviationLength" value="4"/>
+      <property name="ignoreStatic" value="true"/>
+      <property name="ignoreFinal" value="true"/>
+    </module>
+
+    <!-- Structure and readability. -->
+    <module name="UnusedImports"/>
+    <module name="RedundantImport"/>
+    <module name="AvoidStarImport"/>
+    <module name="IllegalImport"/>
+    <module name="NeedBraces"/>
+    <module name="LeftCurly"/>
+    <module name="RightCurly"/>
+    <module name="UpperEll"/>
+    <module name="ArrayTypeStyle"/>
+    <module name="ModifierOrder"/>
+    <module name="RedundantModifier"/>
+    <module name="OuterTypeFilename"/>
+    <module name="OneTopLevelClass"/>
+    <module name="HideUtilityClassConstructor"/>
+    <module name="FinalClass"/>
+  </module>
+</module>

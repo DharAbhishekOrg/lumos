@@ -280,7 +280,9 @@ func betweenQuotes(s, key string) string {
 func npmComponents(root string) ([]Component, error) {
 	raw, err := os.ReadFile(filepath.Join(root, "admin-console", "package.json"))
 	if err != nil {
-		return nil, nil // the admin shell may not exist in every checkout
+		// An absent package.json means the admin shell is not in this checkout,
+		// which is a state with no components rather than a failure.
+		return nil, nil //nolint:nilerr,nilnil // absence is a meaningful, non-error state
 	}
 	var pkg struct {
 		DevDependencies map[string]string `json:"devDependencies"`

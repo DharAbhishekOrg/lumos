@@ -41,6 +41,14 @@ concurrency:
   group: conformance-${{ github.ref }}
   cancel-in-progress: true
 
+env:
+  # TRS-CODE-006's Swift analyser, pinned like every other tool in this
+  # repository. SwiftLint ships preinstalled on the macOS runner image, and
+  # using that copy would mean the gate's rule set changed whenever GitHub
+  # rebuilt the image. MIT licensed; declared in
+  # tools/toolchain/toolchain-manifest.json.
+  SWIFTLINT_VERSION: 0.65.0
+
 jobs:
   # Detects whether this change can affect the Swift conformance result.
   changes:
@@ -66,7 +74,7 @@ jobs:
           head="${{ github.event.pull_request.head.sha }}"
           changed="$(git diff --name-only "$base" "$head")"
           echo "changed files:"; echo "$changed"
-          if echo "$changed" | grep -Eq '^(protocol/|test-vectors/|ios-app/|Package\.swift|\.github/workflows/conformance\.yml)'; then
+          if echo "$changed" | grep -Eq '^(protocol/|test-vectors/|ios-app/|Package\.swift|\.swiftlint\.yml|\.github/workflows/conformance\.yml)'; then
             echo "swift=true" >> "$GITHUB_OUTPUT"
           else
             echo "swift=false" >> "$GITHUB_OUTPUT"
@@ -169,6 +177,56 @@ jobs:
           path: admin-console/test-results
           retention-days: 7
 
+  # TRS-REP-004's variant assertions. They live HERE, next to the admin console
+  # tests and for the identical structural reason: the traceability gate can only
+  # download artefacts produced by its own workflow run, so a test executed in
+  # pipeline.yml cannot support a 'tested' status however green it is.
+  #
+  # All four variants run, and each uploads under its own artefact name. That is
+  # not tidiness - Gradle compiles a separate BuildConfig per flavour, so the
+  # four runs are four different programs, and collecting them under one module
+  # label would collapse four pieces of evidence into one identifier that could
+  # be satisfied by any single variant passing.
+  #
+  # It does NOT reuse the pure-JVM `java` job above: TRS Sec. 18.4 requires
+  # :protocol-conformance to stay runnable on a host with no Android SDK, and
+  # provisioning one in that job would quietly retire the guarantee.
+  android:
+    name: android variant tests (TRS-REP-004)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: android-actions/setup-android@v4
+        with:
+          packages: 'platforms;android-36 build-tools;36.1.0 platform-tools'
+      - uses: gradle/actions/setup-gradle@v6
+      - name: unit tests for all four environments
+        run: |
+          ./gradlew -PlumosAndroid=true \
+            :app:testDevDebugUnitTest \
+            :app:testQaDebugUnitTest \
+            :app:testStagingDebugUnitTest \
+            :app:testProdDebugUnitTest \
+            --no-daemon --console=plain
+      - name: upload android variant test results
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: test-results-android
+          path: android-app/app/build/test-results
+          retention-days: 7
+      - name: upload reports on failure
+        if: failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: android-variant-test-reports
+          path: android-app/app/build/reports/tests
+          retention-days: 7
+
   # This job carries BOTH Swift deliverables - the protocol conformance runner
   # and the empty iOS application shell - because they are targets of one
   # SwiftPM package and macOS runner minutes are billed at a premium. A second
@@ -183,15 +241,66 @@ jobs:
       - name: swift version
         run: swift --version
 
+      # TRS-CODE-006, Swift half one: the linter. It rides this job rather than
+      # taking a second macOS runner - every Swift source it reads is inside
+      # this job's path filter, and .swiftlint.yml was added to that filter with
+      # it. --strict turns SwiftLint's warnings into failures, which is the only
+      # setting under which "zero-warning" is a gate rather than a report.
+      - name: install swiftlint (pinned)
+        run: |
+          set -euo pipefail
+          curl -sSfL -o "$RUNNER_TEMP/swiftlint.zip" \
+            "https://github.com/realm/SwiftLint/releases/download/${SWIFTLINT_VERSION}/portable_swiftlint.zip"
+          mkdir -p "$RUNNER_TEMP/swiftlint"
+          unzip -q -o "$RUNNER_TEMP/swiftlint.zip" -d "$RUNNER_TEMP/swiftlint"
+          echo "$RUNNER_TEMP/swiftlint" >> "$GITHUB_PATH"
+      - name: swiftlint lint (strict)
+        run: |
+          swiftlint version
+          swiftlint lint --strict --config .swiftlint.yml
+
+      # TRS-CODE-006, Swift half two: "Swift 6 strict concurrency diagnostics".
+      # That half is the compiler, not the linter. Package.swift already puts
+      # every target in .swiftLanguageMode(.v6); -warnings-as-errors is what
+      # stops a diagnostic from being printed and then ignored.
+      #
+      # This is the step that carries the zero-warning claim for Swift. It
+      # compiles EVERY target - LumosProtocolGenerated, LumosProtocol and
+      # LumosAppShell - so no Swift source in the repository escapes it.
+      - name: build every target with warnings as errors
+        run: swift build --package-path . -Xswiftc -warnings-as-errors
+
       # The iOS shell compiled for iOS, not merely for the macOS host. Building
       # a library on the host proves nothing about the platform it ships to,
       # and that gap is exactly where an iOS-only availability error hides.
+      #
+      # --scratch-path keeps this build's artefacts away from the host build
+      # above; both otherwise default to .build and SwiftPM reuses whichever
+      # module cache it finds there.
+      #
+      # -warnings-as-errors is deliberately NOT passed here, and the reason is a
+      # real finding rather than a convenience. SwiftPM has no cross-compilation
+      # mode for this: it invokes swiftc with the HOST destination and we
+      # override the SDK and triple through -Xswiftc, which leaves the driver
+      # emitting "using sysroot for 'MacOSX' but targeting 'iPhone'". That
+      # warning has been emitted by this step since WP-01 and is about SwiftPM's
+      # own invocation, not about any Lumos source. Promoting it to an error
+      # fails the job on toolchain plumbing nobody can fix in this repository.
+      #
+      # The zero-warning claim for Swift therefore rests on the host build
+      # above, which compiles the same sources - including LumosAppShell - with
+      # -warnings-as-errors. What that does not cover is an iOS-ONLY diagnostic,
+      # such as an availability warning for an API newer than iOS 17. The shell
+      # uses no iOS-specific API today, so the gap is real but currently empty;
+      # closing it needs a Swift SDK destination rather than -Xswiftc overrides,
+      # and that is a WP-03 problem, when iOS-only code actually arrives.
       - name: build the iOS shell for iOS
         run: |
           set -euo pipefail
           sdk="$(xcrun --sdk iphoneos --show-sdk-path)"
           target="arm64-apple-ios17.0"
           swift build --package-path . --target LumosAppShell \
+            --scratch-path "$RUNNER_TEMP/ios-build" \
             -Xswiftc -sdk -Xswiftc "$sdk" \
             -Xswiftc -target -Xswiftc "$target"
 
@@ -237,8 +346,10 @@ jobs:
   trace:
     name: traceability gate
     runs-on: ubuntu-latest
-    needs: [go, java, swift, ts]
-    if: always() && needs.go.result == 'success' && needs.java.result == 'success' && needs.ts.result == 'success'
+    needs: [go, java, android, swift, ts]
+    if: >-
+      always() && needs.go.result == 'success' && needs.java.result == 'success'
+      && needs.android.result == 'success' && needs.ts.result == 'success'
     steps:
       - uses: actions/checkout@v7
         with:
@@ -257,6 +368,15 @@ jobs:
         run: |
           set -euo pipefail
           junit="java=protocol-conformance=test-results/test-results-java"
+          # One module label per Android flavour. The four runs produce
+          # identical class and method names, so a single label would dedupe
+          # them into one identifier and a matrix row could be satisfied by any
+          # one variant passing - which is precisely the claim TRS-REP-004 is
+          # not allowed to make.
+          for variant in Dev Qa Staging Prod; do
+            lower="$(echo "$variant" | tr '[:upper:]' '[:lower:]')"
+            junit="$junit,java=app-$lower=test-results/test-results-android/test${variant}DebugUnitTest"
+          done
           if [ -d test-results/test-results-swift ]; then
             junit="$junit,swift=LumosProtocolConformance=test-results/test-results-swift"
           else
@@ -290,16 +410,20 @@ jobs:
   conformance-gate:
     name: conformance gate
     runs-on: ubuntu-latest
-    needs: [go, java, swift, ts, trace]
+    needs: [go, java, android, swift, ts, trace]
     if: always()
     steps:
       - name: assess
         shell: bash
         run: |
           set -euo pipefail
-          echo "go=${{ needs.go.result }} java=${{ needs.java.result }} swift=${{ needs.swift.result }} trace=${{ needs.trace.result }}"
+          echo "go=${{ needs.go.result }} java=${{ needs.java.result }} android=${{ needs.android.result }} swift=${{ needs.swift.result }} trace=${{ needs.trace.result }}"
           if [ "${{ needs.go.result }}" != "success" ] || [ "${{ needs.java.result }}" != "success" ]; then
             echo "Go and Java conformance are always required."
+            exit 1
+          fi
+          if [ "${{ needs.android.result }}" != "success" ]; then
+            echo "The TRS-REP-004 variant assertions are always required; they are not path-filtered."
             exit 1
           fi
           if [ "${{ needs.trace.result }}" != "success" ]; then

@@ -264,3 +264,31 @@ func TestHeaderBytesIsExactlyTheAAD(t *testing.T) {
 		t.Error("HeaderBytes must reject input shorter than a header")
 	}
 }
+
+// TestMaxPayloadBoundsFitTheWireField is the assertion Encode's #nosec G115
+// annotation cites. Encode narrows len(f.Payload) to uint32 to fill the
+// four-byte payload_length field, and that narrowing is safe only because the
+// class bound checked immediately above it can never exceed what the field
+// holds. gosec cannot see that argument, so it is written down here instead of
+// being asserted in a comment: if a future register change pushes any
+// MAX_PAYLOAD past 2^32-1, this test fails and the suppression stops being
+// true at the same moment.
+func TestMaxPayloadBoundsFitTheWireField(t *testing.T) {
+	const maxUint32 = int64(^uint32(0))
+
+	checked := 0
+	for mc := range lumosconstants.MessageClassNames {
+		bound, ok := lumosconstants.MaxPayloadBytes(mc)
+		if !ok {
+			t.Errorf("%s: every known class needs a payload bound (TRS-PROTO-007)", mc)
+			continue
+		}
+		if bound < 0 || bound > maxUint32 {
+			t.Errorf("%s: bound %d does not fit the uint32 payload_length field", mc, bound)
+		}
+		checked++
+	}
+	if checked == 0 {
+		t.Fatal("no message classes were checked; the generated registry is empty")
+	}
+}

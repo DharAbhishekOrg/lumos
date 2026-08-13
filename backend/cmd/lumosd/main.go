@@ -89,7 +89,9 @@ func main() {
 		Handler:           NewMux(),
 		ReadHeaderTimeout: 5 * time.Second,
 	}
-	fmt.Fprintf(os.Stdout, "lumosd %s (%s) listening on %s\n", version, buildEnv, *addr)
+	// The banner is diagnostic output on a stream the process does not own; a
+	// closed or full stdout must not stop the server from listening.
+	_, _ = fmt.Fprintf(os.Stdout, "lumosd %s (%s) listening on %s\n", version, buildEnv, *addr)
 	if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
 		log.Fatalf("lumosd: %v", err)
 	}

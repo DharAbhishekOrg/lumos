@@ -65,6 +65,10 @@ func DeriveKAdv(advSecret []byte) ([]byte, error) {
 // a static advertisement payload (SRS-IDN-004).
 func DeriveEID(kAdv []byte, epoch int64) ([]byte, error) {
 	var e [8]byte
+	// #nosec G115 -- the conversion IS the serialisation: the epoch is written as
+	// eight bytes big-endian two's-complement, which is what both platforms and
+	// the adv golden vectors reproduce. Nothing here interprets the result as a
+	// magnitude, so there is no overflow to guard against.
 	binary.BigEndian.PutUint64(e[:], uint64(epoch))
 	info := append([]byte(lumosconstants.AdvEIDKdfInfoValue), e[:]...)
 	eid, err := hkdf.Key(sha256.New, kAdv, make([]byte, 32), string(info), EIDLen)
@@ -82,6 +86,8 @@ func AuthTag(kAdv []byte, version, modeFlags uint8, eid []byte, epoch int64) []b
 	m.Write([]byte{version, modeFlags})
 	m.Write(eid)
 	var e [8]byte
+	// #nosec G115 -- see DeriveEID: the conversion is the eight-byte big-endian
+	// serialisation of the epoch, not an arithmetic widening.
 	binary.BigEndian.PutUint64(e[:], uint64(epoch))
 	m.Write(e[:])
 	return m.Sum(nil)[:AuthTagLen]
