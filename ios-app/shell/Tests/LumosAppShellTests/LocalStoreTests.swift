@@ -26,6 +26,14 @@ private struct FullCapacity: StorageCapacity {
     var usableSpaceBytes: Int64 { Int64(16 * 1024 * 1024) - 1 }
 }
 
+/// A fixed UTC instant, so timestamp assertions are exact.
+///
+/// File-level rather than a stored property: the store's clock is a `@Sendable`
+/// closure, and reading an instance property inside one would capture the
+/// XCTestCase - which Swift 6 strict concurrency rejects, correctly, since the
+/// test case is not Sendable.
+private let fixedNow: Int64 = 1_700_000_000_000
+
 /// Store behaviour over real SQLite.
 final class LocalStoreTests: XCTestCase {
 
@@ -35,8 +43,6 @@ final class LocalStoreTests: XCTestCase {
         "gender identity: non-binary",
         "orientation: bisexual"
     ]
-
-    private let fixedNow: Int64 = 1_700_000_000_000
 
     // MARK: migrations
 
@@ -134,7 +140,7 @@ final class LocalStoreTests: XCTestCase {
         let database = try Sqlite3Database(path: ":memory:")
         defer { database.close() }
         let store = try LocalStore.open(database: database, databaseDomainKey: freshDomainKey(),
-                                        capacity: RoomyCapacity(), now: { self.fixedNow })
+                                        capacity: RoomyCapacity(), now: { fixedNow })
         let id = try store.put(kind: .localProfile, plaintext: Data("x".utf8))
         XCTAssertNotNil(UUID(uuidString: id), "TRS-LOC-010: identifiers are stable UUIDs")
 
