@@ -187,13 +187,39 @@ func addJUnit(out map[string]bool, s junitSuite, lang, module string) {
 			}
 			method = inner
 		}
-		// Gradle writes "methodName()" for a JUnit 5 test without @DisplayName.
-		method = strings.TrimSuffix(method, "()")
+		method = trimParameterList(method)
 		if class == "" || method == "" {
 			continue
 		}
 		out[fmt.Sprintf("%s:%s:%s.%s", lang, module, class, method)] = true
 	}
+}
+
+// trimParameterList removes a JUnit method's parameter list.
+//
+// Gradle writes "methodName()" for a JUnit 5 test, and - the case that bit in
+// WP-02 S2 - "methodName(Path)" for one taking an injected parameter such as
+// @TempDir. The matrix cites Class.method, so the parameter list is not part of
+// the identity; leaving it in produced four linked identifiers that matched
+// nothing while their rows stayed green on OTHER tests in the same module.
+//
+// The trim is deliberately conditional on what precedes the parenthesis being a
+// single word. A JUnit @DisplayName is written into this same attribute and is
+// an ordinary sentence, which may legitimately end in a parenthetical - and
+// truncating one of those is how this collector mangled Java identifiers once
+// before (WP-01 closeout Sec. 5.2).
+func trimParameterList(method string) string {
+	if !strings.HasSuffix(method, ")") {
+		return method
+	}
+	open := strings.Index(method, "(")
+	if open <= 0 {
+		return method
+	}
+	if strings.ContainsAny(method[:open], " \t") {
+		return method // a display-name sentence, not a signature
+	}
+	return method[:open]
 }
 
 func sortedKeys(m map[string]bool) []string {
