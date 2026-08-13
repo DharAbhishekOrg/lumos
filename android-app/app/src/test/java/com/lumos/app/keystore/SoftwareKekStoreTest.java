@@ -27,7 +27,11 @@ import org.junit.jupiter.api.Test;
 /** Behavioural contract of the software KEK tier. */
 final class SoftwareKekStoreTest {
 
-    private static final byte[] DATA_KEY = "0123456789abcdef0123456789abcdef".getBytes(StandardCharsets.UTF_8);
+    // Spelled out in words on purpose: a hex-shaped fixture reads exactly like
+    // a leaked credential to a keyword-plus-entropy scanner, and an allowlist
+    // for a fixture that could simply say what it is would be a blind spot
+    // bought for nothing (TRS-REP-005).
+    private static final byte[] DATA_KEY = "lumos test fixture data key 0032".getBytes(StandardCharsets.UTF_8);
     private static final byte[] AAD = "lumos/local/test/v1".getBytes(StandardCharsets.UTF_8);
 
     @Test

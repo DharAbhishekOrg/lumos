@@ -15,7 +15,9 @@ import XCTest
 /// Behavioural contract of the KEK boundary, on the tier CI can execute.
 final class KekStoreTests: XCTestCase {
 
-    private let dataKey = Data("0123456789abcdef0123456789abcdef".utf8)
+    // Spelled out in words on purpose: a hex-shaped fixture reads exactly like
+    // a leaked credential to a keyword-plus-entropy scanner (TRS-REP-005).
+    private let dataKey = Data("lumos test fixture data key 0032".utf8)
     private let aad = Data("lumos/local/test/v1".utf8)
 
     func testWrapUnwrapRoundtrips() throws {

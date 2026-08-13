@@ -95,6 +95,25 @@ paths = [
 
 [[allowlists]]
 description = """
+Mobile source lines that contain NO string literal. The key hierarchy's code is \
+necessarily full of identifiers like MAX_KEY_BYTES and x25519Pkcs8 sitting next \
+to each other, which reads as keyword-plus-token to generic-api-key - but a \
+secret in source has to BE a literal, and a line with no quote cannot carry \
+one. Scoped to that shape exactly: any line with a double quote is still \
+scanned in full, so a real credential pasted into these files is still caught. \
+Compensating controls: the history-wide lumos-pem-private-key rule and every \
+provider-specific rule stay active here, and the CI canary proves the scanner \
+is live on every run."""
+targetRules = ["generic-api-key"]
+paths = [
+  '''android-app/.*\.java''',
+  '''ios-app/.*\.swift''',
+]
+regexTarget = "line"
+regexes = ['''^[^"]*$''']
+
+[[allowlists]]
+description = """
 Lockfile integrity digests and pinned distribution checksums. These look \
 exactly like high-entropy secrets and are the opposite of one: they are the \
 mechanism that makes the supply chain verifiable. Compensating control: \
