@@ -108,6 +108,16 @@
   },
   {
    "type": "library",
+   "name": "org.xerial:sqlite-jdbc",
+   "version": "3.53.2.1",
+   "purl": "pkg:maven/org.xerial/sqlite-jdbc@3.53.2.1",
+   "scope": "required",
+   "x-ecosystem": "gradle",
+   "x-locked-in": "gradle/libs.versions.toml",
+   "x-license-note": "not declared in the toolchain manifest"
+  },
+  {
+   "type": "library",
    "name": "@eslint/js",
    "version": "9.39.5",
    "purl": "pkg:npm/@eslint/js@9.39.5",

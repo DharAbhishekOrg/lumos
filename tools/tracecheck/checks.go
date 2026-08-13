@@ -143,6 +143,7 @@ func CheckHonesty(m *Matrix, cat *Catalogue, executed *ExecutedTests) []Finding 
 
 	out = append(out, checkGateRegister(m)...)
 	out = append(out, checkIdentifierShapes(m, executed)...)
+	out = append(out, checkEveryLinkedIdentifierRan(m, executed)...)
 
 	SortFindings(out)
 	return out
@@ -310,6 +311,53 @@ func checkIdentifierShapes(m *Matrix, executed *ExecutedTests) []Finding {
 					"the runner's identifier format has drifted, so its evidence is silently not counting",
 				executed.RunID, produced, pair, linked),
 		})
+	}
+	return out
+}
+
+// checkEveryLinkedIdentifierRan tightens checkIdentifierShapes from the
+// lang:module pair to the individual identifier.
+//
+// The pair-level rule only fires when a runner produces identifiers and NONE of
+// the matrix's match - it is deaf to a handful of dead identifiers hiding among
+// live ones. WP-02 S2 met exactly that: JUnit writes an injected parameter into
+// the method name ("noSensitive...(Path)"), four linked identifiers matched
+// nothing, and every affected row stayed green because other tests in the same
+// module did match. A row needs only one executed test to be honest, so nothing
+// complained - which is the same quiet-green shape a level down.
+//
+// The rule: if an identifier's lang:module pair produced ANY identifiers this
+// run, that identifier must be among them. A pair that produced nothing is
+// skipped, because that is the legitimately path-filtered job (Swift on a pull
+// request touching no Swift), not a drift.
+func checkEveryLinkedIdentifierRan(m *Matrix, executed *ExecutedTests) []Finding {
+	if executed == nil || len(executed.Tests) == 0 {
+		return nil
+	}
+
+	producedByPair := map[string]bool{}
+	for _, id := range executed.Tests {
+		if pair, ok := langModule(id); ok {
+			producedByPair[pair] = true
+		}
+	}
+
+	seen := map[string]bool{}
+	var out []Finding
+	for i := range m.Entries {
+		for _, t := range m.Entries[i].Tests {
+			pair, ok := langModule(t)
+			if !ok || !producedByPair[pair] || executed.Has(t) || seen[t] {
+				continue
+			}
+			seen[t] = true
+			out = append(out, Finding{
+				Rule:  "linked-test-did-not-run",
+				ReqID: m.Entries[i].ReqID,
+				Detail: fmt.Sprintf("%s is linked but absent from run %s, while %s produced other tests; "+
+					"the identifier is stale or its shape has drifted", t, executed.RunID, pair),
+			})
+		}
 	}
 	return out
 }

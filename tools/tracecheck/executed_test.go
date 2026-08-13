@@ -137,6 +137,58 @@ func TestPlaceholdersSitOnOppositeFields(t *testing.T) {
 // TestIdentifierShapeDriftIsCaught: the collector renaming everything a runner
 // produces must be LOUD. This is the check that would have caught the S7 Swift
 // break in the run that introduced it.
+// TestADeadIdentifierAmongLiveOnesIsCaught covers the gap the pair-level rule
+// leaves: a handful of stale identifiers hiding behind matching ones in the
+// same module. This is the WP-02 S2 case - four StorageEncryptionTest
+// identifiers matched nothing because of the "(Path)" suffix, while every row
+// carrying them stayed green on other tests in java:app-dev.
+func TestADeadIdentifierAmongLiveOnesIsCaught(t *testing.T) {
+	m := &Matrix{Entries: []Entry{{
+		ReqID:  "SRS-DAT-002",
+		Status: StatusTested,
+		Code:   []string{"android-app/app/src/main/java/com/lumos/app/store/LocalStore.java"},
+		Tests: []string{
+			"java:app-dev:LocalStoreTest.recordsRoundTripPerKind",
+			"java:app-dev:StorageEncryptionTest.noSensitiveValueAppearsInTheDatabaseFile",
+		},
+	}}}
+
+	// The module produced tests; one linked identifier is not among them.
+	partial := &ExecutedTests{RunID: "31746507818", Tests: []string{
+		"java:app-dev:LocalStoreTest.recordsRoundTripPerKind",
+		"java:app-dev:StorageEncryptionTest.noSensitiveValueAppearsInTheDatabaseFile(Path)",
+	}}
+
+	// The pair-level rule is deaf to this: one linked identifier DID match.
+	if f := checkIdentifierShapes(m, partial); len(f) != 0 {
+		t.Errorf("the pair-level rule should stay quiet here; that is why the stricter one exists: %v", f)
+	}
+
+	findings := checkEveryLinkedIdentifierRan(m, partial)
+	if len(findings) != 1 || findings[0].Rule != "linked-test-did-not-run" {
+		t.Fatalf("the dead identifier was not flagged: %v", findings)
+	}
+	if findings[0].ReqID != "SRS-DAT-002" {
+		t.Errorf("finding names %q, want the requirement carrying the stale link", findings[0].ReqID)
+	}
+
+	// Every identifier matching: silent.
+	healthy := &ExecutedTests{RunID: "1", Tests: []string{
+		"java:app-dev:LocalStoreTest.recordsRoundTripPerKind",
+		"java:app-dev:StorageEncryptionTest.noSensitiveValueAppearsInTheDatabaseFile",
+	}}
+	if f := checkEveryLinkedIdentifierRan(m, healthy); len(f) != 0 {
+		t.Errorf("healthy identifiers were flagged: %v", f)
+	}
+
+	// A pair that produced NOTHING is a path-filtered job, not drift. Flagging
+	// it would make the Swift filter unusable.
+	skipped := &ExecutedTests{RunID: "1", Tests: []string{"go:protocol/wire:TestRoundTrip"}}
+	if f := checkEveryLinkedIdentifierRan(m, skipped); len(f) != 0 {
+		t.Errorf("a skipped runner must not be reported as drift: %v", f)
+	}
+}
+
 func TestIdentifierShapeDriftIsCaught(t *testing.T) {
 	m := &Matrix{Entries: []Entry{{
 		ReqID:  "TRS-PROTO-001",
@@ -182,6 +234,42 @@ func TestIdentifierShapeDriftIsCaught(t *testing.T) {
 // TestEveryRunnerLanguageIsATestReference stops a new runner being wired into
 // CI while the honesty check silently ignores its identifiers - which is what
 // happened to "ts" between slice S7 and the WP-01 closeout.
+// gradleInjectedParameterFixture is a VERBATIM excerpt of
+// TEST-com.lumos.app.store.StorageEncryptionTest.xml, downloaded from CI run
+// 31746507818. It is here because it is the exact artefact that exposed the
+// defect: JUnit writes an INJECTED PARAMETER TYPE into the name attribute for a
+// test taking @TempDir, so "noSensitive...(Path)" reached the matrix and four
+// linked identifiers matched nothing while their rows stayed green on other
+// tests in the same module.
+const gradleInjectedParameterFixture = `<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.lumos.app.store.StorageEncryptionTest" tests="2" skipped="0" failures="0" errors="0" time="0.111">
+  <testcase name="aRowMovedToAnotherIdCannotBeOpened(Path)" classname="com.lumos.app.store.StorageEncryptionTest" time="0.023"/>
+  <testcase name="noSensitiveValueAppearsInTheDatabaseFile(Path)" classname="com.lumos.app.store.StorageEncryptionTest" time="0.04"/>
+</testsuite>`
+
+// TestInjectedParameterIsNotPartOfTheIdentifier pins the WP-02 S2 fix.
+func TestInjectedParameterIsNotPartOfTheIdentifier(t *testing.T) {
+	assertIDs(t, collect(t, gradleInjectedParameterFixture, "java", "app-dev"), []string{
+		"java:app-dev:StorageEncryptionTest.aRowMovedToAnotherIdCannotBeOpened",
+		"java:app-dev:StorageEncryptionTest.noSensitiveValueAppearsInTheDatabaseFile",
+	})
+}
+
+// TestDisplayNameSentencesKeepTheirParentheses is the other half of the same
+// fix. The name attribute also carries @DisplayName sentences, which may end in
+// a parenthetical; truncating one of those is how this collector mangled Java
+// identifiers in slice S6. The trim applies only when what precedes the
+// parenthesis is a single word.
+func TestDisplayNameSentencesKeepTheirParentheses(t *testing.T) {
+	const fixture = `<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.lumos.protocol.conformance.CryptoConformanceTest" tests="1" skipped="0" failures="0" errors="0" time="0.1">
+  <testcase name="the alphabet survives font substitution (mostly)" classname="com.lumos.protocol.conformance.CryptoConformanceTest" time="0.01"/>
+</testsuite>`
+	assertIDs(t, collect(t, fixture, "java", "protocol-conformance"), []string{
+		"java:protocol-conformance:CryptoConformanceTest.the alphabet survives font substitution (mostly)",
+	})
+}
+
 func TestEveryRunnerLanguageIsATestReference(t *testing.T) {
 	for _, lang := range TestLanguages {
 		id := lang + ":module:Suite.method"

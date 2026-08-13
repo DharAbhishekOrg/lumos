@@ -117,6 +117,68 @@ func TestEveryPinnedAnalyserIsDeclaredInTheManifest(t *testing.T) {
 	}
 }
 
+// TestSwiftTestsDoNotUseXCTSkip enforces the standing rule the owner approved
+// on 2026-08-14, after WP-02 S1 found the hazard the hard way.
+//
+// SwiftPM's xUnit reporter writes a SKIPPED test as a bare passing <testcase>.
+// The traceability collector cannot tell it from a pass, so a skipped test can
+// enter the executed set and support a `tested` status while having asserted
+// nothing - the WP-01 Sec. 5.1 quiet-green shape, one layer down.
+//
+// The rule is therefore: capability-gated behaviour is asserted from BOTH sides
+// of the gate (it works where the hardware exists; it refuses where it does
+// not), never skipped past. A grep is a crude enforcement mechanism, and it is
+// the right one here: the failure it prevents is invisible in every report a
+// reviewer would otherwise read.
+func TestSwiftTestsDoNotUseXCTSkip(t *testing.T) {
+	root := repoRoot(t)
+	testRoots := []string{
+		"ios-app/shell/Tests",
+		"ios-app/protocol-conformance/Tests",
+	}
+
+	scanned := 0
+	for _, rel := range testRoots {
+		dir := filepath.Join(root, filepath.FromSlash(rel))
+		err := filepath.WalkDir(dir, func(path string, d os.DirEntry, err error) error {
+			if err != nil {
+				return err
+			}
+			if d.IsDir() || !strings.HasSuffix(d.Name(), ".swift") {
+				return nil
+			}
+			scanned++
+			raw, err := os.ReadFile(path)
+			if err != nil {
+				return err
+			}
+			for _, line := range strings.Split(string(raw), "\n") {
+				// The rule is about calling it, not about naming it: this very
+				// repository documents the hazard in prose, and a comment
+				// explaining why XCTSkip is banned must not trip the ban.
+				if strings.Contains(line, "XCTSkip") && !isCommentLine(line) {
+					t.Errorf("%s calls XCTSkip: a skip is indistinguishable from a pass in "+
+						"SwiftPM's xUnit report. Assert both sides of the capability gate instead.",
+						filepath.Base(path))
+				}
+			}
+			return nil
+		})
+		if err != nil {
+			t.Fatalf("walk %s: %v", rel, err)
+		}
+	}
+	if scanned == 0 {
+		t.Fatal("no Swift test files scanned; the rule would be vacuous")
+	}
+}
+
+// isCommentLine reports whether a Swift line is entirely a comment.
+func isCommentLine(line string) bool {
+	trimmed := strings.TrimSpace(line)
+	return strings.HasPrefix(trimmed, "//") || strings.HasPrefix(trimmed, "*")
+}
+
 // TestStackCoversEveryLanguageTheRepositoryOwns is the completeness half. The
 // four languages are the ones TRS Sec. 5.3 names, and a stack that silently
 // stopped covering one would still be green in every job that remained.
