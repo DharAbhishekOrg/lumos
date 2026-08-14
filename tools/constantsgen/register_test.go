@@ -53,7 +53,16 @@ var expectedRegister = map[string][]string{
 		"CHAIN_KEY_SEEDS", "CONFIG_SIGNING_INFO",
 		"MEDIA_OBJECT_KEY_INFO", "MEDIA_OBJECT_KEY_WRAP_INFO",
 		"RATCHET_HEADER_LAYOUT", "RATCHET_MESSAGE_KDF_INFO",
-		"RATCHET_ROOT_KDF_INFO", "SAFETY_NUMBER_EMOJI_ALPHABET",
+		"RATCHET_ROOT_KDF_INFO",
+		// RECOVERY_ARGON2ID is NOT from TRS Sec. 23. It was added in WP-02
+		// slice S4 because ADR-003's content-only RecoveryRecord needs a
+		// passphrase KDF and the specification names none - the same shape of
+		// addition as NEARBY_SYNTHETIC_LOAD_TARGET, which came from EDP 4.1.
+		// Listing it here is what keeps this test a transcription guard rather
+		// than a rubber stamp: every entry is either in the TRS or has a
+		// recorded reason for not being.
+		"RECOVERY_ARGON2ID",
+		"SAFETY_NUMBER_EMOJI_ALPHABET",
 		"SAFETY_NUMBER_ITERATIONS", "SAFETY_NUMBER_KDF_INFO",
 		"VOUCHER_SIGNING_INFO", "X3DH_F_PREFIX", "X3DH_IDENTITY_BINDING_INFO",
 		"X3DH_KDF_INFO", "X3DH_OPK_ID_NONE", "X3DH_PREKEY_SIGNING_INFO",
@@ -148,6 +157,15 @@ var goldenValues = map[string]int64{
 	"crypto_protocol.X3DH_F_PREFIX.len":                          32,
 	"crypto_protocol.X3DH_F_PREFIX.fill_byte":                    255,
 	"crypto_protocol.X3DH_OPK_ID_NONE.default":                   4294967295,
+	// Argon2id work factors, transcribed by hand so a slip in the register is
+	// caught here rather than by a user whose export turns out cheap to crack.
+	"crypto_protocol.RECOVERY_ARGON2ID.memory_kib":     65536,
+	"crypto_protocol.RECOVERY_ARGON2ID.memory_kib_min": 32768,
+	"crypto_protocol.RECOVERY_ARGON2ID.iterations":     3,
+	"crypto_protocol.RECOVERY_ARGON2ID.iterations_min": 2,
+	"crypto_protocol.RECOVERY_ARGON2ID.parallelism":    1,
+	"crypto_protocol.RECOVERY_ARGON2ID.salt_bytes":     16,
+	"crypto_protocol.RECOVERY_ARGON2ID.key_bytes":      32,
 }
 
 func TestRegisterCoversTRSSection23(t *testing.T) {

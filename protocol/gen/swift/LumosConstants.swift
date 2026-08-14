@@ -6,7 +6,7 @@
 /// GENERATED - DO NOT EDIT. Generator: tools/constantsgen
 /// Source register: protocol/constants/lumos_constants.json
 /// Baseline: TRS v1.1 Sec. 23 / EDP v1.0 Sec. 4 (ADR-004)
-/// constants_hash: sha256:99beeffb52f9b5b65afd53bb875175171e0e920e802b0927dd4f34db9cffc23c
+/// constants_hash: sha256:568eb8489beb092351d802a9f7ab88eb6eecc62376b39f75eb2e22361d48d37b
 
 public enum LumosConstants {
 
@@ -14,7 +14,7 @@ public enum LumosConstants {
     public static let serviceUUID = "E853EB6A-775C-4A49-A6BF-320E6A5CC609"
 
     /// Binds generated code to the register that produced it (TRS-CONST-005).
-    public static let constantsHash = "sha256:99beeffb52f9b5b65afd53bb875175171e0e920e802b0927dd4f34db9cffc23c"
+    public static let constantsHash = "sha256:568eb8489beb092351d802a9f7ab88eb6eecc62376b39f75eb2e22361d48d37b"
 
     /// Register schema version.
     public static let schemaVersion = 1
@@ -151,6 +151,42 @@ public enum LumosConstants {
 
     /// crypto_protocol.RATCHET_ROOT_KDF_INFO.value
     public static let ratchetRootKdfInfoValue = "lumos/ratchet/root/v1"
+
+    /// crypto_protocol.RECOVERY_ARGON2ID.iterations
+    public static let recoveryArgon2idIterations = 3
+
+    /// crypto_protocol.RECOVERY_ARGON2ID.iterations_max
+    public static let recoveryArgon2idIterationsMax = 10
+
+    /// crypto_protocol.RECOVERY_ARGON2ID.iterations_min
+    public static let recoveryArgon2idIterationsMin = 2
+
+    /// crypto_protocol.RECOVERY_ARGON2ID.key_bytes
+    public static let recoveryArgon2idKeyBytes = 32
+
+    /// crypto_protocol.RECOVERY_ARGON2ID.memory_kib
+    public static let recoveryArgon2idMemoryKib = 65536
+
+    /// crypto_protocol.RECOVERY_ARGON2ID.memory_kib_max
+    public static let recoveryArgon2idMemoryKibMax = 262144
+
+    /// crypto_protocol.RECOVERY_ARGON2ID.memory_kib_min
+    public static let recoveryArgon2idMemoryKibMin = 32768
+
+    /// crypto_protocol.RECOVERY_ARGON2ID.overridable
+    public static let recoveryArgon2idOverridable = false
+
+    /// crypto_protocol.RECOVERY_ARGON2ID.parallelism
+    public static let recoveryArgon2idParallelism = 1
+
+    /// crypto_protocol.RECOVERY_ARGON2ID.parallelism_max
+    public static let recoveryArgon2idParallelismMax = 4
+
+    /// crypto_protocol.RECOVERY_ARGON2ID.parallelism_min
+    public static let recoveryArgon2idParallelismMin = 1
+
+    /// crypto_protocol.RECOVERY_ARGON2ID.salt_bytes
+    public static let recoveryArgon2idSaltBytes = 16
 
     /// crypto_protocol.SAFETY_NUMBER_EMOJI_ALPHABET.glyphs
     public static let safetyNumberEmojiAlphabetGlyphs: [String] = ["🐶", "🐱", "🐴", "🐮", "🐷", "🐸", "🐵", "🐔", "🐧", "🐢", "🐝", "🦋", "🐙", "🐬", "🐘", "🐊", "🍎", "🍌", "🍇", "🍓", "🍉", "🍍", "🌽", "🍄", "🍞", "🍕", "🎂", "🍩", "☕", "🍦", "🌵", "🌲", "🌻", "🌹", "🍁", "⭐", "🌈", "🔥", "💧", "⚡", "🔑", "🔒", "🎈", "🎁", "⚽", "🎸", "🎺", "🎯", "🚀", "⚓", "🚲", "🚂", "⏰", "💡", "🔔", "🎧", "📷", "🔭", "🎨", "🎪", "💙", "🎵", "🏆", "👑"]

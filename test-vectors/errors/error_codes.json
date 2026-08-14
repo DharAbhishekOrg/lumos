@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "generator": "tools/vectorgen",
-  "constants_hash": "sha256:99beeffb52f9b5b65afd53bb875175171e0e920e802b0927dd4f34db9cffc23c",
+  "constants_hash": "sha256:568eb8489beb092351d802a9f7ab88eb6eecc62376b39f75eb2e22361d48d37b",
   "implements": [
     "TRS-PROTO-013"
   ],
@@ -103,6 +103,18 @@
       "numeric": 44,
       "category": "crypto",
       "meaning": "X3DH prekey bundle signature failed verification (identity-DH binding or signed prekey)."
+    },
+    {
+      "code": "ERR_CRYPTO_RECOVERY_OPEN_FAILED",
+      "numeric": 45,
+      "category": "crypto",
+      "meaning": "A RecoveryRecord could not be opened. ONE code for every cause - wrong passphrase, tampered header, corrupted ciphertext, unknown format - because distinguishing them is an oracle over the passphrase (TRS-CRY-013)."
+    },
+    {
+      "code": "ERR_CRYPTO_RECOVERY_PARAMS_REJECTED",
+      "numeric": 46,
+      "category": "crypto",
+      "meaning": "A RecoveryRecord declares Argon2id work factors below the register minima. Reported separately from OPEN_FAILED on purpose: this is a property of the FILE, readable without any passphrase attempt, so naming it discloses nothing and warning the user their old backup is too weak to trust is worth more than uniformity."
     },
     {
       "code": "ERR_CRYPTO_REPLAY",
