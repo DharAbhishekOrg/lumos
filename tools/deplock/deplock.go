@@ -42,6 +42,16 @@ type Manifest struct {
 	NPMDependencies struct {
 		Modules []Declared `json:"modules"`
 	} `json:"npm_dependencies"`
+	// RuntimeDependencies are linked into a shipped artefact. Kept separate
+	// from the build and test sets because that is the distinction a licence
+	// review turns on: a copyleft analyser imposes nothing, a copyleft runtime
+	// dependency imposes its terms on what is distributed.
+	RuntimeDependencies struct {
+		Modules []Declared `json:"modules"`
+	} `json:"runtime_dependencies"`
+	SwiftPMDependencies struct {
+		Modules []Declared `json:"modules"`
+	} `json:"swiftpm_dependencies"`
 	NotYetPinned struct {
 		Pending []string `json:"pending"`
 	} `json:"not_yet_pinned"`
@@ -56,6 +66,9 @@ type Declared struct {
 	Why            string `json:"why"`
 	Indirect       bool   `json:"indirect"`
 	CatalogueAlias string `json:"catalogue_alias"`
+	// Revision is the immutable commit a SwiftPM package resolves to, which is
+	// what Package.resolved records and a version tag does not guarantee.
+	Revision string `json:"revision"`
 }
 
 // PackageJSON is the subset of admin-console/package.json this package reads.
@@ -221,4 +234,32 @@ func VersionCatalogue(repoRoot string) (map[string]string, error) {
 		out[strings.TrimSpace(key)] = strings.Trim(strings.TrimSpace(value), `"`)
 	}
 	return out, nil
+}
+
+// SwiftPMPin is one entry of the committed Package.resolved.
+type SwiftPMPin struct {
+	Identity string `json:"identity"`
+	Location string `json:"location"`
+	State    struct {
+		Revision string `json:"revision"`
+		Version  string `json:"version"`
+	} `json:"state"`
+}
+
+// ReadSwiftPMResolved parses Package.resolved. It is the fourth lockfile shape
+// this package understands, and the only one whose pin is a commit rather than
+// a checksum: SwiftPM records the revision a version tag resolved to, which is
+// what makes a moved tag detectable.
+func ReadSwiftPMResolved(repoRoot string) ([]SwiftPMPin, error) {
+	raw, err := os.ReadFile(filepath.Join(repoRoot, "Package.resolved"))
+	if err != nil {
+		return nil, fmt.Errorf("read Package.resolved: %w", err)
+	}
+	var doc struct {
+		Pins []SwiftPMPin `json:"pins"`
+	}
+	if err := json.Unmarshal(raw, &doc); err != nil {
+		return nil, fmt.Errorf("parse Package.resolved: %w", err)
+	}
+	return doc.Pins, nil
 }

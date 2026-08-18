@@ -1,6 +1,6 @@
 // Lumos - protocol/crypto/recovery / The ADR-003 content-only RecoveryRecord.
 // Author: dhar.abhishek.email@gmail.com
-// Implements: SRS-ONB-007, SRS-IDN-008, SRS-DAT-004, TRS-CRY-001, TRS-CRY-013
+// Implements: SRS-ONB-007, SRS-DAT-004, TRS-CRY-001, TRS-CRY-013
 // ADRs: ADR-001, ADR-003
 // Threading: any
 // Notes: A passphrase-protected envelope, and the reference implementation the
@@ -109,12 +109,31 @@ const (
 	MaxAcceptableMemoryKiB = 1024 * 1024
 	// MaxAcceptableIterations bounds the time cost.
 	MaxAcceptableIterations = 64
-	// MaxAcceptableParallelism bounds the lane count.
-	MaxAcceptableParallelism = 16
 )
 
-// Validate refuses work factors below the register's minima, and above the
-// absolute resource ceilings above.
+// SupportedParallelism is the only Argon2id lane count this format admits, and
+// the reason is portability rather than resource cost.
+//
+// S4b found it. libsodium's crypto_pwhash fixes Argon2's lane and thread count
+// at one - it exposes no multi-lane entry point at all - and libsodium IS the
+// binding on both shipping platforms (Lazysodium on Android, swift-sodium on
+// iOS). A record declaring two lanes would therefore open in this Go reference
+// and be unopenable on every device the app actually ships to: a recovery
+// record no user could recover from, which is worse than one refused at the
+// door.
+//
+// So all three implementations refuse anything but a single lane, and the
+// cross-language vectors pin the refusal. Note what this is NOT: it is not a
+// resource ceiling in the sense of the two above, which sit far ABOVE the
+// register's tuning maximum so a later build's stronger record still opens.
+// This one sits BELOW the register's parallelism_max of 4, which consequently
+// now describes a lane count no shipping platform can execute - flagged for the
+// owner rather than changed here, because the register is frozen and moving it
+// moves constants_hash.
+const SupportedParallelism uint8 = 1
+
+// Validate refuses work factors below the register's minima, above the absolute
+// resource ceilings above, and outside the single-lane portability rule.
 func (p Params) Validate() error {
 	if p.MemoryKiB > MaxAcceptableMemoryKiB {
 		return &wire.Error{Code: lumoserrors.ErrCryptoRecoveryParamsRejected,
@@ -124,9 +143,9 @@ func (p Params) Validate() error {
 		return &wire.Error{Code: lumoserrors.ErrCryptoRecoveryParamsRejected,
 			Detail: "time cost beyond the acceptable ceiling"}
 	}
-	if p.Parallelism > MaxAcceptableParallelism {
+	if p.Parallelism != SupportedParallelism {
 		return &wire.Error{Code: lumoserrors.ErrCryptoRecoveryParamsRejected,
-			Detail: "parallelism beyond the acceptable ceiling"}
+			Detail: "only a single Argon2id lane is executable on every platform"}
 	}
 	if p.MemoryKiB < uint32(lumosconstants.RecoveryArgon2idMemoryKibMin) {
 		return &wire.Error{Code: lumoserrors.ErrCryptoRecoveryParamsRejected,
@@ -136,10 +155,9 @@ func (p Params) Validate() error {
 		return &wire.Error{Code: lumoserrors.ErrCryptoRecoveryParamsRejected,
 			Detail: "time cost below the register minimum"}
 	}
-	if p.Parallelism < uint8(lumosconstants.RecoveryArgon2idParallelismMin) {
-		return &wire.Error{Code: lumoserrors.ErrCryptoRecoveryParamsRejected,
-			Detail: "parallelism below the register minimum"}
-	}
+	// No separate parallelism minimum: the single-lane rule above is stricter
+	// than the register's parallelism_min for as long as that minimum is 1, and
+	// TestTheSingleLaneRuleStillCoversTheRegisterMinimum fires if it ever moves.
 	return nil
 }
 
@@ -167,11 +185,17 @@ func Export(passphrase []byte, content []byte) ([]byte, error) {
 	if _, err := rand.Read(nonce); err != nil {
 		return nil, &wire.Error{Code: lumoserrors.ErrCryptoRecoveryOpenFailed, Detail: "nonce generation failed"}
 	}
-	return exportWith(passphrase, content, salt, nonce, DefaultParams())
+	return ExportWith(passphrase, content, salt, nonce, DefaultParams())
 }
 
-// exportWith is the deterministic core, so vectors can fix salt and nonce.
-func exportWith(passphrase, content, salt, nonce []byte, p Params) ([]byte, error) {
+// ExportWith is the deterministic core of Export, with the salt, nonce and work
+// factors supplied rather than generated.
+//
+// Exported for one caller only: tools/vectorgen, which cannot pin a record
+// whose salt and nonce are fresh per call. Application code wants Export - a
+// caller that chooses its own salt can repeat one, and a repeated (key, nonce)
+// pair under ChaCha20-Poly1305 is a total break rather than a weakness.
+func ExportWith(passphrase, content, salt, nonce []byte, p Params) ([]byte, error) {
 	if len(salt) != saltLen || len(nonce) != nonceLen {
 		return nil, &wire.Error{Code: lumoserrors.ErrCryptoRecoveryOpenFailed, Detail: "bad salt or nonce length"}
 	}

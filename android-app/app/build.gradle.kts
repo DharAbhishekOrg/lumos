@@ -29,6 +29,17 @@ android {
         versionCode = 1
         versionName = "0.0.0-dev"
 
+        // The ABIs Android actually runs today. Lazysodium's AAR carries libsodium
+        // for armeabi as well, and JNA's carries libjnidispatch for armeabi, mips
+        // and mips64 - none of which any supported Android device has used for
+        // years. Without this filter they are packaged anyway, half a megabyte of
+        // native code for architectures that cannot run the app. Naming the four
+        // is also the honest statement of what the crypto is proven on: the
+        // emulator job runs x86_64.
+        ndk {
+            abiFilters += listOf("armeabi-v7a", "arm64-v8a", "x86", "x86_64")
+        }
+
         // Instrumented tests run the Room half on a real Android runtime. The
         // JVM seam tests stay the fast path; these exist so TRS-AND-004 rests
         // on execution rather than on assertion (owner ruling 2026-08-14).
@@ -94,7 +105,25 @@ android {
     }
 
     sourceSets {
+        getByName("androidTest") {
+            // The committed golden vectors, packaged into the TEST apk so an
+            // instrumented test can read them on a device. Pointed at the
+            // repository's own directory rather than copied: ADR-004's rule that
+            // generated artefacts are consumed where they are generated applies
+            // to vectors exactly as it does to constants, and a copy under
+            // src/androidTest/assets would be a second source of truth that
+            // nothing keeps current. Asset paths are therefore relative to
+            // /test-vectors, e.g. "crypto/recovery_record.json".
+            assets.directories.add(rootProject.file("test-vectors").absolutePath)
+        }
         getByName("main") {
+            // The third-party notices the app SHIPS, packaged from the file that
+            // is the record rather than from a copy of it. One of the conditions
+            // the owner attached to approving Lazysodium's MPL-2.0 licence is
+            // that its text reaches the user; a notices file that lived only in
+            // docs/ would satisfy a reviewer and not that condition.
+            assets.directories.add(rootProject.file("docs/legal").absolutePath)
+
             // Generated constants, message classes and error codes, consumed from
             // the generator's output directory exactly as :protocol-conformance
             // does. ADR-004: no constant is copied, anywhere, ever - the KDF info
@@ -146,6 +175,27 @@ android {
         // next raised: delete this line, run :app:lintDevDebug, and if it
         // survives a file with @param/@return the detector is fixed.
         disable += "BidiSpoofing"
+
+        // Aligned16KB: lazysodium-android 5.1.0 ships an arm64-v8a libsodium.so
+        // whose LOAD segments are 4 KB aligned, and Android 15 devices with 16 KB
+        // pages cannot map it. It is the ONLY library in the APK that fails -
+        // JNA's natives are already aligned, and the 32-bit ABIs are unaffected.
+        //
+        // The fix upstream exists and cannot be taken: lazysodium-android 5.2.0
+        // aligns every .so at 16 KB AND compiles its class files to bytecode 65
+        // (Java 21), which the TRS Sec. 5.3 Java 17 toolchain refuses to read.
+        // Holding a tool back rather than raising a pinned specification value is
+        // the call this project already made for Checkstyle 13, and it is made
+        // the same way here - but the consequence is different in kind, because
+        // this one is a DEVICE COMPATIBILITY defect rather than a build-time
+        // inconvenience, and it is disabled here so it does not masquerade as
+        // absent.
+        //
+        // OWNER DECISION REQUIRED before any Play submission (G-06). Either a TRS
+        // change request moves the toolchain to Java 21 and this line and the
+        // version pin both go, or the Android binding is replaced. Nothing ships
+        // in WP-02, so neither is urgent; both are blocking for WP-10.
+        disable += "Aligned16KB"
     }
 
     testOptions {
@@ -182,6 +232,22 @@ dependencies {
     // compares against the canonical DDL.
     implementation(libs.room.runtime)
     annotationProcessor(libs.room.compiler)
+
+    // Lazysodium-android (MPL-2.0) bundling libsodium (ISC), and JNA (Apache-2.0),
+    // adopted per the owner's approval of 2026-08-18. See gradle/libs.versions.toml
+    // for the licence conditions and tools/toolchain/toolchain-manifest.json for
+    // the record. This is the first dependency the project SHIPS under a copyleft
+    // licence, and LibsodiumRecoveryCrypto is the only file that touches it.
+    //
+    // One exclusion: lazysodium's POM asks for the JNA *jar*, which carries
+    // desktop natives and no libjnidispatch.so for Android. The aar variant under
+    // the same coordinates is the Android one, and it is declared explicitly so
+    // the Java half and the native half come from a single pinned artefact - JNA
+    // refuses to load if the two disagree about their version.
+    implementation(libs.lazysodium.android) {
+        exclude(group = "net.java.dev.jna", module = "jna")
+    }
+    implementation(variantOf(libs.jna) { artifactType("aar") })
 
     // Instrumented-test scope only; never in a release APK.
     androidTestImplementation(libs.androidx.test.junit)

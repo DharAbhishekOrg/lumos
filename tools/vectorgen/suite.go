@@ -8,6 +8,8 @@
 // derived from whatever the generator happens to emit - a completeness check
 // built from the artefact it checks would pass for any suite, including an empty
 // one. Generation fails if a file is missing or if an unlisted file appears.
+// Additions the specification does not prescribe live in ExtensionFiles, which
+// keeps "what the TRS asked for" and "what we chose to add" separable by eye.
 package main
 
 import (
@@ -16,10 +18,14 @@ import (
 	"strings"
 )
 
-// SuiteFiles is the TRS Sec. 18.4 golden-vector tree, transcribed by hand from
+// TRS184Files is the TRS Sec. 18.4 golden-vector tree, transcribed by hand from
 // the specification table. manifest.json is excluded: it is the index of this
 // set, not a member of it.
-var SuiteFiles = []string{
+//
+// Nothing may be added here that is not in that table. Files this project needs
+// beyond the specification go in ExtensionFiles, so this list stays a faithful
+// copy that a reviewer can diff against the PDF.
+var TRS184Files = []string{
 	"test-vectors/adv/ble_advertisement.json",
 	"test-vectors/config/package_invalid.json",
 	"test-vectors/config/package_valid.json",
@@ -32,6 +38,33 @@ var SuiteFiles = []string{
 	"test-vectors/framing/frame_roundtrip.json",
 	"test-vectors/media/object_pipeline.json",
 	"test-vectors/voucher/voucher_tokens.json",
+}
+
+// ExtensionFiles are vector files this project emits BEYOND TRS Sec. 18.4.
+//
+// The specification's table was written before the ADR-003 RecoveryRecord
+// existed, so it prescribes no recovery family. WP-02 S4b adds one on the
+// owner's instruction, because the record is a cross-language format with three
+// implementations and that is exactly the kind of thing golden vectors are for.
+// Keeping it in its own list means the completeness gate still covers it while
+// the Sec. 18.4 transcription above cannot be quietly grown to hide an addition.
+var ExtensionFiles = []string{
+	"test-vectors/crypto/recovery_record.json",
+}
+
+// SuiteFiles is everything generation must emit: the specification's tree plus
+// the deliberate extensions, sorted so the manifest's order is stable.
+var SuiteFiles = sortedUnion(TRS184Files, ExtensionFiles)
+
+// sortedUnion concatenates and sorts, so the emitted order never depends on
+// which group a path came from.
+func sortedUnion(groups ...[]string) []string {
+	var out []string
+	for _, g := range groups {
+		out = append(out, g...)
+	}
+	sort.Strings(out)
+	return out
 }
 
 // assertSuiteComplete enforces that emitted is exactly SuiteFiles.

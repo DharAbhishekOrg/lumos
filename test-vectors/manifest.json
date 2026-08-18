@@ -69,6 +69,16 @@
       ]
     },
     {
+      "path": "test-vectors/crypto/recovery_record.json",
+      "implements": [
+        "SRS-ONB-007",
+        "SRS-DAT-004",
+        "TRS-CRY-001",
+        "TRS-CRY-013",
+        "TRS-TST-001"
+      ]
+    },
+    {
       "path": "test-vectors/adv/ble_advertisement.json",
       "implements": [
         "TRS-PROTO-009",

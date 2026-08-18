@@ -84,6 +84,18 @@ public enum Vectors {
     /// - Parameters:
     ///   - object: containing object
     ///   - key: field name
+    /// - Returns: the nested object
+    /// - Throws: when absent or not an object
+    public static func object(_ object: [String: Any], _ key: String) throws -> [String: Any] {
+        guard let o = object[key] as? [String: Any] else {
+            throw LoadError("missing object field \(key)")
+        }
+        return o
+    }
+
+    /// - Parameters:
+    ///   - object: containing object
+    ///   - key: field name
     /// - Returns: the array of objects
     /// - Throws: when absent
     public static func array(_ object: [String: Any], _ key: String) throws -> [[String: Any]] {

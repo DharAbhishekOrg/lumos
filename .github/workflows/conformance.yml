@@ -76,14 +76,19 @@ jobs:
           head="${{ github.event.pull_request.head.sha }}"
           changed="$(git diff --name-only "$base" "$head")"
           echo "changed files:"; echo "$changed"
-          if echo "$changed" | grep -Eq '^(protocol/|test-vectors/|ios-app/|Package\.swift|\.swiftlint\.yml|\.github/workflows/conformance\.yml)'; then
+          if echo "$changed" | grep -Eq '^(protocol/|test-vectors/|ios-app/|Package\.swift|Package\.resolved|\.swiftlint\.yml|\.github/workflows/conformance\.yml)'; then
             echo "swift=true" >> "$GITHUB_OUTPUT"
           else
             echo "swift=false" >> "$GITHUB_OUTPUT"
           fi
-          # The emulator job is minutes of runner time; only an Android or
-          # protocol change can alter what it asserts.
-          if echo "$changed" | grep -Eq '^(android-app/|protocol/gen/java/|gradle/|settings\.gradle\.kts|\.github/workflows/conformance\.yml)'; then
+          # The emulator job is minutes of runner time; only an Android, a
+          # protocol or a VECTOR change can alter what it asserts. test-vectors/
+          # joined this list in S4b: the instrumented recovery tests read the
+          # committed vector files out of the test apk's assets, so a vector
+          # change alters what the emulator asserts exactly as a source change
+          # does - and a filter that missed it would report green for a suite
+          # that never ran against the new bytes.
+          if echo "$changed" | grep -Eq '^(android-app/|protocol/gen/java/|test-vectors/|gradle/|settings\.gradle\.kts|\.github/workflows/conformance\.yml)'; then
             echo "android=true" >> "$GITHUB_OUTPUT"
           else
             echo "android=false" >> "$GITHUB_OUTPUT"
@@ -309,6 +314,26 @@ jobs:
       - uses: actions/checkout@v7
       - name: swift version
         run: swift --version
+
+      # TRS-REP-003: the Swift dependency is pinned twice over - `exact:` in
+      # Package.swift and an immutable revision in Package.resolved - and this
+      # step is what proves the two agree. Package.resolved was authored from
+      # the upstream tag's commit rather than produced by `swift package
+      # resolve`, because Swift does not exist on the authoring host; this is
+      # the run that confirms SwiftPM lands on the same revision. A moved tag
+      # would fail here rather than silently changing what the recovery vectors
+      # are tested against.
+      - name: resolve and verify the pinned Swift dependency
+        run: |
+          set -euo pipefail
+          swift package resolve
+          pinned="cfd195c76882aa9b997560ca7cb95d72fbf5db00"
+          if ! grep -q "$pinned" Package.resolved; then
+            echo "swift-sodium did not resolve to the committed revision $pinned"
+            cat Package.resolved
+            exit 1
+          fi
+          echo "swift-sodium pinned at $pinned"
 
       # TRS-CODE-006, Swift half one: the linter. It rides this job rather than
       # taking a second macOS runner - every Swift source it reads is inside

@@ -1,6 +1,6 @@
 // Lumos - protocol/crypto/recovery / RecoveryRecord properties.
 // Author: dhar.abhishek.email@gmail.com
-// Implements: SRS-ONB-007, SRS-IDN-008, SRS-DAT-004, TRS-CRY-013
+// Implements: SRS-ONB-007, SRS-DAT-004, TRS-CRY-013
 // ADRs: ADR-001, ADR-003
 // Threading: any
 // Notes: The two properties that matter most are negative ones - a record
@@ -157,9 +157,9 @@ func TestParamsBelowTheRegisterMinimumAreRefusedEvenWhenAuthentic(t *testing.T) 
 	weakParams := Params{MemoryKiB: 8, Iterations: 1, Parallelism: 1}
 	salt := make([]byte, saltLen)
 	nonce := make([]byte, nonceLen)
-	record, err := exportWith(passphrase, []byte("content"), salt, nonce, weakParams)
+	record, err := ExportWith(passphrase, []byte("content"), salt, nonce, weakParams)
 	if err != nil {
-		t.Fatalf("exportWith: %v", err)
+		t.Fatalf("ExportWith: %v", err)
 	}
 	if _, err := Open(passphrase, record); codeOf(t, err) != lumoserrors.ErrCryptoRecoveryParamsRejected {
 		t.Error("an authentic but weak record must still be refused")
@@ -187,9 +187,8 @@ func TestStrongerThanTheRegisterMaximumIsStillAccepted(t *testing.T) {
 // exactly that hole, and this test is what found it.
 func TestAbsurdParamsAreRefusedBeforeAnyDerivation(t *testing.T) {
 	cases := map[string]Params{
-		"memory":      {MemoryKiB: MaxAcceptableMemoryKiB + 1, Iterations: 3, Parallelism: 1},
-		"iterations":  {MemoryKiB: 65536, Iterations: MaxAcceptableIterations + 1, Parallelism: 1},
-		"parallelism": {MemoryKiB: 65536, Iterations: 3, Parallelism: MaxAcceptableParallelism + 1},
+		"memory":     {MemoryKiB: MaxAcceptableMemoryKiB + 1, Iterations: 3, Parallelism: 1},
+		"iterations": {MemoryKiB: 65536, Iterations: MaxAcceptableIterations + 1, Parallelism: 1},
 	}
 	for name, p := range cases {
 		if err := p.Validate(); err == nil {
@@ -208,6 +207,40 @@ func TestAbsurdParamsAreRefusedBeforeAnyDerivation(t *testing.T) {
 	binary.BigEndian.PutUint32(bomb[magicLen+versionLen:], MaxAcceptableMemoryKiB*8)
 	if _, err := Open(passphrase, bomb); err == nil {
 		t.Error("a memory-bomb record was accepted")
+	}
+}
+
+// TestOnlyASingleLaneIsAccepted pins the S4b portability rule. libsodium's
+// crypto_pwhash has no multi-lane entry point, and libsodium is the binding on
+// both shipping platforms, so a two-lane record would open here and nowhere a
+// user could actually use it. All three implementations refuse it identically
+// and the cross-language vectors pin that.
+func TestOnlyASingleLaneIsAccepted(t *testing.T) {
+	for lanes := 2; lanes <= lumosconstants.RecoveryArgon2idParallelismMax; lanes++ {
+		p := Params{MemoryKiB: 65536, Iterations: 3, Parallelism: uint8(lanes)}
+		err := p.Validate()
+		if err == nil {
+			t.Fatalf("%d lanes was accepted; no shipping platform can derive that key", lanes)
+		}
+		if got := codeOf(t, err); got != lumoserrors.ErrCryptoRecoveryParamsRejected {
+			t.Errorf("%d lanes: got %s", lanes, got)
+		}
+	}
+	single := Params{MemoryKiB: 65536, Iterations: 3, Parallelism: SupportedParallelism}
+	if err := single.Validate(); err != nil {
+		t.Errorf("one lane must be accepted: %v", err)
+	}
+}
+
+// TestTheSingleLaneRuleStillCoversTheRegisterMinimum guards the branch Validate
+// no longer has. Dropping the parallelism-minimum check is only safe while the
+// register's minimum IS the single lane; if the register ever raises it, every
+// record becomes unopenable and this test is what says so.
+func TestTheSingleLaneRuleStillCoversTheRegisterMinimum(t *testing.T) {
+	if lumosconstants.RecoveryArgon2idParallelismMin != int(SupportedParallelism) {
+		t.Fatalf("register parallelism_min is %d but only %d lane(s) are executable: "+
+			"Validate would now accept a record no platform can open",
+			lumosconstants.RecoveryArgon2idParallelismMin, SupportedParallelism)
 	}
 }
 
