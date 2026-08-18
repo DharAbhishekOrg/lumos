@@ -162,7 +162,12 @@ public enum RecoveryBundleCodec {
     /// - Throws: ``StoreError/unreadable`` on an unknown version, line tag or
     ///   section label, or a malformed line
     public static func decode(_ plaintext: Data) throws -> RecoveryBundle {
-        let lines = String(decoding: plaintext, as: UTF8.self)
+        // String(bytes:encoding:) rather than String(decoding:as:): SwiftLint's
+        // optional_data_string_conversion prefers the failable initialiser, and
+        // the failure direction is right here anyway - bytes that are not UTF-8
+        // become an empty string, which fails the version check below rather
+        // than being silently repaired into something parseable.
+        let lines = (String(bytes: plaintext, encoding: .utf8) ?? "")
             .split(separator: "\n", omittingEmptySubsequences: false)
         guard lines.first == versionLine[...] else { throw StoreError.unreadable }
 

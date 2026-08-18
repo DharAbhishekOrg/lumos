@@ -9,15 +9,22 @@
  * Slice S1 stated that identity generation "works on JDK 17 and on API 33+" and
  * that only physical API 26-32 devices were affected. Slice S4c ran the
  * generation on an emulator for the first time and that is not what happens.
- * Measured on API 34:
+ * Measured on API 34 and, when this test first ran in CI, on API 30:
  *
- *   KeyPairGenerator.getInstance("XDH")      resolves
- *   KeyPairGenerator.getInstance("Ed25519")  throws NoSuchAlgorithmException
- *   Signature.getInstance("Ed25519")         resolves
+ *                                            API 30   API 34
+ *   KeyPairGenerator.getInstance("XDH")      absent   resolves
+ *   Signature.getInstance("Ed25519")         absent   resolves
+ *   KeyPairGenerator.getInstance("Ed25519")  absent   ABSENT
  *
- * So S1 was half right. XDH did arrive with API 33, and Ed25519 arrived for
- * SIGNING and VERIFYING - but never for key GENERATION. The boundary for the
- * identity is therefore not an API level at all: it is Android.
+ * So S1 was half right, and the half it got right is narrower than it looks.
+ * XDH and Ed25519 SIGNING did arrive with API 33, exactly as S1 said. Ed25519
+ * key GENERATION never arrived at all. The boundary for the identity is
+ * therefore not an API level: it is Android.
+ *
+ * The API-30 column is why this test is written against Build.VERSION rather
+ * than as three flat assertions - the emulator job runs API 30 and a local AVD
+ * is API 34, and a test that only held on one of them would be worse than no
+ * test.
  *
  * What that means, precisely, so nobody has to re-derive it:
  *
@@ -88,11 +95,22 @@ public class PlatformKeyAlgorithmInstrumentedTest {
     }
 
     @Test
-    public void theGapIsGenerationRatherThanSignatureSupport() throws Exception {
-        // Recorded because it is the detail that made S1's claim look right:
-        // Android DOES have Ed25519 signing and verification. What it has never
-        // had is a way to make the key pair in the first place, so
-        // verifyBinding() would work on a device and generate() cannot.
-        assertNotNull(Signature.getInstance("Ed25519"));
+    public void ed25519SignatureSupportTracksTheApiLevelWhileGenerationNeverArrives()
+            throws Exception {
+        // The detail that made S1's claim look right: from API 33 Android DOES
+        // have Ed25519 signing and verification, so verifyBinding() works on a
+        // current device. What it has never had is a way to MAKE the key pair,
+        // which is what generate() needs - and below API 33 it has neither.
+        if (Build.VERSION.SDK_INT >= EDEC_API_LEVEL) {
+            assertNotNull(Signature.getInstance("Ed25519"));
+        } else {
+            try {
+                Signature.getInstance("Ed25519");
+                fail("Ed25519 signing resolved below API " + EDEC_API_LEVEL
+                        + ", earlier than S1 found");
+            } catch (NoSuchAlgorithmException expected) {
+                assertNotNull(expected.getMessage());
+            }
+        }
     }
 }

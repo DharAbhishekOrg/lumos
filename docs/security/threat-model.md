@@ -321,14 +321,15 @@ this "works on JDK 17 and on API 33+", leaving only physical API 26-32 devices
 affected. **Slice S4c ran it on an emulator for the first time and that is not
 what happens.** Measured on API 34:
 
-| | |
-| --- | --- |
-| `KeyPairGenerator.getInstance("XDH")` | resolves |
-| `KeyPairGenerator.getInstance("Ed25519")` | **throws `NoSuchAlgorithmException`** |
-| `Signature.getInstance("Ed25519")` | resolves |
+| | API 30 | API 34 |
+| --- | --- | --- |
+| `KeyPairGenerator.getInstance("XDH")` | absent | resolves |
+| `Signature.getInstance("Ed25519")` | absent | resolves |
+| `KeyPairGenerator.getInstance("Ed25519")` | absent | **absent** |
 
-Android gained Ed25519 for signing and verifying, never for key generation. The
-boundary is therefore not an API level - it is Android. What that means:
+XDH and Ed25519 *signing* arrived with API 33, exactly as S1 said. Ed25519 key
+*generation* never arrived. The boundary is therefore not an API level - it is
+Android. What that means:
 
 - Identity creation (SRS-ONB-006), identity reset (SRS-IDN-003) and the restore
   half of recovery (SRS-ONB-007) are **JVM-proven and device-unproven**. The

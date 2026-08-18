@@ -3180,7 +3180,7 @@
     "java:app-dev:OnboardingServiceTest.anAdultOnboardsWithNoAccountAndEndsWithAnIdentity",
     "java:app-dev:OnboardingServiceTest.identityCreationRefusesToRunBeforeTheGate",
     "java:app-dev:OnboardingServiceTest.theOnboardingPathTouchesNoNetworkOrAccountApi",
-    "java:app-instrumented:PlatformKeyAlgorithmInstrumentedTest.theGapIsGenerationRatherThanSignatureSupport",
+    "java:app-instrumented:PlatformKeyAlgorithmInstrumentedTest.ed25519SignatureSupportTracksTheApiLevelWhileGenerationNeverArrives",
     "java:app-instrumented:PlatformKeyAlgorithmInstrumentedTest.thePlatformStillCannotGenerateEd25519Keys",
     "java:app-instrumented:PlatformKeyAlgorithmInstrumentedTest.x25519GenerationTracksTheApiLevelExactlyAsSliceS1Said"
    ],

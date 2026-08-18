@@ -40,6 +40,15 @@ private func day(_ year: Int, _ month: Int, _ dayOfMonth: Int) -> Date {
 /// captures the non-Sendable XCTestCase, which Swift 6 refuses.
 private let affirmedAtMillis: Int64 = 1_755_561_600_000
 
+/// The standing store a test works over. A struct rather than a tuple because
+/// three members is one past SwiftLint's large_tuple bound, and naming them
+/// reads better at the call sites anyway.
+private struct Stack {
+    let store: LocalStore
+    let kek: SoftwareKekStore
+    let database: Sqlite3Database
+}
+
 /// A complete acceptance map at a placeholder version.
 private func everyDocument(at version: String) -> [LegalDocument: String] {
     Dictionary(uniqueKeysWithValues: LegalDocument.allCases.map { ($0, version) })
@@ -51,14 +60,14 @@ final class OnboardingTests: XCTestCase {
     private let affirmedAt = affirmedAtMillis
 
     /// A standing store over an in-memory engine.
-    private func openStack() throws -> (LocalStore, SoftwareKekStore, Sqlite3Database) {
+    private func openStack() throws -> Stack {
         let database = try Sqlite3Database(path: ":memory:")
         let kek = SoftwareKekStore()
         let hierarchy = try DataKeyHierarchy.create(kek: kek)
         let store = try LocalStore.open(database: database,
                                         databaseDomainKey: hierarchy.deriveKey(for: .database),
                                         capacity: UnlimitedRoom(), now: { 0 })
-        return (store, kek, database)
+        return Stack(store: store, kek: kek, database: database)
     }
 
     // MARK: - Age gate (SRS-ONB-001)
@@ -147,7 +156,7 @@ final class OnboardingTests: XCTestCase {
     func testTheEncodingIsTheOneAndroidWrites() {
         let record = ConsentRecord(affirmedAtUtcMillis: affirmedAt, minimumAgeYears: 18,
                                    acceptedVersions: [.termsOfUse: "1"])
-        let text = String(decoding: ConsentCodec.encode(record), as: UTF8.self)
+        let text = String(bytes: ConsentCodec.encode(record), encoding: .utf8) ?? ""
         // Byte-for-byte the Android format, because a database written by one
         // platform is read by the other.
         XCTAssertEqual(text, "lumos-consent/1\naffirmed_at\t\(affirmedAt)\n"
@@ -185,7 +194,9 @@ final class OnboardingTests: XCTestCase {
     }
 
     func testConsentIsStoredAndReAskedForWhenAVersionMoves() throws {
-        let (store, _, database) = try openStack()
+        let stack = try openStack()
+        let store = stack.store
+        let database = stack.database
         defer { database.close() }
         let repository = ConsentRepository(store: store)
         let shipped = try LegalDocuments.load { _ in "Document version: 2026-08-19.1\n" }
@@ -202,14 +213,18 @@ final class OnboardingTests: XCTestCase {
     // MARK: - Visible Nearby (SRS-ONB-008)
 
     func testVisibleNearbyIsOffOnAFreshDevice() throws {
-        let (store, _, database) = try openStack()
+        let stack = try openStack()
+        let store = stack.store
+        let database = stack.database
         defer { database.close() }
         XCTAssertFalse(try DiscoveryVisibility(store: store).isVisibleNearby(),
                        "a device that has never been told otherwise is not discoverable")
     }
 
     func testOnlyAnExplicitRequestTurnsVisibleNearbyOn() throws {
-        let (store, _, database) = try openStack()
+        let stack = try openStack()
+        let store = stack.store
+        let database = stack.database
         defer { database.close() }
         let visibility = DiscoveryVisibility(store: store)
         try visibility.enableAfterExplicitUserRequest(atUtcMillis: affirmedAt)
@@ -219,7 +234,9 @@ final class OnboardingTests: XCTestCase {
     }
 
     func testAnUnreadableVisibilityRecordReadsAsOff() throws {
-        let (store, _, database) = try openStack()
+        let stack = try openStack()
+        let store = stack.store
+        let database = stack.database
         defer { database.close() }
         try store.put(kind: .discoveryVisibility, id: DiscoveryVisibility.visibilityId,
                       plaintext: Data("lumos-visibility/99\non\n0\n".utf8))
@@ -262,7 +279,10 @@ final class OnboardingTests: XCTestCase {
     // MARK: - Emergency wipe (SRS-SAF-009, SRS-SAF-010)
 
     func testEveryRecordKindThatExistsIsClearedKeysFirst() throws {
-        let (store, kek, database) = try openStack()
+        let stack = try openStack()
+        let store = stack.store
+        let kek = stack.kek
+        let database = stack.database
         defer { database.close() }
         for kind in RecordKind.allCases {
             let payload = Data("private-\(kind.table)".utf8)
@@ -288,7 +308,10 @@ final class OnboardingTests: XCTestCase {
     }
 
     func testAResetConfirmationCannotBeSpentOnAWipe() throws {
-        let (store, kek, database) = try openStack()
+        let stack = try openStack()
+        let store = stack.store
+        let kek = stack.kek
+        let database = stack.database
         defer { database.close() }
         let forReset = try DeliberateConfirmation
             .issue(action: .identityReset, requiredPhrase: "new identity", nowUtcMillis: 0)
@@ -318,7 +341,10 @@ final class OnboardingTests: XCTestCase {
     // MARK: - Identity reset (SRS-IDN-003)
 
     func testAResetReplacesBothHalvesOfTheIdentityAndKeepsTheContent() throws {
-        let (store, kek, database) = try openStack()
+        let stack = try openStack()
+        let store = stack.store
+        let kek = stack.kek
+        let database = stack.database
         defer { database.close() }
         let identities = IdentityRepository(store: store)
         try identities.replace(try IdentityKeyGenerator.generate(kek: kek))
@@ -345,7 +371,10 @@ final class OnboardingTests: XCTestCase {
     }
 
     func testTheResetWarningNamesMatchesConversationsAndWhatSurvives() throws {
-        let (store, kek, database) = try openStack()
+        let stack = try openStack()
+        let store = stack.store
+        let kek = stack.kek
+        let database = stack.database
         defer { database.close() }
         let identities = IdentityRepository(store: store)
         try identities.replace(try IdentityKeyGenerator.generate(kek: kek))
@@ -365,7 +394,7 @@ final class OnboardingTests: XCTestCase {
         let bundle = RecoveryBundle(exportedAtUtcMillis: affirmedAt, sections: [
             .profile: [RecoveryBundle.Item(id: "self", content: Data("hi".utf8))]
         ])
-        let text = String(decoding: RecoveryBundleCodec.encode(bundle), as: UTF8.self)
+        let text = String(bytes: RecoveryBundleCodec.encode(bundle), encoding: .utf8) ?? ""
         XCTAssertEqual(text, "lumos-recovery-bundle/1\nexported_at\t\(affirmedAt)\n"
                        + "unavailable\tmatch_roster\nunavailable\tconversation_history\n"
                        + "row\tprofile\tself\t\(Data("hi".utf8).base64EncodedString())\n")
@@ -382,7 +411,10 @@ final class OnboardingTests: XCTestCase {
     }
 
     func testAnExportCarriesTheContentSectionsAndNamesTheOnesItCannot() throws {
-        let (store, kek, database) = try openStack()
+        let stack = try openStack()
+        let store = stack.store
+        let kek = stack.kek
+        let database = stack.database
         defer { database.close() }
         try IdentityRepository(store: store)
             .replace(try IdentityKeyGenerator.generate(kek: kek))
@@ -401,7 +433,10 @@ final class OnboardingTests: XCTestCase {
     }
 
     func testAnExportRestoresOntoAFreshIdentityAndCarriesNoKeyMaterial() throws {
-        let (source, sourceKek, sourceDatabase) = try openStack()
+        let sourceStack = try openStack()
+        let source = sourceStack.store
+        let sourceKek = sourceStack.kek
+        let sourceDatabase = sourceStack.database
         defer { sourceDatabase.close() }
         let identity = try IdentityKeyGenerator.generate(kek: sourceKek)
         try IdentityRepository(store: source).replace(identity)
@@ -417,7 +452,10 @@ final class OnboardingTests: XCTestCase {
             XCTAssertNil(plaintext.range(of: secret), "ADR-003: nor in its content")
         }
 
-        let (target, targetKek, targetDatabase) = try openStack()
+        let targetStack = try openStack()
+        let target = targetStack.store
+        let targetKek = targetStack.kek
+        let targetDatabase = targetStack.database
         defer { targetDatabase.close() }
         let identities = IdentityRepository(store: target)
         try identities.replace(try IdentityKeyGenerator.generate(kek: targetKek))
@@ -437,7 +475,10 @@ final class OnboardingTests: XCTestCase {
     }
 
     func testAWrongPassphraseRestoresNothingAndChangesNoIdentity() throws {
-        let (source, sourceKek, sourceDatabase) = try openStack()
+        let sourceStack = try openStack()
+        let source = sourceStack.store
+        let sourceKek = sourceStack.kek
+        let sourceDatabase = sourceStack.database
         defer { sourceDatabase.close() }
         try IdentityRepository(store: source)
             .replace(try IdentityKeyGenerator.generate(kek: sourceKek))
@@ -445,7 +486,10 @@ final class OnboardingTests: XCTestCase {
         let sealed = try RecoverySetup(store: source, now: { affirmedAtMillis })
             .export(passphrase: Data("right".utf8))
 
-        let (target, targetKek, targetDatabase) = try openStack()
+        let targetStack = try openStack()
+        let target = targetStack.store
+        let targetKek = targetStack.kek
+        let targetDatabase = targetStack.database
         defer { targetDatabase.close() }
         let identities = IdentityRepository(store: target)
         try identities.replace(try IdentityKeyGenerator.generate(kek: targetKek))
