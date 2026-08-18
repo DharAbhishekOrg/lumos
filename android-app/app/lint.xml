@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Lumos - android-app/app / Lint scoping for the two kinds of test source.
+  Author: dhar.abhishek.email@gmail.com
+  Implements: TRS-CODE-006, TRS-AND-001
+  ADRs: -
+  Threading: n/a
+  Notes: build.gradle.kts turns on checkTestSources, and this file is what makes
+  that setting correct rather than merely strict.
+
+  The module has two test source sets and they run on different runtimes:
+
+    src/androidTest  runs ON A DEVICE, at minSdk. NewApi applies exactly as it
+                     does to production code - S4b proved it, with an
+                     InputStream.readAllBytes call that was green on a local API
+                     34 emulator and threw NoSuchMethodError on the API 30 image
+                     the pipeline uses.
+    src/test         runs on the HOST JVM, at Java 17. It never sees an Android
+                     runtime, so "requires API level 33" is a statement about a
+                     platform this code will never execute on. Files.readAllBytes,
+                     Stream.toList and ByteArrayOutputStream.writeBytes are all
+                     ordinary JDK 17 and all correct where they are.
+
+  So NewApi is suppressed for src/test ONLY, by path, and stays live everywhere
+  else including src/androidTest. Every other lint check remains active in both.
+  A blanket checkTestSources = false would have been the easy alternative and is
+  what let the S4b bug through.
+-->
+<lint>
+    <issue id="NewApi">
+        <ignore path="src/test" />
+    </issue>
+</lint>

@@ -24,6 +24,7 @@ package com.lumos.app.recovery;
 
 import androidx.test.platform.app.InstrumentationRegistry;
 import com.lumos.protocol.LumosConstants;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
@@ -35,6 +36,9 @@ final class RecoveryVectors {
 
     /** Asset path, relative to the /test-vectors source directory. */
     static final String RECOVERY_RECORD = "crypto/recovery_record.json";
+
+    /** Read chunk; the vector files are tens of kilobytes, not megabytes. */
+    private static final int READ_BUFFER_BYTES = 8192;
 
     private RecoveryVectors() {
         throw new AssertionError("no instances");
@@ -49,12 +53,20 @@ final class RecoveryVectors {
      * @throws JSONException if it is not the JSON object it should be
      */
     static JSONObject load(final String assetPath) throws IOException, JSONException {
-        final byte[] raw;
+        final ByteArrayOutputStream raw = new ByteArrayOutputStream();
         try (InputStream in = InstrumentationRegistry.getInstrumentation()
                 .getContext().getAssets().open(assetPath)) {
-            raw = in.readAllBytes();
+            // Read by hand rather than with InputStream.readAllBytes, which is
+            // API 33 and minSdk is 26. This ran green on a local API 34 emulator
+            // and threw NoSuchMethodError on the API 30 image CI uses - which is
+            // exactly what that image is in the pipeline for, and a reminder that
+            // a convenient JDK method is not automatically an Android one.
+            final byte[] buffer = new byte[READ_BUFFER_BYTES];
+            for (int read = in.read(buffer); read >= 0; read = in.read(buffer)) {
+                raw.write(buffer, 0, read);
+            }
         }
-        final JSONObject root = new JSONObject(new String(raw, StandardCharsets.UTF_8));
+        final JSONObject root = new JSONObject(new String(raw.toByteArray(), StandardCharsets.UTF_8));
         final String hash = root.getString("constants_hash");
         if (!LumosConstants.CONSTANTS_HASH.equals(hash)) {
             throw new AssertionError(

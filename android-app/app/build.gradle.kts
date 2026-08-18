@@ -142,6 +142,15 @@ android {
         warningsAsErrors = true
         abortOnError = true
 
+        // Lint skips test sources by default, and that default cost a CI cycle
+        // in S4b: the instrumented vector loader called InputStream.readAllBytes,
+        // which is API 33 while minSdk is 26. It ran green on a local API 34
+        // emulator and threw NoSuchMethodError on the API 30 image the pipeline
+        // uses. NewApi would have said so at build time, for free, if it had been
+        // looking - so now it looks. Test code runs on the same minSdk as the app
+        // and there is no reason to hold it to a weaker standard.
+        checkTestSources = true
+
         // Android lint reports OldTargetApi and GradleDependency because SDK 37
         // exists. TRS Sec. 5.3 pins the baseline at 36, and a specification value
         // is not something a build file may raise on lint's advice - that is a
