@@ -297,11 +297,17 @@ public enum RecoveryRecord {
 
         let status: Int32 = password.withUnsafeBufferPointer { raw in
             raw.withMemoryRebound(to: CChar.self) { chars in
-                crypto_pwhash(&key, UInt64(key.count),
-                              chars.baseAddress, UInt64(passwordLength),
-                              saltBytes,
-                              UInt64(params.iterations), memoryBytes,
-                              crypto_pwhash_alg_argon2id13())
+                // Never nil: `password` was substituted with a single byte above
+                // if the passphrase was empty, precisely so this buffer always
+                // has an address to hand to C. crypto_pwhash imports its passwd
+                // parameter as non-optional, so the guard is what satisfies the
+                // type rather than what handles a real case.
+                guard let passwordStart = chars.baseAddress else { return Int32(-1) }
+                return crypto_pwhash(&key, UInt64(key.count),
+                                     passwordStart, UInt64(passwordLength),
+                                     saltBytes,
+                                     UInt64(params.iterations), memoryBytes,
+                                     crypto_pwhash_alg_argon2id13())
             }
         }
         guard status == 0 else { throw RecoveryError.openFailed }
