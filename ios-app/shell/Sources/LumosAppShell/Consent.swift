@@ -310,7 +310,7 @@ public struct DiscoveryVisibility {
         }
         let lines = (String(bytes: payload, encoding: .utf8) ?? "")
             .split(separator: "\n", omittingEmptySubsequences: false)
-        guard lines.count >= 2, lines[0] == versionLine[...] else { return false }
+        guard lines.count >= 2, lines[0] == Self.versionLine[...] else { return false }
         return lines[1] == "on"
     }
 
