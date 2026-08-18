@@ -33,15 +33,48 @@ func TestSuiteFilesMatchTRS184(t *testing.T) {
 		"test-vectors/media/object_pipeline.json",
 		"test-vectors/voucher/voucher_tokens.json",
 	}
-	if len(SuiteFiles) != len(want) {
-		t.Fatalf("SuiteFiles has %d entries, TRS Sec. 18.4 prescribes %d", len(SuiteFiles), len(want))
+	if len(TRS184Files) != len(want) {
+		t.Fatalf("TRS184Files has %d entries, TRS Sec. 18.4 prescribes %d", len(TRS184Files), len(want))
+	}
+	for i := range want {
+		if TRS184Files[i] != want[i] {
+			t.Errorf("TRS184Files[%d] = %s, want %s", i, TRS184Files[i], want[i])
+		}
 	}
 	if !sort.StringsAreSorted(SuiteFiles) {
 		t.Error("SuiteFiles must stay sorted for stable output")
 	}
-	for i := range want {
-		if SuiteFiles[i] != want[i] {
-			t.Errorf("SuiteFiles[%d] = %s, want %s", i, SuiteFiles[i], want[i])
+	if len(SuiteFiles) != len(TRS184Files)+len(ExtensionFiles) {
+		t.Errorf("SuiteFiles has %d entries, expected %d prescribed + %d extensions",
+			len(SuiteFiles), len(TRS184Files), len(ExtensionFiles))
+	}
+}
+
+// TestExtensionsAreNotSmuggledIntoTheTranscription is the point of splitting the
+// two lists: an addition that appeared in TRS184Files would make the "faithful
+// copy of the specification table" claim false, and nothing else would notice.
+func TestExtensionsAreNotSmuggledIntoTheTranscription(t *testing.T) {
+	prescribed := map[string]bool{}
+	for _, p := range TRS184Files {
+		prescribed[p] = true
+	}
+	for _, p := range ExtensionFiles {
+		if prescribed[p] {
+			t.Errorf("%s is listed as both prescribed and an extension", p)
+		}
+	}
+	if len(ExtensionFiles) == 0 {
+		return
+	}
+	// Every extension must still be emitted and committed; the gate below does
+	// not care which list a path came from, and that is deliberate.
+	emitted := map[string]bool{}
+	for _, f := range buildOnce(t) {
+		emitted[f.Path] = true
+	}
+	for _, p := range ExtensionFiles {
+		if !emitted[p] {
+			t.Errorf("extension %s is declared but never emitted", p)
 		}
 	}
 }

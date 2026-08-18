@@ -78,6 +78,15 @@ func run(root, out string) error {
 	}
 	components = append(components, npmComponents...)
 
+	// SwiftPM joined the SBOM in WP-02 S4b, when the package gained its first
+	// external dependency. A stub that silently omitted an ecosystem would be
+	// worse than one that says it is a stub.
+	swiftComponents, err := swiftPMComponents(root)
+	if err != nil {
+		return err
+	}
+	components = append(components, swiftComponents...)
+
 	// Licences come from the toolchain manifest rather than from the lockfiles,
 	// which do not carry them. tools/deplock asserts by test that the manifest
 	// and the lockfiles agree, so this is not a second source of truth - it is
@@ -162,6 +171,12 @@ func manifestLicences(root string) (map[string]string, error) {
 		out[d.Path] = d.License
 	}
 	for _, d := range m.NPMDependencies.Modules {
+		out[d.Path] = d.License
+	}
+	for _, d := range m.RuntimeDependencies.Modules {
+		out[d.Path] = d.License
+	}
+	for _, d := range m.SwiftPMDependencies.Modules {
 		out[d.Path] = d.License
 	}
 	return out, nil
@@ -304,5 +319,23 @@ func npmComponents(root string) ([]Component, error) {
 	}
 	add(pkg.Dependencies, "required")
 	add(pkg.DevDependencies, "optional")
+	return out, nil
+}
+
+// swiftPMComponents reads the committed Package.resolved. The version is the
+// tag; the revision is what actually pins it, so both are recorded.
+func swiftPMComponents(root string) ([]Component, error) {
+	pins, err := deplock.ReadSwiftPMResolved(root)
+	if err != nil {
+		return nil, err
+	}
+	out := make([]Component, 0, len(pins))
+	for _, p := range pins {
+		out = append(out, Component{
+			Type: "library", Name: p.Location, Version: p.State.Version,
+			Ecosystem: "swiftpm", SourceFile: "Package.swift + Package.resolved",
+			PURL: "pkg:swift/" + p.Identity + "@" + p.State.Version,
+		})
+	}
 	return out, nil
 }

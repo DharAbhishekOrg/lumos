@@ -3,7 +3,7 @@
  "schema_version": 1,
  "work_package": "WP-01",
  "slice": "S0",
- "last_updated_slice": "S7",
+ "last_updated_slice": "WP-02 S4b",
  "implements": [
   "TRS-REP-003",
   "TRS-REP-006",
@@ -143,15 +143,14 @@
    "sbom": "tools/sbomgen emits evidence/sbom/lumos-sbom.json (CycloneDX 1.5). A STUB, and it says so in its own metadata: direct dependencies only, no transitive closure, no provenance. The release SBOM is WP-11's."
   },
   "owner_ruled_pending": {
-   "lazysodium_android": {
-    "ruling": "Owner, 2026-08-14: the Android API 26-32 identity-crypto gap is resolved per ADR-001, which already names Lazysodium-android / libsodium-JNI as the Android binding. Adopt it, pinned and checksummed in this manifest, IN THE FIRST SLICE THAT EXECUTES IDENTITY CRYPTO ON-DEVICE. minSdk stays 26.",
-    "why_not_yet": "WP-02 S2 is persistence; nothing in it executes identity crypto on a device. Adding a native binding now would pin and ship a dependency no gate exercises, which is the opposite of the pinning discipline. The condition is a slice, not a date, and it is recorded here so the adoption cannot be forgotten or brought forward without noticing.",
-    "when": "the first WP-02/WP-03 slice running identity key generation or X3DH on an Android device",
-    "licence_to_verify_on_adoption": "Lazysodium-android is Mozilla Public License 2.0 and libsodium is ISC; both must be read from the shipped artefacts at adoption time, not assumed from documentation, exactly as gitleaks' MIT was."
-   }
+   "note": "Empty. The Lazysodium adoption that lived here from WP-02 S2 was carried out in WP-02 S4b, on the condition it was recorded under: the first slice that executes identity-grade crypto on a device. See runtime_dependencies below."
   },
   "not_applicable": {
-   "swiftpm_resolved": "The SwiftPM package declares no external dependencies - only Foundation, CryptoKit and XCTest - so SwiftPM generates no Package.resolved. There is nothing to pin. If a Swift dependency is ever added, Package.resolved must be committed and this entry removed."
+   "note": "Empty. The SwiftPM entry that lived here - 'the package declares no external dependencies, so there is nothing to pin' - expired in WP-02 S4b when swift-sodium was adopted. Package.resolved is now committed and the swift job verifies the resolved revision against it."
+  },
+  "resolved_in_s4b": {
+   "lazysodium_android": "Adopted at 5.1.0 under the owner's approval of 2026-08-18. Conditions and their evidence: UNMODIFIED USE - one file, LibsodiumRecoveryCrypto.java, imports it at all; LICENCE TEXT IN THE APP'S THIRD-PARTY NOTICES - docs/legal/third-party-notices.md, shipped as an APK asset rather than left in docs/; SBOM - evidence/sbom/lumos-sbom.json; TOOLCHAIN MANIFEST - this entry; IF PATCHING IS EVER NEEDED - switch to a direct libsodium JNI binding rather than fork, recorded here so the condition survives the conversation it was given in.",
+   "swift_sodium": "Adopted at 0.11.0 (ISC) under the same approval. Only the Clibsodium product is taken."
   }
  },
  "static_analysis": {
@@ -281,6 +280,45 @@
     "license": "EPL-2.0",
     "why": "JUnit 5, the framework TRS Sec. 18.4 names for this module.",
     "licence_note": "Weak copyleft limited to the library's own files. Test-only and not distributed; flagged explicitly because EPL is copyleft-family."
+   }
+  ]
+ },
+ "runtime_dependencies": {
+  "note": "Dependencies LINKED INTO A SHIPPED ARTEFACT. Distinct from build_dependencies and jvm_test_dependencies, which never reach a user, and the distinction matters most for licences: a copyleft build tool imposes nothing, a copyleft runtime dependency imposes its terms on what is distributed. Every entry here must also appear in docs/legal/third-party-notices.md, which the app ships.",
+  "modules": [
+   {
+    "path": "com.goterl:lazysodium-android",
+    "version": "5.1.0",
+    "license": "MPL-2.0",
+    "why": "Argon2id for the ADR-003 RecoveryRecord. The JCA has no Argon2 at any API level, so there is no platform alternative; it also supplies ChaCha20-Poly1305, which the JCA provides only from API 28 while minSdk is 26. Bundles libsodium (ISC) in binary form for four ABIs.",
+    "catalogue_alias": "lazysodium",
+    "licence_note": "THE FIRST COPYLEFT DEPENDENCY THIS PROJECT SHIPS. MPL-2.0 is file-scoped: used unmodified it places no obligation on Lumos sources. Owner-approved 2026-08-18 with conditions; see not_yet_pinned.resolved_in_s4b.",
+    "licence_verification": "The shipped AAR carries NO licence file - the MPL-2.0 declaration is in the POM and in the upstream repository's LICENSE.md, and the notices file reproduces the text from the latter. Recorded because the adoption condition said to read the licence from the shipped artefact, and the shipped artefact does not carry one.",
+    "artefact_sha256": "46a7e67681cc280b5f06dcbe6859d84ee341a6e7c50cd1cefe69495dee589617",
+    "held_back_from": "5.2.0",
+    "held_back_why": "5.2.0 ships class files at bytecode 65 (Java 21) and javac under the TRS Sec. 5.3 Java 17 toolchain refuses them outright. It also 16 KB page-aligns its native libraries, which 5.1.0 does not - so holding the version back costs an Android 15 compatibility defect, tracked as a disabled Aligned16KB lint check in android-app/app/build.gradle.kts and OWNER-BLOCKING for G-06."
+   },
+   {
+    "path": "net.java.dev.jna:jna",
+    "version": "5.17.0",
+    "license": "Apache-2.0 OR LGPL-2.1",
+    "why": "The native-call layer Lazysodium binds through. Declared explicitly, and the transitive excluded, because the POM asks for the JAR and Android needs the AAR variant that carries libjnidispatch.so.",
+    "catalogue_alias": "jna",
+    "licence_note": "Dual-licensed at the user's option; Lumos takes Apache-2.0 and reproduces that text in the notices file. The LGPL option is not exercised."
+   }
+  ]
+ },
+ "swiftpm_dependencies": {
+  "note": "SwiftPM packages, pinned twice: `exact:` in Package.swift and an immutable revision in Package.resolved. Swift does not exist on the authoring host, so Package.resolved was authored from the upstream tag's commit rather than produced by `swift package resolve`; the conformance workflow's swift job resolves and asserts the revision matches, which is what turns the claim into evidence.",
+  "modules": [
+   {
+    "path": "https://github.com/jedisct1/swift-sodium.git",
+    "version": "0.11.0",
+    "revision": "cfd195c76882aa9b997560ca7cb95d72fbf5db00",
+    "license": "ISC",
+    "why": "Argon2id for the iOS RecoveryRecord. CryptoKit has no Argon2; ChaCha20-Poly1305 still comes from CryptoKit, as it has since WP-01.",
+    "scope": "Only the Clibsodium product - the libsodium XCFramework and its module map. The package's Sodium Swift wrapper is NOT used: its PWHash.hash maps the password through Int8(_:), which traps on any byte above 0x7F, so a passphrase with an accent in it would crash rather than fail.",
+    "licence_verification": "LICENSE read from the 0.11.0 tag: ISC, Frank Denis. libsodium itself is ISC and its text is reproduced in the notices file."
    }
   ]
  }

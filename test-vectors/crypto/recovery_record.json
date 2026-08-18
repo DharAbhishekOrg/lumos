@@ -1,0 +1,274 @@
+{
+  "schema_version": 1,
+  "generator": "tools/vectorgen",
+  "constants_hash": "sha256:568eb8489beb092351d802a9f7ab88eb6eecc62376b39f75eb2e22361d48d37b",
+  "implements": [
+    "SRS-ONB-007",
+    "SRS-DAT-004",
+    "TRS-CRY-001",
+    "TRS-CRY-013",
+    "TRS-TST-001"
+  ],
+  "key_provenance": "TESTONLY-lumos-vectors-v1",
+  "notes": "The ADR-003 content-only RecoveryRecord, pinned across Go, Java and Swift. Argon2id (v1.3) then ChaCha20-Poly1305 (IETF, 12-byte nonce) with the authenticated header - magic, version, work factors and salt - as associated data. Salt and nonce are FIXED here; a real export draws both fresh, which is why the vectors pin inputs rather than an output of Export. The negative set carries both attacks the format is shaped around: downgrade (claim cheap work factors) and inflation (claim absurd ones and let the reader allocate them). Cases flagged reject_before_derivation must be refused from the header alone.",
+  "format": {
+    "magic_hex": "4c554d4f53524543",
+    "format_version": 1,
+    "authenticated_header_bytes": 34,
+    "header_bytes": 46,
+    "salt_bytes": 16,
+    "nonce_bytes": 12,
+    "key_bytes": 32,
+    "tag_bytes": 16
+  },
+  "limits": {
+    "register_memory_kib_min": 32768,
+    "register_iterations_min": 2,
+    "max_acceptable_memory_kib": 1048576,
+    "max_acceptable_iterations": 64,
+    "supported_parallelism": 1
+  },
+  "derivation": [
+    {
+      "name": "register_defaults",
+      "description": "The register's frozen work factors: 64 MiB, 3 passes, one lane.",
+      "passphrase_hex": "544553544f4e4c592d6c756d6f732d7265636f766572792d70617373706872617365",
+      "salt_hex": "5376b4f5d443ddea7daa8497dfa784b6",
+      "params": {
+        "memory_kib": 65536,
+        "iterations": 3,
+        "parallelism": 1
+      },
+      "derived_key_hex": "766e6bcafb69b2d4276fd1fe4c8f3305f85da515266cdd53b728eab23c893c5f"
+    },
+    {
+      "name": "register_minima",
+      "description": "The weakest parameters an import still accepts. The boundary is inclusive, so an implementation that wrote \u003e where it meant \u003e= fails here rather than in the field.",
+      "passphrase_hex": "544553544f4e4c592d6c756d6f732d7265636f766572792d70617373706872617365",
+      "salt_hex": "e6d5d08be18f3e4e0d6b81f736f21d24",
+      "params": {
+        "memory_kib": 32768,
+        "iterations": 2,
+        "parallelism": 1
+      },
+      "derived_key_hex": "566e05cd2e3285cb39aaf3235ca433ee38692b301169570d968c5ad8a289d21e"
+    },
+    {
+      "name": "empty_passphrase",
+      "description": "Argon2id accepts a zero-length password. Pinned because a binding that rejects it, or that silently substitutes something, would otherwise surface only as an unopenable record for the one user who did it.",
+      "passphrase_hex": "",
+      "salt_hex": "5376b4f5d443ddea7daa8497dfa784b6",
+      "params": {
+        "memory_kib": 65536,
+        "iterations": 3,
+        "parallelism": 1
+      },
+      "derived_key_hex": "39c450ab81efaf8d106330dfe37f8e9fb1478f8cc889204db57c02fbe94707e3"
+    },
+    {
+      "name": "non_ascii_passphrase",
+      "description": "A passphrase with characters outside ASCII, as UTF-8. Not decoration: the obvious Swift binding for crypto_pwhash maps the password bytes through Int8(_:), which TRAPS on any byte above 0x7F - a crash, not an error, for every user whose passphrase has an accent in it.",
+      "passphrase_hex": "544553544f4e4c592d6c756d6f732d7265636f766572792d70c3a473737068726173652de29882",
+      "salt_hex": "e6d5d08be18f3e4e0d6b81f736f21d24",
+      "params": {
+        "memory_kib": 65536,
+        "iterations": 3,
+        "parallelism": 1
+      },
+      "derived_key_hex": "db85dcb0ebbce324a1829574599c949394e4d98564f5cab394f384edf1dd0e12"
+    }
+  ],
+  "positive": [
+    {
+      "name": "defaults_roundtrip",
+      "description": "An ordinary export at the register's defaults. Sealing must reproduce these exact bytes from these exact inputs; opening must return the content.",
+      "passphrase_hex": "544553544f4e4c592d6c756d6f732d7265636f766572792d70617373706872617365",
+      "salt_hex": "e77cdf6f59afaed7130ed20f8463aab9",
+      "nonce_hex": "c3ae1e887fbc74456effa2fc",
+      "params": {
+        "memory_kib": 65536,
+        "iterations": 3,
+        "parallelism": 1
+      },
+      "content_hex": "544553544f4e4c592d6c756d6f732d7265636f766572792d636f6e74656e743a20616c6961732c20626c6f636b206c6973742c2073657474696e6773",
+      "authenticated_header_hex": "4c554d4f5352454301000100000000000301e77cdf6f59afaed7130ed20f8463aab9",
+      "record_hex": "4c554d4f5352454301000100000000000301e77cdf6f59afaed7130ed20f8463aab9c3ae1e887fbc74456effa2fc42d6c9563ee18765e2dbfdaee8218ddd662b23639ec0b84d4c0a520732e1556a61f92a46477209c45d55bf65f72923b52d3b0733c149876c2a6d47f210f12db16f0121d152d573cbb8a7a82a"
+    },
+    {
+      "name": "empty_content",
+      "description": "A record sealing nothing. The ciphertext is the tag alone, which is the length arithmetic most likely to be wrong on a platform that assumed a non-empty plaintext.",
+      "passphrase_hex": "544553544f4e4c592d6c756d6f732d7265636f766572792d70617373706872617365",
+      "salt_hex": "6b397cf15165ce355039161f3b78a171",
+      "nonce_hex": "f07b306508b0c0678cb70f90",
+      "params": {
+        "memory_kib": 65536,
+        "iterations": 3,
+        "parallelism": 1
+      },
+      "content_hex": "",
+      "authenticated_header_hex": "4c554d4f53524543010001000000000003016b397cf15165ce355039161f3b78a171",
+      "record_hex": "4c554d4f53524543010001000000000003016b397cf15165ce355039161f3b78a171f07b306508b0c0678cb70f9024a38f8100e8de30b9caab9bbbfa94da"
+    },
+    {
+      "name": "register_minima_accepted",
+      "description": "An authentic record written at the minima. It must OPEN, not merely validate - the pair to downgrade_authentic_weak_record below, which is one step weaker and must be refused.",
+      "passphrase_hex": "544553544f4e4c592d6c756d6f732d7265636f766572792d70617373706872617365",
+      "salt_hex": "6b86d349c4889f054ed17644a6dc79d2",
+      "nonce_hex": "afdaaea5178380a914400f42",
+      "params": {
+        "memory_kib": 32768,
+        "iterations": 2,
+        "parallelism": 1
+      },
+      "content_hex": "544553544f4e4c592d6c756d6f732d7265636f766572792d636f6e74656e743a20616c6961732c20626c6f636b206c6973742c2073657474696e6773",
+      "authenticated_header_hex": "4c554d4f53524543010000800000000002016b86d349c4889f054ed17644a6dc79d2",
+      "record_hex": "4c554d4f53524543010000800000000002016b86d349c4889f054ed17644a6dc79d2afdaaea5178380a914400f42d042be4bc38dd4e3874fff53dc1dadeb48ce963e1b5c69e66e0f1c9f4638463c7ad8f02a36c4b74a779ca24d2d79c8a1f4659a1d0f02144053b3fcc5d3cb8c43e958875f079a93b7e9351dbe"
+    }
+  ],
+  "negative": [
+    {
+      "name": "downgrade_memory_below_minimum",
+      "family": "downgrade",
+      "description": "The header rewritten to claim 8 KiB. Refused on the register minimum, before the cheap derivation the attacker was shopping for.",
+      "passphrase_hex": "544553544f4e4c592d6c756d6f732d7265636f766572792d70617373706872617365",
+      "record_hex": "4c554d4f535245430100000008000000030120e4e4b61e8b304f67c9b50a2d2ef859eabdf16a8be6d50bbdd1c3e47541ee70d6b00a12c9dbf530c44a18d5dfdd3eef25d2fd39b34c17eae3d8864f2b8be95d50165c881fc29dfcd0c09fda3360a09435044ee0602053d75bd4ba65986c47e6e0d4847737c77706",
+      "expected_error": "ERR_CRYPTO_RECOVERY_PARAMS_REJECTED",
+      "reject_before_derivation": true
+    },
+    {
+      "name": "downgrade_iterations_below_minimum",
+      "family": "downgrade",
+      "description": "The header rewritten to claim a single pass.",
+      "passphrase_hex": "544553544f4e4c592d6c756d6f732d7265636f766572792d70617373706872617365",
+      "record_hex": "4c554d4f535245430100010000000000010120e4e4b61e8b304f67c9b50a2d2ef859eabdf16a8be6d50bbdd1c3e47541ee70d6b00a12c9dbf530c44a18d5dfdd3eef25d2fd39b34c17eae3d8864f2b8be95d50165c881fc29dfcd0c09fda3360a09435044ee0602053d75bd4ba65986c47e6e0d4847737c77706",
+      "expected_error": "ERR_CRYPTO_RECOVERY_PARAMS_REJECTED",
+      "reject_before_derivation": true
+    },
+    {
+      "name": "downgrade_authentic_weak_record",
+      "family": "downgrade",
+      "description": "Not an edit: a record genuinely SEALED at 8 KiB and one pass, so the AEAD verifies and only the minima check stands between the user and a backup worth guessing at. This is the case a tamper check alone would pass.",
+      "passphrase_hex": "544553544f4e4c592d6c756d6f732d7265636f766572792d70617373706872617365",
+      "record_hex": "4c554d4f535245430100000008000000010120e4e4b61e8b304f67c9b50a2d2ef859eabdf16a8be6d50bbdd1c3e47c148b39bb7d48843408537b16a71e0d7d77ea33069edcbba94b1ce018ef4b5c0b392ce2208f342c3c7bd38bd416223d2a5f8b46f62d82f0f602e6c5e2c684bad09e8524f91129431677953d",
+      "expected_error": "ERR_CRYPTO_RECOVERY_PARAMS_REJECTED",
+      "reject_before_derivation": true
+    },
+    {
+      "name": "downgrade_within_bounds_fails_authentication",
+      "family": "downgrade",
+      "description": "The subtle half. The header is rewritten from 64 MiB to the 32 MiB minimum - still legal parameters, so the bounds check has nothing to say. What refuses it is that the work factors are AEAD associated data: the edited header derives a different key AND authenticates different bytes, so the attacker gets a failure rather than a cheaper guess.",
+      "passphrase_hex": "544553544f4e4c592d6c756d6f732d7265636f766572792d70617373706872617365",
+      "record_hex": "4c554d4f535245430100008000000000030120e4e4b61e8b304f67c9b50a2d2ef859eabdf16a8be6d50bbdd1c3e47541ee70d6b00a12c9dbf530c44a18d5dfdd3eef25d2fd39b34c17eae3d8864f2b8be95d50165c881fc29dfcd0c09fda3360a09435044ee0602053d75bd4ba65986c47e6e0d4847737c77706",
+      "expected_error": "ERR_CRYPTO_RECOVERY_OPEN_FAILED",
+      "reject_before_derivation": false
+    },
+    {
+      "name": "inflation_memory_above_ceiling",
+      "family": "inflation",
+      "description": "The header rewritten to demand 8 GiB. One flipped bit in this field turns 64 MiB into 16 GiB, and a reader that derives before it validates hangs or is OOM-killed - denial of service for anyone who can hand the user a file.",
+      "passphrase_hex": "544553544f4e4c592d6c756d6f732d7265636f766572792d70617373706872617365",
+      "record_hex": "4c554d4f535245430100800000000000030120e4e4b61e8b304f67c9b50a2d2ef859eabdf16a8be6d50bbdd1c3e47541ee70d6b00a12c9dbf530c44a18d5dfdd3eef25d2fd39b34c17eae3d8864f2b8be95d50165c881fc29dfcd0c09fda3360a09435044ee0602053d75bd4ba65986c47e6e0d4847737c77706",
+      "expected_error": "ERR_CRYPTO_RECOVERY_PARAMS_REJECTED",
+      "reject_before_derivation": true
+    },
+    {
+      "name": "inflation_memory_uint32_max",
+      "family": "inflation",
+      "description": "The memory field set to the largest value it can hold. It is here for the sign bit rather than the size: a reader that holds this field in a SIGNED 32-bit integer sees -1, which is below every ceiling and above nothing, so a ceiling check written the obvious way lets it through. Reject it, and reject it as a parameter rejection rather than by accident.",
+      "passphrase_hex": "544553544f4e4c592d6c756d6f732d7265636f766572792d70617373706872617365",
+      "record_hex": "4c554d4f5352454301ffffffff000000030120e4e4b61e8b304f67c9b50a2d2ef859eabdf16a8be6d50bbdd1c3e47541ee70d6b00a12c9dbf530c44a18d5dfdd3eef25d2fd39b34c17eae3d8864f2b8be95d50165c881fc29dfcd0c09fda3360a09435044ee0602053d75bd4ba65986c47e6e0d4847737c77706",
+      "expected_error": "ERR_CRYPTO_RECOVERY_PARAMS_REJECTED",
+      "reject_before_derivation": true
+    },
+    {
+      "name": "inflation_iterations_uint32_max",
+      "family": "inflation",
+      "description": "The same sign trap in the time-cost field.",
+      "passphrase_hex": "544553544f4e4c592d6c756d6f732d7265636f766572792d70617373706872617365",
+      "record_hex": "4c554d4f535245430100010000ffffffff0120e4e4b61e8b304f67c9b50a2d2ef859eabdf16a8be6d50bbdd1c3e47541ee70d6b00a12c9dbf530c44a18d5dfdd3eef25d2fd39b34c17eae3d8864f2b8be95d50165c881fc29dfcd0c09fda3360a09435044ee0602053d75bd4ba65986c47e6e0d4847737c77706",
+      "expected_error": "ERR_CRYPTO_RECOVERY_PARAMS_REJECTED",
+      "reject_before_derivation": true
+    },
+    {
+      "name": "inflation_iterations_above_ceiling",
+      "family": "inflation",
+      "description": "The same attack in the time dimension: passes beyond the absolute ceiling.",
+      "passphrase_hex": "544553544f4e4c592d6c756d6f732d7265636f766572792d70617373706872617365",
+      "record_hex": "4c554d4f535245430100010000000000410120e4e4b61e8b304f67c9b50a2d2ef859eabdf16a8be6d50bbdd1c3e47541ee70d6b00a12c9dbf530c44a18d5dfdd3eef25d2fd39b34c17eae3d8864f2b8be95d50165c881fc29dfcd0c09fda3360a09435044ee0602053d75bd4ba65986c47e6e0d4847737c77706",
+      "expected_error": "ERR_CRYPTO_RECOVERY_PARAMS_REJECTED",
+      "reject_before_derivation": true
+    },
+    {
+      "name": "inflation_parallelism_unsupported",
+      "family": "inflation",
+      "description": "Two lanes. libsodium's crypto_pwhash has no multi-lane entry point and it is the binding on both shipping platforms, so a two-lane record would open in Go and nowhere a user could use it. All three refuse it identically.",
+      "passphrase_hex": "544553544f4e4c592d6c756d6f732d7265636f766572792d70617373706872617365",
+      "record_hex": "4c554d4f535245430100010000000000030220e4e4b61e8b304f67c9b50a2d2ef859eabdf16a8be6d50bbdd1c3e47541ee70d6b00a12c9dbf530c44a18d5dfdd3eef25d2fd39b34c17eae3d8864f2b8be95d50165c881fc29dfcd0c09fda3360a09435044ee0602053d75bd4ba65986c47e6e0d4847737c77706",
+      "expected_error": "ERR_CRYPTO_RECOVERY_PARAMS_REJECTED",
+      "reject_before_derivation": true
+    },
+    {
+      "name": "wrong_passphrase",
+      "family": "authentication",
+      "description": "The everyday failure. It must be reported with the same code and the same detail as a tampered record: telling them apart is an oracle (TRS-CRY-013).",
+      "passphrase_hex": "544553544f4e4c592d6c756d6f732d7265636f766572792d77726f6e672d70617373706872617365",
+      "record_hex": "4c554d4f535245430100010000000000030120e4e4b61e8b304f67c9b50a2d2ef859eabdf16a8be6d50bbdd1c3e47541ee70d6b00a12c9dbf530c44a18d5dfdd3eef25d2fd39b34c17eae3d8864f2b8be95d50165c881fc29dfcd0c09fda3360a09435044ee0602053d75bd4ba65986c47e6e0d4847737c77706",
+      "expected_error": "ERR_CRYPTO_RECOVERY_OPEN_FAILED",
+      "reject_before_derivation": false
+    },
+    {
+      "name": "ciphertext_bit_flip",
+      "family": "authentication",
+      "description": "The last ciphertext byte flipped.",
+      "passphrase_hex": "544553544f4e4c592d6c756d6f732d7265636f766572792d70617373706872617365",
+      "record_hex": "4c554d4f535245430100010000000000030120e4e4b61e8b304f67c9b50a2d2ef859eabdf16a8be6d50bbdd1c3e47541ee70d6b00a12c9dbf530c44a18d5dfdd3eef25d2fd39b34c17eae3d8864f2b8be95d50165c881fc29dfcd0c09fda3360a09435044ee0602053d75bd4ba65986c47e6e0d4847737c77707",
+      "expected_error": "ERR_CRYPTO_RECOVERY_OPEN_FAILED",
+      "reject_before_derivation": false
+    },
+    {
+      "name": "salt_edited",
+      "family": "authentication",
+      "description": "A byte of the salt flipped. The salt is inside the associated data, so this fails authentication rather than quietly deriving from a different salt.",
+      "passphrase_hex": "544553544f4e4c592d6c756d6f732d7265636f766572792d70617373706872617365",
+      "record_hex": "4c554d4f535245430100010000000000030121e4e4b61e8b304f67c9b50a2d2ef859eabdf16a8be6d50bbdd1c3e47541ee70d6b00a12c9dbf530c44a18d5dfdd3eef25d2fd39b34c17eae3d8864f2b8be95d50165c881fc29dfcd0c09fda3360a09435044ee0602053d75bd4ba65986c47e6e0d4847737c77706",
+      "expected_error": "ERR_CRYPTO_RECOVERY_OPEN_FAILED",
+      "reject_before_derivation": false
+    },
+    {
+      "name": "foreign_magic",
+      "family": "format",
+      "description": "A file that is not a record at all. Refused on the magic, without a passphrase prompt and without reading further.",
+      "passphrase_hex": "544553544f4e4c592d6c756d6f732d7265636f766572792d70617373706872617365",
+      "record_hex": "b3554d4f535245430100010000000000030120e4e4b61e8b304f67c9b50a2d2ef859eabdf16a8be6d50bbdd1c3e47541ee70d6b00a12c9dbf530c44a18d5dfdd3eef25d2fd39b34c17eae3d8864f2b8be95d50165c881fc29dfcd0c09fda3360a09435044ee0602053d75bd4ba65986c47e6e0d4847737c77706",
+      "expected_error": "ERR_CRYPTO_RECOVERY_OPEN_FAILED",
+      "reject_before_derivation": true
+    },
+    {
+      "name": "unknown_format_version",
+      "family": "format",
+      "description": "A record claiming a layout this build does not know. Refused rather than parsed optimistically.",
+      "passphrase_hex": "544553544f4e4c592d6c756d6f732d7265636f766572792d70617373706872617365",
+      "record_hex": "4c554d4f53524543fe00010000000000030120e4e4b61e8b304f67c9b50a2d2ef859eabdf16a8be6d50bbdd1c3e47541ee70d6b00a12c9dbf530c44a18d5dfdd3eef25d2fd39b34c17eae3d8864f2b8be95d50165c881fc29dfcd0c09fda3360a09435044ee0602053d75bd4ba65986c47e6e0d4847737c77706",
+      "expected_error": "ERR_CRYPTO_RECOVERY_OPEN_FAILED",
+      "reject_before_derivation": true
+    },
+    {
+      "name": "truncated_to_header",
+      "family": "format",
+      "description": "Everything after the header removed. There is no ciphertext to open and no tag to check.",
+      "passphrase_hex": "544553544f4e4c592d6c756d6f732d7265636f766572792d70617373706872617365",
+      "record_hex": "4c554d4f535245430100010000000000030120e4e4b61e8b304f67c9b50a2d2ef859eabdf16a8be6d50bbdd1c3e4",
+      "expected_error": "ERR_CRYPTO_RECOVERY_OPEN_FAILED",
+      "reject_before_derivation": false
+    },
+    {
+      "name": "truncated_mid_header",
+      "family": "format",
+      "description": "A record shorter than its own header. A reader that indexes before it length-checks crashes here instead of returning an error.",
+      "passphrase_hex": "544553544f4e4c592d6c756d6f732d7265636f766572792d70617373706872617365",
+      "record_hex": "4c554d4f535245430100010000000000030120e4e4b61e8b304f67c9b50a2d2ef859eabdf16a8be6d50bbdd1c3",
+      "expected_error": "ERR_CRYPTO_RECOVERY_OPEN_FAILED",
+      "reject_before_derivation": true
+    }
+  ]
+}

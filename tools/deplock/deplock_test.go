@@ -12,6 +12,7 @@
 package deplock
 
 import (
+	"os"
 	"path/filepath"
 	"strings"
 	"testing"
@@ -308,5 +309,128 @@ func TestManifestNoLongerCallsPinnedItemsPending(t *testing.T) {
 		if why, ok := nowPinned[pending]; ok {
 			t.Errorf("manifest still lists %q as not yet pinned, but %s", pending, why)
 		}
+	}
+}
+
+// --- Shipped dependencies ---------------------------------------------------
+//
+// These are the ones a licence review turns on, and the ones the owner attached
+// conditions to. A condition given in conversation and recorded only in prose is
+// a condition that lapses the first time somebody edits the prose; these are the
+// same conditions written as failures.
+
+func TestRuntimeDependenciesAreCataloguedAndDeclared(t *testing.T) {
+	root := repoRoot(t)
+	manifest, err := LoadManifest(root)
+	if err != nil {
+		t.Fatalf("LoadManifest: %v", err)
+	}
+	catalogue, err := VersionCatalogue(root)
+	if err != nil {
+		t.Fatalf("VersionCatalogue: %v", err)
+	}
+	if len(manifest.RuntimeDependencies.Modules) == 0 {
+		t.Fatal("no runtime dependencies declared; the app ships libsodium through two of them")
+	}
+	for _, m := range manifest.RuntimeDependencies.Modules {
+		if m.License == "" || m.Why == "" {
+			t.Errorf("shipped dependency %s has no licence or no stated reason", m.Path)
+		}
+		if m.CatalogueAlias == "" {
+			t.Errorf("shipped dependency %s names no catalogue alias", m.Path)
+			continue
+		}
+		if catalogue[m.CatalogueAlias] != m.Version {
+			t.Errorf("manifest pins %s at %s, catalogue alias %s says %q",
+				m.Path, m.Version, m.CatalogueAlias, catalogue[m.CatalogueAlias])
+		}
+	}
+}
+
+// TestEveryShippedDependencyIsInTheNotices is the owner's licence condition of
+// 2026-08-18 written as a test. "The licence text goes in the app's third-party
+// notices" is checkable, so it is checked: a dependency added to the shipped set
+// without its notice fails here rather than at whatever review nobody scheduled.
+func TestEveryShippedDependencyIsInTheNotices(t *testing.T) {
+	root := repoRoot(t)
+	manifest, err := LoadManifest(root)
+	if err != nil {
+		t.Fatalf("LoadManifest: %v", err)
+	}
+	raw, err := os.ReadFile(filepath.Join(root, "docs", "legal", "third-party-notices.md"))
+	if err != nil {
+		t.Fatalf("the shipped notices file is missing: %v", err)
+	}
+	notices := string(raw)
+
+	shipped := append([]Declared{}, manifest.RuntimeDependencies.Modules...)
+	shipped = append(shipped, manifest.SwiftPMDependencies.Modules...)
+	for _, m := range shipped {
+		name := m.Path
+		if i := strings.LastIndex(name, "/"); i >= 0 {
+			name = strings.TrimSuffix(name[i+1:], ".git")
+		}
+		if i := strings.Index(name, ":"); i >= 0 {
+			name = name[i+1:]
+		}
+		if !strings.Contains(strings.ToLower(notices), strings.ToLower(name)) {
+			t.Errorf("shipped dependency %s is not named in docs/legal/third-party-notices.md", m.Path)
+		}
+		if !strings.Contains(notices, m.Version) {
+			t.Errorf("the notices do not record %s at the pinned version %s", m.Path, m.Version)
+		}
+	}
+
+	// The two licences whose full text the shipped set actually requires.
+	for _, marker := range []string{"Mozilla Public License Version 2.0", "ISC License", "Apache License"} {
+		if !strings.Contains(notices, marker) {
+			t.Errorf("the notices do not carry the %q text", marker)
+		}
+	}
+}
+
+// --- SwiftPM ----------------------------------------------------------------
+
+func TestSwiftPMManifestMirrorsPackageResolved(t *testing.T) {
+	root := repoRoot(t)
+	manifest, err := LoadManifest(root)
+	if err != nil {
+		t.Fatalf("LoadManifest: %v", err)
+	}
+	pins, err := ReadSwiftPMResolved(root)
+	if err != nil {
+		t.Fatalf("ReadSwiftPMResolved: %v", err)
+	}
+	if len(pins) == 0 {
+		t.Fatal("Package.resolved pins nothing; the SwiftPM dependency is unlocked")
+	}
+
+	byLocation := map[string]SwiftPMPin{}
+	for _, p := range pins {
+		byLocation[p.Location] = p
+	}
+	for _, m := range manifest.SwiftPMDependencies.Modules {
+		pin, ok := byLocation[m.Path]
+		if !ok {
+			t.Errorf("manifest declares %s but Package.resolved does not pin it", m.Path)
+			continue
+		}
+		if pin.State.Version != m.Version {
+			t.Errorf("%s: manifest says %s, Package.resolved says %s",
+				m.Path, m.Version, pin.State.Version)
+		}
+		// The revision is the part that matters. A version tag can be moved;
+		// the commit it resolved to cannot, which is why the manifest records
+		// both and the swift job asserts the resolution reaches this one.
+		if m.Revision == "" {
+			t.Errorf("%s: the manifest records no revision", m.Path)
+		} else if pin.State.Revision != m.Revision {
+			t.Errorf("%s: manifest revision %s, Package.resolved %s",
+				m.Path, m.Revision, pin.State.Revision)
+		}
+	}
+	if len(manifest.SwiftPMDependencies.Modules) != len(pins) {
+		t.Errorf("Package.resolved pins %d package(s), the manifest declares %d",
+			len(pins), len(manifest.SwiftPMDependencies.Modules))
 	}
 }
