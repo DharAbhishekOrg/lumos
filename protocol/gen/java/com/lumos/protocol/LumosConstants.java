@@ -7,7 +7,7 @@
  * GENERATED - DO NOT EDIT. Generator: tools/constantsgen
  * Source register: protocol/constants/lumos_constants.json
  * Baseline: TRS v1.1 Sec. 23 / EDP v1.0 Sec. 4 (ADR-004)
- * constants_hash: sha256:568eb8489beb092351d802a9f7ab88eb6eecc62376b39f75eb2e22361d48d37b
+ * constants_hash: sha256:5b73a3fd6a3d99e5e35ec5a93c857d16a6b8c1e4207823e331afeeac6b808d29
  */
 package com.lumos.protocol;
 
@@ -24,7 +24,7 @@ public final class LumosConstants {
     public static final String SERVICE_UUID = "E853EB6A-775C-4A49-A6BF-320E6A5CC609";
 
     /** Binds generated code to the register that produced it (TRS-CONST-005). */
-    public static final String CONSTANTS_HASH = "sha256:568eb8489beb092351d802a9f7ab88eb6eecc62376b39f75eb2e22361d48d37b";
+    public static final String CONSTANTS_HASH = "sha256:5b73a3fd6a3d99e5e35ec5a93c857d16a6b8c1e4207823e331afeeac6b808d29";
 
     /** Register schema version. */
     public static final int SCHEMA_VERSION = 1;
@@ -188,12 +188,6 @@ public final class LumosConstants {
 
     /** crypto_protocol.RECOVERY_ARGON2ID.parallelism */
     public static final int RECOVERY_ARGON2ID_PARALLELISM = 1;
-
-    /** crypto_protocol.RECOVERY_ARGON2ID.parallelism_max */
-    public static final int RECOVERY_ARGON2ID_PARALLELISM_MAX = 4;
-
-    /** crypto_protocol.RECOVERY_ARGON2ID.parallelism_min */
-    public static final int RECOVERY_ARGON2ID_PARALLELISM_MIN = 1;
 
     /** crypto_protocol.RECOVERY_ARGON2ID.salt_bytes */
     public static final int RECOVERY_ARGON2ID_SALT_BYTES = 16;
@@ -1003,4 +997,12 @@ public final class LumosConstants {
 
     /** resource_budgets.STEADY_STATE_RAM_MAX_MB.overridable */
     public static final boolean STEADY_STATE_RAM_MAX_MB_OVERRIDABLE = false;
+
+    // Onboarding safety
+
+    /** onboarding_safety.ADULT_AGE_MINIMUM.overridable */
+    public static final boolean ADULT_AGE_MINIMUM_OVERRIDABLE = false;
+
+    /** onboarding_safety.ADULT_AGE_MINIMUM.years */
+    public static final int ADULT_AGE_MINIMUM_YEARS = 18;
 }

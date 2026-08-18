@@ -71,12 +71,13 @@ final class RecoveryRecordTests: XCTestCase {
                        Int(RecoveryParams.maxAcceptableIterations))
         XCTAssertEqual(try Vectors.int(limits, "supported_parallelism"),
                        Int(RecoveryParams.supportedParallelism))
-        // The single-lane rule replaces the register's parallelism minimum. That
-        // is only safe while the register's minimum IS one lane; if it ever
-        // moves, every record becomes unopenable and this is what says so.
-        XCTAssertEqual(LumosConstants.recoveryArgon2idParallelismMin,
+        // CR-001 made RECOVERY_ARGON2ID.parallelism a fixed constant with no
+        // bounds, so there is exactly one number to agree with. If the register
+        // ever moves it, defaults start producing records validate() itself
+        // refuses, and this is what says so.
+        XCTAssertEqual(LumosConstants.recoveryArgon2idParallelism,
                        Int(RecoveryParams.supportedParallelism),
-                       "the register's parallelism minimum is no longer the supported lane count")
+                       "the register's parallelism is no longer the supported lane count")
     }
 
     /// Argon2id on its own. When a record will not open and nobody can say why,

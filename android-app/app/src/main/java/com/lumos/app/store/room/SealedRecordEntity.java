@@ -4,14 +4,14 @@
  * Implements: TRS-AND-004, SRS-DAT-002, TRS-LOC-002
  * ADRs: ADR-003
  * Threading: any
- * Notes: Seven tables of identical shape, so the columns are declared once on a
+ * Notes: Nine tables of identical shape, so the columns are declared once on a
  * plain base class and each table is a two-line subclass carrying only its
  * @Entity name. Room inherits columns from a non-entity superclass, which is
- * what keeps this from being seven copies of the same six fields.
+ * what keeps this from being nine copies of the same six fields.
  *
  * Room cannot parameterise a table name, which is exactly why it sits BEHIND
  * the SqlDatabase seam rather than replacing it: the generic store addresses
- * all seven kinds through one code path, and Room owns the database, the schema
+ * all nine kinds through one code path, and Room owns the database, the schema
  * and the migrations underneath. That division is the owner's ruling of
  * 2026-08-14 expressed in types.
  *
@@ -86,4 +86,12 @@ public class SealedRecordEntity {
     /** Local diagnostic events. */
     @Entity(tableName = "diagnostic_event")
     public static class DiagnosticEventRow extends SealedRecordEntity { }
+
+    /** Onboarding consent evidence (SRS-ONB-001, SRS-ONB-002). Schema version 2. */
+    @Entity(tableName = "consent_record")
+    public static class ConsentRecordRow extends SealedRecordEntity { }
+
+    /** Visible Nearby state (SRS-ONB-008). Schema version 2. */
+    @Entity(tableName = "discovery_visibility")
+    public static class DiscoveryVisibilityRow extends SealedRecordEntity { }
 }

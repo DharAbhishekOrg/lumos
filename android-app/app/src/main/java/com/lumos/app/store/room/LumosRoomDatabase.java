@@ -30,6 +30,7 @@ import androidx.annotation.NonNull;
 import androidx.room.Database;
 import androidx.room.Room;
 import androidx.room.RoomDatabase;
+import androidx.room.migration.Migration;
 import androidx.sqlite.db.SupportSQLiteDatabase;
 import com.lumos.app.store.LocalSchema;
 
@@ -43,6 +44,8 @@ import com.lumos.app.store.LocalSchema;
             SealedRecordEntity.ProfileMediaRow.class,
             SealedRecordEntity.BlockEntryRow.class,
             SealedRecordEntity.DiagnosticEventRow.class,
+            SealedRecordEntity.ConsentRecordRow.class,
+            SealedRecordEntity.DiscoveryVisibilityRow.class,
         },
         version = LocalSchema.VERSION,
         exportSchema = true)
@@ -59,6 +62,27 @@ public abstract class LumosRoomDatabase extends RoomDatabase {
     public abstract ProfileDao profileDao();
 
     /**
+     * Room's version of the canonical 1-to-2 step (WP-02 slice S4c).
+     *
+     * <p>It executes {@link LocalSchema#migrationToVersion2()} rather than SQL
+     * of its own, and then advances the canonical version in the meta table.
+     * Room tracks its own version in {@code room_master_table}; the meta row is
+     * what the cross-platform seam and the iOS store read, so both have to move
+     * or an upgraded database reports version 1 to everything except Room.
+     */
+    public static final Migration MIGRATION_1_2 = new Migration(1, 2) {
+        @Override
+        public void migrate(@NonNull final SupportSQLiteDatabase database) {
+            for (final String sql : LocalSchema.migrationToVersion2()) {
+                database.execSQL(sql);
+            }
+            database.execSQL("INSERT OR REPLACE INTO " + LocalSchema.TABLE_META + " ("
+                    + LocalSchema.META_KEY + ", " + LocalSchema.META_VALUE + ") VALUES (?, ?)",
+                    new Object[] {LocalSchema.META_SCHEMA_VERSION, String.valueOf(2)});
+        }
+    };
+
+    /**
      * Opens the database in the application's private storage.
      *
      * @param context the application context
@@ -66,6 +90,7 @@ public abstract class LumosRoomDatabase extends RoomDatabase {
      */
     public static LumosRoomDatabase open(final Context context) {
         return Room.databaseBuilder(context, LumosRoomDatabase.class, DATABASE_FILE)
+                .addMigrations(MIGRATION_1_2)
                 .addCallback(new Callback() {
                     @Override
                     public void onCreate(@NonNull final SupportSQLiteDatabase database) {

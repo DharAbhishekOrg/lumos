@@ -168,6 +168,24 @@ android {
         // this check when the app shell gains an activity in WP-02.
         disable += setOf("OldTargetApi", "GradleDependency", "MissingApplicationIcon")
 
+        // UnusedResources: slice S4c adds res/values/strings.xml - the first
+        // user-facing copy in the application - and there is no activity to
+        // reference it from, so lint reports all 52 strings as unused. That is
+        // the same situation as MissingApplicationIcon above and it gets the
+        // same treatment rather than the alternatives, which are worse: a
+        // baseline file hides future real findings, and inventing a screen to
+        // make the strings "used" is a stub shipped to please a linter.
+        //
+        // The copy is not unchecked in the meantime. OnboardingCopyTest parses
+        // this file on the host, asserts every key the safety and onboarding
+        // flows need is present, and enforces the plain-language rules written
+        // at the top of it - including that the two confirmation phrases match
+        // what DeliberateConfirmation compares against.
+        //
+        // RE-ENABLE when the app shell gains its first activity, at the same
+        // time as MissingApplicationIcon.
+        disable += "UnusedResources"
+
         // BidiSpoofing: AGP 9.3.1's bundled lint CRASHES (NoSuchMethodError in
         // JavaDocParser.parseDataItem) when this detector forces a parse of any
         // Javadoc containing block tags - and TRS-CODE-002 requires @param and
@@ -200,10 +218,11 @@ android {
         // inconvenience, and it is disabled here so it does not masquerade as
         // absent.
         //
-        // OWNER DECISION REQUIRED before any Play submission (G-06). Either a TRS
-        // change request moves the toolchain to Java 21 and this line and the
-        // version pin both go, or the Android binding is replaced. Nothing ships
-        // in WP-02, so neither is urgent; both are blocking for WP-10.
+        // OWNER DECISION TAKEN, 2026-08-19: docs/change-requests/CR-002.md moves
+        // the TRS Sec. 5.3 toolchain to Java 21 so lazysodium-android 5.2.0 can
+        // be adopted with its alignment fix. CR-002 EXECUTES IN SLICE S5, not
+        // here; when it does, this disable and the 5.1.0 pin both go. Direct
+        // libsodium JNI remains the recorded fallback. Still blocking for G-06.
         disable += "Aligned16KB"
     }
 
@@ -213,6 +232,14 @@ android {
             // framework across the JVM half of the repository means one set of
             // report shapes for the traceability collector to parse.
             it.useJUnitPlatform()
+
+            // Slice S4c's copy and legal-document tests read files that are not
+            // on the test classpath: docs/legal, which the app ships as assets,
+            // and res/values/strings.xml. Both are repository artefacts, so the
+            // tests are given the repository root the same way
+            // :protocol-conformance is given it for the golden vectors, rather
+            // than walking up from a working directory Gradle is free to change.
+            it.systemProperty("lumos.repoRoot", rootProject.projectDir.absolutePath)
             it.testLogging {
                 events("passed", "skipped", "failed")
             }

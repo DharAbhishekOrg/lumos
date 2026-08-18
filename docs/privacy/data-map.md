@@ -5,6 +5,9 @@
 **Baseline:** SRS v1.1 / TRS v1.1 / EDP v1.0
 **Scope of this revision:** personal data held **locally on the user's device** (Zone A)
 after WP-02 — identity, profile, consent, safety state and the recovery export.
+**Last revised:** WP-02 slice S4c (2026-08-19) - consent evidence, the discarded
+date of birth and the Visible Nearby state are implemented rather than planned,
+and Sec. 7 open question 4 is resolved for the global floor.
 **Status:** living document. Seeded before WP-02 feature code (S0). **Owner
 ruling 2026-08-14: the special-category classification in this document —
 including the stricter treatment of free text and profile media in §2.2 — is
@@ -245,8 +248,17 @@ than guessed, per AGENTS.md §6.
    WP-05 and G-09 (§0.1).
 3. **Launch jurisdictions.** Retention and lawful-basis analysis differs by
    market; SRS-NFR-COM-011 refers to "launch markets" without naming them.
-4. **Minimum age**, described in SRS-ONB-001 as "the configured minimum age" —
-   configured to what, and does it vary by jurisdiction?
+4. ~~**Minimum age**, described in SRS-ONB-001 as "the configured minimum age":
+   configured to what, and does it vary by jurisdiction?~~ **Resolved for the
+   global floor, 2026-08-19 (WP-02 S4c).** SRS-NFR-LEG-007 states it: the
+   adult-only **18+** gate applies globally. It is now the register entry
+   `onboarding_safety.ADULT_AGE_MINIMUM.years`, **not overridable**, because
+   SRS-NFR-LEG-007's per-market clause only ever permits a jurisdiction to be
+   STRICTER and the register has no way to express a one-directional bound: an
+   overridable entry would let a signed-config feed LOWER an age gate on a
+   dating product. Per-market raising remains open and belongs to the work
+   package that owns market configuration, as a separate entry with its floor
+   at this value and an approved change request.
 5. **Free text and images as special-category data** (§2.2). ~~This document
    takes the stricter reading under SRS §2.4. A narrower position is possible
    but is an owner and legal call, not an implementer's.~~ **Resolved

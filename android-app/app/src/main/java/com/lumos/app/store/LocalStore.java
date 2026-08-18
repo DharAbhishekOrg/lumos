@@ -235,6 +235,60 @@ public final class LocalStore {
         return out;
     }
 
+    /** One row of a kind: its identifier and its opened content. */
+    public static final class Entry {
+
+        private final String id;
+        private final byte[] content;
+
+        private Entry(final String id, final byte[] content) {
+            this.id = id;
+            this.content = content;
+        }
+
+        /**
+         * The row identifier.
+         *
+         * @return the opaque id
+         */
+        public String id() {
+            return id;
+        }
+
+        /**
+         * The opened record content.
+         *
+         * @return a copy of the plaintext
+         */
+        public byte[] content() {
+            return content.clone();
+        }
+    }
+
+    /**
+     * Reads and opens every row of a kind, in identifier order.
+     *
+     * <p>Added for the recovery export, which has to enumerate what it is
+     * exporting rather than ask for identifiers it already knows. Ordering by
+     * the identifier makes the export deterministic for a given store, which is
+     * what lets a test compare two exports of the same content.
+     *
+     * @param kind the record's table
+     * @return every row, opened
+     * @throws StoreException on engine failure or an unopenable row
+     */
+    public List<Entry> allOf(final RecordKind kind) throws StoreException {
+        final List<Map<String, Object>> rows = database.query(
+                "SELECT " + LocalSchema.COLUMN_ID + ", " + LocalSchema.COLUMN_PAYLOAD + " FROM "
+                        + kind.table() + " ORDER BY " + LocalSchema.COLUMN_ID, List.of());
+        final List<Entry> out = new ArrayList<>(rows.size());
+        for (final Map<String, Object> row : rows) {
+            final String id = String.valueOf(row.get(LocalSchema.COLUMN_ID));
+            out.add(new Entry(id, codec.open(kind, id, (byte[]) row.get(LocalSchema.COLUMN_PAYLOAD))));
+        }
+        return out;
+    }
+
     /**
      * Deletes a record.
      *

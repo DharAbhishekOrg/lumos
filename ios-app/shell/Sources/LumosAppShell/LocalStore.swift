@@ -311,6 +311,35 @@ public final class LocalStore {
         }
     }
 
+    /// One row of a kind: its identifier and its opened content.
+    public struct Entry: Sendable, Equatable {
+        /// The opaque row identifier.
+        public let id: String
+        /// The opened record content.
+        public let content: Data
+    }
+
+    /// Reads and opens every row of a kind, in identifier order.
+    ///
+    /// Added for the recovery export, which has to enumerate what it is
+    /// exporting rather than ask for identifiers it already knows. Ordering by
+    /// the identifier makes the export deterministic for a given store, which
+    /// is what lets a test compare two exports of the same content.
+    ///
+    /// - Parameter kind: the record's table
+    /// - Returns: every row, opened
+    /// - Throws: ``StoreError`` on engine failure or an unopenable row
+    public func allOf(kind: RecordKind) throws -> [Entry] {
+        let rows = try database.query(
+            "SELECT \(LocalSchema.columnId), \(LocalSchema.columnPayload) FROM \(kind.table) "
+                + "ORDER BY \(LocalSchema.columnId)", [])
+        return try rows.compactMap { row in
+            guard case .text(let id)? = row[LocalSchema.columnId],
+                  case .blob(let sealed)? = row[LocalSchema.columnPayload] else { return nil }
+            return Entry(id: id, content: try codec.open(kind: kind, id: id, sealed: sealed))
+        }
+    }
+
     /// Deletes a record.
     /// - Parameters:
     ///   - kind: the record's table

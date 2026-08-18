@@ -216,7 +216,9 @@ func TestAbsurdParamsAreRefusedBeforeAnyDerivation(t *testing.T) {
 // user could actually use it. All three implementations refuse it identically
 // and the cross-language vectors pin that.
 func TestOnlyASingleLaneIsAccepted(t *testing.T) {
-	for lanes := 2; lanes <= lumosconstants.RecoveryArgon2idParallelismMax; lanes++ {
+	// 4 was the register's parallelism_max until CR-001 removed the bounds; 255
+	// is the largest value the one-byte wire field can carry.
+	for _, lanes := range []int{2, 4, 255} {
 		p := Params{MemoryKiB: 65536, Iterations: 3, Parallelism: uint8(lanes)}
 		err := p.Validate()
 		if err == nil {
@@ -232,15 +234,15 @@ func TestOnlyASingleLaneIsAccepted(t *testing.T) {
 	}
 }
 
-// TestTheSingleLaneRuleStillCoversTheRegisterMinimum guards the branch Validate
-// no longer has. Dropping the parallelism-minimum check is only safe while the
-// register's minimum IS the single lane; if the register ever raises it, every
-// record becomes unopenable and this test is what says so.
-func TestTheSingleLaneRuleStillCoversTheRegisterMinimum(t *testing.T) {
-	if lumosconstants.RecoveryArgon2idParallelismMin != int(SupportedParallelism) {
-		t.Fatalf("register parallelism_min is %d but only %d lane(s) are executable: "+
-			"Validate would now accept a record no platform can open",
-			lumosconstants.RecoveryArgon2idParallelismMin, SupportedParallelism)
+// TestTheRegisterAgreesWithTheSingleLaneRule guards the branch Validate does
+// not have. CR-001 made RECOVERY_ARGON2ID.parallelism a fixed constant with no
+// bounds, so there is exactly one number to agree with; if the register ever
+// moves it, DefaultParams starts producing records Validate itself refuses, and
+// this test is what says so.
+func TestTheRegisterAgreesWithTheSingleLaneRule(t *testing.T) {
+	if lumosconstants.RecoveryArgon2idParallelism != int(SupportedParallelism) {
+		t.Fatalf("register parallelism is %d but only %d lane(s) are executable",
+			lumosconstants.RecoveryArgon2idParallelism, SupportedParallelism)
 	}
 }
 

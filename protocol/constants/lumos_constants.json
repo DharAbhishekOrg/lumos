@@ -5,7 +5,7 @@
  "$generator": "tools/constantsgen",
  "service_uuid": "E853EB6A-775C-4A49-A6BF-320E6A5CC609",
  "$service_uuid_provenance": "One fixed 128-bit GATT service UUID per ADR-002 / TRS Sec. 9.3, generated once from a CSPRNG as an RFC 4122 version-4 UUID in WP-01 slice S2 and frozen here. Advertised by both platforms and used for scan filtering. No 16-bit alias is registered for flagship. Regenerating this value is a breaking protocol change.",
- "constants_hash": "sha256:568eb8489beb092351d802a9f7ab88eb6eecc62376b39f75eb2e22361d48d37b",
+ "constants_hash": "sha256:5b73a3fd6a3d99e5e35ec5a93c857d16a6b8c1e4207823e331afeeac6b808d29",
  "constants_hash_algorithm": {
   "digest": "SHA-256",
   "encoding": "lowercase hex, prefixed 'sha256:'",
@@ -476,13 +476,21 @@
    "iterations_min": 2,
    "iterations_max": 10,
    "parallelism": 1,
-   "parallelism_min": 1,
-   "parallelism_max": 4,
    "salt_bytes": 16,
    "key_bytes": 32,
    "overridable": false,
-   "notes": "Argon2id parameters for the ADR-003 content-only RecoveryRecord, added in WP-02 slice S4. NOT overridable by signed configuration: a config that lowered them would weaken every export made afterwards, and the whole point of a passphrase-derived key is that its cost is fixed by us rather than by whoever controls a config feed. 64 MiB / 3 passes / 1 lane is the OWASP-shaped balance for a mobile device that must also do this while the user waits. The bounds exist for a different reason from every other bounded entry here: a RecoveryRecord CARRIES its own parameters so that a record written today still opens after the defaults move, and import refuses any record whose parameters fall below these minima - which is what stops an attacker who can edit the file from downgrading the work factor before a passphrase guess. salt_bytes and key_bytes are fixed and unbounded because changing either is a format change, not a tuning knob.",
-   "anchors": ["SRS-ONB-007", "SRS-IDN-008", "SRS-DAT-004"], "adr": ["ADR-003"], "source": "ADR-003 / WP-02 S4"
+   "notes": "Argon2id parameters for the ADR-003 content-only RecoveryRecord, added in WP-02 slice S4. NOT overridable by signed configuration: a config that lowered them would weaken every export made afterwards, and the whole point of a passphrase-derived key is that its cost is fixed by us rather than by whoever controls a config feed. 64 MiB / 3 passes / 1 lane is the OWASP-shaped balance for a mobile device that must also do this while the user waits. The memory and time bounds exist for a different reason from every other bounded entry here: a RecoveryRecord CARRIES its own parameters so that a record written today still opens after the defaults move, and import refuses any record whose parameters fall below these minima - which is what stops an attacker who can edit the file from downgrading the work factor before a passphrase guess. parallelism, salt_bytes and key_bytes are fixed and unbounded because changing any of them is a format change, not a tuning knob. parallelism carried min/max until CR-001 (WP-02 S4c) removed them: libsodium crypto_pwhash exposes no multi-lane Argon2 entry point and libsodium is the binding on both mobile platforms, so a lane count above 1 describes a record no shipping platform can open. That is a portability floor, deliberately the opposite shape of the memory and time ceilings above, and a range of legal values for it never existed.",
+   "anchors": ["SRS-ONB-007", "SRS-DAT-004"], "adr": ["ADR-003"], "source": "ADR-003 / WP-02 S4, CR-001"
+  }
+ },
+
+ "onboarding_safety": {
+  "$section_notes": "Onboarding, consent and safety-action policy values. Added in WP-02 slice S4c. TRS Sec. 23 has no onboarding section because none of these values crosses a device boundary - but ADR-004 is about tunable values, not about wire values, and a hard-coded 18 in an age gate is exactly the magic number it exists to forbid.",
+
+  "ADULT_AGE_MINIMUM": {
+   "years": 18, "overridable": false,
+   "notes": "The global adult-only floor. SRS-NFR-LEG-007 states it plainly: the adult-only 18+ gate applies globally. NOT overridable by signed configuration, and the asymmetry is deliberate - SRS-NFR-LEG-007 also allows jurisdictions with stricter duties to be gated per-market via configuration, but 'stricter' is the only direction that is ever safe and this register has no way to express a one-directional bound. An overridable entry with a [min,max] range would let a compromised or misconfigured config feed LOWER the age gate on a dating product, which SRS Sec. 2.4's stricter-reading rule forbids. Per-market raising therefore belongs to the work package that owns market configuration, as a separate entry with its own floor at this value and an approved change request; until then this number is the gate on every market. The gate stores only the affirmation and the value it was checked against (privacy data map Sec. 2.3) - never the date of birth it was computed from.",
+   "anchors": ["SRS-ONB-001", "SRS-NFR-LEG-007"], "adr": ["ADR-004"], "source": "SRS-NFR-LEG-007 / WP-02 S4c"
   }
  },
 

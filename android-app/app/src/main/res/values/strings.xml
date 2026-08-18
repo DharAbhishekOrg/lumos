@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Lumos - android-app/app / The first user-facing copy in the application.
+  Author: dhar.abhishek.email@gmail.com
+  Implements: SRS-ONB-001, SRS-ONB-002, SRS-ONB-006, SRS-ONB-008, SRS-IDN-003, SRS-ONB-007, SRS-SAF-009
+  ADRs: ADR-003, ADR-010
+  Threading: n/a
+  Notes: There is no UI yet, and this is still the right place for these words.
+  They are not decoration on a screen somebody will write later - two of them
+  are load-bearing (wipe_confirm_phrase and reset_confirm_phrase are compared
+  against what the user types) and the rest are the warnings SRS-SAF-009 and
+  SRS-IDN-003 require to exist. OnboardingCopyTest parses this file directly, as
+  BackupExclusionTest parses the backup rules, so the copy is checked on a host
+  with no device.
+
+  House rules for this file, enforced by that test:
+  - Second person. "You", not "the user".
+  - No jargon. No "cryptographic identity", no "key material", no "AEAD", no
+    "provisioning". A person deciding whether to erase their phone should not
+    have to learn a vocabulary first.
+  - Short sentences. The test caps the average.
+  - Say what happens, not how you should feel about it. "This cannot be undone"
+    beats "Please be careful!".
+  - Never promise more than the code does. The wipe copy says traces may remain
+    and says why that is survivable, because WipeCoverage says so too.
+-->
+<resources>
+
+    <string name="app_name">Lumos</string>
+
+    <!-- Age gate (SRS-ONB-001) -->
+    <string name="age_gate_title">How old are you?</string>
+    <string name="age_gate_body">Lumos is for adults only. Enter your date of birth so we can
+        check. We do not keep it — we check it and throw it away, and all that stays on your
+        phone is that you passed.</string>
+    <string name="age_gate_field_label">Date of birth</string>
+    <string name="age_gate_continue">Continue</string>
+    <string name="age_gate_blocked_title">You need to be 18 to use Lumos</string>
+    <string name="age_gate_blocked_body">That is the rule everywhere Lumos works, and there is
+        no way around it. Come back on your eighteenth birthday.</string>
+
+    <!-- Legal documents (SRS-ONB-002) -->
+    <string name="consent_title">Before you start</string>
+    <string name="consent_body">Please read these. They are short, and they are written to be
+        read rather than skipped.</string>
+    <string name="consent_doc_terms">Terms of Use</string>
+    <string name="consent_doc_privacy">Privacy Notice</string>
+    <string name="consent_doc_community">Community Rules</string>
+    <string name="consent_doc_radio">How Lumos uses your phone\'s radio</string>
+    <string name="consent_accept">I have read these and I accept them</string>
+    <string name="consent_updated_title">Something has changed</string>
+    <string name="consent_updated_body">We have updated one of the documents you accepted. Have
+        a look at what changed, then accept again to carry on.</string>
+
+    <!-- Identity creation (SRS-ONB-006) -->
+    <string name="identity_title">Setting up your phone</string>
+    <string name="identity_body">Lumos is making your account. It happens on this phone and
+        takes a moment.</string>
+    <string name="identity_no_account_note">There is no sign-up. Lumos never asks for your phone
+        number, your email address or a login from anywhere else, and nothing about you is sent
+        to us.</string>
+    <string name="identity_offline_note">This works with no internet connection.</string>
+
+    <!-- Visible Nearby (SRS-ONB-008) -->
+    <string name="visibility_title">Visible Nearby</string>
+    <string name="visibility_off_body">You are not visible to anyone right now. Nothing is being
+        broadcast from your phone.</string>
+    <string name="visibility_on_body">People nearby who are also using Lumos can see that you
+        are around. You can turn this off at any time and it stops immediately.</string>
+    <string name="visibility_never_automatic">Lumos never turns this on by itself — not when
+        you install it, not when it updates, not when you restart your phone, and not when you
+        allow Bluetooth. Only you turn it on.</string>
+    <string name="visibility_turn_on">Turn on Visible Nearby</string>
+    <string name="visibility_turn_off">Turn off</string>
+
+    <!-- Recovery setup (SRS-ONB-007, SRS-DAT-004) -->
+    <string name="recovery_setup_title">Save a copy of your Lumos content</string>
+    <string name="recovery_setup_body">This makes one file holding your profile, your photos\'
+        details, your block list and your settings. You choose a passphrase, and the file is
+        locked with it.</string>
+    <string name="recovery_setup_what_is_not_in_it">Your account keys are not in the file, and
+        they cannot be. If you lose this phone, this file brings your content back — but you
+        will be a new person to everyone you had met, and they will have to check it is really
+        you.</string>
+    <string name="recovery_setup_passphrase_warning">Choose a passphrase you will still remember
+        in a year, and write it down somewhere safe. Nobody can open this file without it and
+        nobody can reset it for you — not us, not anyone.</string>
+    <string name="recovery_setup_destination_warning">You decide where this file goes. Once you
+        save it somewhere, it is out of Lumos\'s hands. Putting it in a cloud drive or a shared
+        folder means whoever can reach that folder has the file.</string>
+    <string name="recovery_setup_save">Save the file</string>
+
+    <!-- Recovery restore (SRS-ONB-007) -->
+    <string name="recovery_restore_title">Bring your content back</string>
+    <string name="recovery_restore_body">Choose the file you saved and enter its passphrase.</string>
+    <string name="recovery_restore_new_identity_warning">You will start again as a new person on
+        Lumos. Your content comes back, but your old matches do not, and anyone you were talking
+        to will be asked to check it is really you before carrying on.</string>
+    <string name="recovery_restore_failed">That did not open. Either the passphrase is wrong or
+        the file is not one Lumos made. We cannot tell you which — telling you would help
+        someone guessing.</string>
+    <string name="recovery_restore_partial_notice">Some things were not in this file because
+        Lumos could not save them yet when you made it. They are not lost — they were never in
+        there.</string>
+
+    <!-- Identity reset (SRS-IDN-003) -->
+    <string name="reset_title">Start again as someone new</string>
+    <string name="reset_body">Your profile, your photos and your block list stay. Everything
+        about who you are to other people is replaced.</string>
+    <string name="reset_warning">Anyone you have matched with will lose the connection, and any
+        conversation you were having cannot be carried on. This cannot be undone.</string>
+    <string name="reset_confirm_prompt">Type the words: new identity</string>
+    <string name="reset_confirm_phrase">new identity</string>
+    <string name="reset_button">Reset my identity</string>
+
+    <!-- Emergency wipe (SRS-SAF-009, SRS-SAF-010) -->
+    <string name="wipe_title">Emergency wipe</string>
+    <string name="wipe_body">This erases everything Lumos holds on this phone: your profile,
+        your photos, your block list, your settings and your account keys.</string>
+    <string name="wipe_irreversible">This cannot be undone, there is no confirmation email, and
+        there is nothing to restore from unless you already saved a recovery file.</string>
+    <string name="wipe_order_note">Your keys are destroyed first. If the wipe is interrupted —
+        your phone dies, someone takes it out of your hands — whatever is left behind is
+        unreadable.</string>
+    <string name="wipe_residue_note">Small traces may sit in unused parts of your phone\'s
+        storage until it reuses them. They are locked and the key is already gone, so they
+        cannot be read.</string>
+    <string name="wipe_confirm_prompt">Type the words: erase everything</string>
+    <string name="wipe_confirm_phrase">erase everything</string>
+    <string name="wipe_button">Erase everything now</string>
+    <string name="wipe_done">It is gone.</string>
+
+</resources>

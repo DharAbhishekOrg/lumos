@@ -66,4 +66,58 @@
     <Method name="&lt;init&gt;"/>
     <Bug pattern="EI_EXPOSE_REP2"/>
   </Match>
+
+  <!--
+    WP-02 slice S4c's collaborators, added one class at a time for the reason
+    stated above. Each of these constructors stores a LocalStore, a KekStore, an
+    IdentityRepository or a Clock - all of them long-lived services the caller is
+    meant to keep using, not buffers whose contents could be rewritten behind the
+    holder's back. Copying any of them would be meaningless; sharing them is the
+    point of injecting them.
+
+    Note what is NOT here: nothing in this slice that takes a byte[] is excluded.
+    RecoveryBundle.Item, IdentityKeyRecord, RestoreResult and ResetResult all
+    clone their arrays in and out, and SpotBugs is left free to say so if one
+    ever stops.
+  -->
+  <Match>
+    <Class name="com.lumos.app.onboarding.ConsentRepository"/>
+    <Method name="&lt;init&gt;"/>
+    <Bug pattern="EI_EXPOSE_REP2"/>
+  </Match>
+  <Match>
+    <Class name="com.lumos.app.onboarding.DiscoveryVisibility"/>
+    <Method name="&lt;init&gt;"/>
+    <Bug pattern="EI_EXPOSE_REP2"/>
+  </Match>
+  <Match>
+    <Class name="com.lumos.app.onboarding.OnboardingService"/>
+    <Method name="&lt;init&gt;"/>
+    <Bug pattern="EI_EXPOSE_REP2"/>
+  </Match>
+  <Match>
+    <Class name="com.lumos.app.identity.IdentityRepository"/>
+    <Method name="&lt;init&gt;"/>
+    <Bug pattern="EI_EXPOSE_REP2"/>
+  </Match>
+  <Match>
+    <Class name="com.lumos.app.identity.IdentityReset"/>
+    <Method name="&lt;init&gt;"/>
+    <Bug pattern="EI_EXPOSE_REP2"/>
+  </Match>
+  <Match>
+    <Class name="com.lumos.app.recovery.RecoverySetup"/>
+    <Method name="&lt;init&gt;"/>
+    <Bug pattern="EI_EXPOSE_REP2"/>
+  </Match>
+  <Match>
+    <Class name="com.lumos.app.recovery.RecoveryRestore"/>
+    <Method name="&lt;init&gt;"/>
+    <Bug pattern="EI_EXPOSE_REP2"/>
+  </Match>
+  <Match>
+    <Class name="com.lumos.app.wipe.EmergencyWipe"/>
+    <Method name="&lt;init&gt;"/>
+    <Bug pattern="EI_EXPOSE_REP2"/>
+  </Match>
 </FindBugsFilter>

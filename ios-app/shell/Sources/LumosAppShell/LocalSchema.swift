@@ -32,6 +32,13 @@ public enum RecordKind: String, CaseIterable, Sendable {
     case blockEntry = "block_entry"
     /// Local diagnostic events, redaction-checked before they are written.
     case diagnosticEvent = "diagnostic_event"
+    /// Onboarding consent evidence: the age-gate affirmation and the accepted
+    /// legal document versions (SRS-ONB-001, SRS-ONB-002). Added at version 2.
+    /// The declared date of birth is not here and is not anywhere.
+    case consentRecord = "consent_record"
+    /// Whether the user has turned Visible Nearby on, and when (SRS-ONB-008).
+    /// Added at version 2. Absence reads as off.
+    case discoveryVisibility = "discovery_visibility"
 
     /// The table name for this kind.
     public var table: String { rawValue }
@@ -57,7 +64,7 @@ public struct Migration: Sendable {
 public enum LocalSchema {
 
     /// The schema version this build writes and expects.
-    public static let version = 1
+    public static let version = 2
 
     /// The version of an absent or empty database, before any migration runs.
     public static let versionEmpty = 0
@@ -112,16 +119,39 @@ public enum LocalSchema {
         "CREATE INDEX idx_\(table)_lookup ON \(table) (\(columnLookupTag))"
     }
 
+    /// The record kinds version 1 created, frozen as a literal list.
+    ///
+    /// A literal and not `RecordKind.allCases`, for the reason the Java side
+    /// states at the same place: a past migration describes what a past build
+    /// did, and deriving it from today's enum rewrites history. A kind added
+    /// later joins a new step, never an existing one (TRS-LOC-003).
+    private static let version1Kinds: [RecordKind] = [
+        .identityKeyRecord, .recoveryRecord, .localProfile,
+        .profileFieldPolicy, .profileMedia, .blockEntry, .diagnosticEvent
+    ]
+
+    /// The record kinds version 2 added (WP-02 slice S4c).
+    private static let version2Kinds: [RecordKind] = [.consentRecord, .discoveryVisibility]
+
     /// The complete statement list taking an empty database to version 1.
     public static var migrationToVersion1: [String] {
-        var statements = ["CREATE TABLE \(tableMeta) ("
+        ["CREATE TABLE \(tableMeta) ("
             + "\(metaKey) TEXT PRIMARY KEY NOT NULL, "
-            + "\(metaValue) TEXT NOT NULL)"]
-        for kind in RecordKind.allCases {
-            statements.append(createRecordTable(kind.table))
-            statements.append(createLookupIndex(kind.table))
-        }
-        return statements
+            + "\(metaValue) TEXT NOT NULL)"] + createTables(for: version1Kinds)
+    }
+
+    /// The statements taking a version-1 database to version 2.
+    ///
+    /// Two new tables and nothing else: no existing table is altered and no row
+    /// is rewritten, so an interrupted upgrade leaves a version-1 database
+    /// rather than a half-converted one.
+    public static var migrationToVersion2: [String] { createTables(for: version2Kinds) }
+
+    /// The create-table and create-index pair for each of the given kinds.
+    /// - Parameter kinds: the kinds a migration step introduces
+    /// - Returns: the ordered statements
+    private static func createTables(for kinds: [RecordKind]) -> [String] {
+        kinds.flatMap { [createRecordTable($0.table), createLookupIndex($0.table)] }
     }
 
     /// The forward-only migration ladder.
@@ -131,6 +161,7 @@ public enum LocalSchema {
     /// means discarding sealed payloads nobody can inspect first. A database
     /// from the future is refused, not "handled" (TRS-LOC-003).
     public static var migrations: [Migration] {
-        [Migration(fromVersion: versionEmpty, toVersion: 1, statements: migrationToVersion1)]
+        [Migration(fromVersion: versionEmpty, toVersion: 1, statements: migrationToVersion1),
+         Migration(fromVersion: 1, toVersion: 2, statements: migrationToVersion2)]
     }
 }
