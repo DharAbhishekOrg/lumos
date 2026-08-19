@@ -80,7 +80,18 @@ Every source file starts with:
 ```
 
 Public APIs documented (Javadoc/DocC/godoc). Complexity ≤15/function, ≤800
-lines/file, ≤500/class. Zero analyzer warnings (Checkstyle+SpotBugs+Android Lint /
+lines/file, ≤500/class — all four enforced since WP-02 S5: complexity by each
+language's own analyser, the file and class budgets by `lumoslint -budgets`.
+TRS-CODE-004's exception clause is one optional extra header line, and the ADR
+it cites must exist:
+
+```
+ * Budget-exception: class ADR-012 - <why THIS file needs the room>
+```
+
+There are none in the tree. Splitting the type is the first answer; an
+exception is what you write when splitting it would be worse, and it is
+reviewed as a decision rather than granted by writing a number. Zero analyzer warnings (Checkstyle+SpotBugs+Android Lint /
 SwiftLint+Swift 6 strict / golangci-lint / ESLint+tsc strict). Patterns per TRS
 §24.2: transports = Adapter+Strategy; routing/match/transfer/config = explicit
 State machines with typed events (no boolean-flag state); Repository for data;
@@ -97,31 +108,52 @@ is success; papering over it is the only real failure mode.
 
 ## 7. Current state
 
-- **WP-01 is closed.** Full record: `evidence/wp01/closeout.md`, with
-  machine-readable results in `evidence/wp01/closeout-results.json`. Read the
-  closeout before starting WP-02 — it lists every deviation, every ADR raised,
-  and everything left `not_started` with its destination WP.
-- Active WP: **WP-02** (EDP §7). Do not start it without its kickoff brief.
-- **WP-02 preflight, owner-assigned 2026-08-12 (TRS-REP-008):** seed the threat
-  model and privacy data map **before** feature code. They constrain design;
-  written afterwards they only describe it. They then live per-WP and are
-  audited in WP-11.
-- Trace matrix: 648 entries. Of the 33 IDs in WP-01's declared scope, 17 are
-  `tested`, 9 `implemented` and 7 `not_started`. All nine EDP §8 owner gates
-  remain `unproven_owner`; no agent may advance one.
+- **WP-01 and WP-02 are both closed.** Records: `evidence/wp01/closeout.md` and
+  `evidence/wp02/closeout.md`, each with a machine-readable twin. **Read the
+  WP-02 closeout before starting WP-03** — §6 lists every deferral with a named
+  destination, and eight of them land in WP-03.
+- Active WP: **WP-03** (EDP §7). Do not start it without its kickoff brief, and
+  note its entry criteria include physical devices the owner supplies.
+- **The first thing WP-03 must fix:** `IdentityKeyGenerator.generate()` runs on
+  the JDK and on **no Android runtime at any API level** — the platform JCA has
+  no Ed25519 `KeyPairGenerator`. Onboarding, identity reset and the restore half
+  of recovery are therefore JVM-proven and device-unproven. ADR-001's answer is
+  libsodium, already in the tree; the owner ruling of 2026-08-14 parked the
+  wiring for WP-03. `PlatformKeyAlgorithmInstrumentedTest` is the tripwire.
+  Closeout §5.1 and threat model §7.6 carry the measurements.
+- Trace matrix: 648 entries — 60 `tested`, 24 `implemented`, 564 `not_started`.
+  Of the 45 IDs in WP-02's declared scope (EDP §7), 22 are `tested`, 6
+  `implemented` and 17 `not_started`. All nine EDP §8 owner gates remain
+  `unproven_owner`; no agent may advance one.
+- **The repository ruleset is owner-held (ruling 2026-08-19).** Never modify
+  branch protection and do not offer to. Required check names live in
+  `docs/ci/required-checks.md`; `tools/cicheck` fails the build if a workflow
+  job name drifts from that register, and a rename means the owner must edit
+  the ruleset before the pull request can merge.
 - Repo layout is the TRS §4.1 ten-root form. The handover pack's
   `requirements/`, `acceptance/` and `prompts/` directories were moved under
   `docs/` in slice S1; the original archive is retained at
   `docs/handover/Lumos_Codex_Handover_Pack.zip`.
-- Toolchains are pinned in `tools/toolchain/toolchain-manifest.json`. Swift is
-  unavailable on the Windows authoring host by design; the iOS conformance
-  runner and the iOS shell build on a GitHub Actions `macos-latest` runner.
-- What exists: 306 frozen constants with tri-language codegen (no hand-written
-  constant anywhere), the protocol schemas, the complete TRS §18.4 golden-vector
-  suite, Go/Java/Swift/TypeScript conformance and unit runners, the traceability
-  gate, the PR pipeline (lint, secret scan, dependency locks, SBOM stub), and
-  four EMPTY application shells.
-- ADRs 005–009 were raised during WP-01 and are all Accepted; two carry flags
-  for gate G-07 (external cryptographic review). See `docs/adrs/`.
-- Beyond the above, nothing is implemented. The shells are empty by instruction.
-  Do not assume any code exists that you have not read.
+- Toolchains are pinned in `tools/toolchain/toolchain-manifest.json`. **Java 21
+  LTS since CR-002**; the Android module still compiles to Java 17 language
+  level, deliberately. Swift is unavailable on the Windows authoring host by
+  design; the iOS conformance runner and the iOS shell build on a GitHub Actions
+  `macos-latest` runner.
+- What exists after WP-02: 318 frozen constants with tri-language codegen (no
+  hand-written constant anywhere); the complete TRS §18.4 golden-vector suite
+  plus the recovery-record extension; a device-bound two-key identity per
+  ADR-008; encrypted persistence at schema version 2 with a forward-only ladder
+  and Room behind the cross-platform seam; the inclusive profile, its field
+  policy and derived preview; the EXIF-stripping media sanitiser; the
+  content-only RecoveryRecord with setup and restore; offline no-account
+  onboarding behind an adult gate with legal-version consent; emergency wipe,
+  keys-first, behind an unforgeable confirmation; the first user-facing copy;
+  and the full CI stack with nine required checks.
+- ADRs 005–011 are all Accepted. ADR-010 is **partially discharged** (the
+  capability probe and the confirmation tokens exist; App Lock and the
+  action-level auth prompts are WP-03) and ADR-011 is **not discharged** — both
+  need surfaces WP-02 does not have. CR-001 and CR-002 are both **executed**;
+  see `docs/change-requests/`.
+- The application shells now contain real domain code, but **there is still no
+  activity, no view and no UI anywhere.** Do not assume a surface exists that
+  you have not read.

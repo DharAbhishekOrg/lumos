@@ -13,6 +13,7 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"os"
 	"path/filepath"
 	"strings"
@@ -40,7 +41,7 @@ func TestScopeIsTheKickoffSetNotWhatMoved(t *testing.T) {
 		"TRS-TST-001",
 	}
 	for _, id := range inScope {
-		if !InScope(id) {
+		if !InScope("WP-01", id) {
 			t.Errorf("%s is named by the kickoff but reads as out of scope", id)
 		}
 	}
@@ -55,9 +56,82 @@ func TestScopeIsTheKickoffSetNotWhatMoved(t *testing.T) {
 		"SRS-IDN-005", "SRS-NFR-CMP-004", "TRS-AI-003",
 	}
 	for _, id := range outOfScope {
-		if InScope(id) {
+		if InScope("WP-01", id) {
 			t.Errorf("%s is not in the kickoff's exit-evidence set but reads as in scope", id)
 		}
+	}
+}
+
+// TestWPTwoScopeIsTheBriefNotWhatMoved does for WP-02 what the test above does
+// for WP-01, and the transcription is deliberately independent of the one in
+// closeout.go: reading the scope back out of the file it is meant to verify
+// would prove only that the file agrees with itself.
+//
+// The count matters as much as the membership. EDP Sec. 7's WP-02 brief names
+// forty-five requirement IDs; if a pattern here quietly matched forty-two, the
+// closeout would report a higher completion rate against a smaller scope.
+func TestWPTwoScopeIsTheBriefNotWhatMoved(t *testing.T) {
+	// Transcribed by hand from the brief's "Key requirements" row.
+	inScope := []string{
+		"SRS-ONB-001", "SRS-ONB-008",
+		"SRS-IDN-001", "SRS-IDN-002", "SRS-IDN-003", "SRS-IDN-007",
+		"SRS-PRO-001", "SRS-PRO-009", "SRS-PRO-013",
+		"SRS-SAF-009", "SRS-SAF-010",
+		"SRS-DAT-002", "SRS-DAT-004", "SRS-DAT-012",
+		"TRS-LOC-001", "TRS-LOC-010",
+		"TRS-AND-004", "TRS-IOS-007",
+		"SRS-NFR-SEC-002", "SRS-NFR-SEC-003", "SRS-NFR-SEC-013",
+	}
+	for _, id := range inScope {
+		if !InScope("WP-02", id) {
+			t.Errorf("%s is named by the WP-02 brief but reads as out of scope", id)
+		}
+	}
+
+	// Moved during WP-02, or adjacent to the ranges above, and NOT claimed by
+	// the brief. Counting any of them would inflate the completion figure.
+	outOfScope := []string{
+		"SRS-ONB-009", "SRS-IDN-004", "SRS-IDN-008", "SRS-PRO-014",
+		"SRS-SAF-001", "SRS-SAF-011", "SRS-DAT-001", "SRS-DAT-003",
+		"TRS-LOC-011", "TRS-AND-005", "TRS-IOS-006",
+		"SRS-NFR-SEC-001", "SRS-NFR-SEC-004", "SRS-NFR-SEC-012",
+		"SRS-NFR-LEG-007", "SRS-NFR-PRI-012",
+		"TRS-CODE-004", "TRS-CICD-001", "TRS-REP-008", "TRS-CRY-001",
+	}
+	for _, id := range outOfScope {
+		if InScope("WP-02", id) {
+			t.Errorf("%s is not in the WP-02 brief but reads as in scope", id)
+		}
+	}
+
+	// And the brief's arithmetic: eight, four, thirteen, two, three, ten, one,
+	// one, three.
+	want := 8 + 4 + 13 + 2 + 3 + 10 + 1 + 1 + 3
+	got := 0
+	for _, prefix := range []string{"SRS-ONB", "SRS-IDN", "SRS-PRO", "SRS-SAF",
+		"SRS-DAT", "TRS-LOC", "TRS-AND", "TRS-IOS", "SRS-NFR-SEC"} {
+		for n := 1; n <= 40; n++ {
+			if InScope("WP-02", fmt.Sprintf("%s-%03d", prefix, n)) {
+				got++
+			}
+		}
+	}
+	if got != want {
+		t.Errorf("the WP-02 scope patterns match %d requirement IDs, the brief names %d", got, want)
+	}
+}
+
+// TestEveryKnownWorkPackageHasPatterns keeps the -wp flag honest: a package the
+// CLI accepts but has no patterns for would report an empty scope and a perfect
+// completion rate.
+func TestEveryKnownWorkPackageHasPatterns(t *testing.T) {
+	for _, wp := range KnownWorkPackages() {
+		if len(scopePatterns[wp]) == 0 {
+			t.Errorf("%s is offered by the CLI and has no scope patterns", wp)
+		}
+	}
+	if len(KnownWorkPackages()) < 2 {
+		t.Error("WP-01 and WP-02 should both be closeable")
 	}
 }
 
@@ -77,7 +151,7 @@ func TestReportNeverUpgradesAStatus(t *testing.T) {
 	}
 	// TestOne executed; TestTwo did not.
 	executed := &ExecutedTests{RunID: "42", Tests: []string{"go:pkg:TestOne"}}
-	r := Build(m, executed, "abc1234")
+	r := Build("WP-01", m, executed, "abc1234")
 
 	want := map[string]string{
 		"TRS-REP-001": "not_started",
@@ -113,7 +187,7 @@ func TestSpilloverCapturesMovedOutOfScopeRows(t *testing.T) {
 		{ReqID: "TRS-CODE-001", Status: "tested", Code: []string{"b"}},
 		{ReqID: "TRS-AND-001", Status: "not_started"},
 	}}
-	r := Build(m, &ExecutedTests{}, "x")
+	r := Build("WP-01", m, &ExecutedTests{}, "x")
 	if len(r.InScope) != 1 || r.InScope[0].ReqID != "TRS-REP-001" {
 		t.Errorf("in-scope rows = %v", r.InScope)
 	}
@@ -135,7 +209,7 @@ func TestByLanguageCountsEveryReportingRunner(t *testing.T) {
 		"swift:LumosAppShell:LumosAppShellTests.testY",
 		"ts:admin-console:AdminShell.testZ",
 	}}
-	r := Build(&Matrix{}, executed, "x")
+	r := Build("WP-01", &Matrix{}, executed, "x")
 	want := map[string]int{"go": 2, "java": 1, "swift": 2, "ts": 1}
 	for lang, n := range want {
 		if r.Pipeline.ByLanguage[lang] != n {
@@ -157,7 +231,7 @@ func TestMissingExecutedSetReportsZeroRatherThanGuessing(t *testing.T) {
 	if err != nil {
 		t.Fatalf("LoadExecuted: %v", err)
 	}
-	r := Build(&Matrix{Entries: []Entry{
+	r := Build("WP-01", &Matrix{Entries: []Entry{
 		{ReqID: "TRS-REP-001", Status: "tested", Tests: []string{"go:p:T"}},
 	}}, e, "x")
 	if r.Pipeline.ExecutedTests != 0 || r.Pipeline.RunID != "" {
@@ -176,7 +250,7 @@ func TestLiveMatrixIsCoveredEndToEnd(t *testing.T) {
 	if err != nil {
 		t.Fatalf("LoadMatrix: %v", err)
 	}
-	r := Build(m, &ExecutedTests{}, "test")
+	r := Build("WP-01", m, &ExecutedTests{}, "test")
 
 	if r.Totals.MatrixEntries != 648 {
 		t.Errorf("matrix has %d entries, the baseline defines 648", r.Totals.MatrixEntries)
@@ -207,7 +281,7 @@ func TestOwnerGatesAreCarriedThroughUnchanged(t *testing.T) {
 	if err != nil {
 		t.Fatalf("LoadMatrix: %v", err)
 	}
-	r := Build(m, &ExecutedTests{}, "test")
+	r := Build("WP-01", m, &ExecutedTests{}, "test")
 	if len(r.OwnerGates) != len(m.OwnerGates) {
 		t.Fatalf("report carries %d gates, matrix has %d", len(r.OwnerGates), len(m.OwnerGates))
 	}
@@ -223,7 +297,7 @@ func TestMarkdownTableRendersEveryInScopeRow(t *testing.T) {
 	if err != nil {
 		t.Fatalf("LoadMatrix: %v", err)
 	}
-	r := Build(m, &ExecutedTests{}, "test")
+	r := Build("WP-01", m, &ExecutedTests{}, "test")
 	table := MarkdownTable(r)
 	for _, row := range r.InScope {
 		if !strings.Contains(table, "| "+row.ReqID+" | `"+row.Status+"` |") {

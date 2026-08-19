@@ -23,14 +23,16 @@
    "why": "Single-generator rule (TRS Sec. 18.4): /tools/vectorgen and the backend conformance runner 'go test ./protocol/...' are Go."
   },
   "jdk": {
-   "version": "17.0.20+8",
+   "version": "21.0.12+8",
    "distribution": "Eclipse Temurin",
-   "verified": "OpenJDK Runtime Environment Temurin-17.0.20+8 (build 17.0.20+8)",
-   "path": "C:\\Program Files\\Eclipse Adoptium\\jdk-17.0.20.8-hotspot",
+   "verified": "OpenJDK Runtime Environment Temurin-21.0.12+8 (build 21.0.12+8-LTS)",
+   "path": "C:\\Program Files\\Eclipse Adoptium\\jdk-21.0.12.8-hotspot",
    "license": "GPL-2.0-with-classpath-exception",
    "license_note": "Standard OpenJDK licensing. Build toolchain only; not linked into any shipped artefact. Installed on explicit owner instruction.",
-   "install": "winget install --id EclipseAdoptium.Temurin.17.JDK --exact",
-   "why": "TRS Sec. 5.3 mandates a Java 17 toolchain. Drives the pure-JVM :protocol-conformance module (slice S5)."
+   "install": "winget install --id EclipseAdoptium.Temurin.21.JDK --exact",
+   "why": "TRS Sec. 5.3 mandated a Java 17 toolchain; CR-002 (accepted 2026-08-19, executed in WP-02 slice S5) moves it to Java 21 LTS so lazysodium-android 5.2.0 can be read and its 16 KB-aligned natives taken. Drives the pure-JVM :protocol-conformance module, the Android module and every JVM job in CI.",
+   "superseded": "Was 17.0.20+8 (Eclipse Temurin) from WP-01 slice S5 until CR-002. The predecessor is named rather than deleted because the 17 pin is what several build-file comments and the Checkstyle 12.x hold were reasoning about.",
+   "language_level_note": "The TOOLCHAIN is 21; the Android module still COMPILES to Java 17 language level (compileOptions in android-app/app/build.gradle.kts). CR-002 needed a javac that can read bytecode-65 class files, which is a property of the JDK and not of -source/-target. Raising what the app emits is a separate change, deferred to WP-03."
   },
   "node": {
    "version": "26.7.0",
@@ -288,15 +290,17 @@
   "modules": [
    {
     "path": "com.goterl:lazysodium-android",
-    "version": "5.1.0",
+    "version": "5.2.0",
     "license": "MPL-2.0",
     "why": "Argon2id for the ADR-003 RecoveryRecord. The JCA has no Argon2 at any API level, so there is no platform alternative; it also supplies ChaCha20-Poly1305, which the JCA provides only from API 28 while minSdk is 26. Bundles libsodium (ISC) in binary form for four ABIs.",
     "catalogue_alias": "lazysodium",
     "licence_note": "THE FIRST COPYLEFT DEPENDENCY THIS PROJECT SHIPS. MPL-2.0 is file-scoped: used unmodified it places no obligation on Lumos sources. Owner-approved 2026-08-18 with conditions; see not_yet_pinned.resolved_in_s4b.",
     "licence_verification": "The shipped AAR carries NO licence file - the MPL-2.0 declaration is in the POM and in the upstream repository's LICENSE.md, and the notices file reproduces the text from the latter. Recorded because the adoption condition said to read the licence from the shipped artefact, and the shipped artefact does not carry one.",
-    "artefact_sha256": "46a7e67681cc280b5f06dcbe6859d84ee341a6e7c50cd1cefe69495dee589617",
-    "held_back_from": "5.2.0",
-    "held_back_why": "5.2.0 ships class files at bytecode 65 (Java 21) and javac under the TRS Sec. 5.3 Java 17 toolchain refuses them outright. It also 16 KB page-aligns its native libraries, which 5.1.0 does not - so holding the version back costs an Android 15 compatibility defect, tracked as a disabled Aligned16KB lint check in android-app/app/build.gradle.kts and OWNER-BLOCKING for G-06."
+    "artefact_sha256": "b5378c1d9db2573d61b304e89cf83db187a05c3e4ff081d9b2ef3d0bb00ca314",
+    "raised_in": "WP-02 slice S5, executing CR-002. Held at 5.1.0 through S4b and S4c because 5.2.0 ships bytecode-65 class files that a Java 17 javac refuses; the Java 21 toolchain removes that.",
+    "alignment_verified": "Read from the artefacts rather than from the release notes. Every PT_LOAD segment of the 64-bit objects in 5.2.0 has p_align 0x4000 (16 KB): jni/arm64-v8a/libsodium.so and jni/x86_64/libsodium.so. The same segments in 5.1.0 have p_align 0x1000 (4 KB), which is the defect - an Android 15 device with 16 KB pages cannot map that object at all. The 32-bit ABIs are unaffected by the rule. Android Lint Aligned16KB is consequently ENABLED again in android-app/app/build.gradle.kts and passing; the narrow disable that recorded the gap is deleted.",
+    "abi_note": "5.2.0 drops the legacy armeabi ABI that 5.1.0 shipped. No supported device uses it and the module already declares abiFilters, so nothing changes in the APK.",
+    "surface_unchanged": "crypto_pwhash and the AEAD entry points LibsodiumRecoveryCrypto binds are identical across the bump. The evidence is the cross-language recovery vectors, re-executed on an emulator against 5.2.0 - 21 instrumented tests, including the four derivation KATs and the 16 negative cases - not the release notes."
    },
    {
     "path": "net.java.dev.jna:jna",

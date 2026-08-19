@@ -2,7 +2,11 @@
 
 Native Java consumer app (TRS Sec. 4.1, Sec. 5).
 
-Baseline per TRS Sec. 5.3: compileSdk/targetSdk 36, minSdk 26, Java 17 toolchain.
+Baseline per TRS Sec. 5.3: compileSdk/targetSdk 36, minSdk 26, and a Java 21 LTS
+toolchain since CR-002 (WP-02 slice S5). The toolchain and the language level are
+different numbers on purpose: the app still COMPILES to Java 17
+(`compileOptions`), because CR-002 needed a javac that can read bytecode-65 class
+files and that is a property of the JDK, not of `-source`/`-target`.
 
 ## Status
 

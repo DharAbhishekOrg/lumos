@@ -143,8 +143,8 @@
   {
    "type": "library",
    "name": "com.goterl:lazysodium-android",
-   "version": "5.1.0",
-   "purl": "pkg:maven/com.goterl/lazysodium-android@5.1.0",
+   "version": "5.2.0",
+   "purl": "pkg:maven/com.goterl/lazysodium-android@5.2.0",
    "scope": "required",
    "licenses": [
     {

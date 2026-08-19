@@ -6,7 +6,7 @@
  * Threading: any
  * Notes: NO Android plugin, NO Android framework dependency, NO Android SDK.
  * TRS Sec. 18.4 requires this module to be pure JVM so the conformance gate runs
- * on a plain JDK 17 container. It CONSUMES the committed /test-vectors files and
+ * on a plain JDK container. It CONSUMES the committed /test-vectors files and
  * never generates them (single-generator rule); the generated protocol constants
  * and error codes come from /protocol/gen/java, so no constant is hand-written.
  */
@@ -19,8 +19,10 @@ plugins {
 
 java {
     toolchain {
-        // TRS Sec. 5.3 mandates a Java 17 toolchain.
-        languageVersion.set(JavaLanguageVersion.of(17))
+        // TRS Sec. 5.3 mandated a Java 17 toolchain; CR-002 moved it to 21 LTS
+        // in WP-02 slice S5, so that lazysodium-android 5.2.0's bytecode-65
+        // class files can be read and its 16 KB-aligned natives taken.
+        languageVersion.set(JavaLanguageVersion.of(21))
     }
 }
 

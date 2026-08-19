@@ -18,25 +18,31 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"slices"
 	"strings"
 )
 
 func main() {
 	var (
 		root     = flag.String("root", ".", "repository root")
+		wp       = flag.String("wp", "WP-01", "work package to close (WP-01, WP-02)")
 		out      = flag.String("out", "evidence/wp01/closeout-results.json", "output path")
 		executed = flag.String("executed", "", "executed-test set from the pipeline run")
 		table    = flag.Bool("table", false, "print the markdown status table and exit")
 	)
 	flag.Parse()
 
-	if err := run(*root, *out, *executed, *table); err != nil {
+	if err := run(*root, *wp, *out, *executed, *table); err != nil {
 		fmt.Fprintln(os.Stderr, "closeout:", err)
 		os.Exit(1)
 	}
 }
 
-func run(root, out, executedPath string, table bool) error {
+func run(root, workPackage, out, executedPath string, table bool) error {
+	if !slices.Contains(KnownWorkPackages(), workPackage) {
+		return fmt.Errorf("unknown work package %q; this tool knows %v",
+			workPackage, KnownWorkPackages())
+	}
 	m, err := LoadMatrix(root)
 	if err != nil {
 		return err
@@ -45,7 +51,7 @@ func run(root, out, executedPath string, table bool) error {
 	if err != nil {
 		return err
 	}
-	report := Build(m, executed, headCommit(root))
+	report := Build(workPackage, m, executed, headCommit(root))
 
 	if table {
 		fmt.Print(MarkdownTable(report))
@@ -55,8 +61,8 @@ func run(root, out, executedPath string, table bool) error {
 	if err := Write(filepath.Join(root, filepath.FromSlash(out)), report); err != nil {
 		return err
 	}
-	fmt.Printf("wrote %s: %d in scope (%v), %d spillover, %d executed tests from run %q\n",
-		out, report.Totals.InScopeCount, report.Totals.InScopeByStatus,
+	fmt.Printf("wrote %s for %s: %d in scope (%v), %d spillover, %d executed tests from run %q\n",
+		out, workPackage, report.Totals.InScopeCount, report.Totals.InScopeByStatus,
 		report.Totals.SpilloverCount, report.Pipeline.ExecutedTests, report.Pipeline.RunID)
 	return nil
 }

@@ -4,9 +4,9 @@
  * Implements: TRS-CRY-001, TRS-CRY-003, TRS-CRY-011, TRS-TST-001
  * ADRs: ADR-001
  * Threading: any
- * Notes: Everything here comes from the JDK 17 JCA - X25519 (XDH), Ed25519,
+ * Notes: Everything here comes from the JDK 21 JCA - X25519 (XDH), Ed25519,
  * ChaCha20-Poly1305, SHA-256 and HMAC. HKDF is written out over Mac because
- * JDK 17 predates javax.crypto.KDF; it is RFC 5869 extract-then-expand and
+ * JDK 21 predates javax.crypto.KDF; it is RFC 5869 extract-then-expand and
  * nothing more. The raw<->key conversions matter: X25519 public keys are
  * LITTLE-endian u-coordinates while BigInteger is big-endian, and Ed25519 raw
  * encoding carries the x-sign in the top bit of the last byte. Getting either

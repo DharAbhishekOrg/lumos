@@ -132,6 +132,17 @@ android {
         }
     }
 
+    // The TOOLCHAIN is Java 21 since CR-002; the LANGUAGE LEVEL this module
+    // compiles to stays 17, and the two are different questions.
+    //
+    // CR-002 exists so javac can READ lazysodium 5.2.0's bytecode-65 class
+    // files, and that is a property of the JDK running the compiler - a Java 21
+    // javac reads class file 65 whatever -source and -target say. Raising what
+    // this module EMITS would be a second change: it puts class file 65 through
+    // D8 and desugaring at minSdk 26, for no Java 21 language feature anybody
+    // here uses. Deferred to WP-03 with that reasoning recorded in
+    // evidence/wp02/closeout.md rather than taken quietly alongside the
+    // toolchain move.
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
@@ -203,27 +214,13 @@ android {
         // survives a file with @param/@return the detector is fixed.
         disable += "BidiSpoofing"
 
-        // Aligned16KB: lazysodium-android 5.1.0 ships an arm64-v8a libsodium.so
-        // whose LOAD segments are 4 KB aligned, and Android 15 devices with 16 KB
-        // pages cannot map it. It is the ONLY library in the APK that fails -
-        // JNA's natives are already aligned, and the 32-bit ABIs are unaffected.
-        //
-        // The fix upstream exists and cannot be taken: lazysodium-android 5.2.0
-        // aligns every .so at 16 KB AND compiles its class files to bytecode 65
-        // (Java 21), which the TRS Sec. 5.3 Java 17 toolchain refuses to read.
-        // Holding a tool back rather than raising a pinned specification value is
-        // the call this project already made for Checkstyle 13, and it is made
-        // the same way here - but the consequence is different in kind, because
-        // this one is a DEVICE COMPATIBILITY defect rather than a build-time
-        // inconvenience, and it is disabled here so it does not masquerade as
-        // absent.
-        //
-        // OWNER DECISION TAKEN, 2026-08-19: docs/change-requests/CR-002.md moves
-        // the TRS Sec. 5.3 toolchain to Java 21 so lazysodium-android 5.2.0 can
-        // be adopted with its alignment fix. CR-002 EXECUTES IN SLICE S5, not
-        // here; when it does, this disable and the 5.1.0 pin both go. Direct
-        // libsodium JNI remains the recorded fallback. Still blocking for G-06.
-        disable += "Aligned16KB"
+        // Aligned16KB is NOT disabled, and it was until CR-002 landed in slice
+        // S5. lazysodium-android 5.1.0 shipped an arm64-v8a libsodium.so whose
+        // LOAD segments were 4 KB aligned, which an Android 15 device with 16 KB
+        // pages cannot map at all; the check was disabled narrowly so the defect
+        // did not masquerade as absent. 5.2.0 aligns every .so at 16 KB, so the
+        // check runs and passes, and its passing is the evidence. If it ever
+        // fails again the answer is a dependency, not another disable.
     }
 
     testOptions {

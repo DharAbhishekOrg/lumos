@@ -28,7 +28,7 @@ what the user receives.
 
 ---
 
-## Lazysodium for Android 5.1.0 - Mozilla Public License 2.0
+## Lazysodium for Android 5.2.0 - Mozilla Public License 2.0
 
 Copyright (c) Terl Tech Ltd. <https://github.com/terl/lazysodium-android>
 
@@ -39,7 +39,7 @@ necessary, the owner's ruling of 2026-08-18 is that Lumos moves to a direct
 libsodium JNI binding rather than forking it.
 
 The source of the version used is available from the address above and from
-Maven Central at `com.goterl:lazysodium-android:5.1.0`.
+Maven Central at `com.goterl:lazysodium-android:5.2.0`.
 
 ```
 Mozilla Public License Version 2.0

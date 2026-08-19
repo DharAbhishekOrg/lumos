@@ -29,6 +29,16 @@ func write(t *testing.T, dir, name, body string) string {
 	return p
 }
 
+// readLinesForTest reads a file into lines for the budget tests.
+func readLinesForTest(t *testing.T, path string) []string {
+	t.Helper()
+	raw, err := os.ReadFile(path)
+	if err != nil {
+		t.Fatalf("read %s: %v", path, err)
+	}
+	return strings.Split(strings.ReplaceAll(string(raw), "\r\n", "\n"), "\n")
+}
+
 func ruleSet(f []Finding) map[string]int {
 	out := map[string]int{}
 	for _, x := range f {
