@@ -37,7 +37,7 @@ import java.util.List;
 public final class LocalSchema {
 
     /** The schema version this build writes and expects. */
-    public static final int VERSION = 1;
+    public static final int VERSION = 2;
 
     /** The version of an absent or empty database, before any migration runs. */
     public static final int VERSION_EMPTY = 0;
@@ -103,6 +103,31 @@ public final class LocalSchema {
     }
 
     /**
+     * The record kinds version 1 created, frozen as a literal list.
+     *
+     * <p>It is a list and not {@code RecordKind.values()} on purpose, and the
+     * difference is the whole of TRS-LOC-003. A past migration describes what
+     * a past build DID; deriving it from today's enum rewrites history, so
+     * adding a kind would silently make step 0-to-1 create the new table and
+     * then step 1-to-2 would fail on a fresh database while succeeding on an
+     * upgraded one. Every step below therefore names its own tables, and a
+     * kind added later joins a new step, never an existing one.
+     */
+    private static final List<RecordKind> VERSION_1_KINDS = List.of(
+            RecordKind.IDENTITY_KEY_RECORD,
+            RecordKind.RECOVERY_RECORD,
+            RecordKind.LOCAL_PROFILE,
+            RecordKind.PROFILE_FIELD_POLICY,
+            RecordKind.PROFILE_MEDIA,
+            RecordKind.BLOCK_ENTRY,
+            RecordKind.DIAGNOSTIC_EVENT);
+
+    /** The record kinds version 2 added (WP-02 slice S4c). */
+    private static final List<RecordKind> VERSION_2_KINDS = List.of(
+            RecordKind.CONSENT_RECORD,
+            RecordKind.DISCOVERY_VISIBILITY);
+
+    /**
      * The complete statement list taking an empty database to version 1.
      *
      * <p>Order matters and is asserted: the meta table exists before anything
@@ -115,11 +140,36 @@ public final class LocalSchema {
         statements.add("CREATE TABLE " + TABLE_META + " ("
                 + META_KEY + " TEXT PRIMARY KEY NOT NULL, "
                 + META_VALUE + " TEXT NOT NULL)");
-        for (final RecordKind kind : RecordKind.values()) {
+        statements.addAll(createTablesFor(VERSION_1_KINDS));
+        return Collections.unmodifiableList(statements);
+    }
+
+    /**
+     * The statements taking a version-1 database to version 2.
+     *
+     * <p>Two new tables and nothing else. No existing table is altered and no
+     * row is rewritten, so an interrupted upgrade leaves a version-1 database
+     * rather than a half-converted one.
+     *
+     * @return the ordered statements of migration 1 to 2
+     */
+    public static List<String> migrationToVersion2() {
+        return Collections.unmodifiableList(createTablesFor(VERSION_2_KINDS));
+    }
+
+    /**
+     * The create-table and create-index pair for each of the given kinds.
+     *
+     * @param kinds the kinds a migration step introduces
+     * @return the ordered statements
+     */
+    private static List<String> createTablesFor(final List<RecordKind> kinds) {
+        final List<String> statements = new ArrayList<>();
+        for (final RecordKind kind : kinds) {
             statements.add(createRecordTable(kind.table()));
             statements.add(createLookupIndex(kind.table()));
         }
-        return Collections.unmodifiableList(statements);
+        return statements;
     }
 
     /**
@@ -136,6 +186,7 @@ public final class LocalSchema {
     public static List<Migration> migrations() {
         final List<Migration> ladder = new ArrayList<>();
         ladder.add(new Migration(VERSION_EMPTY, 1, migrationToVersion1()));
+        ladder.add(new Migration(1, 2, migrationToVersion2()));
         return Collections.unmodifiableList(ladder);
     }
 }

@@ -30,6 +30,7 @@ var GroupOrder = []string{
 	"media",
 	"config_venue_ops",
 	"resource_budgets",
+	"onboarding_safety",
 }
 
 // ValueKind discriminates the emitted literal forms.

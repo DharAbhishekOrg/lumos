@@ -269,7 +269,7 @@
  },
  "title": "Lumos signed-configuration overrides",
  "type": "object",
- "x-constants-hash": "sha256:568eb8489beb092351d802a9f7ab88eb6eecc62376b39f75eb2e22361d48d37b",
+ "x-constants-hash": "sha256:5b73a3fd6a3d99e5e35ec5a93c857d16a6b8c1e4207823e331afeeac6b808d29",
  "x-cross-field-constraints": [
   {
    "constant": "SCAN_WINDOW_FG_MS",

@@ -4,7 +4,7 @@
  * Implements: TRS-LOC-001, SRS-DAT-002
  * ADRs: ADR-003
  * Threading: any
- * Notes: Seven of the sixteen domains TRS-LOC-001 enumerates - the ones WP-02's
+ * Notes: Nine of the sixteen domains TRS-LOC-001 enumerates - the ones WP-02's
  * own features touch. The rest (presence, match, conversation, message, outbox,
  * chunk state, dedup, venue, voucher, entitlement, configuration) arrive with
  * the work packages that own them, which is why TRS-LOC-001 stays not_started
@@ -43,7 +43,25 @@ public enum RecordKind {
     BLOCK_ENTRY(true),
 
     /** Local diagnostic events, redaction-checked before they are written. */
-    DIAGNOSTIC_EVENT(false);
+    DIAGNOSTIC_EVENT(false),
+
+    /**
+     * The onboarding consent evidence: the age-gate affirmation and the legal
+     * document versions the user accepted (SRS-ONB-001, SRS-ONB-002).
+     *
+     * <p>Added at schema version 2. The declared date of birth is NOT here and
+     * is not anywhere - the gate evaluates it and keeps only the answer.
+     */
+    CONSENT_RECORD(false),
+
+    /**
+     * Whether the user has turned Visible Nearby on, and when (SRS-ONB-008).
+     *
+     * <p>Added at schema version 2. Its absence reads as off, so a device that
+     * has never been told otherwise is not discoverable - which is the whole
+     * requirement, expressed as the default rather than as a code path.
+     */
+    DISCOVERY_VISIBILITY(false);
 
     private final boolean lookupByTag;
 

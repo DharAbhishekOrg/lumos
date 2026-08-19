@@ -19,11 +19,11 @@ import CryptoKit
 import Foundation
 
 /// The protection tier the KEK actually obtained, recorded at creation.
-public enum KeyProtection: Sendable, Equatable {
+public enum KeyProtection: String, Sendable, Equatable {
     /// Apple Secure Enclave. The hardware tier.
-    case secureEnclave
+    case secureEnclave = "SECURE_ENCLAVE"
     /// In-process software key: the probed fallback, and the only CI tier.
-    case softwareFallback
+    case softwareFallback = "SOFTWARE_FALLBACK"
 
     /// Whether this tier is backed by hardware the OS cannot bypass.
     public var isHardwareBacked: Bool {

@@ -69,14 +69,16 @@ func TestExtractionActuallyFoundSomething(t *testing.T) {
 	}
 }
 
-// TestTheSevenWpTwoKindsArePresent pins the entity subset this work package
+// TestTheWpTwoKindsArePresent pins the entity subset this work package
 // persists, so a table quietly disappearing is a test failure rather than a
-// smaller store.
-func TestTheSevenWpTwoKindsArePresent(t *testing.T) {
+// smaller store. Seven kinds at slice S2; consent_record and
+// discovery_visibility joined at S4c with schema version 2.
+func TestTheWpTwoKindsArePresent(t *testing.T) {
 	java, swift := load(t)
 	want := []string{
-		"block_entry", "diagnostic_event", "identity_key_record", "local_profile",
-		"profile_field_policy", "profile_media", "recovery_record",
+		"block_entry", "consent_record", "diagnostic_event", "discovery_visibility",
+		"identity_key_record", "local_profile", "profile_field_policy",
+		"profile_media", "recovery_record",
 	}
 	if !equalStrings(java.Tables, want) {
 		t.Errorf("java tables = %v, want %v", java.Tables, want)

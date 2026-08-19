@@ -107,6 +107,14 @@ var expectedRegister = map[string][]string{
 		"COLD_LAUNCH_P95_MS", "IDLE_BACKGROUND", "IOS_DOWNLOAD_MAX_MB",
 		"STEADY_STATE_RAM_MAX_MB",
 	},
+	// onboarding_safety is NOT from TRS Sec. 23, which has no onboarding
+	// section at all - none of these values crosses a device boundary. It was
+	// added in WP-02 slice S4c for the same reason RECOVERY_ARGON2ID was added
+	// in S4: ADR-004 forbids a magic number, SRS-NFR-LEG-007 fixes the adult
+	// floor at 18, and those two together leave nowhere else for it to live.
+	"onboarding_safety": {
+		"ADULT_AGE_MINIMUM",
+	},
 }
 
 // goldenValues are normative numbers transcribed from TRS Sec. 23 / EDP Sec. 4.
@@ -166,6 +174,8 @@ var goldenValues = map[string]int64{
 	"crypto_protocol.RECOVERY_ARGON2ID.parallelism":    1,
 	"crypto_protocol.RECOVERY_ARGON2ID.salt_bytes":     16,
 	"crypto_protocol.RECOVERY_ARGON2ID.key_bytes":      32,
+	// SRS-NFR-LEG-007: the adult-only 18+ gate applies globally.
+	"onboarding_safety.ADULT_AGE_MINIMUM.years": 18,
 }
 
 func TestRegisterCoversTRSSection23(t *testing.T) {

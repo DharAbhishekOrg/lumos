@@ -126,10 +126,11 @@ const (
 // cross-language vectors pin the refusal. Note what this is NOT: it is not a
 // resource ceiling in the sense of the two above, which sit far ABOVE the
 // register's tuning maximum so a later build's stronger record still opens.
-// This one sits BELOW the register's parallelism_max of 4, which consequently
-// now describes a lane count no shipping platform can execute - flagged for the
-// owner rather than changed here, because the register is frozen and moving it
-// moves constants_hash.
+// This is a portability floor, and CR-001 made the register say so: the entry
+// carried parallelism_min/parallelism_max until S4c removed them, because a
+// range of legal lane counts never existed. RECOVERY_ARGON2ID.parallelism is
+// now a fixed constant, and TestTheRegisterAgreesWithTheSingleLaneRule pins
+// this value to it.
 const SupportedParallelism uint8 = 1
 
 // Validate refuses work factors below the register's minima, above the absolute
@@ -155,9 +156,8 @@ func (p Params) Validate() error {
 		return &wire.Error{Code: lumoserrors.ErrCryptoRecoveryParamsRejected,
 			Detail: "time cost below the register minimum"}
 	}
-	// No separate parallelism minimum: the single-lane rule above is stricter
-	// than the register's parallelism_min for as long as that minimum is 1, and
-	// TestTheSingleLaneRuleStillCoversTheRegisterMinimum fires if it ever moves.
+	// No separate parallelism minimum to check: CR-001 removed the bounds, and
+	// the single-lane rule above admits exactly the register's fixed value.
 	return nil
 }
 

@@ -6,7 +6,7 @@
 /// GENERATED - DO NOT EDIT. Generator: tools/constantsgen
 /// Source register: protocol/constants/lumos_constants.json
 /// Baseline: TRS v1.1 Sec. 23 / EDP v1.0 Sec. 4 (ADR-004)
-/// constants_hash: sha256:568eb8489beb092351d802a9f7ab88eb6eecc62376b39f75eb2e22361d48d37b
+/// constants_hash: sha256:5b73a3fd6a3d99e5e35ec5a93c857d16a6b8c1e4207823e331afeeac6b808d29
 
 public enum LumosConstants {
 
@@ -14,7 +14,7 @@ public enum LumosConstants {
     public static let serviceUUID = "E853EB6A-775C-4A49-A6BF-320E6A5CC609"
 
     /// Binds generated code to the register that produced it (TRS-CONST-005).
-    public static let constantsHash = "sha256:568eb8489beb092351d802a9f7ab88eb6eecc62376b39f75eb2e22361d48d37b"
+    public static let constantsHash = "sha256:5b73a3fd6a3d99e5e35ec5a93c857d16a6b8c1e4207823e331afeeac6b808d29"
 
     /// Register schema version.
     public static let schemaVersion = 1
@@ -178,12 +178,6 @@ public enum LumosConstants {
 
     /// crypto_protocol.RECOVERY_ARGON2ID.parallelism
     public static let recoveryArgon2idParallelism = 1
-
-    /// crypto_protocol.RECOVERY_ARGON2ID.parallelism_max
-    public static let recoveryArgon2idParallelismMax = 4
-
-    /// crypto_protocol.RECOVERY_ARGON2ID.parallelism_min
-    public static let recoveryArgon2idParallelismMin = 1
 
     /// crypto_protocol.RECOVERY_ARGON2ID.salt_bytes
     public static let recoveryArgon2idSaltBytes = 16
@@ -993,6 +987,14 @@ public enum LumosConstants {
 
     /// resource_budgets.STEADY_STATE_RAM_MAX_MB.overridable
     public static let steadyStateRAMMaxMBOverridable = false
+
+    // MARK: - Onboarding safety
+
+    /// onboarding_safety.ADULT_AGE_MINIMUM.overridable
+    public static let adultAgeMinimumOverridable = false
+
+    /// onboarding_safety.ADULT_AGE_MINIMUM.years
+    public static let adultAgeMinimumYears = 18
 }
 
 /// Canonical Lumos message class (TRS Sec. 9.2).

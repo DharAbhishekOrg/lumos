@@ -189,6 +189,13 @@ whatever order the entities happen to be listed.
 
 ### 4.4 Onboarding, consent and the age gate
 
+**Status after WP-02 slice S4c: LT-30 to LT-34 are implemented and tested on the
+JVM, with one device-level caveat recorded in Sec. 7.6.** LT-30's mitigation is a
+closed-by-default surface gate rather than a list of blocked screens, so a screen
+added in a later work package is blocked until somebody deliberately opens it.
+LT-32 (permission timing) remains WP-03's, because there is no permission to
+request yet.
+
 | ID | Threat | Adversary | Severity | Mitigation | Requirement |
 | --- | --- | --- | --- | --- | --- |
 | LT-30 | Profile surface reachable before the age gate | — | High | Age gate before **any** profile surface; the kickoff names this a trap | SRS-ONB-001 |
@@ -285,7 +292,7 @@ proceeding past it.
 - Wipe covers the documented platform limit and says so; SRS-SAF-010 names the
   set. What cannot be reached is named in the UI rather than implied to be gone.
 
-### 7.4 Keystore authentication policy (LT-07) — DECIDED
+### 7.4 Keystore authentication policy (LT-07) - DECIDED
 Resolved by [ADR-010](../adrs/ADR-010-keystore-authentication-policy.md)
 (Accepted 2026-08-14). Identity and ratchet keys carry **no key-level auth
 gating** — background decrypt requires it; user-facing protection is **App Lock
@@ -304,7 +311,39 @@ FLAG_SECURE**, because evidence capture per SRS-SAF-004 must remain possible —
 a capture block that suppresses evidence of harassment protects the harasser.
 The accessibility and no-overclaiming constraints are recorded in the ADR.
 
-### 7.6 Owner-executed, not ours to close
+### 7.6 Identity generation does not run on Android (found in S4c)
+
+Recorded here because it is a control this document assumes and a WP-02 slice
+proved is not yet available on the platform.
+
+`IdentityKeyGenerator.generate()` uses the platform JCA. Slice S1 reported that
+this "works on JDK 17 and on API 33+", leaving only physical API 26-32 devices
+affected. **Slice S4c ran it on an emulator for the first time and that is not
+what happens.** Measured on API 34:
+
+| | API 30 | API 34 |
+| --- | --- | --- |
+| `KeyPairGenerator.getInstance("XDH")` | absent | resolves |
+| `Signature.getInstance("Ed25519")` | absent | resolves |
+| `KeyPairGenerator.getInstance("Ed25519")` | absent | **absent** |
+
+XDH and Ed25519 *signing* arrived with API 33, exactly as S1 said. Ed25519 key
+*generation* never arrived. The boundary is therefore not an API level - it is
+Android. What that means:
+
+- Identity creation (SRS-ONB-006), identity reset (SRS-IDN-003) and the restore
+  half of recovery (SRS-ONB-007) are **JVM-proven and device-unproven**. The
+  export half of recovery is proven on a device, on the shipping libsodium
+  binding, because it needs no key generation.
+- The answer is ADR-001's own: libsodium, already in the tree as Lazysodium for
+  the RecoveryRecord. The owner ruling of **2026-08-14 parks it until WP-03
+  device work** rather than taking it inside WP-02, and S4c respects that.
+- Nothing SHIPS in WP-02, so no user is exposed by the interval.
+
+`PlatformKeyAlgorithmInstrumentedTest` asserts the algorithms are ABSENT, so the
+day a platform update makes them available the emulator job fails and says so.
+
+### 7.7 Owner-executed, not ours to close
 - **G-07** — external penetration test and cryptographic review. ADR-008 and
   ADR-009 already carry flags for it.
 - **Physical StrongBox / Secure Enclave behaviour** on real hardware; the WP-02

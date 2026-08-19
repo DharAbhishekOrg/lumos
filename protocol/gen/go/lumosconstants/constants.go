@@ -6,7 +6,7 @@
 // GENERATED - DO NOT EDIT. Generator: tools/constantsgen
 // Source register: protocol/constants/lumos_constants.json
 // Baseline: TRS v1.1 Sec. 23 / EDP v1.0 Sec. 4 (ADR-004)
-// constants_hash: sha256:568eb8489beb092351d802a9f7ab88eb6eecc62376b39f75eb2e22361d48d37b
+// constants_hash: sha256:5b73a3fd6a3d99e5e35ec5a93c857d16a6b8c1e4207823e331afeeac6b808d29
 
 package lumosconstants
 
@@ -14,7 +14,7 @@ package lumosconstants
 const ServiceUUID = "E853EB6A-775C-4A49-A6BF-320E6A5CC609"
 
 // ConstantsHash binds generated code to the register that produced it (TRS-CONST-005).
-const ConstantsHash = "sha256:568eb8489beb092351d802a9f7ab88eb6eecc62376b39f75eb2e22361d48d37b"
+const ConstantsHash = "sha256:5b73a3fd6a3d99e5e35ec5a93c857d16a6b8c1e4207823e331afeeac6b808d29"
 
 // SchemaVersion is the register schema version.
 const SchemaVersion = 1
@@ -178,12 +178,6 @@ const RecoveryArgon2idOverridable = false
 
 // RecoveryArgon2idParallelism is crypto_protocol.RECOVERY_ARGON2ID.parallelism.
 const RecoveryArgon2idParallelism = 1
-
-// RecoveryArgon2idParallelismMax is crypto_protocol.RECOVERY_ARGON2ID.parallelism_max.
-const RecoveryArgon2idParallelismMax = 4
-
-// RecoveryArgon2idParallelismMin is crypto_protocol.RECOVERY_ARGON2ID.parallelism_min.
-const RecoveryArgon2idParallelismMin = 1
 
 // RecoveryArgon2idSaltBytes is crypto_protocol.RECOVERY_ARGON2ID.salt_bytes.
 const RecoveryArgon2idSaltBytes = 16
@@ -987,6 +981,14 @@ const SteadyStateRAMMaxMBDefault = 220
 
 // SteadyStateRAMMaxMBOverridable is resource_budgets.STEADY_STATE_RAM_MAX_MB.overridable.
 const SteadyStateRAMMaxMBOverridable = false
+
+// Onboarding safety
+
+// AdultAgeMinimumOverridable is onboarding_safety.ADULT_AGE_MINIMUM.overridable.
+const AdultAgeMinimumOverridable = false
+
+// AdultAgeMinimumYears is onboarding_safety.ADULT_AGE_MINIMUM.years.
+const AdultAgeMinimumYears = 18
 
 // SafetyNumberEmojiAlphabetGlyphs is crypto_protocol.SAFETY_NUMBER_EMOJI_ALPHABET.glyphs. It is a var because Go has no array constants; treat it as read-only.
 var SafetyNumberEmojiAlphabetGlyphs = [...]string{"🐶", "🐱", "🐴", "🐮", "🐷", "🐸", "🐵", "🐔", "🐧", "🐢", "🐝", "🦋", "🐙", "🐬", "🐘", "🐊", "🍎", "🍌", "🍇", "🍓", "🍉", "🍍", "🌽", "🍄", "🍞", "🍕", "🎂", "🍩", "☕", "🍦", "🌵", "🌲", "🌻", "🌹", "🍁", "⭐", "🌈", "🔥", "💧", "⚡", "🔑", "🔒", "🎈", "🎁", "⚽", "🎸", "🎺", "🎯", "🚀", "⚓", "🚲", "🚂", "⏰", "💡", "🔔", "🎧", "📷", "🔭", "🎨", "🎪", "💙", "🎵", "🏆", "👑"}

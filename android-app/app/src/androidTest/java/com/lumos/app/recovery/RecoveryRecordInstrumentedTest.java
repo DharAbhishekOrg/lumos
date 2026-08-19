@@ -88,11 +88,12 @@ public class RecoveryRecordInstrumentedTest {
                 limits.getLong("max_acceptable_iterations"), RecoveryParams.MAX_ACCEPTABLE_ITERATIONS);
         assertEquals("supported_parallelism",
                 limits.getInt("supported_parallelism"), RecoveryParams.SUPPORTED_PARALLELISM);
-        // The single-lane rule replaces the register's parallelism minimum. That
-        // is only safe while the register's minimum IS one lane; if it ever
-        // moves, every record becomes unopenable and this is what says so.
-        assertEquals("the register's parallelism minimum is no longer the supported lane count",
-                RecoveryParams.SUPPORTED_PARALLELISM, LumosConstants.RECOVERY_ARGON2ID_PARALLELISM_MIN);
+        // CR-001 made RECOVERY_ARGON2ID.parallelism a fixed constant with no
+        // bounds, so there is exactly one number to agree with. If the register
+        // ever moves it, defaults start producing records validate() itself
+        // refuses, and this is what says so.
+        assertEquals("the register's parallelism is no longer the supported lane count",
+                RecoveryParams.SUPPORTED_PARALLELISM, LumosConstants.RECOVERY_ARGON2ID_PARALLELISM);
     }
 
     /**

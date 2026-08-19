@@ -77,8 +77,10 @@ public struct RecoveryParams: Equatable, Sendable {
     /// Portability, not cost. libsodium's `crypto_pwhash` fixes Argon2's lanes
     /// at one and exposes no multi-lane entry point, and libsodium is the
     /// binding on both shipping platforms. A two-lane record would open in the
-    /// Go reference and nowhere a user could use it. Note this sits BELOW the
-    /// register's parallelism_max of 4, unlike the two ceilings above.
+    /// Go reference and nowhere a user could use it. Note this is a
+    /// portability floor, not a resource ceiling like the two above: CR-001
+    /// removed the register's parallelism bounds because a range of legal lane
+    /// counts never existed.
     public static let supportedParallelism: UInt8 = 1
 
     /// The register's frozen work factors, which is what an export writes.
@@ -117,9 +119,9 @@ public struct RecoveryParams: Equatable, Sendable {
         if iterations < UInt32(LumosConstants.recoveryArgon2idIterationsMin) {
             throw RecoveryError.paramsRejected("time cost below the register minimum")
         }
-        // No separate parallelism minimum: the single-lane rule above is
-        // stricter than the register's parallelism_min for as long as that
-        // minimum is 1, and RecoveryRecordTests fires if the register moves it.
+        // No separate parallelism minimum to check: CR-001 removed the
+        // bounds, and the single-lane rule above admits exactly the register's
+        // fixed value. RecoveryRecordTests fires if the register moves it.
     }
 }
 

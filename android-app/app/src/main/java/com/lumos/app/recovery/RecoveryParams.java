@@ -49,9 +49,10 @@ public final class RecoveryParams {
      * to: a recovery record no user could recover from. All three
      * implementations refuse it, and the cross-language vectors pin the refusal.
      *
-     * <p>Note this sits BELOW the register's parallelism_max of 4, unlike the two
-     * ceilings above. That maximum consequently describes a lane count no
-     * shipping platform can execute.
+     * <p>Note this is a portability floor, not a resource ceiling like the two
+     * above. CR-001 made the register say so: the entry carried
+     * parallelism_min/parallelism_max until WP-02 S4c removed them, because a
+     * range of legal lane counts never existed.
      */
     public static final int SUPPORTED_PARALLELISM = 1;
 
@@ -119,9 +120,9 @@ public final class RecoveryParams {
         if (iterations < LumosConstants.RECOVERY_ARGON2ID_ITERATIONS_MIN) {
             throw RecoveryException.paramsRejected("time cost below the register minimum");
         }
-        // No separate parallelism minimum: the single-lane rule above is stricter
-        // than the register's parallelism_min for as long as that minimum is 1,
-        // and RecoveryRecordInstrumentedTest fires if the register ever moves it.
+        // No separate parallelism minimum to check: CR-001 removed the bounds,
+        // and the single-lane rule above admits exactly the register's fixed
+        // value. RecoveryRecordInstrumentedTest fires if the register moves it.
     }
 
     @Override
