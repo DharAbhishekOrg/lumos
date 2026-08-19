@@ -93,74 +93,123 @@ func LoadWorkflow(repoRoot, workflow string) ([]Job, bool, error) {
 		return nil, false, fmt.Errorf("read %s: %w", rel, err)
 	}
 
-	lines := strings.Split(strings.ReplaceAll(string(raw), "\r\n", "\n"), "\n")
-	var (
-		jobs        []Job
-		inJobs      bool
-		filtered    bool
-		currentJob  = -1
-		pendingIf   bool
-		conditionSb strings.Builder
-	)
+	p := &parser{workflow: workflow, current: -1}
+	text := strings.ReplaceAll(string(raw), "\r\n", "\n")
+	for _, line := range strings.Split(text, "\n") {
+		p.feed(line)
+	}
+	return p.done(), p.filtered, nil
+}
 
-	for _, line := range lines {
-		if !inJobs {
-			if jobsHeading.MatchString(line) {
-				inJobs = true
-				continue
-			}
-			if pathFilter.MatchString(line) {
-				filtered = true
-			}
-			continue
-		}
+// parser walks a workflow file one line at a time.
+//
+// A type rather than one function with a large switch, because TRS-CODE-004
+// caps complexity at 15 and a YAML-shaped reader reaches that quickly: the
+// preamble, the job keys, the scalar fields and the block-scalar continuation
+// are four small state machines sharing one cursor.
+type parser struct {
+	workflow  string
+	jobs      []Job
+	inJobs    bool
+	filtered  bool
+	current   int
+	pendingIf bool
+	condition strings.Builder
+}
 
-		// A block-scalar `if:` continues until the next line indented four
-		// spaces or fewer. Gather it so the condition can be inspected whole.
-		if pendingIf {
-			trimmed := strings.TrimSpace(line)
-			if trimmed != "" && len(line)-len(strings.TrimLeft(line, " ")) > 4 {
-				conditionSb.WriteString(" ")
-				conditionSb.WriteString(trimmed)
-				continue
-			}
-			jobs[currentJob].Condition = strings.TrimSpace(conditionSb.String())
-			pendingIf = false
-			conditionSb.Reset()
-		}
+// feed advances the parser by one line.
+func (p *parser) feed(line string) {
+	if !p.inJobs {
+		p.preamble(line)
+		return
+	}
+	if p.absorbCondition(line) {
+		return
+	}
+	if m := jobKey.FindStringSubmatch(line); m != nil {
+		p.jobs = append(p.jobs, Job{Workflow: p.workflow, ID: m[1]})
+		p.current = len(p.jobs) - 1
+		return
+	}
+	if p.current >= 0 {
+		p.field(line)
+	}
+}
 
-		if m := jobKey.FindStringSubmatch(line); m != nil {
-			jobs = append(jobs, Job{Workflow: workflow, ID: m[1]})
-			currentJob = len(jobs) - 1
-			continue
-		}
-		if currentJob < 0 {
-			continue
-		}
-		if m := jobName.FindStringSubmatch(line); m != nil && jobs[currentJob].CheckName == "" {
-			jobs[currentJob].CheckName = strings.Trim(m[1], `"'`)
-			continue
-		}
-		if m := jobIf.FindStringSubmatch(line); m != nil && jobs[currentJob].Condition == "" {
-			if blockScalar.MatchString(m[1]) {
-				pendingIf = true
-				conditionSb.Reset()
-				continue
-			}
-			jobs[currentJob].Condition = m[1]
+// preamble reads everything above `jobs:`, which is where a workflow-level
+// path filter would be.
+func (p *parser) preamble(line string) {
+	if jobsHeading.MatchString(line) {
+		p.inJobs = true
+		return
+	}
+	if pathFilter.MatchString(line) {
+		p.filtered = true
+	}
+}
+
+// absorbCondition gathers the continuation lines of a block-scalar `if:`,
+// which runs until the next line indented four spaces or fewer. It reports
+// whether the line belonged to that condition.
+func (p *parser) absorbCondition(line string) bool {
+	if !p.pendingIf {
+		return false
+	}
+	trimmed := strings.TrimSpace(line)
+	if trimmed != "" && indentOf(line) > 4 {
+		p.condition.WriteString(" ")
+		p.condition.WriteString(trimmed)
+		return true
+	}
+	p.closeCondition()
+	return false
+}
+
+// field reads the two job-level scalars this tool reasons about.
+func (p *parser) field(line string) {
+	if m := jobName.FindStringSubmatch(line); m != nil && p.jobs[p.current].CheckName == "" {
+		p.jobs[p.current].CheckName = strings.Trim(m[1], `"'`)
+		return
+	}
+	m := jobIf.FindStringSubmatch(line)
+	if m == nil || p.jobs[p.current].Condition != "" {
+		return
+	}
+	if blockScalar.MatchString(m[1]) {
+		p.pendingIf = true
+		p.condition.Reset()
+		return
+	}
+	p.jobs[p.current].Condition = m[1]
+}
+
+// closeCondition commits a gathered block-scalar condition to its job.
+func (p *parser) closeCondition() {
+	if !p.pendingIf || p.current < 0 {
+		return
+	}
+	p.jobs[p.current].Condition = strings.TrimSpace(p.condition.String())
+	p.pendingIf = false
+	p.condition.Reset()
+}
+
+// done finishes the file and returns the jobs.
+//
+// A job with no `name:` reports its id as the check name, which is GitHub's
+// own rule and not a fallback of ours.
+func (p *parser) done() []Job {
+	p.closeCondition()
+	for i := range p.jobs {
+		if p.jobs[i].CheckName == "" {
+			p.jobs[i].CheckName = p.jobs[i].ID
 		}
 	}
-	if pendingIf && currentJob >= 0 {
-		jobs[currentJob].Condition = strings.TrimSpace(conditionSb.String())
-	}
+	return p.jobs
+}
 
-	// A job with no `name:` reports its id as the check name.
-	for i := range jobs {
-		if jobs[i].CheckName == "" {
-			jobs[i].CheckName = jobs[i].ID
-		}
-	}
-	return jobs, filtered, nil
+// indentOf counts a line's leading spaces.
+func indentOf(line string) int {
+	return len(line) - len(strings.TrimLeft(line, " "))
 }
 
 // LoadAllWorkflows parses every workflow, sorted for stable comparison.
