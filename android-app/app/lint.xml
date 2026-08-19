@@ -15,11 +15,11 @@
                      InputStream.readAllBytes call that was green on a local API
                      34 emulator and threw NoSuchMethodError on the API 30 image
                      the pipeline uses.
-    src/test         runs on the HOST JVM, at Java 17. It never sees an Android
+    src/test         runs on the HOST JVM, at Java 21. It never sees an Android
                      runtime, so "requires API level 33" is a statement about a
                      platform this code will never execute on. Files.readAllBytes,
                      Stream.toList and ByteArrayOutputStream.writeBytes are all
-                     ordinary JDK 17 and all correct where they are.
+                     ordinary JDK 21 and all correct where they are.
 
   So NewApi is suppressed for src/test ONLY, by path, and stays live everywhere
   else including src/androidTest. Every other lint check remains active in both.

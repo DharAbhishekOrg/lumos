@@ -5529,9 +5529,29 @@
   },
   {
    "req_id": "TRS-CODE-004",
-   "status": "not_started",
-   "code": [],
-   "tests": [],
+   "status": "tested",
+   "code": [
+    ".golangci.yml",
+    ".swiftlint.yml",
+    "AGENTS.md",
+    "tools/lumoslint/budgets.go",
+    "tools/lumoslint/main.go",
+    "tools/staticanalysis/checkstyle/checkstyle.xml"
+   ],
+   "tests": [
+    "go:tools/lumoslint:TestAWellFormedExceptionLiftsTheBudget",
+    "go:tools/lumoslint:TestAnUnwritableExceptionIsRefused",
+    "go:tools/lumoslint:TestGeneratedFilesAreExempt",
+    "go:tools/lumoslint:TestKnownADRsFindsTheRealSet",
+    "go:tools/lumoslint:TestRepositoryPassesEveryLint",
+    "go:tools/lumoslint:TestTheClassBudgetFiresInEveryLanguage",
+    "go:tools/lumoslint:TestTheFileBudgetFires",
+    "go:tools/lumoslint:TestTheMeasurementIsNotVacuous",
+    "go:tools/lumoslint:TestTheRepositoryIsWithinBudget",
+    "go:tools/staticanalysis:TestCheckstyleCarriesTheSpecifiedBudgets",
+    "go:tools/staticanalysis:TestGolangciEnforcesTheComplexityBudgetAndReportsEverything",
+    "go:tools/staticanalysis:TestSwiftLintCarriesTheSpecifiedBudgets"
+   ],
    "evidence": [],
    "adr": [],
    "last_commit": "059b325",

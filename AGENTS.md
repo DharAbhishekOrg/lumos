@@ -80,7 +80,18 @@ Every source file starts with:
 ```
 
 Public APIs documented (Javadoc/DocC/godoc). Complexity ≤15/function, ≤800
-lines/file, ≤500/class. Zero analyzer warnings (Checkstyle+SpotBugs+Android Lint /
+lines/file, ≤500/class — all four enforced since WP-02 S5: complexity by each
+language's own analyser, the file and class budgets by `lumoslint -budgets`.
+TRS-CODE-004's exception clause is one optional extra header line, and the ADR
+it cites must exist:
+
+```
+ * Budget-exception: class ADR-012 - <why THIS file needs the room>
+```
+
+There are none in the tree. Splitting the type is the first answer; an
+exception is what you write when splitting it would be worse, and it is
+reviewed as a decision rather than granted by writing a number. Zero analyzer warnings (Checkstyle+SpotBugs+Android Lint /
 SwiftLint+Swift 6 strict / golangci-lint / ESLint+tsc strict). Patterns per TRS
 §24.2: transports = Adapter+Strategy; routing/match/transfer/config = explicit
 State machines with typed events (no boolean-flag state); Repository for data;

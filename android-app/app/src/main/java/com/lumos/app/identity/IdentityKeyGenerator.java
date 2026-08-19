@@ -12,12 +12,27 @@
  * envelope; no API returns them, and IdentityKeyGeneratorTest asserts the
  * envelope is unopenable once the KEK is destroyed (crypto-erasure).
  *
- * Provider availability is a stated constraint, not an assumption: the JCA
- * names Ed25519 and XDH resolve on JDK 17 (all unit tests, CI) and on Android
- * API 33+ (every current emulator image). Below API 33 the platform provider
- * lacks both algorithms, and the ADR-001 answer is a libsodium-backed provider
- * - a new dependency that needs owner approval and is flagged in the WP-02 S1
- * pull request rather than smuggled in here.
+ * PROVIDER AVAILABILITY, MEASURED RATHER THAN ASSUMED - and the measurement
+ * corrects what this comment used to say. Slice S1 recorded that Ed25519 and
+ * XDH "resolve on JDK 17 and on Android API 33+"; slice S4c ran generation on
+ * an emulator for the first time and only half of that held:
+ *
+ *                                            JDK   API 30   API 34
+ *   KeyPairGenerator.getInstance("XDH")      yes   no       yes
+ *   Signature.getInstance("Ed25519")         yes   no       yes
+ *   KeyPairGenerator.getInstance("Ed25519")  yes   no       NO
+ *
+ * Android gained Ed25519 for signing and verifying at API 33 and has never
+ * gained it for key GENERATION. So generate() runs on the JDK - every unit test
+ * and every JVM job in CI - and on no Android runtime at all, while
+ * verifyBinding() works on API 33+. The boundary is not an API level; it is
+ * Android.
+ *
+ * The ADR-001 answer is libsodium, which is already in the tree as Lazysodium
+ * for the RecoveryRecord. The owner ruling of 2026-08-14 parks that wiring for
+ * WP-03 device work rather than taking it inside WP-02, and
+ * PlatformKeyAlgorithmInstrumentedTest is the tripwire that fails the day the
+ * platform makes it unnecessary.
  */
 
 package com.lumos.app.identity;

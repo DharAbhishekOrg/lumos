@@ -64,22 +64,53 @@ type ExecutedTests struct {
 	Tests []string `json:"tests"`
 }
 
-// scopePatterns is the WP-01 requirement set, transcribed from the kickoff's
-// "Exit evidence" clause: "TRS-REP-*, TRS-PROTO-001..016, TRS-CONST-*,
-// TRS-CICD-001/005, TRS-TST-001". It is written here as the kickoff states it,
-// NOT derived from whatever happens to have moved - a scope read back from the
-// work done can never report the work as incomplete.
-var scopePatterns = []*regexp.Regexp{
-	regexp.MustCompile(`^TRS-REP-\d+$`),
-	regexp.MustCompile(`^TRS-CONST-\d+$`),
-	regexp.MustCompile(`^TRS-PROTO-0(0[1-9]|1[0-6])$`),
-	regexp.MustCompile(`^TRS-CICD-00[15]$`),
-	regexp.MustCompile(`^TRS-TST-001$`),
+// scopePatterns is each work package's declared requirement set, transcribed
+// from its EDP Sec. 7 brief and NOT derived from whatever happens to have
+// moved. That direction is the whole value of a closeout: a scope read back
+// from the work done can never report the work as incomplete, and seventeen of
+// WP-02's forty-five are `not_started` - a derived list would simply not have
+// mentioned them.
+//
+// WP-01 comes from its kickoff's "Exit evidence" clause: "TRS-REP-*,
+// TRS-PROTO-001..016, TRS-CONST-*, TRS-CICD-001/005, TRS-TST-001".
+//
+// WP-02 comes from its brief's "Key requirements" row: "SRS-ONB-001..008,
+// SRS-IDN-001..003/007, SRS-PRO-001..013, SRS-SAF-009/010, SRS-DAT-002/004/012,
+// TRS-LOC-001..010, TRS-AND-004, TRS-IOS-007, SRS-NFR-SEC-002/003/013".
+var scopePatterns = map[string][]*regexp.Regexp{
+	"WP-01": {
+		regexp.MustCompile(`^TRS-REP-\d+$`),
+		regexp.MustCompile(`^TRS-CONST-\d+$`),
+		regexp.MustCompile(`^TRS-PROTO-0(0[1-9]|1[0-6])$`),
+		regexp.MustCompile(`^TRS-CICD-00[15]$`),
+		regexp.MustCompile(`^TRS-TST-001$`),
+	},
+	"WP-02": {
+		regexp.MustCompile(`^SRS-ONB-00[1-8]$`),
+		regexp.MustCompile(`^SRS-IDN-00[1237]$`),
+		regexp.MustCompile(`^SRS-PRO-0(0[1-9]|1[0-3])$`),
+		regexp.MustCompile(`^SRS-SAF-0(09|10)$`),
+		regexp.MustCompile(`^SRS-DAT-0(02|04|12)$`),
+		regexp.MustCompile(`^TRS-LOC-0(0[1-9]|10)$`),
+		regexp.MustCompile(`^TRS-AND-004$`),
+		regexp.MustCompile(`^TRS-IOS-007$`),
+		regexp.MustCompile(`^SRS-NFR-SEC-0(02|03|13)$`),
+	},
 }
 
-// InScope reports whether a requirement belongs to the WP-01 declared set.
-func InScope(reqID string) bool {
-	for _, p := range scopePatterns {
+// KnownWorkPackages lists the packages this tool can close, sorted.
+func KnownWorkPackages() []string {
+	out := make([]string, 0, len(scopePatterns))
+	for wp := range scopePatterns {
+		out = append(out, wp)
+	}
+	sort.Strings(out)
+	return out
+}
+
+// InScope reports whether a requirement belongs to a work package's declared set.
+func InScope(workPackage, reqID string) bool {
+	for _, p := range scopePatterns[workPackage] {
 		if p.MatchString(reqID) {
 			return true
 		}
@@ -159,7 +190,7 @@ func LoadExecuted(path string) (*ExecutedTests, error) {
 }
 
 // Build assembles the report. It reads status and never writes it.
-func Build(m *Matrix, executed *ExecutedTests, commit string) *Report {
+func Build(workPackage string, m *Matrix, executed *ExecutedTests, commit string) *Report {
 	executedSet := make(map[string]bool, len(executed.Tests))
 	byLanguage := map[string]int{}
 	for _, id := range executed.Tests {
@@ -175,7 +206,7 @@ func Build(m *Matrix, executed *ExecutedTests, commit string) *Report {
 	sort.Strings(languages)
 
 	r := &Report{
-		WorkPackage:  "WP-01",
+		WorkPackage:  workPackage,
 		Baseline:     m.Baseline,
 		GeneratedFor: commit,
 		Pipeline: PipelineResult{
@@ -213,7 +244,7 @@ func Build(m *Matrix, executed *ExecutedTests, commit string) *Report {
 		}
 
 		switch {
-		case InScope(e.ReqID):
+		case InScope(workPackage, e.ReqID):
 			r.Totals.InScopeByStatus[e.Status]++
 			r.InScope = append(r.InScope, row)
 		case e.Status != "not_started":

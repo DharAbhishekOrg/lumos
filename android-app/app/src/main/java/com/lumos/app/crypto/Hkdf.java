@@ -7,7 +7,7 @@
  * Notes: Extract-then-expand over HMAC-SHA-256 and nothing more, mirroring the
  * conformance runner's implementation byte for byte (that module is test-scope
  * and cannot be a production dependency, so the mirror is deliberate and small
- * rather than shared). JDK 17 and Android both predate javax.crypto.KDF. Every
+ * rather than shared). JDK 21 and Android both predate javax.crypto.KDF. Every
  * Lumos KDF uses a zero-filled 32-byte salt; callers pass it explicitly so the
  * choice is visible at the call site.
  */

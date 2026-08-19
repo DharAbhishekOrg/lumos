@@ -22,12 +22,17 @@ junit = "5.11.3"
 # are build-time analysers: never linked into, bundled with or shipped in any
 # artefact, and LGPL-2.1 places no obligation on the sources they read.
 #
-# Checkstyle is held at the 12.x line deliberately. 13.10.0 was tried first and
-# refused to run: "Checkstyle 13.10.0 is not compatible with the configured JVM
-# (17)". TRS Sec. 5.3 pins the Java 17 toolchain, and a specification value is a
-# change request against the TRS rather than something a build file may raise on
-# a tool's behalf - the same call TRS-CICD-006 already owns for the Android SDK
-# baseline. 12.3.1 is the newest release that runs on 17.
+# Checkstyle stays on the 12.x line, and the REASON has changed even though the
+# number has not. 13.10.0 was refused by the JVM ("not compatible with the
+# configured JVM (17)"), and CR-002 has since moved the toolchain to Java 21, so
+# that obstacle is gone. Raising Checkstyle is now an ordinary dependency
+# decision rather than a blocked one - and CR-002 says in as many words that it
+# is a SEPARATE decision and not part of that change request. Raising it here
+# would be smuggling a second change through the door the first one opened.
+#
+# Recorded as a deferral in evidence/wp02/closeout.md with WP-03 as its
+# destination: the first slice that touches the analyser stack should try 13.x
+# on the Java 21 toolchain and take the new rules deliberately.
 checkstyle = "12.3.1"
 spotbugs = "4.10.3"
 spotbugsPlugin = "6.5.10"
@@ -65,16 +70,25 @@ androidxTestRunner = "1.7.0"
 # no platform equivalent - the JCA has no Argon2 at any API level. It also closes
 # the API 26-27 gap for ChaCha20-Poly1305, which the JCA only provides from 28.
 #
-# HELD AT 5.1.0 DELIBERATELY. 5.2.0 is the latest release and was tried first; it
-# ships class files at bytecode version 65 (Java 21) and javac refuses them
-# outright: "class file has wrong version 65.0, should be 61.0". TRS Sec. 5.3
-# pins the Java 17 toolchain, and a specification value is a change request
-# against the TRS rather than something a build file may raise on a dependency's
-# behalf - the same call already made for Checkstyle above. 5.1.0 is the newest
-# release compiled to a bytecode level a Java 17 toolchain can read (52, Java 8),
-# it exposes the identical crypto_pwhash and AEAD surface, and it ships libsodium
-# for every ABI including the x86_64 the emulator job runs.
-lazysodium = "5.1.0"
+# AT 5.2.0 SINCE CR-002 (WP-02 slice S5). It was held at 5.1.0 for two slices
+# because 5.2.0 ships class files at bytecode version 65 and javac under a Java
+# 17 toolchain refuses them outright: "class file has wrong version 65.0, should
+# be 61.0". That was never a dependency problem - it was a specification value,
+# and moving it needed the owner's change request rather than a build file
+# raising a pin on a library's behalf.
+#
+# What the move buys, and why it was worth a change request: 5.2.0 16 KB
+# page-aligns its native libraries and 5.1.0 does not. An Android 15 device with
+# 16 KB pages cannot map 5.1.0's arm64-v8a/libsodium.so AT ALL - not a
+# performance question, a load failure - and Google Play requires the alignment.
+# It was the one open G-06 blocker in WP-02. The narrow Aligned16KB lint disable
+# that documented the gap is gone with this bump; the check is live again and
+# passing, which is the evidence that the alignment is real rather than claimed.
+#
+# The crypto surface is unchanged across the bump: crypto_pwhash and the AEAD
+# entry points LibsodiumRecoveryCrypto binds are identical, and the recovery
+# vectors are what prove it rather than the release notes.
+lazysodium = "5.2.0"
 # JNA 5.17.0, Apache-2.0 OR LGPL-2.1 (dual, at the user's option; Apache-2.0 is
 # the option taken). Lazysodium's POM asks for 5.12.1 and asks for the JAR - and
 # the JAR carries desktop natives, not Android's libjnidispatch.so. The AAR

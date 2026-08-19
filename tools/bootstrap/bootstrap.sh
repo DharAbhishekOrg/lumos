@@ -137,7 +137,7 @@ if command -v javac >/dev/null 2>&1; then
   check_version jdk "$(javac -version 2>&1 | sed -E 's/javac ([0-9.]+).*/\1/')" "$JDK_PIN_NUM"
 else
   bad jdk "required $JDK_PIN (Eclipse Temurin) - drives :protocol-conformance"
-  install_hint jdk "--cask temurin@17" "openjdk-17-jdk"
+  install_hint jdk "--cask temurin@21" "openjdk-21-jdk"
 fi
 
 # --- Node -------------------------------------------------------------------

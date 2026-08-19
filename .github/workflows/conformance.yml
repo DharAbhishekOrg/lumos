@@ -160,7 +160,7 @@ jobs:
       - uses: actions/setup-java@v5
         with:
           distribution: temurin
-          java-version: '17'
+          java-version: '21'
       - uses: gradle/actions/setup-gradle@v6
       - name: protocol-conformance test
         run: ./gradlew :protocol-conformance:test --no-daemon --console=plain
@@ -230,7 +230,7 @@ jobs:
       - uses: actions/setup-java@v5
         with:
           distribution: temurin
-          java-version: '17'
+          java-version: '21'
       - uses: android-actions/setup-android@v4
         with:
           packages: 'platforms;android-36 build-tools;36.1.0 platform-tools'
@@ -281,7 +281,7 @@ jobs:
       - uses: actions/setup-java@v5
         with:
           distribution: temurin
-          java-version: '17'
+          java-version: '21'
       - uses: android-actions/setup-android@v4
         with:
           packages: 'platforms;android-36 build-tools;36.1.0 platform-tools'

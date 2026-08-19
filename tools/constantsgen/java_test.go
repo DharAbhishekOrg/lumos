@@ -123,9 +123,18 @@ func TestGeneratedJavaCompilesAndMatchesRegister(t *testing.T) {
 		t.Fatalf("javac failed (generated Java must compile warning-free under TRS-CODE-006):\n%s", out)
 	}
 
-	// -Dfile.encoding=UTF-8 keeps System.out UTF-8 on Windows JDK 17, so the
-	// emoji alphabet survives the pipe byte-for-byte.
-	out, err := exec.Command(java, "-Dfile.encoding=UTF-8", "-cp", classes, "Dump").CombinedOutput()
+	// The emoji alphabet has to survive the pipe byte-for-byte, and on Windows
+	// that needs saying explicitly. -Dfile.encoding=UTF-8 was enough until the
+	// CR-002 toolchain move: JEP 400 (JDK 18) made UTF-8 the default charset,
+	// and JDK 19 then split System.out off onto its own `stdout.encoding`
+	// property, which still follows the console codepage. So on JDK 21 the old
+	// flag stopped reaching stdout and every glyph came back as '?' - a real
+	// finding from this migration, and one the emoji are what caught. Both
+	// properties are passed: `stdout.encoding` for 19 and later, `file.encoding`
+	// so this keeps working if the toolchain is ever pinned back.
+	out, err := exec.Command(java,
+		"-Dstdout.encoding=UTF-8", "-Dfile.encoding=UTF-8",
+		"-cp", classes, "Dump").CombinedOutput()
 	if err != nil {
 		t.Fatalf("running Dump failed:\n%s", out)
 	}

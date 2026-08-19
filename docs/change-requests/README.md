@@ -9,7 +9,7 @@ frozen*, and names the slice that executes it.
 | CR | Status | Executes | Subject |
 | --- | --- | --- | --- |
 | [001](CR-001.md) | **Accepted** | WP-02 S4c (done) | `RECOVERY_ARGON2ID.parallelism` becomes a fixed 1; `parallelism_min`/`_max` removed |
-| [002](CR-002.md) | **Accepted** | **WP-02 S5** | TRS §5.3 toolchain Java 17 → Java 21 LTS, to adopt Lazysodium 5.2.0 (16 KB alignment, G-06 blocker) |
+| [002](CR-002.md) | **Accepted** | WP-02 S5 (done) | TRS §5.3 toolchain Java 17 → Java 21 LTS, to adopt Lazysodium 5.2.0 (16 KB alignment, G-06 blocker) |
 
 A CR is applied in exactly one slice. Applying one that moves `constants_hash`
 also regenerates every golden vector that embeds it and reruns the full

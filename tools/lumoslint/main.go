@@ -1,9 +1,9 @@
 // Lumos - tools/lumoslint / CLI: header, constants and architecture lint.
 // Author: dhar.abhishek.email@gmail.com
-// Implements: TRS-CODE-001, TRS-CODE-003, TRS-CODE-005, TRS-CICD-001
+// Implements: TRS-CODE-001, TRS-CODE-003, TRS-CODE-004, TRS-CODE-005, TRS-CICD-001
 // ADRs: ADR-004
 // Threading: main-safe
-// Notes: One tool, three checks, because they share the same file walk and the
+// Notes: One tool, four checks, because they share the same file walk and the
 // same exclusion policy. Build output, vendored code and the committed Gradle
 // wrapper are skipped: linting code nobody in this repository wrote produces
 // findings nobody can act on.
@@ -52,16 +52,17 @@ func main() {
 		headers = flag.Bool("headers", true, "check TRS Sec. 24.1 file headers")
 		consts  = flag.Bool("constants", true, "check for hand-written register constants")
 		arch    = flag.Bool("architecture", true, "check TRS Sec. 4.3 layering")
+		budgets = flag.Bool("budgets", true, "check TRS-CODE-004 file and class size budgets")
 	)
 	flag.Parse()
 
-	if err := run(*root, *headers, *consts, *arch); err != nil {
+	if err := run(*root, *headers, *consts, *arch, *budgets); err != nil {
 		fmt.Fprintln(os.Stderr, "lumoslint:", err)
 		os.Exit(1)
 	}
 }
 
-func run(root string, headers, consts, arch bool) error {
+func run(root string, headers, consts, arch, budgets bool) error {
 	abs, err := filepath.Abs(root)
 	if err != nil {
 		return err
@@ -73,6 +74,15 @@ func run(root string, headers, consts, arch bool) error {
 			return err
 		}
 		fmt.Printf("constants: policing %d distinctive register values\n", len(values))
+	}
+
+	var knownADRs map[string]bool
+	if budgets {
+		if knownADRs, err = KnownADRs(abs); err != nil {
+			return err
+		}
+		fmt.Printf("budgets: %d file lines, %d class lines; %d ADRs may be cited for an exception\n",
+			MaxFileLines, MaxTypeLines, len(knownADRs))
 	}
 
 	files, err := SourceFiles(abs)
@@ -91,6 +101,9 @@ func run(root string, headers, consts, arch bool) error {
 		}
 		if arch {
 			findings = append(findings, CheckArchitecture(abs, p)...)
+		}
+		if budgets {
+			findings = append(findings, CheckBudgets(p, knownADRs)...)
 		}
 	}
 

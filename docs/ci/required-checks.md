@@ -83,7 +83,7 @@ required. Requiring them individually as well is harmless and redundant.
 | `SBOM` | pipeline | `sbom` | no | the committed SBOM is current |
 | `shell build - Go backend` | pipeline | `shell-backend` | no | the backend shell compiles |
 | `shell build - TypeScript admin console` | pipeline | `shell-admin` | no | the admin shell compiles |
-| `shell build - Android (Java 17, API 36)` | pipeline | `shell-android` | no | the Android shell assembles and Android Lint passes |
+| `shell build - Android` | pipeline | `shell-android` | no | the Android shell assembles and Android Lint passes |
 
 ## 4. Configuring and verifying the ruleset
 
