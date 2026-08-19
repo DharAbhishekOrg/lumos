@@ -5317,17 +5317,27 @@
    "code": [
     ".github/workflows/conformance.yml",
     ".github/workflows/pipeline.yml",
-    ".gitleaks.toml"
+    ".gitleaks.toml",
+    "docs/ci/required-checks.md",
+    "tools/cicheck/checks.go"
    ],
    "tests": [
-    "ci:conformance#31528127667"
+    "ci:conformance#31528127667",
+    "go:tools/cicheck:TestDifferencesDetectsEveryKindOfDrift",
+    "go:tools/cicheck:TestEveryRequiredCheckIsRegistered",
+    "go:tools/cicheck:TestExtractionActuallyFoundSomething",
+    "go:tools/cicheck:TestNoRequiredCheckCanSkipForTheWrongReason",
+    "go:tools/cicheck:TestNoWorkflowFiltersItselfOut",
+    "go:tools/cicheck:TestRequiredCheckNamesAreTypeable",
+    "go:tools/cicheck:TestTheRegisterDescribesTheWorkflows",
+    "go:tools/cicheck:TestTheSkipRuleDetectsEveryKindOfViolation"
    ],
    "evidence": [
     "ci:conformance#31528127667"
    ],
    "adr": [],
-   "last_commit": "059b325",
-   "updated": "2026-08-18"
+   "last_commit": "667c30d",
+   "updated": "2026-08-19"
   },
   {
    "req_id": "TRS-CICD-002",
@@ -5394,18 +5404,28 @@
    "req_id": "TRS-CICD-007",
    "status": "implemented",
    "code": [
-    "tools/tracecheck/checks.go",
     ".github/workflows/conformance.yml",
-    ".github/workflows/pipeline.yml"
+    ".github/workflows/pipeline.yml",
+    "docs/ci/required-checks.md",
+    "tools/cicheck/checks.go",
+    "tools/tracecheck/checks.go"
    ],
    "tests": [
-    "go:tools/tracecheck:TestReleaseCandidateGate",
-    "go:tools/tracecheck:TestGateRegisterRejectsDishonestRows"
+    "go:tools/cicheck:TestDifferencesDetectsEveryKindOfDrift",
+    "go:tools/cicheck:TestEveryRequiredCheckIsRegistered",
+    "go:tools/cicheck:TestExtractionActuallyFoundSomething",
+    "go:tools/cicheck:TestNoRequiredCheckCanSkipForTheWrongReason",
+    "go:tools/cicheck:TestNoWorkflowFiltersItselfOut",
+    "go:tools/cicheck:TestRequiredCheckNamesAreTypeable",
+    "go:tools/cicheck:TestTheRegisterDescribesTheWorkflows",
+    "go:tools/cicheck:TestTheSkipRuleDetectsEveryKindOfViolation",
+    "go:tools/tracecheck:TestGateRegisterRejectsDishonestRows",
+    "go:tools/tracecheck:TestReleaseCandidateGate"
    ],
    "evidence": [],
    "adr": [],
-   "last_commit": "ecacc35",
-   "updated": "2026-08-18"
+   "last_commit": "667c30d",
+   "updated": "2026-08-19"
   },
   {
    "req_id": "TRS-CICD-008",
