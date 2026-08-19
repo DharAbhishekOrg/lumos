@@ -5336,8 +5336,8 @@
     "ci:conformance#31528127667"
    ],
    "adr": [],
-   "last_commit": "059b325",
-   "updated": "2026-08-18"
+   "last_commit": "738b569",
+   "updated": "2026-08-19"
   },
   {
    "req_id": "TRS-CICD-002",
@@ -5424,8 +5424,8 @@
    ],
    "evidence": [],
    "adr": [],
-   "last_commit": "ecacc35",
-   "updated": "2026-08-18"
+   "last_commit": "738b569",
+   "updated": "2026-08-19"
   },
   {
    "req_id": "TRS-CICD-008",
