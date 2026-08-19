@@ -9,6 +9,19 @@
 # premium and nothing outside those paths can change what Swift asserts. All
 # three are PR-blocking.
 #
+# THE FILTER IS AT JOB LEVEL AND MUST STAY THERE. This workflow declares no
+# `paths:` or `paths-ignore:` under `on:`, and tools/cicheck fails the build if
+# one appears. The distinction is not stylistic: a workflow filtered out by
+# `on: paths` never reports its checks at all, and a required check that never
+# reports blocks every pull request that does not touch those paths, for ever.
+# A job skipped by an `if:` condition still posts a check run - conclusion
+# "skipped" - which a ruleset accepts. Job-level is the only form of filtering
+# that is compatible with requiring the check.
+#
+# The check names this workflow reports are the contract between it and the
+# repository ruleset. They are listed in docs/ci/required-checks.md and
+# tools/cicheck fails if the two disagree.
+#
 # The Swift job also builds and tests the empty iOS application shell, which
 # lives in the same SwiftPM package. Spending a second macOS runner on a target
 # this job already compiles would be waste; the lint, secret-scan, dependency,
@@ -136,7 +149,11 @@ jobs:
           retention-days: 7
 
   java:
-    name: java conformance (pure JVM)
+    # Check name deliberately says nothing about HOW it runs. "(pure JVM)" was
+    # accurate and was also the kind of detail that moves - and a required
+    # check whose name moves is a required check that stops reporting until
+    # somebody edits the ruleset. docs/ci/required-checks.md is the contract.
+    name: java conformance
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
@@ -169,7 +186,7 @@ jobs:
   # however green it is. pipeline.yml still proves the shell builds; this proves
   # what it asserts.
   ts:
-    name: admin console tests (node:test)
+    name: admin console tests
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
@@ -206,7 +223,7 @@ jobs:
   # :protocol-conformance to stay runnable on a host with no Android SDK, and
   # provisioning one in that job would quietly retire the guarantee.
   android:
-    name: android variant tests (TRS-REP-004)
+    name: android unit tests
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
@@ -255,7 +272,7 @@ jobs:
   # it asserts. KVM is enabled explicitly - without it the emulator falls back
   # to software rendering and takes long enough to time out.
   android-instrumented:
-    name: android instrumented (Room, emulator)
+    name: android instrumented tests
     needs: changes
     if: needs.changes.outputs.android == 'true'
     runs-on: ubuntu-latest
@@ -306,7 +323,7 @@ jobs:
   # SwiftPM package and macOS runner minutes are billed at a premium. A second
   # macOS job to compile a shell that this one already builds would be waste.
   swift:
-    name: swift conformance + iOS shell (macOS)
+    name: swift conformance
     needs: changes
     if: needs.changes.outputs.swift == 'true'
     runs-on: macos-latest
@@ -440,12 +457,48 @@ jobs:
   trace:
     name: traceability gate
     runs-on: ubuntu-latest
-    needs: [go, java, android, android-instrumented, swift, ts]
-    if: >-
-      always() && needs.go.result == 'success' && needs.java.result == 'success'
-      && needs.android.result == 'success' && needs.ts.result == 'success'
-      && needs.android-instrumented.result != 'failure'
+    needs: [changes, go, java, android, android-instrumented, swift, ts]
+    # always(), and the upstream results are asserted in the job's FIRST STEP
+    # rather than here. The difference matters and it is the whole of this
+    # slice's hardening: GitHub reports an `if`-skipped job as a check run with
+    # conclusion "skipped", and a ruleset counts a skipped required check as
+    # satisfied. So a required job whose `if` depends on another job's result
+    # is a required check that disappears at exactly the moment something broke.
+    # This job used to skip whenever go, java, android or ts failed; it now runs
+    # and fails, which is the only reporting that means anything.
+    #
+    # The rule this encodes, enforced for every required check by
+    # tools/cicheck: a required job may be skipped ONLY for "not applicable on
+    # this diff" - the path filter - and never for "an upstream job failed".
+    if: always()
     steps:
+      - name: upstream results
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo "changes=${{ needs.changes.result }} go=${{ needs.go.result }} java=${{ needs.java.result }} android=${{ needs.android.result }} instrumented=${{ needs.android-instrumented.result }} swift=${{ needs.swift.result }} ts=${{ needs.ts.result }}"
+          # The path filter deciding nothing is not a licence to skip the jobs
+          # it filters: if `changes` failed, "swift=skipped" means "unknown",
+          # not "not applicable".
+          if [ "${{ needs.changes.result }}" != "success" ]; then
+            echo "::error::the path filter did not complete, so a skipped Swift or emulator job cannot be read as deliberate."
+            exit 1
+          fi
+          for pair in "go=${{ needs.go.result }}" "java=${{ needs.java.result }}" \
+                      "android=${{ needs.android.result }}" "ts=${{ needs.ts.result }}"; do
+            if [ "${pair#*=}" != "success" ]; then
+              echo "::error::${pair%%=*} did not pass, so there is no executed-test set to judge the matrix against."
+              exit 1
+            fi
+          done
+          # These two are path-filtered. Skipped is legitimate; failed is not.
+          for pair in "android-instrumented=${{ needs.android-instrumented.result }}" \
+                      "swift=${{ needs.swift.result }}"; do
+            case "${pair#*=}" in
+              success|skipped) ;;
+              *) echo "::error::${pair%%=*} failed."; exit 1 ;;
+            esac
+          done
       - uses: actions/checkout@v7
         with:
           fetch-depth: 0
@@ -507,39 +560,59 @@ jobs:
           path: evidence/ci/executed-tests.json
           retention-days: 7
 
-  # A single required check that stays green when the Swift job is deliberately
-  # skipped by the path filter, so branch protection does not have to encode the
-  # filter logic a second time.
+  # One check that is true when this whole workflow is true, so a ruleset can
+  # require a single name instead of restating the path-filter logic. It stays
+  # green when Swift or the emulator is deliberately skipped and red for every
+  # other reason, including the two that individual required checks miss: a
+  # failed path filter, and a job nobody remembered to add to the ruleset.
+  #
+  # It names EVERY job in the workflow. `ts` was missing from this list until
+  # slice S4c's closeout hardening, which meant a failing admin-console suite
+  # left this gate green.
   conformance-gate:
     name: conformance gate
     runs-on: ubuntu-latest
-    needs: [go, java, android, android-instrumented, swift, ts, trace]
+    needs: [changes, go, java, android, android-instrumented, swift, ts, trace]
     if: always()
     steps:
       - name: assess
         shell: bash
         run: |
           set -euo pipefail
-          echo "go=${{ needs.go.result }} java=${{ needs.java.result }} android=${{ needs.android.result }} instrumented=${{ needs.android-instrumented.result }} swift=${{ needs.swift.result }} trace=${{ needs.trace.result }}"
+          results=(
+            "path filter=${{ needs.changes.result }}"
+            "go conformance=${{ needs.go.result }}"
+            "java conformance=${{ needs.java.result }}"
+            "android unit tests=${{ needs.android.result }}"
+            "admin console tests=${{ needs.ts.result }}"
+            "traceability gate=${{ needs.trace.result }}"
+          )
+          printf '%s\n' "${results[@]}"
+          echo "android instrumented tests=${{ needs.android-instrumented.result }} (path-filtered)"
+          echo "swift conformance=${{ needs.swift.result }} (path-filtered)"
+
+          failed=0
+          for r in "${results[@]}"; do
+            if [ "${r#*=}" != "success" ]; then
+              echo "::error::${r%%=*} did not pass; it is required on every pull request and is not path-filtered."
+              failed=1
+            fi
+          done
+
+          # The two path-filtered jobs. `skipped` is a real answer here and
+          # only here: it means the diff cannot change what they assert.
           case "${{ needs.android-instrumented.result }}" in
-            success) echo "instrumented (emulator) green" ;;
-            skipped) echo "instrumented skipped by path filter - no Android change" ;;
-            *) echo "instrumented tests failed"; exit 1 ;;
+            success) echo "emulator green" ;;
+            skipped) echo "emulator skipped by the path filter - no Android, protocol or vector change" ;;
+            *) echo "::error::the instrumented tests failed."; failed=1 ;;
           esac
-          if [ "${{ needs.go.result }}" != "success" ] || [ "${{ needs.java.result }}" != "success" ]; then
-            echo "Go and Java conformance are always required."
-            exit 1
-          fi
-          if [ "${{ needs.android.result }}" != "success" ]; then
-            echo "The TRS-REP-004 variant assertions are always required; they are not path-filtered."
-            exit 1
-          fi
-          if [ "${{ needs.trace.result }}" != "success" ]; then
-            echo "The traceability gate is always required (TRS Sec. 19.3)."
-            exit 1
-          fi
           case "${{ needs.swift.result }}" in
-            success) echo "all three runners green" ;;
-            skipped) echo "Swift skipped by path filter - no protocol, vector or iOS change" ;;
-            *) echo "Swift conformance failed"; exit 1 ;;
+            success) echo "swift green" ;;
+            skipped) echo "swift skipped by the path filter - no protocol, vector or iOS change" ;;
+            *) echo "::error::swift conformance failed."; failed=1 ;;
           esac
+
+          if [ "$failed" -ne 0 ]; then
+            exit 1
+          fi
+          echo "every conformance stage green or deliberately skipped"

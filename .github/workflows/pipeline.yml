@@ -12,6 +12,13 @@
 # The shells are EMPTY by instruction. What is being proven here is that four
 # toolchains compile and lint clean in a container that has never seen this
 # repository - not that any feature works.
+#
+# Every job here runs on every pull request: no path filter, no condition. That
+# is deliberate and it is cheap - these are Linux runners - and it means
+# `pipeline gate` below is a single check name that is true exactly when this
+# whole workflow is true. The check names are registered in
+# docs/ci/required-checks.md and tools/cicheck fails the build if they drift
+# from it.
 
 name: pipeline
 
@@ -68,6 +75,15 @@ jobs:
       # readable message rather than as a test assertion.
       - name: repository layout
         run: go test ./tools/repolint/ -count=1
+
+      # The check names this pipeline reports against the register a ruleset is
+      # configured from (docs/ci/required-checks.md). Run here for the same
+      # reason repolint is: a required check whose name has moved is a merge
+      # gate that has quietly stopped being one, and that should read as a lint
+      # failure with the two names in it rather than as a test assertion buried
+      # in the Go suite.
+      - name: required-check register
+        run: go test ./tools/cicheck/ -count=1
 
       # TRS-CODE-006, Go. Pinned binary rather than the action, matching the
       # gitleaks step below. --max-issues-per-linter and --max-same-issues are
