@@ -94,4 +94,8 @@ public class SealedRecordEntity {
     /** Visible Nearby state (SRS-ONB-008). Schema version 2. */
     @Entity(tableName = "discovery_visibility")
     public static class DiscoveryVisibilityRow extends SealedRecordEntity { }
+
+    /** App Lock choice (ADR-010). Schema version 3. */
+    @Entity(tableName = "app_lock")
+    public static class AppLockRow extends SealedRecordEntity { }
 }

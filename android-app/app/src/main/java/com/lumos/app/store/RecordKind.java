@@ -61,7 +61,16 @@ public enum RecordKind {
      * has never been told otherwise is not discoverable - which is the whole
      * requirement, expressed as the default rather than as a code path.
      */
-    DISCOVERY_VISIBILITY(false);
+    DISCOVERY_VISIBILITY(false),
+
+    /**
+     * Whether the user has turned App Lock on (ADR-010).
+     *
+     * <p>Added at schema version 3. Its absence reads as not enabled - App
+     * Lock is a protection the user adds, and the record only ever carries
+     * the choice, never anything that could unlock it.
+     */
+    APP_LOCK(false);
 
     private final boolean lookupByTag;
 

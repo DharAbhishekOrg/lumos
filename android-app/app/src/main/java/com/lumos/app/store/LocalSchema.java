@@ -37,7 +37,7 @@ import java.util.List;
 public final class LocalSchema {
 
     /** The schema version this build writes and expects. */
-    public static final int VERSION = 2;
+    public static final int VERSION = 3;
 
     /** The version of an absent or empty database, before any migration runs. */
     public static final int VERSION_EMPTY = 0;
@@ -127,6 +127,10 @@ public final class LocalSchema {
             RecordKind.CONSENT_RECORD,
             RecordKind.DISCOVERY_VISIBILITY);
 
+    /** The record kinds version 3 added (WP-03 slice S5b). */
+    private static final List<RecordKind> VERSION_3_KINDS = List.of(
+            RecordKind.APP_LOCK);
+
     /**
      * The complete statement list taking an empty database to version 1.
      *
@@ -155,6 +159,19 @@ public final class LocalSchema {
      */
     public static List<String> migrationToVersion2() {
         return Collections.unmodifiableList(createTablesFor(VERSION_2_KINDS));
+    }
+
+    /**
+     * The statements taking a version-2 database to version 3.
+     *
+     * <p>One new table and nothing else, the same interruption-safe shape as
+     * the step before it: an upgrade that stops half way leaves a version-2
+     * database, never a half-converted one.
+     *
+     * @return the ordered statements of migration 2 to 3
+     */
+    public static List<String> migrationToVersion3() {
+        return Collections.unmodifiableList(createTablesFor(VERSION_3_KINDS));
     }
 
     /**
@@ -187,6 +204,7 @@ public final class LocalSchema {
         final List<Migration> ladder = new ArrayList<>();
         ladder.add(new Migration(VERSION_EMPTY, 1, migrationToVersion1()));
         ladder.add(new Migration(1, 2, migrationToVersion2()));
+        ladder.add(new Migration(2, 3, migrationToVersion3()));
         return Collections.unmodifiableList(ladder);
     }
 }
