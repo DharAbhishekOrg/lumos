@@ -114,4 +114,16 @@ public final class DiscoveryTriage {
         let budget = max(0, LumosConstants.maxConcurrentGATTLinksDefault - activeLinks)
         return Array(candidates().prefix(budget))
     }
+
+    /// Takes a candidate out of rotation - the connector calls this the
+    /// moment it spends a link on one, so the next wave is the next strongest
+    /// peers rather than the same few forever. A later sighting makes the
+    /// peer a candidate again; whether it deserves a SECOND connection is the
+    /// connector's question to answer against the presence table.
+    /// - Parameter key: the candidate's triage key
+    /// - Returns: whether a candidate was removed
+    @discardableResult
+    public func remove(key: String) -> Bool {
+        table.removeValue(forKey: key) != nil
+    }
 }

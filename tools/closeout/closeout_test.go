@@ -370,3 +370,32 @@ func TestEveryOwnerGateStaysUnproven(t *testing.T) {
 		}
 	}
 }
+
+// TestWPThreeScopeIsTheBriefNotWhatMoved transcribes the WP-03 brief's "Key
+// requirements" row independently of the production list, the same discipline
+// as the two tests above. AT-003/004 are owner acceptance campaigns, not
+// matrix rows, and the TRS-ENV family WP-03's slices moved is deliberately
+// absent from the brief's row - both must read as out of scope here so the
+// closeout reports them where they belong.
+func TestWPThreeScopeIsTheBriefNotWhatMoved(t *testing.T) {
+	inScope := []string{"SRS-IDN-004", "SRS-PRO-007", "TRS-AND-005", "TRS-AND-006",
+		"TRS-IOS-003", "TRS-IOS-009", "TRS-TRN-002", "TRS-TRN-003",
+		"TRS-PROTO-009", "TRS-PROTO-017", "TRS-PROTO-018",
+		"SRS-NFR-BAT-001", "SRS-NFR-BAT-002", "SRS-NFR-PERF-005", "SRS-NFR-PERF-009"}
+	for i := 1; i <= 17; i++ {
+		inScope = append(inScope, fmt.Sprintf("SRS-NBY-%03d", i))
+	}
+	for _, id := range inScope {
+		if !InScope("WP-03", id) {
+			t.Errorf("%s is named by the WP-03 brief but reads as out of scope", id)
+		}
+	}
+	outOfScope := []string{"AT-003", "AT-004", "TRS-ENV-001", "TRS-ENV-002",
+		"TRS-ENV-003", "SRS-NBY-018", "TRS-TRN-001", "TRS-PROTO-010",
+		"SRS-NFR-BAT-003", "SRS-NFR-PERF-004", "SRS-MAT-001"}
+	for _, id := range outOfScope {
+		if InScope("WP-03", id) {
+			t.Errorf("%s is not in the WP-03 brief's row but reads as in scope", id)
+		}
+	}
+}

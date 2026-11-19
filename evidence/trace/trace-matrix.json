@@ -477,7 +477,7 @@
     "ADR-008",
     "ADR-010"
    ],
-   "last_commit": "787a202",
+   "last_commit": "bce1370",
    "updated": "2026-11-19"
   },
   {
@@ -1264,13 +1264,27 @@
   },
   {
    "req_id": "SRS-NBY-005",
-   "status": "not_started",
-   "code": [],
-   "tests": [],
+   "status": "implemented",
+   "code": [
+    "android-app/app/src/main/java/com/lumos/app/ble/RescanLadder.java",
+    "android-app/app/src/main/java/com/lumos/app/ble/ScanDutyCycle.java",
+    "android-app/app/src/main/java/com/lumos/app/ble/TaskScheduler.java",
+    "ios-app/shell/Sources/LumosAppShell/RescanLadder.swift"
+   ],
+   "tests": [
+    "java:app-dev:RescanLadderTest.outsideTheGateNothingEscalates",
+    "java:app-dev:ScanDutyCycleTest.aScanFailureStopsTheCycleAndSurfacesTheTypedState",
+    "java:app-dev:ScanDutyCycleTest.bothProfilesSitInsideTheirOwnDutyBounds",
+    "java:app-dev:ScanDutyCycleTest.stopIsIdempotentAndCancelsTheNextPhase",
+    "java:app-dev:ScanDutyCycleTest.sustainedCyclingMakesExactlyTheBudgetedWindows",
+    "java:app-dev:ScanDutyCycleTest.theCycleAlternatesOnTheRegisterWindows"
+   ],
    "evidence": [],
-   "adr": [],
-   "last_commit": null,
-   "updated": null
+   "adr": [
+    "ADR-002"
+   ],
+   "last_commit": "bce1370",
+   "updated": "2026-11-19"
   },
   {
    "req_id": "SRS-NBY-006",
@@ -1282,7 +1296,9 @@
    ],
    "tests": [
     "java:app-dev:PresenceTableTest.oneIdentityStaysOneCardAcrossEidRotations",
-    "swift:LumosAppShell:PresenceTableTests.testOneIdentityStaysOneCardAcrossEidRotations"
+    "java:app-dev:VenueFeedPathTest.aFullVenueFlowsSightingToTriageToHelloToPresenceUnderTheBudget",
+    "swift:LumosAppShell:PresenceTableTests.testOneIdentityStaysOneCardAcrossEidRotations",
+    "swift:LumosAppShell:VenueFeedPathTests.testAFullVenueFlowsSightingToTriageToHelloToPresenceUnderTheBudget"
    ],
    "evidence": [],
    "adr": [
@@ -1301,7 +1317,9 @@
    ],
    "tests": [
     "java:app-dev:PresenceTableTest.staleCardsAgeOutOnTheRegisterBound",
-    "swift:LumosAppShell:PresenceTableTests.testStaleCardsAgeOutOnTheRegisterBound"
+    "java:app-dev:VenueFeedPathTest.aFullVenueFlowsSightingToTriageToHelloToPresenceUnderTheBudget",
+    "swift:LumosAppShell:PresenceTableTests.testStaleCardsAgeOutOnTheRegisterBound",
+    "swift:LumosAppShell:VenueFeedPathTests.testAFullVenueFlowsSightingToTriageToHelloToPresenceUnderTheBudget"
    ],
    "evidence": [],
    "adr": [
@@ -1512,13 +1530,23 @@
   },
   {
    "req_id": "SRS-NFR-BAT-001",
-   "status": "not_started",
-   "code": [],
-   "tests": [],
+   "status": "implemented",
+   "code": [
+    "android-app/app/src/main/java/com/lumos/app/ble/RescanLadder.java",
+    "android-app/app/src/main/java/com/lumos/app/ble/ScanDutyCycle.java",
+    "ios-app/shell/Sources/LumosAppShell/RescanLadder.swift"
+   ],
+   "tests": [
+    "java:app-dev:RescanLadderTest.outsideTheGateNothingEscalates",
+    "java:app-dev:ScanDutyCycleTest.bothProfilesSitInsideTheirOwnDutyBounds",
+    "swift:LumosAppShell:RescanLadderTests.testOutsideTheGateNothingEscalates"
+   ],
    "evidence": [],
-   "adr": [],
-   "last_commit": null,
-   "updated": null
+   "adr": [
+    "ADR-002"
+   ],
+   "last_commit": "bce1370",
+   "updated": "2026-11-19"
   },
   {
    "req_id": "SRS-NFR-BAT-002",
@@ -2803,7 +2831,7 @@
     "ADR-003",
     "ADR-010"
    ],
-   "last_commit": "787a202",
+   "last_commit": "bce1370",
    "updated": "2026-11-19"
   },
   {
@@ -2901,12 +2929,14 @@
    "status": "implemented",
    "code": [
     "android-app/app/src/main/AndroidManifest.xml",
+    "android-app/app/src/main/java/com/lumos/app/ble/DiscoverySuccessMetric.java",
     "android-app/app/src/main/java/com/lumos/app/media/MediaObjectStore.java",
     "android-app/app/src/main/java/com/lumos/app/safety/AppLock.java",
     "android-app/app/src/main/java/com/lumos/app/safety/DeviceAuth.java",
     "android-app/app/src/main/java/com/lumos/app/safety/ScreenPrivacyPolicy.java",
     "android-app/app/src/main/java/com/lumos/app/store/LocalSchema.java",
     "android-app/app/src/main/java/com/lumos/app/store/SealedRecordCodec.java",
+    "ios-app/shell/Sources/LumosAppShell/DiscoverySuccessMetric.swift",
     "ios-app/shell/Sources/LumosAppShell/LocalSchema.swift"
    ],
    "tests": [
@@ -2918,10 +2948,12 @@
     "java:app-dev:AppLockTest.theStoredRecordCarriesTheChoiceAndNothingThatCouldUnlockIt",
     "java:app-dev:DeviceAuthPolicyTest.everyPurposeRequiresThePrompt",
     "java:app-dev:DeviceAuthPolicyTest.thePurposeListIsTheFourMomentsTheOwnerRulingNames",
+    "java:app-dev:DiscoverySuccessMetricTest.theWholePayloadMatchesTheClosedGrammar",
     "java:app-dev:MigrationTest.emptyDatabaseMigratesToCurrentVersion",
     "java:app-dev:ScreenPrivacyPolicyTest.captureIsNeverBlockedBecauseEvidenceCaptureIsASafetyFeature",
     "java:app-dev:ScreenPrivacyPolicyTest.screenshotWarningsApplyToConversationsAndNowhereElse",
-    "java:app-dev:ScreenPrivacyPolicyTest.theRecentsSnapshotIsRedactedOnEverySurface"
+    "java:app-dev:ScreenPrivacyPolicyTest.theRecentsSnapshotIsRedactedOnEverySurface",
+    "swift:LumosAppShell:DiscoverySuccessMetricTests.testTheWholePayloadMatchesTheClosedGrammar"
    ],
    "evidence": [],
    "adr": [
@@ -4727,7 +4759,7 @@
    ],
    "evidence": [],
    "adr": [],
-   "last_commit": "474df8e",
+   "last_commit": "bce1370",
    "updated": "2026-11-19"
   },
   {
@@ -4750,8 +4782,8 @@
    "tests": null,
    "evidence": [],
    "adr": [],
-   "last_commit": "34c6874",
-   "updated": "2026-08-19"
+   "last_commit": "bce1370",
+   "updated": "2026-11-19"
   },
   {
    "req_id": "TRS-AI-006",
@@ -4850,7 +4882,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "787a202",
+   "last_commit": "bce1370",
    "updated": "2026-11-19"
   },
   {
@@ -4860,7 +4892,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "787a202",
+   "last_commit": "bce1370",
    "updated": "2026-11-19"
   },
   {
@@ -4870,7 +4902,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "787a202",
+   "last_commit": "bce1370",
    "updated": "2026-11-19"
   },
   {
@@ -4894,7 +4926,7 @@
    "adr": [
     "ADR-003"
    ],
-   "last_commit": "787a202",
+   "last_commit": "bce1370",
    "updated": "2026-11-19"
   },
   {
@@ -4916,7 +4948,7 @@
    "adr": [
     "ADR-002"
    ],
-   "last_commit": "787a202",
+   "last_commit": "bce1370",
    "updated": "2026-11-19"
   },
   {
@@ -4935,7 +4967,7 @@
    "adr": [
     "ADR-002"
    ],
-   "last_commit": "787a202",
+   "last_commit": "bce1370",
    "updated": "2026-11-19"
   },
   {
@@ -4945,7 +4977,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "787a202",
+   "last_commit": "bce1370",
    "updated": "2026-11-19"
   },
   {
@@ -4955,7 +4987,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "787a202",
+   "last_commit": "bce1370",
    "updated": "2026-11-19"
   },
   {
@@ -4965,7 +4997,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "787a202",
+   "last_commit": "bce1370",
    "updated": "2026-11-19"
   },
   {
@@ -4975,7 +5007,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "787a202",
+   "last_commit": "bce1370",
    "updated": "2026-11-19"
   },
   {
@@ -4985,7 +5017,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "787a202",
+   "last_commit": "bce1370",
    "updated": "2026-11-19"
   },
   {
@@ -4995,7 +5027,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "787a202",
+   "last_commit": "bce1370",
    "updated": "2026-11-19"
   },
   {
@@ -5539,7 +5571,7 @@
     "ci:conformance#31528127667"
    ],
    "adr": [],
-   "last_commit": "787a202",
+   "last_commit": "bce1370",
    "updated": "2026-11-19"
   },
   {
@@ -5757,7 +5789,7 @@
    ],
    "evidence": [],
    "adr": [],
-   "last_commit": "787a202",
+   "last_commit": "bce1370",
    "updated": "2026-11-19"
   },
   {
@@ -5808,7 +5840,7 @@
     "ci:pipeline#31737418465"
    ],
    "adr": [],
-   "last_commit": "787a202",
+   "last_commit": "bce1370",
    "updated": "2026-11-19"
   },
   {
@@ -6393,11 +6425,14 @@
    "code": [
     "android-app/app/src/main/java/com/lumos/app/ble/DiscoveryTriage.java",
     "android-app/app/src/main/java/com/lumos/app/ble/ScanDutyCycle.java",
+    "android-app/app/src/test/java/com/lumos/app/ble/VenueFeedPathTest.java",
     "ios-app/shell/Sources/LumosAppShell/DiscoveryTriage.swift"
    ],
    "tests": [
     "java:app-dev:DiscoveryTriageTest.aHundredPlusAdvertisersTriageBoundedAndSorted",
-    "swift:LumosAppShell:DiscoveryTriageTests.testAHundredPlusAdvertisersTriageBoundedAndSorted"
+    "java:app-dev:VenueFeedPathTest.aFullVenueFlowsSightingToTriageToHelloToPresenceUnderTheBudget",
+    "swift:LumosAppShell:DiscoveryTriageTests.testAHundredPlusAdvertisersTriageBoundedAndSorted",
+    "swift:LumosAppShell:VenueFeedPathTests.testAFullVenueFlowsSightingToTriageToHelloToPresenceUnderTheBudget"
    ],
    "evidence": [],
    "adr": [
@@ -6416,9 +6451,11 @@
     "test-vectors/session/hello_exchange.json"
    ],
    "tests": [
+    "go:protocol/hello:TestAReplayedAckGrantsNothing",
     "java:app-dev:PresenceTableTest.aReplayedAckThrowsBeforeAnyCardCanExist",
+    "java:app-dev:VenueFeedPathTest.aFullVenueFlowsSightingToTriageToHelloToPresenceUnderTheBudget",
     "swift:LumosAppShell:PresenceTableTests.testAReplayedAckThrowsBeforeAnyCardCanExist",
-    "go:protocol/hello:TestAReplayedAckGrantsNothing"
+    "swift:LumosAppShell:VenueFeedPathTests.testAFullVenueFlowsSightingToTriageToHelloToPresenceUnderTheBudget"
    ],
    "evidence": [],
    "adr": [
@@ -6430,13 +6467,40 @@
   },
   {
    "req_id": "TRS-ENV-003",
-   "status": "not_started",
-   "code": [],
-   "tests": [],
+   "status": "tested",
+   "code": [
+    "android-app/app/src/main/java/com/lumos/app/ble/DiscoverySuccessMetric.java",
+    "android-app/app/src/main/java/com/lumos/app/ble/RescanLadder.java",
+    "ios-app/shell/Sources/LumosAppShell/DiscoverySuccessMetric.swift",
+    "ios-app/shell/Sources/LumosAppShell/RescanLadder.swift"
+   ],
+   "tests": [
+    "java:app-dev:DiscoverySuccessMetricTest.successIsPresenceNotEffort",
+    "java:app-dev:DiscoverySuccessMetricTest.theBucketsDestroyTheExactCount",
+    "java:app-dev:DiscoverySuccessMetricTest.theWholePayloadMatchesTheClosedGrammar",
+    "java:app-dev:RescanLadderTest.aSightingDropsTheLadderStraightToBase",
+    "java:app-dev:RescanLadderTest.leavingNearbyOrGoingInvisibleResetsTheStep",
+    "java:app-dev:RescanLadderTest.outsideTheGateNothingEscalates",
+    "java:app-dev:RescanLadderTest.sessionCountersRestartWithTheView",
+    "java:app-dev:RescanLadderTest.theConfiguredRunOfEmptyCyclesClimbsExactlyOneStep",
+    "java:app-dev:RescanLadderTest.theLadderIsCappedAtMaxSteps",
+    "java:app-dev:RescanLadderTest.theOnWindowGrowsLinearlyAndTheOffWindowNever",
+    "swift:LumosAppShell:DiscoverySuccessMetricTests.testSuccessIsPresenceNotEffort",
+    "swift:LumosAppShell:DiscoverySuccessMetricTests.testTheBucketsDestroyTheExactCount",
+    "swift:LumosAppShell:DiscoverySuccessMetricTests.testTheWholePayloadMatchesTheClosedGrammar",
+    "swift:LumosAppShell:RescanLadderTests.testLeavingNearbyOrGoingInvisibleResetsTheStep",
+    "swift:LumosAppShell:RescanLadderTests.testOutsideTheGateNothingEscalates",
+    "swift:LumosAppShell:RescanLadderTests.testSessionCountersRestartWithTheView",
+    "swift:LumosAppShell:RescanLadderTests.testTheConfiguredRunOfEmptyCyclesClimbsExactlyOneStep",
+    "swift:LumosAppShell:RescanLadderTests.testTheLadderIsCappedAndASightingDropsItToBase",
+    "swift:LumosAppShell:RescanLadderTests.testTheOnWindowGrowsLinearlyFromTheBase"
+   ],
    "evidence": [],
-   "adr": [],
-   "last_commit": null,
-   "updated": null
+   "adr": [
+    "ADR-002"
+   ],
+   "last_commit": "bce1370",
+   "updated": "2026-11-19"
   },
   {
    "req_id": "TRS-ENV-004",
@@ -6555,7 +6619,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "787a202",
+   "last_commit": "bce1370",
    "updated": "2026-11-19"
   },
   {
@@ -6565,7 +6629,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "787a202",
+   "last_commit": "bce1370",
    "updated": "2026-11-19"
   },
   {
@@ -6585,7 +6649,7 @@
    "adr": [
     "ADR-002"
    ],
-   "last_commit": "787a202",
+   "last_commit": "bce1370",
    "updated": "2026-11-19"
   },
   {
@@ -6595,7 +6659,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "787a202",
+   "last_commit": "bce1370",
    "updated": "2026-11-19"
   },
   {
@@ -6605,7 +6669,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "787a202",
+   "last_commit": "bce1370",
    "updated": "2026-11-19"
   },
   {
@@ -6615,7 +6679,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "787a202",
+   "last_commit": "bce1370",
    "updated": "2026-11-19"
   },
   {
@@ -6637,7 +6701,7 @@
     "ADR-003",
     "ADR-010"
    ],
-   "last_commit": "787a202",
+   "last_commit": "bce1370",
    "updated": "2026-11-19"
   },
   {
@@ -6647,7 +6711,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "787a202",
+   "last_commit": "bce1370",
    "updated": "2026-11-19"
   },
   {
@@ -6657,7 +6721,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "787a202",
+   "last_commit": "bce1370",
    "updated": "2026-11-19"
   },
   {
@@ -6667,7 +6731,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "787a202",
+   "last_commit": "bce1370",
    "updated": "2026-11-19"
   },
   {
@@ -6677,7 +6741,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "787a202",
+   "last_commit": "bce1370",
    "updated": "2026-11-19"
   },
   {
@@ -6687,7 +6751,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "787a202",
+   "last_commit": "bce1370",
    "updated": "2026-11-19"
   },
   {
@@ -6825,7 +6889,7 @@
    "adr": [
     "ADR-003"
    ],
-   "last_commit": "787a202",
+   "last_commit": "bce1370",
    "updated": "2026-11-19"
   },
   {
@@ -7751,7 +7815,7 @@
    ],
    "evidence": [],
    "adr": [],
-   "last_commit": "787a202",
+   "last_commit": "bce1370",
    "updated": "2026-11-19"
   },
   {
@@ -7812,7 +7876,7 @@
    ],
    "evidence": [],
    "adr": [],
-   "last_commit": "787a202",
+   "last_commit": "bce1370",
    "updated": "2026-11-19"
   },
   {
