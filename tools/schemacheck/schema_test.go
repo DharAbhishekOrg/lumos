@@ -73,13 +73,15 @@ func TestExtractionActuallyFoundSomething(t *testing.T) {
 // persists, so a table quietly disappearing is a test failure rather than a
 // smaller store. Seven kinds at slice S2; consent_record and
 // discovery_visibility joined at S4c with schema version 2; app_lock joined
-// at WP-03 S5b with schema version 3.
+// at WP-03 S5b with schema version 3; hidden_peer joined at WP-04 S1a with
+// schema version 4.
 func TestTheWpTwoKindsArePresent(t *testing.T) {
 	java, swift := load(t)
 	want := []string{
 		"app_lock", "block_entry", "consent_record", "diagnostic_event",
-		"discovery_visibility", "identity_key_record", "local_profile",
-		"profile_field_policy", "profile_media", "recovery_record",
+		"discovery_visibility", "hidden_peer", "identity_key_record",
+		"local_profile", "profile_field_policy", "profile_media",
+		"recovery_record",
 	}
 	if !equalStrings(java.Tables, want) {
 		t.Errorf("java tables = %v, want %v", java.Tables, want)

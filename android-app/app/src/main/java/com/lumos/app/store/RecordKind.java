@@ -70,7 +70,20 @@ public enum RecordKind {
      * Lock is a protection the user adds, and the record only ever carries
      * the choice, never anything that could unlock it.
      */
-    APP_LOCK(false);
+    APP_LOCK(false),
+
+    /**
+     * Peers the user hid from the Nearby feed (SRS-NBY-012). Looked up by a
+     * blind index over the authenticated peer identifier - the same shape as
+     * the block list, for the same reason: the feed must answer "is this
+     * peer hidden?" without the identifier being readable in the file, and
+     * the key is identity, never the rotating advertisement (SRS-NBY-013's
+     * logic applied to hiding).
+     *
+     * <p>Added at schema version 4. Hiding is silent: nothing here is ever
+     * sent, and the hidden peer cannot observe any of it.
+     */
+    HIDDEN_PEER(true);
 
     private final boolean lookupByTag;
 
@@ -90,10 +103,11 @@ public enum RecordKind {
     /**
      * Whether this kind is looked up by a blind index over a natural key.
      *
-     * <p>Only BLOCK_ENTRY is today. A block list must answer "is this peer
-     * blocked?" without the peer identifier being readable in the file - the
-     * threat model treats the block list as a safety asset, not a preference
-     * (data map Sec. 2.4).
+     * <p>BLOCK_ENTRY and HIDDEN_PEER. Both lists must answer "is this peer
+     * on the list?" without the peer identifier being readable in the file -
+     * the threat model treats the block list as a safety asset, not a
+     * preference (data map Sec. 2.4), and the hidden list reveals who the
+     * user chose to avoid, which is the same secret at lower stakes.
      *
      * @return true when writes must supply a lookup tag
      */

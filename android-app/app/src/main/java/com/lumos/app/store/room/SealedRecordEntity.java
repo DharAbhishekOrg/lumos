@@ -98,4 +98,8 @@ public class SealedRecordEntity {
     /** App Lock choice (ADR-010). Schema version 3. */
     @Entity(tableName = "app_lock")
     public static class AppLockRow extends SealedRecordEntity { }
+
+    /** Hidden Nearby peers (SRS-NBY-012). Schema version 4. */
+    @Entity(tableName = "hidden_peer")
+    public static class HiddenPeerRow extends SealedRecordEntity { }
 }

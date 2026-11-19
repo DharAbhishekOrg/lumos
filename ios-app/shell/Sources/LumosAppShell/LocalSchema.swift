@@ -43,15 +43,19 @@ public enum RecordKind: String, CaseIterable, Sendable {
     /// Absence reads as not enabled; the record carries the choice, never
     /// anything that could unlock it.
     case appLock = "app_lock"
+    /// Peers the user hid from the Nearby feed (SRS-NBY-012). Added at
+    /// version 4. Keyed by authenticated identity, blind-indexed like the
+    /// block list and for the same reason; hiding is silent.
+    case hiddenPeer = "hidden_peer"
 
     /// The table name for this kind.
     public var table: String { rawValue }
 
     /// Whether this kind is looked up by a blind index over a natural key.
     ///
-    /// Only `blockEntry` is today: a block list must answer "is this peer
-    /// blocked?" without the peer identifier being readable in the file.
-    public var isLookedUpByTag: Bool { self == .blockEntry }
+    /// `blockEntry` and `hiddenPeer`: both must answer "is this peer on the
+    /// list?" without the peer identifier being readable in the file.
+    public var isLookedUpByTag: Bool { self == .blockEntry || self == .hiddenPeer }
 }
 
 /// One step of the forward-only migration ladder.
@@ -68,7 +72,7 @@ public struct Migration: Sendable {
 public enum LocalSchema {
 
     /// The schema version this build writes and expects.
-    public static let version = 3
+    public static let version = 4
 
     /// The version of an absent or empty database, before any migration runs.
     public static let versionEmpty = 0
@@ -140,6 +144,9 @@ public enum LocalSchema {
     /// The record kinds version 3 added (WP-03 slice S5b).
     private static let version3Kinds: [RecordKind] = [.appLock]
 
+    /// The record kinds version 4 added (WP-04 slice S1a).
+    private static let version4Kinds: [RecordKind] = [.hiddenPeer]
+
     /// The complete statement list taking an empty database to version 1.
     public static var migrationToVersion1: [String] {
         ["CREATE TABLE \(tableMeta) ("
@@ -158,6 +165,10 @@ public enum LocalSchema {
     /// table, the same interruption-safe shape as the step before it.
     public static var migrationToVersion3: [String] { createTables(for: version3Kinds) }
 
+    /// The statements taking a version-3 database to version 4: one new
+    /// table, the interruption-safe shape every step of this ladder keeps.
+    public static var migrationToVersion4: [String] { createTables(for: version4Kinds) }
+
     /// The create-table and create-index pair for each of the given kinds.
     /// - Parameter kinds: the kinds a migration step introduces
     /// - Returns: the ordered statements
@@ -174,6 +185,7 @@ public enum LocalSchema {
     public static var migrations: [Migration] {
         [Migration(fromVersion: versionEmpty, toVersion: 1, statements: migrationToVersion1),
          Migration(fromVersion: 1, toVersion: 2, statements: migrationToVersion2),
-         Migration(fromVersion: 2, toVersion: 3, statements: migrationToVersion3)]
+         Migration(fromVersion: 2, toVersion: 3, statements: migrationToVersion3),
+         Migration(fromVersion: 3, toVersion: 4, statements: migrationToVersion4)]
     }
 }

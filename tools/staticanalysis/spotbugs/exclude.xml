@@ -110,6 +110,20 @@
     <Method name="&lt;init&gt;"/>
     <Bug pattern="EI_EXPOSE_REP2"/>
   </Match>
+  <!--
+    WP-04 slice S1a: the two peer-list classes store the injected LocalStore,
+    the same long-lived-service rationale as every entry above.
+  -->
+  <Match>
+    <Class name="com.lumos.app.nearby.HiddenPeers"/>
+    <Method name="&lt;init&gt;"/>
+    <Bug pattern="EI_EXPOSE_REP2"/>
+  </Match>
+  <Match>
+    <Class name="com.lumos.app.nearby.BlockedPeers"/>
+    <Method name="&lt;init&gt;"/>
+    <Bug pattern="EI_EXPOSE_REP2"/>
+  </Match>
   <Match>
     <Class name="com.lumos.app.onboarding.OnboardingService"/>
     <Method name="&lt;init&gt;"/>
