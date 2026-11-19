@@ -19,9 +19,9 @@ import (
 	"crypto/sha256"
 	"encoding/binary"
 
-	"github.com/dharabhishekemail-ops/lumos/protocol/gen/go/lumosconstants"
-	"github.com/dharabhishekemail-ops/lumos/protocol/gen/go/lumoserrors"
-	"github.com/dharabhishekemail-ops/lumos/protocol/wire"
+	"github.com/dharabhishekorg/lumos/protocol/gen/go/lumosconstants"
+	"github.com/dharabhishekorg/lumos/protocol/gen/go/lumoserrors"
+	"github.com/dharabhishekorg/lumos/protocol/wire"
 )
 
 // Layout sizes, all from the register (TRS Sec. 9.3).

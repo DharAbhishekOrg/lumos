@@ -69,7 +69,7 @@ func CollectGoTests(path string) ([]string, error) {
 // shortGoPackage turns a full module path into the repo-relative package path
 // the matrix cites, e.g. ".../lumos/protocol/wire" -> "protocol/wire".
 func shortGoPackage(pkg string) string {
-	const modulePrefix = "github.com/dharabhishekemail-ops/lumos/"
+	const modulePrefix = "github.com/dharabhishekorg/lumos/"
 	return strings.TrimPrefix(pkg, modulePrefix)
 }
 

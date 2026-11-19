@@ -20,12 +20,12 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/dharabhishekemail-ops/lumos/protocol/crypto/aead"
-	"github.com/dharabhishekemail-ops/lumos/protocol/crypto/ratchet"
-	"github.com/dharabhishekemail-ops/lumos/protocol/crypto/safety"
-	"github.com/dharabhishekemail-ops/lumos/protocol/crypto/x3dh"
-	"github.com/dharabhishekemail-ops/lumos/protocol/schema"
-	"github.com/dharabhishekemail-ops/lumos/protocol/wire"
+	"github.com/dharabhishekorg/lumos/protocol/crypto/aead"
+	"github.com/dharabhishekorg/lumos/protocol/crypto/ratchet"
+	"github.com/dharabhishekorg/lumos/protocol/crypto/safety"
+	"github.com/dharabhishekorg/lumos/protocol/crypto/x3dh"
+	"github.com/dharabhishekorg/lumos/protocol/schema"
+	"github.com/dharabhishekorg/lumos/protocol/wire"
 )
 
 func root(t *testing.T) string {

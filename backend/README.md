@@ -2,7 +2,7 @@
 
 Relay, registry, config, venue, billing and reports services (TRS Sec. 4.1).
 
-Go; part of the repository-root Go module `github.com/dharabhishekemail-ops/lumos`.
+Go; part of the repository-root Go module `github.com/dharabhishekorg/lumos`.
 
 ## Status
 

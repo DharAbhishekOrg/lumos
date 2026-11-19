@@ -241,7 +241,7 @@ func TestArchitectureRuleFiresOnForbiddenImports(t *testing.T) {
 	dir := t.TempDir()
 
 	bad := write(t, dir, "protocol/wire/x.go",
-		goodHeader+"\nimport (\n\t\"github.com/dharabhishekemail-ops/lumos/backend/store\"\n)\n")
+		goodHeader+"\nimport (\n\t\"github.com/dharabhishekorg/lumos/backend/store\"\n)\n")
 	if ruleSet(CheckArchitecture(dir, bad))["forbidden-import"] != 1 {
 		t.Error("protocol importing backend must fire (TRS Sec. 4.3)")
 	}
@@ -253,13 +253,13 @@ func TestArchitectureRuleFiresOnForbiddenImports(t *testing.T) {
 	}
 
 	ok := write(t, dir, "protocol/wire/ok.go",
-		goodHeader+"\nimport (\n\t\"github.com/dharabhishekemail-ops/lumos/protocol/schema\"\n)\n")
+		goodHeader+"\nimport (\n\t\"github.com/dharabhishekorg/lumos/protocol/schema\"\n)\n")
 	if f := CheckArchitecture(dir, ok); len(f) != 0 {
 		t.Errorf("an in-layer import must pass, got %v", f)
 	}
 
 	unmapped := write(t, dir, "tools/x/z.go",
-		goodHeader+"\nimport (\n\t\"github.com/dharabhishekemail-ops/lumos/backend/store\"\n)\n")
+		goodHeader+"\nimport (\n\t\"github.com/dharabhishekorg/lumos/backend/store\"\n)\n")
 	if f := CheckArchitecture(dir, unmapped); len(f) != 0 {
 		t.Errorf("tools are not layer-constrained today, got %v", f)
 	}

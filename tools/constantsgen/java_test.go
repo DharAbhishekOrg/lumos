@@ -11,6 +11,7 @@
 package main
 
 import (
+	"bytes"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -132,11 +133,20 @@ func TestGeneratedJavaCompilesAndMatchesRegister(t *testing.T) {
 	// finding from this migration, and one the emoji are what caught. Both
 	// properties are passed: `stdout.encoding` for 19 and later, `file.encoding`
 	// so this keeps working if the toolchain is ever pinned back.
-	out, err := exec.Command(java,
+	// Dump's data contract is stdout alone. The JVM writes environment noise to
+	// stderr - "Picked up JAVA_TOOL_OPTIONS/_JAVA_OPTIONS" banners on any host
+	// that sets those variables (CI proxies, corporate machines, the WP-03
+	// authoring container) - and CombinedOutput() fed those lines into the
+	// parser as phantom register symbols. Parse only the stream the program
+	// writes data to; keep stderr separately for the failure diagnostic.
+	dumpCmd := exec.Command(java,
 		"-Dstdout.encoding=UTF-8", "-Dfile.encoding=UTF-8",
-		"-cp", classes, "Dump").CombinedOutput()
+		"-cp", classes, "Dump")
+	var dumpErr bytes.Buffer
+	dumpCmd.Stderr = &dumpErr
+	out, err := dumpCmd.Output()
 	if err != nil {
-		t.Fatalf("running Dump failed:\n%s", out)
+		t.Fatalf("running Dump failed:\n%s\nstderr:\n%s", out, dumpErr.Bytes())
 	}
 
 	got := map[string]string{}

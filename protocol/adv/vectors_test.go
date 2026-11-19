@@ -16,8 +16,8 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/dharabhishekemail-ops/lumos/protocol/schema"
-	"github.com/dharabhishekemail-ops/lumos/protocol/wire"
+	"github.com/dharabhishekorg/lumos/protocol/schema"
+	"github.com/dharabhishekorg/lumos/protocol/wire"
 )
 
 type advVectors struct {

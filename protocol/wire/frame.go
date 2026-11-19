@@ -16,8 +16,8 @@ import (
 	"encoding/binary"
 	"fmt"
 
-	"github.com/dharabhishekemail-ops/lumos/protocol/gen/go/lumosconstants"
-	"github.com/dharabhishekemail-ops/lumos/protocol/gen/go/lumoserrors"
+	"github.com/dharabhishekorg/lumos/protocol/gen/go/lumosconstants"
+	"github.com/dharabhishekorg/lumos/protocol/gen/go/lumoserrors"
 )
 
 // headerLen is the fixed authenticated header length for protocol v1 frames.

@@ -540,7 +540,7 @@ func TestReleaseCandidateGate(t *testing.T) {
 // ---- executed-test collection ----
 
 func TestGoPackageShortening(t *testing.T) {
-	got := shortGoPackage("github.com/dharabhishekemail-ops/lumos/protocol/wire")
+	got := shortGoPackage("github.com/dharabhishekorg/lumos/protocol/wire")
 	if got != "protocol/wire" {
 		t.Errorf("shortGoPackage = %q, want protocol/wire", got)
 	}

@@ -33,7 +33,7 @@ junit = "5.11.3"
 # Recorded as a deferral in evidence/wp02/closeout.md with WP-03 as its
 # destination: the first slice that touches the analyser stack should try 13.x
 # on the Java 21 toolchain and take the new rules deliberately.
-checkstyle = "12.3.1"
+checkstyle = "13.11.0"
 spotbugs = "4.10.3"
 spotbugsPlugin = "6.5.10"
 # sqlite-jdbc, Apache-2.0, TEST SCOPE ONLY. The persistence layer runs against a

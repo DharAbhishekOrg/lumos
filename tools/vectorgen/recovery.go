@@ -34,10 +34,10 @@ import (
 
 	"golang.org/x/crypto/chacha20poly1305"
 
-	"github.com/dharabhishekemail-ops/lumos/protocol/crypto/recovery"
-	"github.com/dharabhishekemail-ops/lumos/protocol/gen/go/lumosconstants"
-	"github.com/dharabhishekemail-ops/lumos/protocol/gen/go/lumoserrors"
-	"github.com/dharabhishekemail-ops/lumos/protocol/wire"
+	"github.com/dharabhishekorg/lumos/protocol/crypto/recovery"
+	"github.com/dharabhishekorg/lumos/protocol/gen/go/lumosconstants"
+	"github.com/dharabhishekorg/lumos/protocol/gen/go/lumoserrors"
+	"github.com/dharabhishekorg/lumos/protocol/wire"
 )
 
 // errorCodeOf pulls the stable code out of a coded error, via errors.As so a

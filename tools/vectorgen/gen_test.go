@@ -17,7 +17,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/dharabhishekemail-ops/lumos/protocol/schema"
+	"github.com/dharabhishekorg/lumos/protocol/schema"
 )
 
 func repoRoot(t *testing.T) string {

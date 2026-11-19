@@ -21,7 +21,7 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/dharabhishekemail-ops/lumos/tools/deplock"
+	"github.com/dharabhishekorg/lumos/tools/deplock"
 )
 
 // Component is one CycloneDX component entry.
