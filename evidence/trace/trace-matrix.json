@@ -1254,13 +1254,24 @@
   },
   {
    "req_id": "SRS-NBY-004",
-   "status": "not_started",
-   "code": [],
-   "tests": [],
+   "status": "tested",
+   "code": [
+    "android-app/protocol-java/src/main/java/com/lumos/protocol/adv/Adv.java",
+    "ios-app/protocol-conformance/Sources/LumosProtocol/Adv.swift",
+    "protocol/adv/adv.go"
+   ],
+   "tests": [
+    "go:protocol/adv:TestLayoutMatchesADR002",
+    "go:protocol/adv:TestNoProhibitedContentCapacity",
+    "java:protocol-conformance:CryptoConformanceTest.advertisement",
+    "swift:LumosProtocolConformance:CryptoConformanceTests.testAdvertisementScheduleAndNegatives"
+   ],
    "evidence": [],
-   "adr": [],
-   "last_commit": null,
-   "updated": null
+   "adr": [
+    "ADR-002"
+   ],
+   "last_commit": "7147fc8",
+   "updated": "2026-11-19"
   },
   {
    "req_id": "SRS-NBY-005",
@@ -1410,13 +1421,20 @@
   },
   {
    "req_id": "SRS-NBY-016",
-   "status": "not_started",
-   "code": [],
-   "tests": [],
+   "status": "tested",
+   "code": [
+    "android-app/app/src/main/java/com/lumos/app/ble/NearbyLabels.java",
+    "android-app/app/src/main/res/values/strings.xml"
+   ],
+   "tests": [
+    "java:app-dev:OnboardingCopyTest.proximityIsWordsAndNeverADistance"
+   ],
    "evidence": [],
-   "adr": [],
-   "last_commit": null,
-   "updated": null
+   "adr": [
+    "ADR-002"
+   ],
+   "last_commit": "7147fc8",
+   "updated": "2026-11-19"
   },
   {
    "req_id": "SRS-NBY-017",
@@ -3216,6 +3234,7 @@
     "java:app-dev:OnboardingGateTest.everythingOpensOnlyWhenOnboardingIsComplete",
     "java:app-dev:OnboardingMachineTest.anUnderAgeAnswerIsATerminalStateNotAReturnedValue",
     "java:app-dev:OnboardingServiceTest.aRefusedUserGetsNoIdentityAndNoConsentRecord",
+    "java:app-instrumented:ProductEntryInstrumentedTest.at001AFreshInstallBlocksEveryProductSurfaceUntilConsent",
     "swift:LumosAppShell:OnboardingTests.testABlockedUserReachesNothingAtAll",
     "swift:LumosAppShell:OnboardingTests.testADateInTheFutureIsNotAnAdult",
     "swift:LumosAppShell:OnboardingTests.testAFreshDeviceCanReachTheAgeGateAndNothingElse",
@@ -3223,8 +3242,7 @@
     "swift:LumosAppShell:OnboardingTests.testEverythingOpensOnlyWhenOnboardingIsComplete",
     "swift:LumosAppShell:OnboardingTests.testTheDayBeforeAnEighteenthBirthdayIsRefused",
     "swift:LumosAppShell:OnboardingTests.testTheDecisionRecordsWhatItWasJudgedAgainst",
-    "swift:LumosAppShell:OnboardingTests.testTheMinimumComesFromTheRegisterAndIsEighteen",
-    "android:app-dev:ProductEntryInstrumentedTest.at001AFreshInstallBlocksEveryProductSurfaceUntilConsent"
+    "swift:LumosAppShell:OnboardingTests.testTheMinimumComesFromTheRegisterAndIsEighteen"
    ],
    "evidence": [],
    "adr": [
@@ -3470,6 +3488,7 @@
     "ios-app/shell/Sources/LumosAppShell/LocalSchema.swift"
    ],
    "tests": [
+    "java:app-dev:NoAutoVisibilityTest.aPreviousFormatVersionReadsAsOffBecauseAnUpdateIsATrigger",
     "java:app-dev:NoAutoVisibilityTest.afterARebootTheStoredAnswerIsWhatTheUserLastChose",
     "java:app-dev:NoAutoVisibilityTest.afterAnUpdateThatAddsTheTableItIsStillOff",
     "java:app-dev:NoAutoVisibilityTest.afterInstallationNothingIsBroadcast",
@@ -3478,11 +3497,10 @@
     "java:app-dev:NoAutoVisibilityTest.turningItOffTakesEffectImmediately",
     "java:app-dev:OnboardingCopyTest.theVisibilityCopyNamesAllFourTriggers",
     "java:app-dev:OnboardingServiceTest.completingOnboardingLeavesTheUserInvisible",
+    "java:app-instrumented:ProductEntryInstrumentedTest.at001AFreshInstallBlocksEveryProductSurfaceUntilConsent",
     "swift:LumosAppShell:OnboardingTests.testAnUnreadableVisibilityRecordReadsAsOff",
     "swift:LumosAppShell:OnboardingTests.testOnlyAnExplicitRequestTurnsVisibleNearbyOn",
-    "swift:LumosAppShell:OnboardingTests.testVisibleNearbyIsOffOnAFreshDevice",
-    "java:app-dev:NoAutoVisibilityTest.aPreviousFormatVersionReadsAsOffBecauseAnUpdateIsATrigger",
-    "android:app-dev:ProductEntryInstrumentedTest.at001AFreshInstallBlocksEveryProductSurfaceUntilConsent"
+    "swift:LumosAppShell:OnboardingTests.testVisibleNearbyIsOffOnAFreshDevice"
    ],
    "evidence": [],
    "adr": [
@@ -4960,8 +4978,8 @@
     "android-app/app/src/main/res/values/strings.xml"
    ],
    "tests": [
-    "android:app-dev:BleDeclarationsInstrumentedTest.theServiceReachesTheForegroundWithItsNotification",
-    "android:app-dev:BleDeclarationsInstrumentedTest.theDeclaredServiceIsTheConnectedDeviceForegroundType"
+    "java:app-instrumented:BleDeclarationsInstrumentedTest.theDeclaredServiceIsTheConnectedDeviceForegroundType",
+    "java:app-instrumented:BleDeclarationsInstrumentedTest.theServiceReachesTheForegroundWithItsNotification"
    ],
    "evidence": [],
    "adr": [
@@ -7914,13 +7932,26 @@
   },
   {
    "req_id": "TRS-TRN-002",
-   "status": "not_started",
-   "code": [],
-   "tests": [],
+   "status": "implemented",
+   "code": [
+    "android-app/app/src/main/java/com/lumos/app/ble/FrameLink.java",
+    "android-app/protocol-java/src/main/java/com/lumos/protocol/wire/FragmentReassembler.java",
+    "android-app/protocol-java/src/main/java/com/lumos/protocol/wire/Fragmenter.java",
+    "ios-app/shell/Sources/LumosAppShell/FrameChannel.swift",
+    "ios-app/shell/Sources/LumosAppShell/PacedWriteQueue.swift"
+   ],
+   "tests": [
+    "java:app-dev:FrameLinkTest.aBlobCrossesTheLinkWholeOneWriteAtATime",
+    "java:app-dev:FrameLinkTest.sequentialSendsDoNotInterleaveFragments",
+    "java:protocol-conformance:FragmentationConformanceTest.splitVectorsReproduceByteForByte",
+    "swift:LumosAppShell:FrameChannelTests.testABlobCrossesTheChannelWholeAndPaced"
+   ],
    "evidence": [],
-   "adr": [],
-   "last_commit": null,
-   "updated": null
+   "adr": [
+    "ADR-002"
+   ],
+   "last_commit": "7147fc8",
+   "updated": "2026-11-19"
   },
   {
    "req_id": "TRS-TRN-003",
