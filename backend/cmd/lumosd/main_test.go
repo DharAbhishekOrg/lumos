@@ -16,7 +16,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/dharabhishekemail-ops/lumos/protocol/gen/go/lumosconstants"
+	"github.com/dharabhishekorg/lumos/protocol/gen/go/lumosconstants"
 )
 
 func TestHealthEndpointRespondsOK(t *testing.T) {

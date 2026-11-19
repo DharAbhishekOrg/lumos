@@ -265,8 +265,8 @@
   {
    "type": "library",
    "name": "typescript-eslint",
-   "version": "8.67.0",
-   "purl": "pkg:npm/typescript-eslint@8.67.0",
+   "version": "8.73.0",
+   "purl": "pkg:npm/typescript-eslint@8.73.0",
    "scope": "optional",
    "licenses": [
     {

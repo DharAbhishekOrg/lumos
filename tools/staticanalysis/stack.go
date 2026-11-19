@@ -67,7 +67,7 @@ var Stack = []Analyser{
 		ZeroWarningIn:      "android-app/protocol-conformance/build.gradle.kts",
 		Workflow:           ".github/workflows/pipeline.yml",
 		Invocation:         ":protocol-conformance:staticAnalysis",
-		Version:            "12.3.1",
+		Version:            "13.11.0",
 		PinnedIn:           "gradle/libs.versions.toml",
 	},
 	{

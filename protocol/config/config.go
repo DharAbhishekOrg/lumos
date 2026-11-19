@@ -22,9 +22,9 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/dharabhishekemail-ops/lumos/protocol/gen/go/lumosconstants"
-	"github.com/dharabhishekemail-ops/lumos/protocol/gen/go/lumoserrors"
-	"github.com/dharabhishekemail-ops/lumos/protocol/wire"
+	"github.com/dharabhishekorg/lumos/protocol/gen/go/lumosconstants"
+	"github.com/dharabhishekorg/lumos/protocol/gen/go/lumoserrors"
+	"github.com/dharabhishekorg/lumos/protocol/wire"
 )
 
 // Environment values a package may target.

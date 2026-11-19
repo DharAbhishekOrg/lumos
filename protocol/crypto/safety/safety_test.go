@@ -16,7 +16,7 @@ import (
 	"testing"
 	"unicode/utf8"
 
-	"github.com/dharabhishekemail-ops/lumos/protocol/gen/go/lumosconstants"
+	"github.com/dharabhishekorg/lumos/protocol/gen/go/lumosconstants"
 )
 
 func ident(t *testing.T, label string) ed25519.PublicKey {

@@ -10,8 +10,9 @@
   "SRS-NFR-MNT-007"
  ],
  "host": {
-  "os": "Windows 11 Enterprise 10.0.26200",
-  "arch": "amd64"
+  "os": "Ubuntu 24.04 (Claude cloud authoring container)",
+  "arch": "amd64",
+  "host_note": "Authoring host moved at WP-03 S0 (owner handover 2026-11-19) from the Windows 11 laptop to the Linux cloud container. CI remains the prover; this records where authoring-time verification now runs. Prior hosts: Windows 11 Enterprise 10.0.26200 amd64 (WP-01..WP-02)."
  },
  "toolchains": {
   "go": {
@@ -35,15 +36,15 @@
    "language_level_note": "The TOOLCHAIN is 21; the Android module still COMPILES to Java 17 language level (compileOptions in android-app/app/build.gradle.kts). CR-002 needed a javac that can read bytecode-65 class files, which is a property of the JDK and not of -source/-target. Raising what the app emits is a separate change, deferred to WP-03."
   },
   "node": {
-   "version": "26.7.0",
-   "npm": "11.19.0",
-   "channel": "current",
-   "verified": "v26.7.0",
-   "path": "C:\\Program Files\\nodejs\\node.exe",
+   "version": "22.23.5",
+   "npm": "10.9.9",
+   "channel": "lts",
+   "verified": "v22.23.5",
+   "path": "/usr/local/bin/node (Linux cloud authoring container)",
    "license": "MIT",
-   "install": "winget install --id OpenJS.NodeJS.LTS --exact",
+   "install": "preinstalled in the Claude cloud authoring container",
    "why": "admin-console empty-shell build (TypeScript, ESLint + tsc strict) in slice S7.",
-   "version_note": "This entry records the AUTHORING HOST, which moved to v26.7.0 between WP-01 and WP-02 S1; updated on owner ruling 2026-08-14. The CI pin is separate and deliberately stays on the 24 LTS line: both workflows set node-version '24', and @types/node 24.x in admin-console describes that runtime. Moving CI is a TRS-CICD-006 controlled update, not a side effect of the host drifting."
+   "version_note": "This entry records the AUTHORING HOST, which moved a second time at WP-03 S0 (owner handover 2026-11-19): from the Windows laptop (v26.7.0) to the Linux cloud authoring container (v22.23.5 LTS). The CI pin is separate and deliberately stays on the 24 LTS line: both workflows set node-version '24', and @types/node 24.x in admin-console describes that runtime. Moving CI is a TRS-CICD-006 controlled update, not a side effect of the host moving. Earlier hosts are named in the history rather than deleted: laptop v26.7.0 (WP-02), laptop v24.19.0 (WP-01)."
   },
   "swift": {
    "version": null,
@@ -160,13 +161,13 @@
   "modules": [
    {
     "path": "com.puppycrawl.tools:checkstyle",
-    "version": "12.3.1",
+    "version": "13.11.0",
     "license": "LGPL-2.1-or-later",
     "license_note": "Copyleft-family, flagged explicitly. Build-time analyser only; never distributed.",
     "why": "Java source rules of TRS Sec. 24: the TRS-CODE-004 file and complexity budgets, TRS-CODE-002 public-API Javadoc, TRS-CODE-008 error handling and TRS-CODE-007 naming.",
     "pinned_in": "gradle/libs.versions.toml",
     "config": "tools/staticanalysis/checkstyle/checkstyle.xml",
-    "version_note": "Held on 12.x. 13.10.0 was installed first and refused to run: 'Checkstyle 13.10.0 is not compatible with the configured JVM (17)'. TRS Sec. 5.3 pins the Java 17 toolchain, so moving to 13.x would mean provisioning a second JDK to satisfy a linter - a specification change dressed up as a tool upgrade. 12.3.1 is the newest release that runs on 17."
+    "version_note": "Raised from 12.3.1 at WP-03 S0 on the owner ruling of 2026-08-19 (WP-02 boundary audit): CR-002's Java 21 toolchain removed the JVM incompatibility that held 12.x ('Checkstyle 13.10.0 is not compatible with the configured JVM (17)'). 13.11.0 was executed against both Java modules under the existing explicit checkstyle.xml with zero violations - the config enumerates its rules rather than inheriting defaults, so the 13.x default-set changes introduce nothing silently; any new rule is adopted by editing the config, which is a reviewed change."
    },
    {
     "path": "com.github.spotbugs:spotbugs",
@@ -254,9 +255,10 @@
    },
    {
     "path": "typescript-eslint",
-    "version": "8.67.0",
+    "version": "8.73.0",
     "license": "MIT",
-    "why": "TypeScript parser and rules for ESLint 9 flat config."
+    "why": "TypeScript parser and rules for ESLint 9 flat config.",
+    "version_note": "Raised 8.67.0 -> 8.73.0 (semver-minor) at WP-03 S0: GHSA-g3hv-75wg-m249 (moderate, minimatch 7.0.0-11.0.0 DoS) reached the lockfile through @typescript-eslint/typescript-estree's minimatch ^10; 8.73.0 moved to ^11.0.1, which is fixed. Chosen over `npm audit fix --force`, whose path was an ESLint 10 major jump the WP-01 ruling reserves for a deliberate decision. The same npm-audit pass also refreshed transitive brace-expansion and js-yaml (both high, lockfile-only moves). "
    },
    {
     "path": "@types/node",

@@ -14,10 +14,10 @@ import (
 	"encoding/hex"
 	"fmt"
 
-	"github.com/dharabhishekemail-ops/lumos/protocol/adv"
-	"github.com/dharabhishekemail-ops/lumos/protocol/config"
-	"github.com/dharabhishekemail-ops/lumos/protocol/gen/go/lumosconstants"
-	"github.com/dharabhishekemail-ops/lumos/protocol/media"
+	"github.com/dharabhishekorg/lumos/protocol/adv"
+	"github.com/dharabhishekorg/lumos/protocol/config"
+	"github.com/dharabhishekorg/lumos/protocol/gen/go/lumosconstants"
+	"github.com/dharabhishekorg/lumos/protocol/media"
 )
 
 // ---- adv/ble_advertisement.json ----

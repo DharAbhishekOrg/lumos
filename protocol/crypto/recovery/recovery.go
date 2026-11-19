@@ -38,9 +38,9 @@ import (
 	"golang.org/x/crypto/argon2"
 	"golang.org/x/crypto/chacha20poly1305"
 
-	"github.com/dharabhishekemail-ops/lumos/protocol/gen/go/lumosconstants"
-	"github.com/dharabhishekemail-ops/lumos/protocol/gen/go/lumoserrors"
-	"github.com/dharabhishekemail-ops/lumos/protocol/wire"
+	"github.com/dharabhishekorg/lumos/protocol/gen/go/lumosconstants"
+	"github.com/dharabhishekorg/lumos/protocol/gen/go/lumoserrors"
+	"github.com/dharabhishekorg/lumos/protocol/wire"
 )
 
 // Magic identifies a Lumos recovery record. Eight bytes, so a file-type sniff

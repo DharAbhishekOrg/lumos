@@ -17,9 +17,9 @@ import (
 
 	"golang.org/x/crypto/chacha20poly1305"
 
-	"github.com/dharabhishekemail-ops/lumos/protocol/gen/go/lumosconstants"
-	"github.com/dharabhishekemail-ops/lumos/protocol/gen/go/lumoserrors"
-	"github.com/dharabhishekemail-ops/lumos/protocol/wire"
+	"github.com/dharabhishekorg/lumos/protocol/gen/go/lumosconstants"
+	"github.com/dharabhishekorg/lumos/protocol/gen/go/lumoserrors"
+	"github.com/dharabhishekorg/lumos/protocol/wire"
 )
 
 // KeySize and NonceSize are the ChaCha20-Poly1305 (IETF) parameters of ADR-001.

@@ -16,8 +16,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/dharabhishekemail-ops/lumos/protocol/gen/go/lumoserrors"
-	"github.com/dharabhishekemail-ops/lumos/protocol/wire"
+	"github.com/dharabhishekorg/lumos/protocol/gen/go/lumoserrors"
+	"github.com/dharabhishekorg/lumos/protocol/wire"
 )
 
 func mustHex(t *testing.T, s string) []byte {

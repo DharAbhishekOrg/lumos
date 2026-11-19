@@ -20,7 +20,7 @@ import (
 	"os"
 	"time"
 
-	"github.com/dharabhishekemail-ops/lumos/protocol/gen/go/lumosconstants"
+	"github.com/dharabhishekorg/lumos/protocol/gen/go/lumosconstants"
 )
 
 // Build provenance, injected at link time by the release build (TRS-REP-007).

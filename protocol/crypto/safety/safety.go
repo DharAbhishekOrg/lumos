@@ -20,7 +20,7 @@ import (
 	"encoding/binary"
 	"fmt"
 
-	"github.com/dharabhishekemail-ops/lumos/protocol/gen/go/lumosconstants"
+	"github.com/dharabhishekorg/lumos/protocol/gen/go/lumosconstants"
 )
 
 // DigitsLen and EmojiLen are the ADR-005 output shape.

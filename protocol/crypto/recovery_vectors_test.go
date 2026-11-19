@@ -17,8 +17,8 @@ import (
 	"errors"
 	"testing"
 
-	"github.com/dharabhishekemail-ops/lumos/protocol/crypto/recovery"
-	"github.com/dharabhishekemail-ops/lumos/protocol/wire"
+	"github.com/dharabhishekorg/lumos/protocol/crypto/recovery"
+	"github.com/dharabhishekorg/lumos/protocol/wire"
 )
 
 const recoveryVectorPath = "test-vectors/crypto/recovery_record.json"

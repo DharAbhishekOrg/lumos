@@ -16,9 +16,9 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/dharabhishekemail-ops/lumos/protocol/gen/go/lumosconstants"
-	"github.com/dharabhishekemail-ops/lumos/protocol/schema"
-	"github.com/dharabhishekemail-ops/lumos/protocol/wire"
+	"github.com/dharabhishekorg/lumos/protocol/gen/go/lumosconstants"
+	"github.com/dharabhishekorg/lumos/protocol/schema"
+	"github.com/dharabhishekorg/lumos/protocol/wire"
 )
 
 // KeyProvenance names the deterministic seed namespace. Every derived byte in

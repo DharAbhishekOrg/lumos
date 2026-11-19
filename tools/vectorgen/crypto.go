@@ -17,12 +17,12 @@ import (
 	"encoding/hex"
 	"fmt"
 
-	"github.com/dharabhishekemail-ops/lumos/protocol/crypto/aead"
-	"github.com/dharabhishekemail-ops/lumos/protocol/crypto/ratchet"
-	"github.com/dharabhishekemail-ops/lumos/protocol/crypto/safety"
-	"github.com/dharabhishekemail-ops/lumos/protocol/crypto/x3dh"
-	"github.com/dharabhishekemail-ops/lumos/protocol/gen/go/lumosconstants"
-	"github.com/dharabhishekemail-ops/lumos/protocol/wire"
+	"github.com/dharabhishekorg/lumos/protocol/crypto/aead"
+	"github.com/dharabhishekorg/lumos/protocol/crypto/ratchet"
+	"github.com/dharabhishekorg/lumos/protocol/crypto/safety"
+	"github.com/dharabhishekorg/lumos/protocol/crypto/x3dh"
+	"github.com/dharabhishekorg/lumos/protocol/gen/go/lumosconstants"
+	"github.com/dharabhishekorg/lumos/protocol/wire"
 )
 
 // cryptoSeed derives deterministic key material for a labelled role.

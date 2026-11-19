@@ -19,8 +19,8 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/dharabhishekemail-ops/lumos/protocol/gen/go/lumosconstants"
-	"github.com/dharabhishekemail-ops/lumos/protocol/schema"
+	"github.com/dharabhishekorg/lumos/protocol/gen/go/lumosconstants"
+	"github.com/dharabhishekorg/lumos/protocol/schema"
 )
 
 type vectorFields struct {
