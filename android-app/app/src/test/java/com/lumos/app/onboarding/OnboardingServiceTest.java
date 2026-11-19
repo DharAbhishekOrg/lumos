@@ -132,7 +132,7 @@ final class OnboardingServiceTest {
             service.createIdentity();
 
             assertSame(OnboardingState.COMPLETE, service.machine().state());
-            assertFalse(new DiscoveryVisibility(stack.store()).isVisibleNearby(),
+            assertFalse(new DiscoveryVisibility(stack.store()).isVisibleNearby(NOW),
                     "SRS-ONB-008: finishing onboarding is an installation, and an "
                             + "installation does not make anybody discoverable");
         }

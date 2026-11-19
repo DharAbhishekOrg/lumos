@@ -248,6 +248,12 @@
    "maximum": 30,
    "description": "config_venue_ops.VENUE_ROOM_POST_RATE_PER_MIN.default (register default 10)"
   },
+  "VISIBLE_NEARBY_DURATION_SEC": {
+   "type": "integer",
+   "minimum": 900,
+   "maximum": 28800,
+   "description": "onboarding_safety.VISIBLE_NEARBY_DURATION_SEC.default (register default 3600)"
+  },
   "VOICE_NOTE.max_sec": {
    "type": "integer",
    "minimum": 30,
@@ -269,7 +275,7 @@
  },
  "title": "Lumos signed-configuration overrides",
  "type": "object",
- "x-constants-hash": "sha256:8bb65dc5e630eb6df4261d8eb75296f6cdc5191f09de248c33dfbe2803e6e373",
+ "x-constants-hash": "sha256:cd16dcdf2cd4e16b4c90259fc5ee16f0e4890c9c00de72a7bd317b63475873fe",
  "x-cross-field-constraints": [
   {
    "constant": "SCAN_WINDOW_FG_MS",
@@ -295,7 +301,7 @@
    "rule": "on / (on + off) * 100 must fall within the stated duty-cycle range"
   }
  ],
- "x-overridable-count": 33,
+ "x-overridable-count": 34,
  "x-overridable-names": [
   "CONFIG_REFRESH_INTERVAL_HOURS",
   "DEDUP_CACHE",
@@ -328,6 +334,7 @@
   "SUPPORT_RING_BUFFER_MB",
   "THUMBNAIL_MAX_KB",
   "VENUE_ROOM_POST_RATE_PER_MIN",
+  "VISIBLE_NEARBY_DURATION_SEC",
   "VOICE_NOTE",
   "VOUCHER_NONCE_CACHE"
  ],

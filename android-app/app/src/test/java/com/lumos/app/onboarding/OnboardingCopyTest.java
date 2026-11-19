@@ -24,6 +24,7 @@
 
 package com.lumos.app.onboarding;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -230,5 +231,67 @@ final class OnboardingCopyTest {
             assertTrue(strings.containsKey(key), "missing copy: " + key);
             assertFalse(strings.get(key).isBlank(), "blank copy: " + key);
         }
+    }
+
+    @Test
+    void theConnectivityCopyNamesBothDependencies() {
+        // SRS-ONB-003: discovery depends on Bluetooth, remote chat on the
+        // internet - said plainly, in one place, before anything is requested.
+        final String copy = strings.get("connectivity_explainer").toLowerCase(Locale.ROOT);
+        assertTrue(copy.contains("bluetooth"), "nearby depends on Bluetooth");
+        assertTrue(copy.contains("internet"), "remote chat depends on the internet");
+        assertTrue(copy.contains("no account") || copy.contains("no sign-up"),
+                "and neither grows an account");
+    }
+
+    @Test
+    void theVisibilityCopyPromisesSelfExpiryAndNeverSelfStart() {
+        // SRS-NBY-001/002 and SRS-ONB-008, as words a person reads before
+        // choosing: it ends on its own, it never begins on its own.
+        final String copy = strings.get("visible_nearby_explainer").toLowerCase(Locale.ROOT);
+        assertTrue(copy.contains("turns itself off"), "the expiry promise (SRS-NBY-002)");
+        assertTrue(copy.contains("never turns itself on"), "the SRS-ONB-008 promise");
+        assertTrue(copy.contains("you choose"), "the duration is a choice (SRS-NBY-001)");
+    }
+
+    @Test
+    void proximityIsWordsAndNeverADistance() {
+        // SRS-PRO-013 names the three labels; indoor radio cannot honestly
+        // give metres, so no string anywhere may claim a distance.
+        assertEquals("Very close", strings.get("proximity_very_close"));
+        assertEquals("Nearby", strings.get("proximity_nearby"));
+        assertEquals("Around the venue", strings.get("proximity_around_venue"));
+
+        final List<String> distanceWords =
+                List.of(" metre", " meter", " feet", " foot", " yards", " km ", " kilometre");
+        final List<String> offences = new ArrayList<>();
+        for (final Map.Entry<String, String> entry : strings.entrySet()) {
+            final String text = " " + entry.getValue().toLowerCase(Locale.ROOT) + " ";
+            for (final String word : distanceWords) {
+                if (text.contains(word)) {
+                    offences.add(entry.getKey() + " claims '" + word.trim() + "'");
+                }
+            }
+        }
+        assertTrue(offences.isEmpty(),
+                "a precise indoor distance is a claim the radio cannot keep: " + offences);
+    }
+
+    @Test
+    void profileCopyStaysRespectful() {
+        // SRS-PRO-012: respectful, non-objectifying language, and no
+        // hot-or-not anywhere - the words are the first place it would creep
+        // back in.
+        final List<String> banned = List.of("hot or not", "rate people", "swipe", "hotness");
+        final List<String> offences = new ArrayList<>();
+        for (final Map.Entry<String, String> entry : strings.entrySet()) {
+            final String text = entry.getValue().toLowerCase(Locale.ROOT);
+            for (final String phrase : banned) {
+                if (text.contains(phrase)) {
+                    offences.add(entry.getKey() + " contains '" + phrase + "'");
+                }
+            }
+        }
+        assertTrue(offences.isEmpty(), "SRS-PRO-012: " + offences);
     }
 }

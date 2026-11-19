@@ -5,7 +5,7 @@
  "$generator": "tools/constantsgen",
  "service_uuid": "E853EB6A-775C-4A49-A6BF-320E6A5CC609",
  "$service_uuid_provenance": "One fixed 128-bit GATT service UUID per ADR-002 / TRS Sec. 9.3, generated once from a CSPRNG as an RFC 4122 version-4 UUID in WP-01 slice S2 and frozen here. Advertised by both platforms and used for scan filtering. No 16-bit alias is registered for flagship. Regenerating this value is a breaking protocol change.",
- "constants_hash": "sha256:8bb65dc5e630eb6df4261d8eb75296f6cdc5191f09de248c33dfbe2803e6e373",
+ "constants_hash": "sha256:cd16dcdf2cd4e16b4c90259fc5ee16f0e4890c9c00de72a7bd317b63475873fe",
  "constants_hash_algorithm": {
   "digest": "SHA-256",
   "encoding": "lowercase hex, prefixed 'sha256:'",
@@ -557,6 +557,11 @@
    "years": 18, "overridable": false,
    "notes": "The global adult-only floor. SRS-NFR-LEG-007 states it plainly: the adult-only 18+ gate applies globally. NOT overridable by signed configuration, and the asymmetry is deliberate - SRS-NFR-LEG-007 also allows jurisdictions with stricter duties to be gated per-market via configuration, but 'stricter' is the only direction that is ever safe and this register has no way to express a one-directional bound. An overridable entry with a [min,max] range would let a compromised or misconfigured config feed LOWER the age gate on a dating product, which SRS Sec. 2.4's stricter-reading rule forbids. Per-market raising therefore belongs to the work package that owns market configuration, as a separate entry with its own floor at this value and an approved change request; until then this number is the gate on every market. The gate stores only the affirmation and the value it was checked against (privacy data map Sec. 2.3) - never the date of birth it was computed from.",
    "anchors": ["SRS-ONB-001", "SRS-NFR-LEG-007"], "adr": ["ADR-004"], "source": "SRS-NFR-LEG-007 / WP-02 S4c"
+  },
+  "VISIBLE_NEARBY_DURATION_SEC": {
+   "default": 3600, "min": 900, "max": 28800, "overridable": true,
+   "notes": "SRS-NBY-001's bounded visibility durations: default one hour, and [min,max] is BOTH the signed-config override range for the default AND the range a user's custom duration may take (fifteen minutes to eight hours). Until-venue-exit is a MODE, not a duration - it ends on the venue-exit event and still never renews itself (SRS-NBY-002). The eight-hour ceiling is a privacy bound: visibility that quietly spans a day stops being a session someone chose.",
+   "anchors": ["SRS-NBY-001", "SRS-NBY-002"], "source": "SRS-NBY-001 derivation / WP-03 S5"
   }
  },
 

@@ -50,7 +50,7 @@ final class NoAutoVisibilityTest {
     @Test
     void afterInstallationNothingIsBroadcast() throws Exception {
         try (Fixtures.Stack stack = Fixtures.openInMemory()) {
-            assertFalse(new DiscoveryVisibility(stack.store()).isVisibleNearby(),
+            assertFalse(new DiscoveryVisibility(stack.store()).isVisibleNearby(NOW),
                     "a device that has never been told otherwise is not discoverable");
         }
     }
@@ -74,7 +74,7 @@ final class NoAutoVisibilityTest {
 
             assertEquals(0, store.count(RecordKind.DISCOVERY_VISIBILITY),
                     "the migration creates the table and writes no row into it");
-            assertFalse(new DiscoveryVisibility(store).isVisibleNearby(),
+            assertFalse(new DiscoveryVisibility(store).isVisibleNearby(NOW),
                     "updating the app must not make anyone discoverable");
         }
     }
@@ -90,7 +90,7 @@ final class NoAutoVisibilityTest {
         try (JdbcSqlDatabase database = JdbcSqlDatabase.atPath(file)) {
             final LocalStore store = LocalStore.open(database, databaseKey,
                     () -> Long.MAX_VALUE, () -> NOW);
-            assertFalse(new DiscoveryVisibility(store).isVisibleNearby());
+            assertFalse(new DiscoveryVisibility(store).isVisibleNearby(NOW));
         }
 
         // Reboot: the process is gone and the file is all that is left.
@@ -98,18 +98,19 @@ final class NoAutoVisibilityTest {
             final LocalStore store = LocalStore.open(reopened, databaseKey,
                     () -> Long.MAX_VALUE, () -> NOW);
             final DiscoveryVisibility visibility = new DiscoveryVisibility(store);
-            assertFalse(visibility.isVisibleNearby(), "off survives a restart as off");
+            assertFalse(visibility.isVisibleNearby(NOW), "off survives a restart as off");
 
-            visibility.enableAfterExplicitUserRequest(NOW);
-            assertTrue(visibility.isVisibleNearby());
+            visibility.enableAfterExplicitUserRequest(
+                    DiscoveryVisibility.Selection.defaultSession(), NOW);
+            assertTrue(visibility.isVisibleNearby(NOW));
         }
 
         try (JdbcSqlDatabase reopened = JdbcSqlDatabase.atPath(file)) {
             final LocalStore store = LocalStore.open(reopened, databaseKey,
                     () -> Long.MAX_VALUE, () -> NOW);
-            assertTrue(new DiscoveryVisibility(store).isVisibleNearby(),
-                    "and on survives a restart as on - a reboot is not a reason to "
-                            + "change what the user chose, in either direction");
+            assertTrue(new DiscoveryVisibility(store).isVisibleNearby(NOW),
+                    "and on survives a restart as on, inside its window - a reboot is "
+                            + "not a reason to change what the user chose, in either direction");
         }
     }
 
@@ -127,20 +128,37 @@ final class NoAutoVisibilityTest {
             mutators.add(method.getName());
         }
         java.util.Collections.sort(mutators);
-        assertEquals(List.of("disable", "enableAfterExplicitUserRequest", "isVisibleNearby"),
+        assertEquals(List.of("disable", "enableAfterExplicitUserRequest", "endOnVenueExit",
+                        "indicator", "isVisibleNearby"),
                 mutators,
                 "exactly one method may turn Visible Nearby on, and its name says who "
-                        + "must have asked; anything else here is a way for an install, "
-                        + "an update, a reboot or a permission grant to do it instead");
+                        + "must have asked; endOnVenueExit and disable only turn it OFF, "
+                        + "indicator and isVisibleNearby only read; anything else here is "
+                        + "a way for an install, an update, a reboot or a permission "
+                        + "grant to do it instead");
     }
 
     @Test
     void anUnreadableRecordReadsAsOff() throws Exception {
         try (Fixtures.Stack stack = Fixtures.openInMemory()) {
             stack.store().put(RecordKind.DISCOVERY_VISIBILITY, DiscoveryVisibility.VISIBILITY_ID,
-                    "lumos-visibility/99\non\n0\n".getBytes(StandardCharsets.UTF_8), null);
-            assertFalse(new DiscoveryVisibility(stack.store()).isVisibleNearby(),
+                    "lumos-visibility/99\ndefault\non\n0\n0\n".getBytes(StandardCharsets.UTF_8),
+                    null);
+            assertFalse(new DiscoveryVisibility(stack.store()).isVisibleNearby(NOW),
                     "a record from a format this build does not know fails towards off");
+        }
+    }
+
+    @Test
+    void aPreviousFormatVersionReadsAsOffBecauseAnUpdateIsATrigger() throws Exception {
+        // The S5 format change is itself the SRS-ONB-008 update case: a device
+        // that was visible under the WP-02 format comes back NOT visible, and
+        // the person chooses again with a duration (SRS-NBY-001).
+        try (Fixtures.Stack stack = Fixtures.openInMemory()) {
+            stack.store().put(RecordKind.DISCOVERY_VISIBILITY, DiscoveryVisibility.VISIBILITY_ID,
+                    "lumos-visibility/1\non\n0\n".getBytes(StandardCharsets.UTF_8), null);
+            assertFalse(new DiscoveryVisibility(stack.store()).isVisibleNearby(NOW),
+                    "visibility must not carry across an app update's format change");
         }
     }
 
@@ -148,10 +166,11 @@ final class NoAutoVisibilityTest {
     void turningItOffTakesEffectImmediately() throws Exception {
         try (Fixtures.Stack stack = Fixtures.openInMemory()) {
             final DiscoveryVisibility visibility = new DiscoveryVisibility(stack.store());
-            visibility.enableAfterExplicitUserRequest(NOW);
-            assertTrue(visibility.isVisibleNearby());
+            visibility.enableAfterExplicitUserRequest(
+                    DiscoveryVisibility.Selection.defaultSession(), NOW);
+            assertTrue(visibility.isVisibleNearby(NOW));
             visibility.disable(NOW + 1);
-            assertFalse(visibility.isVisibleNearby());
+            assertFalse(visibility.isVisibleNearby(NOW + 1));
         }
     }
 }
