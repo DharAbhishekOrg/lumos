@@ -1254,13 +1254,24 @@
   },
   {
    "req_id": "SRS-NBY-004",
-   "status": "not_started",
-   "code": [],
-   "tests": [],
+   "status": "tested",
+   "code": [
+    "android-app/protocol-java/src/main/java/com/lumos/protocol/adv/Adv.java",
+    "ios-app/protocol-conformance/Sources/LumosProtocol/Adv.swift",
+    "protocol/adv/adv.go"
+   ],
+   "tests": [
+    "go:protocol/adv:TestLayoutMatchesADR002",
+    "go:protocol/adv:TestNoProhibitedContentCapacity",
+    "java:protocol-conformance:CryptoConformanceTest.advertisement",
+    "swift:LumosProtocolConformance:CryptoConformanceTests.testAdvertisementScheduleAndNegatives"
+   ],
    "evidence": [],
-   "adr": [],
-   "last_commit": null,
-   "updated": null
+   "adr": [
+    "ADR-002"
+   ],
+   "last_commit": "7147fc8",
+   "updated": "2026-11-19"
   },
   {
    "req_id": "SRS-NBY-005",
@@ -1410,13 +1421,20 @@
   },
   {
    "req_id": "SRS-NBY-016",
-   "status": "not_started",
-   "code": [],
-   "tests": [],
+   "status": "tested",
+   "code": [
+    "android-app/app/src/main/java/com/lumos/app/ble/NearbyLabels.java",
+    "android-app/app/src/main/res/values/strings.xml"
+   ],
+   "tests": [
+    "java:app-dev:OnboardingCopyTest.proximityIsWordsAndNeverADistance"
+   ],
    "evidence": [],
-   "adr": [],
-   "last_commit": null,
-   "updated": null
+   "adr": [
+    "ADR-002"
+   ],
+   "last_commit": "7147fc8",
+   "updated": "2026-11-19"
   },
   {
    "req_id": "SRS-NBY-017",
@@ -7914,13 +7932,26 @@
   },
   {
    "req_id": "TRS-TRN-002",
-   "status": "not_started",
-   "code": [],
-   "tests": [],
+   "status": "implemented",
+   "code": [
+    "android-app/app/src/main/java/com/lumos/app/ble/FrameLink.java",
+    "android-app/protocol-java/src/main/java/com/lumos/protocol/wire/FragmentReassembler.java",
+    "android-app/protocol-java/src/main/java/com/lumos/protocol/wire/Fragmenter.java",
+    "ios-app/shell/Sources/LumosAppShell/FrameChannel.swift",
+    "ios-app/shell/Sources/LumosAppShell/PacedWriteQueue.swift"
+   ],
+   "tests": [
+    "java:app-dev:FrameLinkTest.aBlobCrossesTheLinkWholeOneWriteAtATime",
+    "java:app-dev:FrameLinkTest.sequentialSendsDoNotInterleaveFragments",
+    "java:protocol-conformance:FragmentationConformanceTest.splitVectorsReproduceByteForByte",
+    "swift:LumosAppShell:BleTransportTests.testABlobCrossesTheChannelWholeAndPaced"
+   ],
    "evidence": [],
-   "adr": [],
-   "last_commit": null,
-   "updated": null
+   "adr": [
+    "ADR-002"
+   ],
+   "last_commit": "7147fc8",
+   "updated": "2026-11-19"
   },
   {
    "req_id": "TRS-TRN-003",
