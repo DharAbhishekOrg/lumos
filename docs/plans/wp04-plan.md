@@ -41,8 +41,11 @@ AT-005 closes the package end to end.
 
 ### S1 — The Nearby feed surface (the WP-03 §6.2 destination)
 Material 3 native Views/XML on Android (TRS-AND-003, Java 17), SwiftUI on
-iOS (TRS-IOS-001), mounted on `PresenceTable` and nothing else. Expected to
-ship as S1a (Android) / S1b (iOS) per the S2/S5 precedent.
+iOS (TRS-IOS-001), mounted on `PresenceTable` and nothing else. Shipped as
+three PRs (the S2/S5 precedent, recorded as the split happened): S1a the
+Android machines over schema v4, S1b the iOS machine siblings, S1c the
+rendering layers with the instrumented state demo that closes the WP-03
+§6.3 exit gap.
 - Feed list over presence cards with skeleton and empty states, no
   indefinite spinners (SRS-NBY-014); proximity words from NearbyLabels, no
   plumbing vocabulary anywhere a user reads (SRS-NBY-008 as an executable

@@ -477,7 +477,7 @@
     "ADR-008",
     "ADR-010"
    ],
-   "last_commit": "f2670dc",
+   "last_commit": "5d1076c",
    "updated": "2026-11-19"
   },
   {
@@ -1364,10 +1364,12 @@
    "status": "implemented",
    "code": [
     "android-app/app/src/main/java/com/lumos/app/nearby/FeedState.java",
-    "android-app/app/src/main/java/com/lumos/app/nearby/NearbyFeedController.java"
+    "android-app/app/src/main/java/com/lumos/app/nearby/NearbyFeedController.java",
+    "ios-app/shell/Sources/LumosAppShell/NearbyFeed.swift"
    ],
    "tests": [
-    "java:app-dev:NearbyFeedControllerTest.everyTypedScanFailureFoldsToAStateTheUserCanActOn"
+    "java:app-dev:NearbyFeedControllerTest.everyTypedScanFailureFoldsToAStateTheUserCanActOn",
+    "swift:LumosAppShell:NearbyFeedTests.testEveryTypedScanFailureFoldsToAStateTheUserCanActOn"
    ],
    "evidence": [],
    "adr": [
@@ -1380,10 +1382,12 @@
    "req_id": "SRS-NBY-011",
    "status": "implemented",
    "code": [
-    "android-app/app/src/main/java/com/lumos/app/nearby/NearbyFeedController.java"
+    "android-app/app/src/main/java/com/lumos/app/nearby/NearbyFeedController.java",
+    "ios-app/shell/Sources/LumosAppShell/NearbyFeed.swift"
    ],
    "tests": [
-    "java:app-dev:NearbyFeedControllerTest.theInterestFilterIsLocalAndOptIn"
+    "java:app-dev:NearbyFeedControllerTest.theInterestFilterIsLocalAndOptIn",
+    "swift:LumosAppShell:NearbyFeedTests.testTheInterestFilterIsLocalAndOptInAndCardsArriveNewestFirst"
    ],
    "evidence": [],
    "adr": [
@@ -1399,10 +1403,12 @@
     "android-app/app/src/main/java/com/lumos/app/nearby/HiddenPeers.java",
     "android-app/app/src/main/java/com/lumos/app/nearby/NearbyFeedController.java",
     "android-app/app/src/main/java/com/lumos/app/store/LocalSchema.java",
-    "ios-app/shell/Sources/LumosAppShell/LocalSchema.swift"
+    "ios-app/shell/Sources/LumosAppShell/LocalSchema.swift",
+    "ios-app/shell/Sources/LumosAppShell/NearbyFeed.swift"
    ],
    "tests": [
-    "java:app-dev:NearbyFeedControllerTest.aHiddenCardStaysGoneForAFreshControllerOverTheSameStore"
+    "java:app-dev:NearbyFeedControllerTest.aHiddenCardStaysGoneForAFreshControllerOverTheSameStore",
+    "swift:LumosAppShell:NearbyFeedTests.testHiddenStaysGoneAndBlockedNeverReappearsUnderRotation"
    ],
    "evidence": [],
    "adr": [
@@ -1417,10 +1423,12 @@
    "status": "tested",
    "code": [
     "android-app/app/src/main/java/com/lumos/app/nearby/BlockedPeers.java",
-    "android-app/app/src/main/java/com/lumos/app/nearby/NearbyFeedController.java"
+    "android-app/app/src/main/java/com/lumos/app/nearby/NearbyFeedController.java",
+    "ios-app/shell/Sources/LumosAppShell/NearbyFeed.swift"
    ],
    "tests": [
-    "java:app-dev:NearbyFeedControllerTest.aBlockedIdentityNeverReappearsUnderRotation"
+    "java:app-dev:NearbyFeedControllerTest.aBlockedIdentityNeverReappearsUnderRotation",
+    "swift:LumosAppShell:NearbyFeedTests.testHiddenStaysGoneAndBlockedNeverReappearsUnderRotation"
    ],
    "evidence": [],
    "adr": [
@@ -1435,10 +1443,12 @@
    "status": "implemented",
    "code": [
     "android-app/app/src/main/java/com/lumos/app/nearby/FeedState.java",
-    "android-app/app/src/main/java/com/lumos/app/nearby/NearbyFeedController.java"
+    "android-app/app/src/main/java/com/lumos/app/nearby/NearbyFeedController.java",
+    "ios-app/shell/Sources/LumosAppShell/NearbyFeed.swift"
    ],
    "tests": [
-    "java:app-dev:NearbyFeedControllerTest.emptyIsAFirstClassStateAndCardsArriveNewestConfirmedFirst"
+    "java:app-dev:NearbyFeedControllerTest.emptyIsAFirstClassStateAndCardsArriveNewestConfirmedFirst",
+    "swift:LumosAppShell:NearbyFeedTests.testTheInterestFilterIsLocalAndOptInAndCardsArriveNewestFirst"
    ],
    "evidence": [],
    "adr": [
@@ -1451,10 +1461,12 @@
    "req_id": "SRS-NBY-015",
    "status": "implemented",
    "code": [
-    "android-app/app/src/main/java/com/lumos/app/nearby/NearbyFeedController.java"
+    "android-app/app/src/main/java/com/lumos/app/nearby/NearbyFeedController.java",
+    "ios-app/shell/Sources/LumosAppShell/NearbyFeed.swift"
    ],
    "tests": [
-    "java:app-dev:FeedResponsivenessTest.aHundredRefreshesOverAHundredPlusPeersFitInsideTheStallBudget"
+    "java:app-dev:FeedResponsivenessTest.aHundredRefreshesOverAHundredPlusPeersFitInsideTheStallBudget",
+    "swift:LumosAppShell:NearbyFeedTests.testAHundredRefreshesOverAHundredPlusPeersFitTheStallBudget"
    ],
    "evidence": [],
    "adr": [
@@ -2488,10 +2500,12 @@
    "req_id": "SRS-NFR-PERF-009",
    "status": "implemented",
    "code": [
-    "android-app/app/src/main/java/com/lumos/app/nearby/NearbyFeedController.java"
+    "android-app/app/src/main/java/com/lumos/app/nearby/NearbyFeedController.java",
+    "ios-app/shell/Sources/LumosAppShell/NearbyFeed.swift"
    ],
    "tests": [
-    "java:app-dev:FeedResponsivenessTest.aHundredRefreshesOverAHundredPlusPeersFitInsideTheStallBudget"
+    "java:app-dev:FeedResponsivenessTest.aHundredRefreshesOverAHundredPlusPeersFitInsideTheStallBudget",
+    "swift:LumosAppShell:NearbyFeedTests.testAHundredRefreshesOverAHundredPlusPeersFitTheStallBudget"
    ],
    "evidence": [],
    "adr": [
@@ -2899,7 +2913,7 @@
     "ADR-003",
     "ADR-010"
    ],
-   "last_commit": "f2670dc",
+   "last_commit": "5d1076c",
    "updated": "2026-11-19"
   },
   {
@@ -6541,6 +6555,7 @@
     "android-app/app/src/main/java/com/lumos/app/ble/RescanLadder.java",
     "android-app/app/src/main/java/com/lumos/app/nearby/NearbyFeedController.java",
     "ios-app/shell/Sources/LumosAppShell/DiscoverySuccessMetric.swift",
+    "ios-app/shell/Sources/LumosAppShell/NearbyFeed.swift",
     "ios-app/shell/Sources/LumosAppShell/RescanLadder.swift"
    ],
    "tests": [
@@ -6558,6 +6573,7 @@
     "swift:LumosAppShell:DiscoverySuccessMetricTests.testSuccessIsPresenceNotEffort",
     "swift:LumosAppShell:DiscoverySuccessMetricTests.testTheBucketsDestroyTheExactCount",
     "swift:LumosAppShell:DiscoverySuccessMetricTests.testTheWholePayloadMatchesTheClosedGrammar",
+    "swift:LumosAppShell:NearbyFeedTests.testClosingTheViewWritesExactlyOneMetricRecord",
     "swift:LumosAppShell:RescanLadderTests.testLeavingNearbyOrGoingInvisibleResetsTheStep",
     "swift:LumosAppShell:RescanLadderTests.testOutsideTheGateNothingEscalates",
     "swift:LumosAppShell:RescanLadderTests.testSessionCountersRestartWithTheView",
@@ -6689,7 +6705,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "f2670dc",
+   "last_commit": "5d1076c",
    "updated": "2026-11-19"
   },
   {
@@ -6699,7 +6715,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "f2670dc",
+   "last_commit": "5d1076c",
    "updated": "2026-11-19"
   },
   {
@@ -6719,7 +6735,7 @@
    "adr": [
     "ADR-002"
    ],
-   "last_commit": "f2670dc",
+   "last_commit": "5d1076c",
    "updated": "2026-11-19"
   },
   {
@@ -6729,7 +6745,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "f2670dc",
+   "last_commit": "5d1076c",
    "updated": "2026-11-19"
   },
   {
@@ -6739,7 +6755,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "f2670dc",
+   "last_commit": "5d1076c",
    "updated": "2026-11-19"
   },
   {
@@ -6749,7 +6765,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "f2670dc",
+   "last_commit": "5d1076c",
    "updated": "2026-11-19"
   },
   {
@@ -6771,7 +6787,7 @@
     "ADR-003",
     "ADR-010"
    ],
-   "last_commit": "f2670dc",
+   "last_commit": "5d1076c",
    "updated": "2026-11-19"
   },
   {
@@ -6781,7 +6797,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "f2670dc",
+   "last_commit": "5d1076c",
    "updated": "2026-11-19"
   },
   {
@@ -6791,7 +6807,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "f2670dc",
+   "last_commit": "5d1076c",
    "updated": "2026-11-19"
   },
   {
@@ -6801,7 +6817,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "f2670dc",
+   "last_commit": "5d1076c",
    "updated": "2026-11-19"
   },
   {
@@ -6811,7 +6827,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "f2670dc",
+   "last_commit": "5d1076c",
    "updated": "2026-11-19"
   },
   {
@@ -6821,7 +6837,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "f2670dc",
+   "last_commit": "5d1076c",
    "updated": "2026-11-19"
   },
   {
@@ -6959,7 +6975,7 @@
    "adr": [
     "ADR-003"
    ],
-   "last_commit": "f2670dc",
+   "last_commit": "5d1076c",
    "updated": "2026-11-19"
   },
   {
@@ -7885,7 +7901,7 @@
    ],
    "evidence": [],
    "adr": [],
-   "last_commit": "f2670dc",
+   "last_commit": "5d1076c",
    "updated": "2026-11-19"
   },
   {
@@ -7946,7 +7962,7 @@
    ],
    "evidence": [],
    "adr": [],
-   "last_commit": "f2670dc",
+   "last_commit": "5d1076c",
    "updated": "2026-11-19"
   },
   {
