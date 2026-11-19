@@ -1,0 +1,430 @@
+{
+  "schema_version": 1,
+  "generator": "tools/vectorgen",
+  "constants_hash": "sha256:d65cfa8dfb493f4e4a78e6178b9cd9846c76731575da9fc12da6ea2a685c8586",
+  "implements": [
+    "TRS-PROTO-010",
+    "TRS-PROTO-015",
+    "TRS-TST-001"
+  ],
+  "key_provenance": "TESTONLY-lumos-vectors-v1",
+  "notes": "TRS-PROTO-010 transport fragmentation. The layer is content-opaque: blobs here are arbitrary derived bytes (one is an encoded canonical frame; the layer never knows). split cases pin exact fragment bytes - consumers byte-compare their own Split AND reassemble the committed fragments. scripts drive a reassembler through timelines with an injected millisecond clock and pin every offer's outcome: accepted/duplicate/complete flags or the exact stable error code. timeout_millis is REASSEMBLY_TIMEOUT_SEC.ble * 1000; elapsed time STRICTLY GREATER than the timeout expires an idle assembly.",
+  "split": [
+    {
+      "name": "frame_at_default_mtu",
+      "description": "An encoded canonical HELLO frame split at the 251-MTU budget (244). The layer does not know it is a frame.",
+      "chunk_payload": 244,
+      "assembly_id": 1,
+      "blob_hex": "4c4d10010000003a726ea162ec1069635cb4868e6955c94defd92cff3eb315b80c1dcd5c336103d50000000100000000000000180000012c0000bd3e09b63d4f426dbcf17a4daaed184f1b2bbe575285f855",
+      "fragments_hex": [
+        "03010000000000524c4d10010000003a726ea162ec1069635cb4868e6955c94defd92cff3eb315b80c1dcd5c336103d50000000100000000000000180000012c0000bd3e09b63d4f426dbcf17a4daaed184f1b2bbe575285f855"
+      ]
+    },
+    {
+      "name": "blob_at_floor_chunk",
+      "description": "A 299-byte opaque blob at the degraded-link floor budget (20).",
+      "chunk_payload": 20,
+      "assembly_id": 2,
+      "blob_hex": "38324e233343d4ecff29a570b129849cb8b6d10e620041b2d2847ddb3a157d7eead2a037172a37512f16b46fd8001189255821c102ee1f49be3fa51fd70d6eaad5e2629e1581c17289cbcb2841be6e35910c499fdeaaa1188f799ce76adfd581045ad59dcbe96df261fbb76ce70dcc0d61382a80667cfbad9ba530bd528da273183ca0653dd7507f8cda0916913aba94868ba2eff50e1026829dd22be3ce8e24cd45029655f6285f32f87c57c27e381124873d8d0b2747035df58abe7cd9a926373356ca169fcd7fbc2f2567bc7565e1e08b1c8c75a1ee6696e611e26a278945c62b665e8bd5c51cf0084363cd55206d1ab9e0604cd0da4b621eecf83097430039653217dd87a1aa7232ec959164f90afb982c3231c1799446d412fd30888a33035e7715620d3b2e9d26f5",
+      "fragments_hex": [
+        "010200000000012b38324e233343d4ecff29a570b129849c",
+        "00020001b8b6d10e620041b2d2847ddb3a157d7eead2a037",
+        "00020002172a37512f16b46fd8001189255821c102ee1f49",
+        "00020003be3fa51fd70d6eaad5e2629e1581c17289cbcb28",
+        "0002000441be6e35910c499fdeaaa1188f799ce76adfd581",
+        "00020005045ad59dcbe96df261fbb76ce70dcc0d61382a80",
+        "00020006667cfbad9ba530bd528da273183ca0653dd7507f",
+        "000200078cda0916913aba94868ba2eff50e1026829dd22b",
+        "00020008e3ce8e24cd45029655f6285f32f87c57c27e3811",
+        "0002000924873d8d0b2747035df58abe7cd9a926373356ca",
+        "0002000a169fcd7fbc2f2567bc7565e1e08b1c8c75a1ee66",
+        "0002000b96e611e26a278945c62b665e8bd5c51cf0084363",
+        "0002000ccd55206d1ab9e0604cd0da4b621eecf830974300",
+        "0002000d39653217dd87a1aa7232ec959164f90afb982c32",
+        "0002000e31c1799446d412fd30888a33035e7715620d3b2e",
+        "0202000f9d26f5"
+      ]
+    },
+    {
+      "name": "blob_at_odd_chunk",
+      "description": "A 1000-byte opaque blob at an odd 37-byte budget, exercising a non-aligned final fragment.",
+      "chunk_payload": 37,
+      "assembly_id": 3,
+      "blob_hex": "8d9e46e3f815e79d3420129c242754df4311929019a2aaf4888909adf756b22f09a6c2b9a6f2b65d8ee78e0e0e8860a82cddc1e3471379da68b6f3f4afe32ffb7e1a1cf241b7aecf7ad7386fa665f2f1e1a22be2ea434d5c8ce3dfd0071a564d18355c1fe90f54542fe4d14affc0184bcde122e38f73ba73548ba755ea7c033600d253cb8228747492a5dc5dcd4a2b1a8fbceeb3d3a43cba34d5931f7582466cf50acde3c58d46006ab47f68c246845e2d632584013b53a839c8613f78d9993204e6d41605a45aa87bf4b04ab7a14203e3bd9fb61d9cb7ff96be3e9ca84a151856576eff478cea3093b88174b811fe74b913b94baf22e8854a64bd58f2ffae1b3d694c99535526a18bf2d11db14d8e9f2358334303532f54efe3b332aba79cbe9effdf0c3e0759a61e437ca7bef8cbb1ed7efb604f59cb3f04a30c3ab7ff0ff7fc005003c7a95e5ee3406e9589306ef57570e0c3c20b6a019e2478e7fcdb33312dcbea2612bff444515241dc75adfd795a554fbf994b74acb887c06f04727de58b329721ab46f3e74bfb6ca939ca6153bda76aeadd4fab93f5c291d84dca46421f7b7cb1f47dcc23d2a8349f596e145fb0db542bac702885e91b7735a1d8074c123ba678e7d9cb8e53c345d2f7c35e6af19eac589fbbab658d53ef319ac1118fff84d53d0fac2cf83d8dbb513690a50f6eabc11b3a8e590187af507ec536176bf5eb44d9ef76bd947bcabb248ea293ae981b9bef0027c1f8c667e0ed2c38f18cefe6f7e97d1f35dd9c7ebb1f57accbcc1703bf6f7b0745960169f0cabce1ef65060be258ada286889f1f9891c2cc2eb9c07c2ac5e32fbb440db2b1e233064dd38729dd5cb9810901a153d5d153d2082b891ee426c036a56c460985aae74e435c5da80073eeae08be187382b0fcbc8a5673ffa4e5eda90a510d8d1d1904c52072b8a1d929dfc799779f16ffe043c0590aa7f83b9b67f046b0296f6b2424b1b09f7c21a317137fc9cd154c39f2ea766c448bca75c2de94988c6137cc3d3a6ccf675eee44ccdbabc9148d6466d8f968cc20633ce21e0476ef500c01cce0adf52fa18f3991e01d009dc9eaefc491dd12373c8339610fd0dd951294a1813d0cecfcac7843820eb4d985234fe9524ce29c1c66bf9ac4e1c01dbdb8e818d6422d31f1bef885cd1ed019621c40cc1f165d36932f3112d1687a4e2ee633d6a5533a4f02f1633c6877a7743eccf2d53f1d55f47c0e5a8bf3256e31bad344b7699954e1d8bd7950548a8137de96159518f81a09d47fd0db13e4ab4aa886188cccc0002eb3a1213915b625d2577920c4413440a5e8967dc2f6c14671e75cea4f41d2b43c61ef92cd41cf463068de477f869a6501a0100c9fcc6eb86d2695b3d95c748bed9e7eb10946119a1eb46c",
+      "fragments_hex": [
+        "01030000000003e88d9e46e3f815e79d3420129c242754df4311929019a2aaf4888909adf756b22f09",
+        "00030001a6c2b9a6f2b65d8ee78e0e0e8860a82cddc1e3471379da68b6f3f4afe32ffb7e1a1cf241b7",
+        "00030002aecf7ad7386fa665f2f1e1a22be2ea434d5c8ce3dfd0071a564d18355c1fe90f54542fe4d1",
+        "000300034affc0184bcde122e38f73ba73548ba755ea7c033600d253cb8228747492a5dc5dcd4a2b1a",
+        "000300048fbceeb3d3a43cba34d5931f7582466cf50acde3c58d46006ab47f68c246845e2d63258401",
+        "000300053b53a839c8613f78d9993204e6d41605a45aa87bf4b04ab7a14203e3bd9fb61d9cb7ff96be",
+        "000300063e9ca84a151856576eff478cea3093b88174b811fe74b913b94baf22e8854a64bd58f2ffae",
+        "000300071b3d694c99535526a18bf2d11db14d8e9f2358334303532f54efe3b332aba79cbe9effdf0c",
+        "000300083e0759a61e437ca7bef8cbb1ed7efb604f59cb3f04a30c3ab7ff0ff7fc005003c7a95e5ee3",
+        "00030009406e9589306ef57570e0c3c20b6a019e2478e7fcdb33312dcbea2612bff444515241dc75ad",
+        "0003000afd795a554fbf994b74acb887c06f04727de58b329721ab46f3e74bfb6ca939ca6153bda76a",
+        "0003000beadd4fab93f5c291d84dca46421f7b7cb1f47dcc23d2a8349f596e145fb0db542bac702885",
+        "0003000ce91b7735a1d8074c123ba678e7d9cb8e53c345d2f7c35e6af19eac589fbbab658d53ef319a",
+        "0003000dc1118fff84d53d0fac2cf83d8dbb513690a50f6eabc11b3a8e590187af507ec536176bf5eb",
+        "0003000e44d9ef76bd947bcabb248ea293ae981b9bef0027c1f8c667e0ed2c38f18cefe6f7e97d1f35",
+        "0003000fdd9c7ebb1f57accbcc1703bf6f7b0745960169f0cabce1ef65060be258ada286889f1f9891",
+        "00030010c2cc2eb9c07c2ac5e32fbb440db2b1e233064dd38729dd5cb9810901a153d5d153d2082b89",
+        "000300111ee426c036a56c460985aae74e435c5da80073eeae08be187382b0fcbc8a5673ffa4e5eda9",
+        "000300120a510d8d1d1904c52072b8a1d929dfc799779f16ffe043c0590aa7f83b9b67f046b0296f6b",
+        "000300132424b1b09f7c21a317137fc9cd154c39f2ea766c448bca75c2de94988c6137cc3d3a6ccf67",
+        "000300145eee44ccdbabc9148d6466d8f968cc20633ce21e0476ef500c01cce0adf52fa18f3991e01d",
+        "00030015009dc9eaefc491dd12373c8339610fd0dd951294a1813d0cecfcac7843820eb4d985234fe9",
+        "00030016524ce29c1c66bf9ac4e1c01dbdb8e818d6422d31f1bef885cd1ed019621c40cc1f165d3693",
+        "000300172f3112d1687a4e2ee633d6a5533a4f02f1633c6877a7743eccf2d53f1d55f47c0e5a8bf325",
+        "000300186e31bad344b7699954e1d8bd7950548a8137de96159518f81a09d47fd0db13e4ab4aa88618",
+        "000300198cccc0002eb3a1213915b625d2577920c4413440a5e8967dc2f6c14671e75cea4f41d2b43c",
+        "0003001a61ef92cd41cf463068de477f869a6501a0100c9fcc6eb86d2695b3d95c748bed9e7eb10946",
+        "0203001b119a1eb46c"
+      ]
+    },
+    {
+      "name": "single_fragment_blob",
+      "description": "A 10-byte blob that fits one fragment: FIRST|LAST together.",
+      "chunk_payload": 244,
+      "assembly_id": 4,
+      "blob_hex": "a15001ade29c0ad69d1d",
+      "fragments_hex": [
+        "030400000000000aa15001ade29c0ad69d1d"
+      ]
+    }
+  ],
+  "scripts": [
+    {
+      "name": "in_order_reassembly",
+      "description": "Every fragment in order completes with the original blob.",
+      "timeout_millis": 120000,
+      "steps": [
+        {
+          "at_millis": 0,
+          "fragment_hex": "010a000000000065d86665448d73239af3b389f844738648",
+          "expect": "accepted"
+        },
+        {
+          "at_millis": 10,
+          "fragment_hex": "000a0001f5bd0860b87eee8bf24b1da1c1950b0b0998e3dc",
+          "expect": "accepted"
+        },
+        {
+          "at_millis": 20,
+          "fragment_hex": "000a0002239cf0a33ea72d46cabee5d4734a293e68e3439a",
+          "expect": "accepted"
+        },
+        {
+          "at_millis": 30,
+          "fragment_hex": "000a00038cbc1740df672c5ea060cc3d843d35169deb2d4e",
+          "expect": "accepted"
+        },
+        {
+          "at_millis": 40,
+          "fragment_hex": "000a00047c41ff1b717a9def81d770569e08c307e7eabced",
+          "expect": "accepted"
+        },
+        {
+          "at_millis": 50,
+          "fragment_hex": "020a0005b707684f37",
+          "expect": "complete",
+          "payload_hex": "d86665448d73239af3b389f844738648f5bd0860b87eee8bf24b1da1c1950b0b0998e3dc239cf0a33ea72d46cabee5d4734a293e68e3439a8cbc1740df672c5ea060cc3d843d35169deb2d4e7c41ff1b717a9def81d770569e08c307e7eabcedb707684f37"
+        }
+      ]
+    },
+    {
+      "name": "duplicate_fragment_suppressed",
+      "description": "A re-sent continuation is suppressed without disturbing the assembly (TRS-PROTO-010 duplicate suppression).",
+      "timeout_millis": 120000,
+      "steps": [
+        {
+          "at_millis": 0,
+          "fragment_hex": "010a000000000065d86665448d73239af3b389f844738648",
+          "expect": "accepted"
+        },
+        {
+          "at_millis": 10,
+          "fragment_hex": "000a0001f5bd0860b87eee8bf24b1da1c1950b0b0998e3dc",
+          "expect": "accepted"
+        },
+        {
+          "at_millis": 20,
+          "fragment_hex": "000a0001f5bd0860b87eee8bf24b1da1c1950b0b0998e3dc",
+          "expect": "duplicate"
+        },
+        {
+          "at_millis": 30,
+          "fragment_hex": "000a0002239cf0a33ea72d46cabee5d4734a293e68e3439a",
+          "expect": "accepted"
+        },
+        {
+          "at_millis": 40,
+          "fragment_hex": "000a00038cbc1740df672c5ea060cc3d843d35169deb2d4e",
+          "expect": "accepted"
+        },
+        {
+          "at_millis": 50,
+          "fragment_hex": "000a00047c41ff1b717a9def81d770569e08c307e7eabced",
+          "expect": "accepted"
+        },
+        {
+          "at_millis": 60,
+          "fragment_hex": "020a0005b707684f37",
+          "expect": "complete",
+          "payload_hex": "d86665448d73239af3b389f844738648f5bd0860b87eee8bf24b1da1c1950b0b0998e3dc239cf0a33ea72d46cabee5d4734a293e68e3439a8cbc1740df672c5ea060cc3d843d35169deb2d4e7c41ff1b717a9def81d770569e08c307e7eabcedb707684f37"
+        }
+      ]
+    },
+    {
+      "name": "straggler_after_completion_suppressed",
+      "description": "A reconnect epoch re-delivers a fragment of the assembly that already completed: suppressed, never an error.",
+      "timeout_millis": 120000,
+      "steps": [
+        {
+          "at_millis": 0,
+          "fragment_hex": "010b0000000000322b47f3917a552d4157b5e6adee5887e6",
+          "expect": "accepted"
+        },
+        {
+          "at_millis": 10,
+          "fragment_hex": "000b0001960e80a446c1557d983b2466435f54383513a08c",
+          "expect": "accepted"
+        },
+        {
+          "at_millis": 20,
+          "fragment_hex": "020b000232fb75eda327b34e773602398b2e",
+          "expect": "complete",
+          "payload_hex": "2b47f3917a552d4157b5e6adee5887e6960e80a446c1557d983b2466435f54383513a08c32fb75eda327b34e773602398b2e"
+        },
+        {
+          "at_millis": 110,
+          "fragment_hex": "000b0001960e80a446c1557d983b2466435f54383513a08c",
+          "expect": "duplicate"
+        }
+      ]
+    },
+    {
+      "name": "first_replaces_open_assembly",
+      "description": "A FIRST while another assembly is open abandons the old one and restarts; whole-message dedupe is the semantic layer's job.",
+      "timeout_millis": 120000,
+      "steps": [
+        {
+          "at_millis": 0,
+          "fragment_hex": "010a000000000065d86665448d73239af3b389f844738648",
+          "expect": "accepted"
+        },
+        {
+          "at_millis": 10,
+          "fragment_hex": "000a0001f5bd0860b87eee8bf24b1da1c1950b0b0998e3dc",
+          "expect": "accepted"
+        },
+        {
+          "at_millis": 20,
+          "fragment_hex": "010b0000000000322b47f3917a552d4157b5e6adee5887e6",
+          "expect": "accepted",
+          "restarted": true
+        },
+        {
+          "at_millis": 30,
+          "fragment_hex": "000b0001960e80a446c1557d983b2466435f54383513a08c",
+          "expect": "accepted"
+        },
+        {
+          "at_millis": 40,
+          "fragment_hex": "020b000232fb75eda327b34e773602398b2e",
+          "expect": "complete",
+          "payload_hex": "2b47f3917a552d4157b5e6adee5887e6960e80a446c1557d983b2466435f54383513a08c32fb75eda327b34e773602398b2e"
+        }
+      ]
+    },
+    {
+      "name": "reassembly_timeout_expires_assembly",
+      "description": "A continuation arriving past the idle timeout fails with the timeout code; a fresh FIRST then proceeds normally.",
+      "timeout_millis": 120000,
+      "steps": [
+        {
+          "at_millis": 0,
+          "fragment_hex": "010a000000000065d86665448d73239af3b389f844738648",
+          "expect": "accepted"
+        },
+        {
+          "at_millis": 120001,
+          "fragment_hex": "000a0001f5bd0860b87eee8bf24b1da1c1950b0b0998e3dc",
+          "expect": "error",
+          "error": "ERR_FRAG_REASSEMBLY_TIMEOUT"
+        },
+        {
+          "at_millis": 120002,
+          "fragment_hex": "010a000000000065d86665448d73239af3b389f844738648",
+          "expect": "accepted"
+        }
+      ]
+    },
+    {
+      "name": "first_over_idle_assembly_reports_expiry",
+      "description": "A FIRST arriving after the open assembly aged out reports expired_previous and is not a restart.",
+      "timeout_millis": 120000,
+      "steps": [
+        {
+          "at_millis": 0,
+          "fragment_hex": "010a000000000065d86665448d73239af3b389f844738648",
+          "expect": "accepted"
+        },
+        {
+          "at_millis": 120001,
+          "fragment_hex": "010b0000000000322b47f3917a552d4157b5e6adee5887e6",
+          "expect": "accepted",
+          "expired_previous": true
+        }
+      ]
+    },
+    {
+      "name": "exactly_at_timeout_still_alive",
+      "description": "Elapsed time equal to the timeout does NOT expire the assembly; only strictly greater does.",
+      "timeout_millis": 120000,
+      "steps": [
+        {
+          "at_millis": 0,
+          "fragment_hex": "010a000000000065d86665448d73239af3b389f844738648",
+          "expect": "accepted"
+        },
+        {
+          "at_millis": 120000,
+          "fragment_hex": "000a0001f5bd0860b87eee8bf24b1da1c1950b0b0998e3dc",
+          "expect": "accepted"
+        },
+        {
+          "at_millis": 120010,
+          "fragment_hex": "000a0002239cf0a33ea72d46cabee5d4734a293e68e3439a",
+          "expect": "accepted"
+        },
+        {
+          "at_millis": 120020,
+          "fragment_hex": "000a00038cbc1740df672c5ea060cc3d843d35169deb2d4e",
+          "expect": "accepted"
+        },
+        {
+          "at_millis": 120030,
+          "fragment_hex": "000a00047c41ff1b717a9def81d770569e08c307e7eabced",
+          "expect": "accepted"
+        },
+        {
+          "at_millis": 120040,
+          "fragment_hex": "020a0005b707684f37",
+          "expect": "complete",
+          "payload_hex": "d86665448d73239af3b389f844738648f5bd0860b87eee8bf24b1da1c1950b0b0998e3dc239cf0a33ea72d46cabee5d4734a293e68e3439a8cbc1740df672c5ea060cc3d843d35169deb2d4e7c41ff1b717a9def81d770569e08c307e7eabcedb707684f37"
+        }
+      ]
+    },
+    {
+      "name": "sequence_gap_drops_assembly",
+      "description": "A skipped index fails with the gap code and drops the assembly, so even the fragment that WAS next becomes unknown.",
+      "timeout_millis": 120000,
+      "steps": [
+        {
+          "at_millis": 0,
+          "fragment_hex": "010a000000000065d86665448d73239af3b389f844738648",
+          "expect": "accepted"
+        },
+        {
+          "at_millis": 10,
+          "fragment_hex": "000a0002239cf0a33ea72d46cabee5d4734a293e68e3439a",
+          "expect": "error",
+          "error": "ERR_FRAG_SEQUENCE_GAP"
+        },
+        {
+          "at_millis": 20,
+          "fragment_hex": "000a0001f5bd0860b87eee8bf24b1da1c1950b0b0998e3dc",
+          "expect": "error",
+          "error": "ERR_FRAG_SEQUENCE_GAP"
+        }
+      ]
+    },
+    {
+      "name": "unknown_continuation_rejected",
+      "description": "A continuation with no open or remembered assembly fails with the gap code.",
+      "timeout_millis": 120000,
+      "steps": [
+        {
+          "at_millis": 0,
+          "fragment_hex": "000a0001f5bd0860b87eee8bf24b1da1c1950b0b0998e3dc",
+          "expect": "error",
+          "error": "ERR_FRAG_SEQUENCE_GAP"
+        }
+      ]
+    },
+    {
+      "name": "declared_total_bounds_before_allocation",
+      "description": "A FIRST declaring more than FRAG_REASSEMBLY_MAX_BYTES is rejected before any allocation (TRS Sec. 9.4).",
+      "timeout_millis": 120000,
+      "steps": [
+        {
+          "at_millis": 0,
+          "fragment_hex": "011400000020003baa",
+          "expect": "error",
+          "error": "ERR_FRAG_TOTAL_TOO_LARGE"
+        }
+      ]
+    },
+    {
+      "name": "malformed_fragments_rejected",
+      "description": "Reserved flag bits, a FIRST with a non-zero index, a FIRST without a total, and a zero total all fail with the malformed code.",
+      "timeout_millis": 120000,
+      "steps": [
+        {
+          "at_millis": 0,
+          "fragment_hex": "04000000aa",
+          "expect": "error",
+          "error": "ERR_FRAG_HEADER_MALFORMED"
+        },
+        {
+          "at_millis": 1,
+          "fragment_hex": "0100000100000005aa",
+          "expect": "error",
+          "error": "ERR_FRAG_HEADER_MALFORMED"
+        },
+        {
+          "at_millis": 2,
+          "fragment_hex": "01000000000000",
+          "expect": "error",
+          "error": "ERR_FRAG_HEADER_MALFORMED"
+        },
+        {
+          "at_millis": 3,
+          "fragment_hex": "0300000000000000aa",
+          "expect": "error",
+          "error": "ERR_FRAG_HEADER_MALFORMED"
+        }
+      ]
+    },
+    {
+      "name": "length_mismatches_rejected",
+      "description": "Content overrunning the declared total, and a LAST completing short of it, both fail with the mismatch code.",
+      "timeout_millis": 120000,
+      "steps": [
+        {
+          "at_millis": 0,
+          "fragment_hex": "011e000000000004aabbcc",
+          "expect": "accepted"
+        },
+        {
+          "at_millis": 10,
+          "fragment_hex": "001e0001ddee",
+          "expect": "error",
+          "error": "ERR_FRAG_LENGTH_MISMATCH"
+        },
+        {
+          "at_millis": 20,
+          "fragment_hex": "011f000000000006aabbcc",
+          "expect": "accepted"
+        },
+        {
+          "at_millis": 30,
+          "fragment_hex": "021f0001dd",
+          "expect": "error",
+          "error": "ERR_FRAG_LENGTH_MISMATCH"
+        }
+      ]
+    }
+  ]
+}

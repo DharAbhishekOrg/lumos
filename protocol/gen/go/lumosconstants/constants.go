@@ -6,7 +6,7 @@
 // GENERATED - DO NOT EDIT. Generator: tools/constantsgen
 // Source register: protocol/constants/lumos_constants.json
 // Baseline: TRS v1.1 Sec. 23 / EDP v1.0 Sec. 4 (ADR-004)
-// constants_hash: sha256:5b73a3fd6a3d99e5e35ec5a93c857d16a6b8c1e4207823e331afeeac6b808d29
+// constants_hash: sha256:d65cfa8dfb493f4e4a78e6178b9cd9846c76731575da9fc12da6ea2a685c8586
 
 package lumosconstants
 
@@ -14,7 +14,7 @@ package lumosconstants
 const ServiceUUID = "E853EB6A-775C-4A49-A6BF-320E6A5CC609"
 
 // ConstantsHash binds generated code to the register that produced it (TRS-CONST-005).
-const ConstantsHash = "sha256:5b73a3fd6a3d99e5e35ec5a93c857d16a6b8c1e4207823e331afeeac6b808d29"
+const ConstantsHash = "sha256:d65cfa8dfb493f4e4a78e6178b9cd9846c76731575da9fc12da6ea2a685c8586"
 
 // SchemaVersion is the register schema version.
 const SchemaVersion = 1
@@ -684,6 +684,48 @@ const CircuitBreakerOpenAfterFails = 3
 
 // CircuitBreakerOverridable is transport.CIRCUIT_BREAKER.overridable.
 const CircuitBreakerOverridable = false
+
+// FragFlagsReservedMaskDefault is transport.FRAG_FLAGS_RESERVED_MASK.default.
+const FragFlagsReservedMaskDefault = 252
+
+// FragFlagsReservedMaskOverridable is transport.FRAG_FLAGS_RESERVED_MASK.overridable.
+const FragFlagsReservedMaskOverridable = false
+
+// FragFlagFirstDefault is transport.FRAG_FLAG_FIRST.default.
+const FragFlagFirstDefault = 1
+
+// FragFlagFirstOverridable is transport.FRAG_FLAG_FIRST.overridable.
+const FragFlagFirstOverridable = false
+
+// FragFlagLastDefault is transport.FRAG_FLAG_LAST.default.
+const FragFlagLastDefault = 2
+
+// FragFlagLastOverridable is transport.FRAG_FLAG_LAST.overridable.
+const FragFlagLastOverridable = false
+
+// FragHeaderLenDefault is transport.FRAG_HEADER_LEN.default.
+const FragHeaderLenDefault = 4
+
+// FragHeaderLenOverridable is transport.FRAG_HEADER_LEN.overridable.
+const FragHeaderLenOverridable = false
+
+// FragMaxFragmentsDefault is transport.FRAG_MAX_FRAGMENTS.default.
+const FragMaxFragmentsDefault = 65536
+
+// FragMaxFragmentsOverridable is transport.FRAG_MAX_FRAGMENTS.overridable.
+const FragMaxFragmentsOverridable = false
+
+// FragReassemblyMaxBytesDefault is transport.FRAG_REASSEMBLY_MAX_BYTES.default.
+const FragReassemblyMaxBytesDefault = 2097210
+
+// FragReassemblyMaxBytesOverridable is transport.FRAG_REASSEMBLY_MAX_BYTES.overridable.
+const FragReassemblyMaxBytesOverridable = false
+
+// FragTotalPrefixLenDefault is transport.FRAG_TOTAL_PREFIX_LEN.default.
+const FragTotalPrefixLenDefault = 4
+
+// FragTotalPrefixLenOverridable is transport.FRAG_TOTAL_PREFIX_LEN.overridable.
+const FragTotalPrefixLenOverridable = false
 
 // LANChunkPayloadBytesDefault is transport.LAN_CHUNK_PAYLOAD_BYTES.default.
 const LANChunkPayloadBytesDefault = 65536

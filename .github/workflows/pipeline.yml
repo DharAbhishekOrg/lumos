@@ -113,10 +113,11 @@ jobs:
           npm run typecheck
 
   # ----------------------------------------------- Java static analysis ----
-  # TRS-CODE-006's Java half. Checkstyle and SpotBugs run over
-  # :protocol-conformance, which is where the hand-written Java lives, and over
-  # the Android module's sources; Android Lint is the third Java analyser and
-  # runs beside the shell build below, where the variant it inspects is built.
+  # TRS-CODE-006's Java half. Checkstyle and SpotBugs run over :protocol-java
+  # (the shared protocol library, WP-03 S2) and :protocol-conformance (its
+  # vector tests), and over the Android module's sources; Android Lint is the
+  # third Java analyser and runs beside the shell build below, where the
+  # variant it inspects is built.
   #
   # This is a job of its own rather than a step of `lint` because it needs a JDK
   # and the Gradle cache, and because a Checkstyle failure should read as a
@@ -134,8 +135,8 @@ jobs:
       - uses: android-actions/setup-android@v4
         with:
           packages: 'platforms;android-36 build-tools;36.1.0 platform-tools'
-      - name: checkstyle + spotbugs (pure-JVM module)
-        run: ./gradlew :protocol-conformance:staticAnalysis --no-daemon --console=plain
+      - name: checkstyle + spotbugs (pure-JVM modules)
+        run: ./gradlew :protocol-java:staticAnalysis :protocol-conformance:staticAnalysis --no-daemon --console=plain
       # spotbugsApp joined in WP-02 S1, the slice that gave the module its first
       # production bytecode; the WP-01 exemption was conditional on the module
       # being empty and TestAppModuleWiresSpotbugsOnceItHasProductionCode is the
@@ -148,6 +149,8 @@ jobs:
         with:
           name: java-static-analysis-reports
           path: |
+            android-app/protocol-java/build/reports/checkstyle
+            android-app/protocol-java/build/reports/spotbugs
             android-app/protocol-conformance/build/reports/checkstyle
             android-app/protocol-conformance/build/reports/spotbugs
             android-app/app/build/reports/checkstyle

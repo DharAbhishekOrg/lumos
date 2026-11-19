@@ -51,6 +51,11 @@ var TRS184Files = []string{
 var ExtensionFiles = []string{
 	"test-vectors/crypto/identity_binding.json",
 	"test-vectors/crypto/recovery_record.json",
+	// WP-03 S2: the TRS-PROTO-010 fragmentation layer is stateful and
+	// cross-language (Go reference, Java for the Android BLE adapter, Swift),
+	// so it gets the same treatment the Sec. 18.4 families get - including
+	// scripted timelines, which a stateful layer needs and KATs cannot give.
+	"test-vectors/framing/fragmentation.json",
 }
 
 // SuiteFiles is everything generation must emit: the specification's tree plus

@@ -5,7 +5,7 @@
  "$generator": "tools/constantsgen",
  "service_uuid": "E853EB6A-775C-4A49-A6BF-320E6A5CC609",
  "$service_uuid_provenance": "One fixed 128-bit GATT service UUID per ADR-002 / TRS Sec. 9.3, generated once from a CSPRNG as an RFC 4122 version-4 UUID in WP-01 slice S2 and frozen here. Advertised by both platforms and used for scan filtering. No 16-bit alias is registered for flagship. Regenerating this value is a breaking protocol change.",
- "constants_hash": "sha256:5b73a3fd6a3d99e5e35ec5a93c857d16a6b8c1e4207823e331afeeac6b808d29",
+ "constants_hash": "sha256:d65cfa8dfb493f4e4a78e6178b9cd9846c76731575da9fc12da6ea2a685c8586",
  "constants_hash_algorithm": {
   "digest": "SHA-256",
   "encoding": "lowercase hex, prefixed 'sha256:'",
@@ -194,6 +194,41 @@
    "lan": 30, "lan_min": 15, "lan_max": 120,
    "overridable": true,
    "anchors": ["TRS-PROTO-010"], "source": "TRS 23.4"
+  },
+  "FRAG_HEADER_LEN": {
+   "default": 4, "overridable": false,
+   "notes": "Transport fragment header, fixed here per the TRS Sec. 19 AI delivery rule (layout unstated by the TRS, frozen once vectors exist - WP-03 S2). Byte 0 flags, byte 1 assembly_id (u8, per-link, wraps), bytes 2-3 fragment_index (u16 big-endian, 0-based, strictly sequential). This is where BLE_CHUNK_PAYLOAD's subtract-7 comes from: 3 bytes ATT write overhead + these 4. The layer is content-opaque (TRS-PROTO-010): it carries bytes, never a parsed frame.",
+   "anchors": ["TRS-PROTO-010"], "source": "TRS 23.4 derivation"
+  },
+  "FRAG_FLAG_FIRST": {
+   "default": 1, "overridable": false,
+   "notes": "Header byte 0, bit 0. The first fragment of an assembly; its content begins with the u32 big-endian total length of the reassembled blob (FRAG_TOTAL_PREFIX_LEN).",
+   "anchors": ["TRS-PROTO-010"], "source": "TRS 23.4 derivation"
+  },
+  "FRAG_FLAG_LAST": {
+   "default": 2, "overridable": false,
+   "notes": "Header byte 0, bit 1. FIRST|LAST together is a single-fragment message.",
+   "anchors": ["TRS-PROTO-010"], "source": "TRS 23.4 derivation"
+  },
+  "FRAG_FLAGS_RESERVED_MASK": {
+   "default": 252, "overridable": false,
+   "notes": "0xFC - header byte 0 bits 2..7. Any set reserved bit fails closed with ERR_FRAG_HEADER_MALFORMED: the fragment layer has no critical-flag escape hatch because nothing semantic rides in it.",
+   "anchors": ["TRS-PROTO-010"], "source": "TRS 23.4 derivation"
+  },
+  "FRAG_TOTAL_PREFIX_LEN": {
+   "default": 4, "overridable": false,
+   "notes": "u32 big-endian reassembled-length prefix carried in the FIRST fragment's content, so bounds are validated before any reassembly allocation (TRS Sec. 9.4, TRS-PROTO-007 discipline applied at this layer).",
+   "anchors": ["TRS-PROTO-010"], "source": "TRS 23.4 derivation"
+  },
+  "FRAG_REASSEMBLY_MAX_BYTES": {
+   "default": 2097210, "overridable": false,
+   "notes": "FRAME_HEADER_LEN_BYTES (58) + the largest per-class payload bound (media.FULL_IMAGE_MAX_MB, 2097152): no legal semantic frame can exceed this, so a FIRST fragment declaring more is rejected before allocation. A Go test holds this value to that derivation so it cannot silently fall behind a raised class bound.",
+   "anchors": ["TRS-PROTO-010", "TRS-PROTO-007"], "source": "TRS 23.4 derivation"
+  },
+  "FRAG_MAX_FRAGMENTS": {
+   "default": 65536, "overridable": false,
+   "notes": "fragment_index is u16, 0-based, so one assembly holds at most 65536 fragments. The sender fails a split that would need more (a 2 MB PROFILE_FULL does not fit over a floor-20 degraded link); the transfer is refused at the sender rather than stalling the receiver.",
+   "anchors": ["TRS-PROTO-010"], "source": "TRS 23.4 derivation"
   },
   "RETRY_BUDGET_PER_PATH": {
    "default": 5, "min": 3, "max": 8, "overridable": true,

@@ -1,5 +1,5 @@
 /*
- * Lumos - protocol-conformance / JCA primitives for the conformance runner.
+ * Lumos - android-app/protocol-java / JCA primitives per ADR-001.
  * Author: dhar.abhishek.email@gmail.com
  * Implements: TRS-CRY-001, TRS-CRY-003, TRS-CRY-011, TRS-TST-001
  * ADRs: ADR-001
@@ -13,7 +13,7 @@
  * backwards produces a key that is valid but wrong, which is exactly the class
  * of cross-language bug these vectors exist to catch.
  */
-package com.lumos.protocol.conformance;
+package com.lumos.protocol.wire;
 
 import java.math.BigInteger;
 import java.security.GeneralSecurityException;

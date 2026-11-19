@@ -22,6 +22,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.lumos.protocol.LumosErrors;
 import com.lumos.protocol.MessageClass;
+import com.lumos.protocol.wire.Frame;
 import java.util.HashSet;
 import java.util.Set;
 import org.junit.jupiter.api.Test;

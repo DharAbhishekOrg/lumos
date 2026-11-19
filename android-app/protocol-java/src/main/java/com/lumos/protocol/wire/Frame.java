@@ -1,5 +1,5 @@
 /*
- * Lumos - protocol-conformance / Java frame codec per TRS Sec. 9.1.
+ * Lumos - android-app/protocol-java / Java frame codec per TRS Sec. 9.1.
  * Author: dhar.abhishek.email@gmail.com
  * Implements: TRS-PROTO-001, TRS-PROTO-002, TRS-PROTO-004, TRS-PROTO-006, TRS-PROTO-007, TRS-PROTO-013
  * ADRs: ADR-004, ADR-007
@@ -11,8 +11,13 @@
  * than merely implemented once. The decode validation order matches the wire
  * contract because the negative vectors assert exact codes. Bounds are checked
  * before any payload allocation (TRS-PROTO-007).
+ *
+ * WP-03 S2 moved this class out of :protocol-conformance into the shared
+ * :protocol-java library, unchanged: the BLE adapter needs the codec inside the
+ * APK, and a second Java implementation would be the in-codebase divergence the
+ * vector suite exists to prevent. The conformance tests still hold it green.
  */
-package com.lumos.protocol.conformance;
+package com.lumos.protocol.wire;
 
 import com.lumos.protocol.LumosConstants;
 import com.lumos.protocol.LumosErrors;

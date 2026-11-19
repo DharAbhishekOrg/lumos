@@ -211,6 +211,12 @@
    "TRS-AND-004",
    "SRS-DAT-002",
    "TRS-LOC-003"
+  ],
+  "android-app/protocol-java/": [
+   "TRS-PROTO-015",
+   "TRS-PROTO-010",
+   "TRS-TST-001",
+   "SRS-NFR-CMP-004"
   ]
  },
  "last_commit_convention": "A commit cannot contain its own hash, so last_commit records the HEAD the entry's evidence was produced against - the commit the author stamped from. Freshness proves the field CHANGED between the PR base and head, which is what EDP Sec. 6.2 actually requires ('must also modify those entries' last_commit') and needs no self-referential SHA."

@@ -7,7 +7,7 @@
  * GENERATED - DO NOT EDIT. Generator: tools/constantsgen
  * Source register: protocol/constants/lumos_constants.json
  * Baseline: TRS v1.1 Sec. 23 / EDP v1.0 Sec. 4 (ADR-004)
- * constants_hash: sha256:5b73a3fd6a3d99e5e35ec5a93c857d16a6b8c1e4207823e331afeeac6b808d29
+ * constants_hash: sha256:d65cfa8dfb493f4e4a78e6178b9cd9846c76731575da9fc12da6ea2a685c8586
  */
 package com.lumos.protocol;
 
@@ -24,7 +24,7 @@ public final class LumosConstants {
     public static final String SERVICE_UUID = "E853EB6A-775C-4A49-A6BF-320E6A5CC609";
 
     /** Binds generated code to the register that produced it (TRS-CONST-005). */
-    public static final String CONSTANTS_HASH = "sha256:5b73a3fd6a3d99e5e35ec5a93c857d16a6b8c1e4207823e331afeeac6b808d29";
+    public static final String CONSTANTS_HASH = "sha256:d65cfa8dfb493f4e4a78e6178b9cd9846c76731575da9fc12da6ea2a685c8586";
 
     /** Register schema version. */
     public static final int SCHEMA_VERSION = 1;
@@ -697,6 +697,48 @@ public final class LumosConstants {
 
     /** transport.CIRCUIT_BREAKER.overridable */
     public static final boolean CIRCUIT_BREAKER_OVERRIDABLE = false;
+
+    /** transport.FRAG_FLAGS_RESERVED_MASK.default */
+    public static final int FRAG_FLAGS_RESERVED_MASK_DEFAULT = 252;
+
+    /** transport.FRAG_FLAGS_RESERVED_MASK.overridable */
+    public static final boolean FRAG_FLAGS_RESERVED_MASK_OVERRIDABLE = false;
+
+    /** transport.FRAG_FLAG_FIRST.default */
+    public static final int FRAG_FLAG_FIRST_DEFAULT = 1;
+
+    /** transport.FRAG_FLAG_FIRST.overridable */
+    public static final boolean FRAG_FLAG_FIRST_OVERRIDABLE = false;
+
+    /** transport.FRAG_FLAG_LAST.default */
+    public static final int FRAG_FLAG_LAST_DEFAULT = 2;
+
+    /** transport.FRAG_FLAG_LAST.overridable */
+    public static final boolean FRAG_FLAG_LAST_OVERRIDABLE = false;
+
+    /** transport.FRAG_HEADER_LEN.default */
+    public static final int FRAG_HEADER_LEN_DEFAULT = 4;
+
+    /** transport.FRAG_HEADER_LEN.overridable */
+    public static final boolean FRAG_HEADER_LEN_OVERRIDABLE = false;
+
+    /** transport.FRAG_MAX_FRAGMENTS.default */
+    public static final int FRAG_MAX_FRAGMENTS_DEFAULT = 65536;
+
+    /** transport.FRAG_MAX_FRAGMENTS.overridable */
+    public static final boolean FRAG_MAX_FRAGMENTS_OVERRIDABLE = false;
+
+    /** transport.FRAG_REASSEMBLY_MAX_BYTES.default */
+    public static final int FRAG_REASSEMBLY_MAX_BYTES_DEFAULT = 2097210;
+
+    /** transport.FRAG_REASSEMBLY_MAX_BYTES.overridable */
+    public static final boolean FRAG_REASSEMBLY_MAX_BYTES_OVERRIDABLE = false;
+
+    /** transport.FRAG_TOTAL_PREFIX_LEN.default */
+    public static final int FRAG_TOTAL_PREFIX_LEN_DEFAULT = 4;
+
+    /** transport.FRAG_TOTAL_PREFIX_LEN.overridable */
+    public static final boolean FRAG_TOTAL_PREFIX_LEN_OVERRIDABLE = false;
 
     /** transport.LAN_CHUNK_PAYLOAD_BYTES.default */
     public static final int LAN_CHUNK_PAYLOAD_BYTES_DEFAULT = 65536;
