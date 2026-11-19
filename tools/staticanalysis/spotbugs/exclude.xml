@@ -121,6 +121,30 @@
     <Bug pattern="EI_EXPOSE_REP2"/>
   </Match>
   <!--
+    WP-03 S2b's collaborators, same discipline: one class at a time. The BLE
+    adapters store the device's BluetoothAdapter - the platform handle sharing
+    is the adapter's entire job - and FrameLink stores the operation queue,
+    the reassembler and the blob consumer it was built to wire together. The
+    byte[] paths in the same package are NOT excluded: ScanSighting and
+    Adv.Payload clone their arrays in and out, and SpotBugs stays free to say
+    so if one ever stops.
+  -->
+  <Match>
+    <Class name="com.lumos.app.ble.AndroidBleScanner"/>
+    <Method name="&lt;init&gt;"/>
+    <Bug pattern="EI_EXPOSE_REP2"/>
+  </Match>
+  <Match>
+    <Class name="com.lumos.app.ble.AndroidBleAdvertiser"/>
+    <Method name="&lt;init&gt;"/>
+    <Bug pattern="EI_EXPOSE_REP2"/>
+  </Match>
+  <Match>
+    <Class name="com.lumos.app.ble.FrameLink"/>
+    <Method name="&lt;init&gt;"/>
+    <Bug pattern="EI_EXPOSE_REP2"/>
+  </Match>
+  <!--
     IdentityCrypto.KeyMaterial adopts and returns its live arrays ON PURPOSE,
     and the EI_EXPOSE heuristic cannot see why: the private half is key
     material whose only safe end state is being ZEROED IN PLACE via destroy().

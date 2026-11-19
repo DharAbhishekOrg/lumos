@@ -1,22 +1,62 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  Lumos - android-app/app / Empty shell manifest.
+  Lumos - android-app/app / Manifest: BLE permission matrix and the discovery service.
   Author: dhar.abhishek.email@gmail.com
-  Implements: TRS-REP-001, SRS-NFR-PRI-001
-  ADRs: -
+  Implements: TRS-AND-005, TRS-AND-006, SRS-NFR-PRI-001
+  ADRs: ADR-002
   Threading: n/a
-  Notes: No permissions, no components, no AD_ID. TRS Sec. 5.3 states the
-  flagship does not use behavioural ad identifiers, and the cleanest way to keep
-  that true is to never add the permission in the first place. Bluetooth,
-  location and notification permissions arrive with WP-03, declared alongside the
-  code that needs them.
+  Notes: The WP-03 S2 permission matrix (TRS-AND-005), declared beside the code
+  that needs it and nothing more. API 31+ uses the scoped trio, with
+  neverForLocation on BLUETOOTH_SCAN because Lumos does not compute location
+  from radio - the flag makes that claim enforceable by the OS. The legacy
+  pair and ACCESS_FINE_LOCATION are capped at API 30: pre-31 Android withholds
+  scan results without fine location, and 31+ must never ask for it.
+  bluetooth_le is required=true - proximity IS the product, and hiding that
+  from the store listing would sell the app to phones it cannot work on.
+  Still no AD_ID, and none will ever arrive (TRS Sec. 5.3).
 -->
-<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <uses-feature
+        android:name="android.hardware.bluetooth_le"
+        android:required="true" />
+
+    <!-- API 31+ scoped runtime permissions (TRS-AND-005). -->
+    <uses-permission
+        android:name="android.permission.BLUETOOTH_SCAN"
+        android:usesPermissionFlags="neverForLocation"
+        tools:targetApi="s" />
+    <uses-permission android:name="android.permission.BLUETOOTH_ADVERTISE" />
+    <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
+
+    <!-- API 26-30 legacy matrix; never requested on 31+. -->
+    <uses-permission
+        android:name="android.permission.BLUETOOTH"
+        android:maxSdkVersion="30" />
+    <uses-permission
+        android:name="android.permission.BLUETOOTH_ADMIN"
+        android:maxSdkVersion="30" />
+    <uses-permission
+        android:name="android.permission.ACCESS_FINE_LOCATION"
+        android:maxSdkVersion="30" />
+
+    <!-- TRS-AND-006: the user-visible foreground service and its notice. -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_CONNECTED_DEVICE" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 
     <application
         android:allowBackup="false"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
-        android:label="Lumos" />
+        android:label="Lumos">
+
+        <service
+            android:name="com.lumos.app.ble.ProximityService"
+            android:exported="false"
+            android:foregroundServiceType="connectedDevice" />
+
+    </application>
 
 </manifest>

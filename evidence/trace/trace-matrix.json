@@ -477,7 +477,7 @@
     "ADR-008",
     "ADR-010"
    ],
-   "last_commit": "5d1f2fe",
+   "last_commit": "e6e3250",
    "updated": "2026-11-19"
   },
   {
@@ -531,14 +531,16 @@
    "code": [
     "protocol/adv/adv.go",
     "test-vectors/adv/ble_advertisement.json",
-    "tools/vectorgen/close.go"
+    "tools/vectorgen/close.go",
+    "android-app/app/src/main/java/com/lumos/app/ble/AdvertisingController.java"
    ],
    "tests": [
     "go:protocol/adv:TestConformanceAdvSchedule",
     "go:protocol/adv:TestEIDIsUnlinkableAcrossEpochs",
     "go:protocol/adv:TestEpochUsesRegisterCadence",
     "java:protocol-conformance:CryptoConformanceTest.advertisement",
-    "swift:LumosProtocolConformance:CryptoConformanceTests.testAdvertisementScheduleAndNegatives"
+    "swift:LumosProtocolConformance:CryptoConformanceTests.testAdvertisementScheduleAndNegatives",
+    "java:app-dev:AdvertisingControllerTest.rotationReAdvertisesWithAnUnlinkablePayload"
    ],
    "evidence": [
     "ci:conformance#31528127667"
@@ -1581,7 +1583,7 @@
     "ci:conformance#31528127667"
    ],
    "adr": [],
-   "last_commit": "a01e9a9",
+   "last_commit": "e6e3250",
    "updated": "2026-11-19"
   },
   {
@@ -2740,7 +2742,7 @@
     "ADR-003",
     "ADR-010"
    ],
-   "last_commit": "5d1f2fe",
+   "last_commit": "e6e3250",
    "updated": "2026-11-19"
   },
   {
@@ -4710,7 +4712,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "a01e9a9",
+   "last_commit": "e6e3250",
    "updated": "2026-11-19"
   },
   {
@@ -4720,7 +4722,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "a01e9a9",
+   "last_commit": "e6e3250",
    "updated": "2026-11-19"
   },
   {
@@ -4730,7 +4732,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "a01e9a9",
+   "last_commit": "e6e3250",
    "updated": "2026-11-19"
   },
   {
@@ -4754,27 +4756,48 @@
    "adr": [
     "ADR-003"
    ],
-   "last_commit": "a01e9a9",
+   "last_commit": "e6e3250",
    "updated": "2026-11-19"
   },
   {
    "req_id": "TRS-AND-005",
-   "status": "not_started",
-   "code": [],
-   "tests": [],
+   "status": "implemented",
+   "code": [
+    "android-app/app/src/main/java/com/lumos/app/ble/BlePermissions.java",
+    "android-app/app/src/main/java/com/lumos/app/ble/AndroidBleScanner.java",
+    "android-app/app/src/main/java/com/lumos/app/ble/AndroidBleAdvertiser.java",
+    "android-app/app/src/main/AndroidManifest.xml"
+   ],
+   "tests": [
+    "java:app-dev:BlePermissionsTest.modernDevicesGetTheScopedTrioAndNeverLocation",
+    "java:app-dev:BlePermissionsTest.legacyDevicesGetFineLocationBecauseScanResultsNeedIt",
+    "java:app-dev:BlePermissionsTest.everyDocumentedScanFailureMapsTyped",
+    "java:app-dev:BlePermissionsTest.theOemLongTailLandsTypedInsteadOfCrashing"
+   ],
    "evidence": [],
-   "adr": [],
-   "last_commit": "a01e9a9",
+   "adr": [
+    "ADR-002"
+   ],
+   "last_commit": "e6e3250",
    "updated": "2026-11-19"
   },
   {
    "req_id": "TRS-AND-006",
-   "status": "not_started",
-   "code": [],
-   "tests": [],
+   "status": "implemented",
+   "code": [
+    "android-app/app/src/main/java/com/lumos/app/ble/ProximityService.java",
+    "android-app/app/src/main/AndroidManifest.xml",
+    "android-app/app/src/main/res/values/strings.xml"
+   ],
+   "tests": [
+    "android:app-dev:BleDeclarationsInstrumentedTest.theServiceReachesTheForegroundWithItsNotification",
+    "android:app-dev:BleDeclarationsInstrumentedTest.theDeclaredServiceIsTheConnectedDeviceForegroundType"
+   ],
    "evidence": [],
-   "adr": [],
-   "last_commit": "a01e9a9",
+   "adr": [
+    "ADR-002"
+   ],
+   "last_commit": "e6e3250",
    "updated": "2026-11-19"
   },
   {
@@ -4784,7 +4807,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "a01e9a9",
+   "last_commit": "e6e3250",
    "updated": "2026-11-19"
   },
   {
@@ -4794,7 +4817,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "a01e9a9",
+   "last_commit": "e6e3250",
    "updated": "2026-11-19"
   },
   {
@@ -4804,7 +4827,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "a01e9a9",
+   "last_commit": "e6e3250",
    "updated": "2026-11-19"
   },
   {
@@ -4814,7 +4837,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "a01e9a9",
+   "last_commit": "e6e3250",
    "updated": "2026-11-19"
   },
   {
@@ -4824,7 +4847,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "a01e9a9",
+   "last_commit": "e6e3250",
    "updated": "2026-11-19"
   },
   {
@@ -4834,7 +4857,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "a01e9a9",
+   "last_commit": "e6e3250",
    "updated": "2026-11-19"
   },
   {
@@ -5378,7 +5401,7 @@
     "ci:conformance#31528127667"
    ],
    "adr": [],
-   "last_commit": "a01e9a9",
+   "last_commit": "e6e3250",
    "updated": "2026-11-19"
   },
   {
@@ -5596,7 +5619,7 @@
    ],
    "evidence": [],
    "adr": [],
-   "last_commit": "5d1f2fe",
+   "last_commit": "e6e3250",
    "updated": "2026-11-19"
   },
   {
@@ -5647,7 +5670,7 @@
     "ci:pipeline#31737418465"
    ],
    "adr": [],
-   "last_commit": "5d1f2fe",
+   "last_commit": "e6e3250",
    "updated": "2026-11-19"
   },
   {
@@ -6228,13 +6251,20 @@
   },
   {
    "req_id": "TRS-ENV-001",
-   "status": "not_started",
-   "code": [],
-   "tests": [],
+   "status": "implemented",
+   "code": [
+    "android-app/app/src/main/java/com/lumos/app/ble/DiscoveryTriage.java",
+    "android-app/app/src/main/java/com/lumos/app/ble/ScanDutyCycle.java"
+   ],
+   "tests": [
+    "java:app-dev:DiscoveryTriageTest.aHundredPlusAdvertisersTriageBoundedAndSorted"
+   ],
    "evidence": [],
-   "adr": [],
-   "last_commit": null,
-   "updated": null
+   "adr": [
+    "ADR-002"
+   ],
+   "last_commit": "b45b46b",
+   "updated": "2026-11-19"
   },
   {
    "req_id": "TRS-ENV-002",
@@ -7225,7 +7255,10 @@
    "code": [
     "protocol/adv/adv.go",
     "test-vectors/adv/ble_advertisement.json",
-    "tools/vectorgen/close.go"
+    "tools/vectorgen/close.go",
+    "android-app/protocol-java/src/main/java/com/lumos/protocol/adv/Adv.java",
+    "android-app/app/src/main/java/com/lumos/app/ble/AndroidBleAdvertiser.java",
+    "android-app/app/src/main/java/com/lumos/app/ble/AdvertisingController.java"
    ],
    "tests": [
     "go:protocol/adv:TestConformanceAdvNegatives",
@@ -7235,7 +7268,8 @@
     "go:protocol/adv:TestRoundtripVerify",
     "go:protocol/adv:TestVerifyRejectsWrongEpochAndTamper",
     "java:protocol-conformance:CryptoConformanceTest.advertisement",
-    "swift:LumosProtocolConformance:CryptoConformanceTests.testAdvertisementScheduleAndNegatives"
+    "swift:LumosProtocolConformance:CryptoConformanceTests.testAdvertisementScheduleAndNegatives",
+    "java:protocol-conformance:AdvConformanceTest.scheduleReproducesThroughTheSharedClass"
    ],
    "evidence": [
     "ci:conformance#31528127667"
@@ -7272,7 +7306,7 @@
    "adr": [
     "ADR-004"
    ],
-   "last_commit": "a01e9a9",
+   "last_commit": "e6e3250",
    "updated": "2026-11-19"
   },
   {
@@ -7375,7 +7409,7 @@
     "ci:conformance#31528127667"
    ],
    "adr": [],
-   "last_commit": "a01e9a9",
+   "last_commit": "e6e3250",
    "updated": "2026-11-19"
   },
   {
@@ -7522,7 +7556,7 @@
    ],
    "evidence": [],
    "adr": [],
-   "last_commit": "a01e9a9",
+   "last_commit": "e6e3250",
    "updated": "2026-11-19"
   },
   {
@@ -7583,7 +7617,7 @@
    ],
    "evidence": [],
    "adr": [],
-   "last_commit": "a01e9a9",
+   "last_commit": "e6e3250",
    "updated": "2026-11-19"
   },
   {
@@ -7631,13 +7665,23 @@
   },
   {
    "req_id": "TRS-TRN-003",
-   "status": "not_started",
-   "code": [],
-   "tests": [],
+   "status": "implemented",
+   "code": [
+    "android-app/app/src/main/java/com/lumos/app/ble/GattOperationQueue.java",
+    "android-app/app/src/main/java/com/lumos/app/ble/FrameLink.java"
+   ],
+   "tests": [
+    "java:app-dev:GattOperationQueueTest.operationsRunStrictlyOneAtATime",
+    "java:app-dev:GattOperationQueueTest.aStaleEpochCompletionIsDiscarded",
+    "java:app-dev:GattOperationQueueTest.reconnectFailsEverythingPending",
+    "java:app-dev:GattOperationQueueTest.transientFailuresRetryOnTheRegisterBackoffWithinTheBudget"
+   ],
    "evidence": [],
-   "adr": [],
-   "last_commit": null,
-   "updated": null
+   "adr": [
+    "ADR-002"
+   ],
+   "last_commit": "b45b46b",
+   "updated": "2026-11-19"
   },
   {
    "req_id": "TRS-TRN-004",
@@ -7828,7 +7872,7 @@
    "adr": [
     "ADR-004"
    ],
-   "last_commit": "a01e9a9",
+   "last_commit": "e6e3250",
    "updated": "2026-11-19"
   },
   {

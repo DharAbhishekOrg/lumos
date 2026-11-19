@@ -130,4 +130,15 @@
     <string name="wipe_button">Erase everything now</string>
     <string name="wipe_done">It is gone.</string>
 
+    <!-- The nearby foreground notification (TRS-AND-006). Android requires a
+         user-visible notice while Lumos keeps working with the screen off, and
+         that is a feature, not a chore: you can always see that Lumos is
+         active, and stop it from the notice itself. -->
+    <string name="nearby_channel_name">Nearby</string>
+    <string name="nearby_channel_description">Shown while Lumos is finding people near
+        you.</string>
+    <string name="nearby_notification_title">Lumos is on</string>
+    <string name="nearby_notification_body">Lumos is finding people near you. Open the app to
+        stop.</string>
+
 </resources>
