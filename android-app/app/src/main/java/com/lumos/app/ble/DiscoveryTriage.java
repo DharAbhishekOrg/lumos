@@ -180,6 +180,21 @@ public final class DiscoveryTriage {
         return ordered.subList(0, Math.min(budget, ordered.size()));
     }
 
+    /**
+     * Takes a candidate out of rotation - the connector calls this the moment
+     * it spends a link on one, so the next wave is the next strongest peers
+     * rather than the same four forever. A later sighting makes the peer a
+     * candidate again; whether it is worth a SECOND connection is the
+     * connector's question to answer against the presence table, not this
+     * one's.
+     *
+     * @param key the candidate's triage key
+     * @return whether a candidate was removed
+     */
+    public boolean remove(final String key) {
+        return candidates.remove(key) != null;
+    }
+
     private static String hex(final byte[] b) {
         final StringBuilder sb = new StringBuilder(b.length * 2);
         for (final byte x : b) {

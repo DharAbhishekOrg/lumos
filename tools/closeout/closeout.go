@@ -77,6 +77,14 @@ type ExecutedTests struct {
 // WP-02 comes from its brief's "Key requirements" row: "SRS-ONB-001..008,
 // SRS-IDN-001..003/007, SRS-PRO-001..013, SRS-SAF-009/010, SRS-DAT-002/004/012,
 // TRS-LOC-001..010, TRS-AND-004, TRS-IOS-007, SRS-NFR-SEC-002/003/013".
+//
+// WP-03 comes from its brief's "Key requirements" row: "SRS-NBY-001..017,
+// SRS-IDN-004, SRS-PRO-007, TRS-AND-005/006, TRS-IOS-003/009, TRS-TRN-002/003,
+// TRS-PROTO-009/017/018, SRS-NFR-BAT-001/002, SRS-NFR-PERF-005/009,
+// AT-003/004". The two acceptance tests are owner-executed radio campaigns,
+// not matrix rows, so they appear in the closeout's owner-gate section rather
+// than here; the TRS-ENV family the slices also moved is out of the brief's
+// row on purpose and is reported as spillover.
 var scopePatterns = map[string][]*regexp.Regexp{
 	"WP-01": {
 		regexp.MustCompile(`^TRS-REP-\d+$`),
@@ -95,6 +103,17 @@ var scopePatterns = map[string][]*regexp.Regexp{
 		regexp.MustCompile(`^TRS-AND-004$`),
 		regexp.MustCompile(`^TRS-IOS-007$`),
 		regexp.MustCompile(`^SRS-NFR-SEC-0(02|03|13)$`),
+	},
+	"WP-03": {
+		regexp.MustCompile(`^SRS-NBY-0(0[1-9]|1[0-7])$`),
+		regexp.MustCompile(`^SRS-IDN-004$`),
+		regexp.MustCompile(`^SRS-PRO-007$`),
+		regexp.MustCompile(`^TRS-AND-00[56]$`),
+		regexp.MustCompile(`^TRS-IOS-00[39]$`),
+		regexp.MustCompile(`^TRS-TRN-00[23]$`),
+		regexp.MustCompile(`^TRS-PROTO-0(09|17|18)$`),
+		regexp.MustCompile(`^SRS-NFR-BAT-00[12]$`),
+		regexp.MustCompile(`^SRS-NFR-PERF-00[59]$`),
 	},
 }
 
