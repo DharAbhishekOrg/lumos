@@ -193,4 +193,25 @@
     <string name="proximity_nearby">Nearby</string>
     <string name="proximity_around_venue">Around the venue</string>
 
+    <!-- The Nearby feed states (SRS-NBY-010, SRS-NBY-014). Four situations a
+         person can act on, one honest waiting state - and no plumbing
+         vocabulary anywhere (SRS-NBY-008): the radio is "Bluetooth", a peer
+         is a person, and nothing here names an identifier, a protocol or a
+         distance. -->
+    <string name="nearby_title">Nearby</string>
+    <string name="nearby_state_radio_off">Bluetooth is off. Turn it on to see people
+        nearby.</string>
+    <string name="nearby_state_permission_needed">Lumos needs Bluetooth permission to find
+        people near you. You can grant it in Settings.</string>
+    <string name="nearby_state_radio_unavailable">Nearby is not available on this phone right
+        now.</string>
+    <string name="nearby_state_radio_busy">The radio is catching its breath. Nearby will
+        continue in a moment.</string>
+    <string name="nearby_state_empty">Looking around. No one nearby yet — people appear here
+        the moment Lumos is sure they are real.</string>
+    <string name="nearby_card_title">Someone nearby</string>
+    <string name="nearby_card_subtitle">Here right now</string>
+    <string name="nearby_card_hide">Hide</string>
+    <string name="nearby_stop_everything">Stop Nearby</string>
+
 </resources>

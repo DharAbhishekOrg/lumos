@@ -52,6 +52,18 @@ room = "2.8.4"
 # asserted about - the condition the same ruling attached to TRS-AND-004.
 androidxTestJunit = "1.3.0"
 androidxTestRunner = "1.7.0"
+# Material Components 1.12.0, Apache-2.0, with AppCompat 1.7.0 and RecyclerView
+# 1.3.2 (both Apache-2.0) declared explicitly because the feed code imports
+# them directly - the transitive graph is not a declaration (AGENTS.md Sec. 3).
+# Adopted in WP-04 S1c: TRS-AND-003 mandates Material 3-compatible native
+# Views/XML, and these three are the smallest runtime set that renders the
+# Nearby feed - the theme and components, the action-bar-compatible Activity,
+# and the list. All three ship in the APK; see
+# tools/toolchain/toolchain-manifest.json runtime_dependencies and
+# docs/legal/third-party-notices.md.
+material = "1.12.0"
+appcompat = "1.7.0"
+recyclerview = "1.3.2"
 # Lazysodium-android 5.2.0, MOZILLA PUBLIC LICENSE 2.0, bundling libsodium (ISC).
 # Adopted in WP-02 S4b on the owner's approval of 2026-08-18, under conditions
 # recorded verbatim in tools/toolchain/toolchain-manifest.json: UNMODIFIED USE
@@ -106,6 +118,9 @@ spotbugs = { id = "com.github.spotbugs", version.ref = "spotbugsPlugin" }
 
 [libraries]
 gson = { module = "com.google.code.gson:gson", version.ref = "gson" }
+material = { module = "com.google.android.material:material", version.ref = "material" }
+androidx-appcompat = { module = "androidx.appcompat:appcompat", version.ref = "appcompat" }
+androidx-recyclerview = { module = "androidx.recyclerview:recyclerview", version.ref = "recyclerview" }
 junit-bom = { module = "org.junit:junit-bom", version.ref = "junit" }
 # Versionless on purpose: both resolve through the junit-bom platform above, so
 # the BOM stays the single place the JUnit 5 version is written down. They are

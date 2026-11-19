@@ -293,6 +293,16 @@ dependencies {
     }
     implementation(variantOf(libs.jna) { artifactType("aar") })
 
+    // Material Components, AppCompat and RecyclerView, all Apache-2.0,
+    // adopted in WP-04 S1c for the Nearby feed: TRS-AND-003 mandates
+    // Material 3-compatible native Views/XML, and these are the smallest
+    // runtime set that renders it. Declared explicitly because feed code
+    // imports all three directly; see gradle/libs.versions.toml and
+    // tools/toolchain/toolchain-manifest.json.
+    implementation(libs.material)
+    implementation(libs.androidx.appcompat)
+    implementation(libs.androidx.recyclerview)
+
     // Instrumented-test scope only; never in a release APK.
     androidTestImplementation(libs.androidx.test.junit)
     androidTestImplementation(libs.androidx.test.runner)
