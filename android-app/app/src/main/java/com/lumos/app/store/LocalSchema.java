@@ -37,7 +37,7 @@ import java.util.List;
 public final class LocalSchema {
 
     /** The schema version this build writes and expects. */
-    public static final int VERSION = 3;
+    public static final int VERSION = 4;
 
     /** The version of an absent or empty database, before any migration runs. */
     public static final int VERSION_EMPTY = 0;
@@ -131,6 +131,10 @@ public final class LocalSchema {
     private static final List<RecordKind> VERSION_3_KINDS = List.of(
             RecordKind.APP_LOCK);
 
+    /** The record kinds version 4 added (WP-04 slice S1a). */
+    private static final List<RecordKind> VERSION_4_KINDS = List.of(
+            RecordKind.HIDDEN_PEER);
+
     /**
      * The complete statement list taking an empty database to version 1.
      *
@@ -175,6 +179,18 @@ public final class LocalSchema {
     }
 
     /**
+     * The statements taking a version-3 database to version 4.
+     *
+     * <p>One new table and nothing else, the interruption-safe shape every
+     * step of this ladder keeps.
+     *
+     * @return the ordered statements of migration 3 to 4
+     */
+    public static List<String> migrationToVersion4() {
+        return Collections.unmodifiableList(createTablesFor(VERSION_4_KINDS));
+    }
+
+    /**
      * The create-table and create-index pair for each of the given kinds.
      *
      * @param kinds the kinds a migration step introduces
@@ -205,6 +221,7 @@ public final class LocalSchema {
         ladder.add(new Migration(VERSION_EMPTY, 1, migrationToVersion1()));
         ladder.add(new Migration(1, 2, migrationToVersion2()));
         ladder.add(new Migration(2, 3, migrationToVersion3()));
+        ladder.add(new Migration(3, 4, migrationToVersion4()));
         return Collections.unmodifiableList(ladder);
     }
 }
