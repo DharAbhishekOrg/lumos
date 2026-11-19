@@ -51,7 +51,14 @@ var expectedRegister = map[string][]string{
 	"crypto_protocol": {
 		"ADV_AUTH_TAG_INFO", "ADV_EID_KDF_INFO", "ADV_KEY_KDF_INFO",
 		"CHAIN_KEY_SEEDS", "CONFIG_SIGNING_INFO",
+		// The HELLO_* and PEER_ID_* entries are not Sec. 23 transcriptions:
+		// they fix the TRS-PROTO-017 session-bootstrap payloads and the
+		// SRS-IDN-002 peer-identifier derivation under the TRS Sec. 19 AI
+		// delivery rule (WP-03 S4), the same footing as the framing flag bits
+		// and the FRAG_* layout.
+		"HELLO_ACK_V1_LAYOUT", "HELLO_AUTH_INFO", "HELLO_V1_LAYOUT",
 		"MEDIA_OBJECT_KEY_INFO", "MEDIA_OBJECT_KEY_WRAP_INFO",
+		"PEER_ID_KDF_INFO", "PEER_ID_LEN",
 		"RATCHET_HEADER_LAYOUT", "RATCHET_MESSAGE_KDF_INFO",
 		"RATCHET_ROOT_KDF_INFO",
 		// RECOVERY_ARGON2ID is NOT from TRS Sec. 23. It was added in WP-02

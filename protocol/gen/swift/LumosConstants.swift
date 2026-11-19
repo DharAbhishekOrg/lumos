@@ -6,7 +6,7 @@
 /// GENERATED - DO NOT EDIT. Generator: tools/constantsgen
 /// Source register: protocol/constants/lumos_constants.json
 /// Baseline: TRS v1.1 Sec. 23 / EDP v1.0 Sec. 4 (ADR-004)
-/// constants_hash: sha256:d65cfa8dfb493f4e4a78e6178b9cd9846c76731575da9fc12da6ea2a685c8586
+/// constants_hash: sha256:8bb65dc5e630eb6df4261d8eb75296f6cdc5191f09de248c33dfbe2803e6e373
 
 public enum LumosConstants {
 
@@ -14,7 +14,7 @@ public enum LumosConstants {
     public static let serviceUUID = "E853EB6A-775C-4A49-A6BF-320E6A5CC609"
 
     /// Binds generated code to the register that produced it (TRS-CONST-005).
-    public static let constantsHash = "sha256:d65cfa8dfb493f4e4a78e6178b9cd9846c76731575da9fc12da6ea2a685c8586"
+    public static let constantsHash = "sha256:8bb65dc5e630eb6df4261d8eb75296f6cdc5191f09de248c33dfbe2803e6e373"
 
     /// Register schema version.
     public static let schemaVersion = 1
@@ -113,6 +113,54 @@ public enum LumosConstants {
     /// crypto_protocol.CONFIG_SIGNING_INFO.value
     public static let configSigningInfoValue = "lumos/config/signed-package/v1"
 
+    /// crypto_protocol.HELLO_ACK_V1_LAYOUT.auth_sig_len
+    public static let helloAckV1LayoutAuthSigLen = 64
+
+    /// crypto_protocol.HELLO_ACK_V1_LAYOUT.overridable
+    public static let helloAckV1LayoutOverridable = false
+
+    /// crypto_protocol.HELLO_ACK_V1_LAYOUT.total_len
+    public static let helloAckV1LayoutTotalLen = 228
+
+    /// crypto_protocol.HELLO_AUTH_INFO.overridable
+    public static let helloAuthInfoOverridable = false
+
+    /// crypto_protocol.HELLO_AUTH_INFO.value
+    public static let helloAuthInfoValue = "lumos/hello/auth/v1"
+
+    /// crypto_protocol.HELLO_V1_LAYOUT.binding_sig_len
+    public static let helloV1LayoutBindingSigLen = 64
+
+    /// crypto_protocol.HELLO_V1_LAYOUT.capability_bits_len
+    public static let helloV1LayoutCapabilityBitsLen = 2
+
+    /// crypto_protocol.HELLO_V1_LAYOUT.ed_public_len
+    public static let helloV1LayoutEdPublicLen = 32
+
+    /// crypto_protocol.HELLO_V1_LAYOUT.eid_len
+    public static let helloV1LayoutEIDLen = 12
+
+    /// crypto_protocol.HELLO_V1_LAYOUT.hello_version_len
+    public static let helloV1LayoutHelloVersionLen = 1
+
+    /// crypto_protocol.HELLO_V1_LAYOUT.nonce_len
+    public static let helloV1LayoutNonceLen = 16
+
+    /// crypto_protocol.HELLO_V1_LAYOUT.overridable
+    public static let helloV1LayoutOverridable = false
+
+    /// crypto_protocol.HELLO_V1_LAYOUT.protocol_version_len
+    public static let helloV1LayoutProtocolVersionLen = 1
+
+    /// crypto_protocol.HELLO_V1_LAYOUT.total_len
+    public static let helloV1LayoutTotalLen = 164
+
+    /// crypto_protocol.HELLO_V1_LAYOUT.venue_hint_len
+    public static let helloV1LayoutVenueHintLen = 4
+
+    /// crypto_protocol.HELLO_V1_LAYOUT.x_public_len
+    public static let helloV1LayoutXPublicLen = 32
+
     /// crypto_protocol.MEDIA_OBJECT_KEY_INFO.overridable
     public static let mediaObjectKeyInfoOverridable = false
 
@@ -124,6 +172,18 @@ public enum LumosConstants {
 
     /// crypto_protocol.MEDIA_OBJECT_KEY_WRAP_INFO.value
     public static let mediaObjectKeyWrapInfoValue = "lumos/media/object-key-wrap/v1"
+
+    /// crypto_protocol.PEER_ID_KDF_INFO.overridable
+    public static let peerIDKdfInfoOverridable = false
+
+    /// crypto_protocol.PEER_ID_KDF_INFO.value
+    public static let peerIDKdfInfoValue = "lumos/peer-id/v1"
+
+    /// crypto_protocol.PEER_ID_LEN.default
+    public static let peerIDLenDefault = 16
+
+    /// crypto_protocol.PEER_ID_LEN.overridable
+    public static let peerIDLenOverridable = false
 
     /// crypto_protocol.RATCHET_HEADER_LAYOUT.dh_len
     public static let ratchetHeaderLayoutDhLen = 32

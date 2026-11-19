@@ -7,7 +7,7 @@
  * GENERATED - DO NOT EDIT. Generator: tools/constantsgen
  * Source register: protocol/constants/lumos_constants.json
  * Baseline: TRS v1.1 Sec. 23 / EDP v1.0 Sec. 4 (ADR-004)
- * constants_hash: sha256:d65cfa8dfb493f4e4a78e6178b9cd9846c76731575da9fc12da6ea2a685c8586
+ * constants_hash: sha256:8bb65dc5e630eb6df4261d8eb75296f6cdc5191f09de248c33dfbe2803e6e373
  */
 package com.lumos.protocol;
 
@@ -24,7 +24,7 @@ public final class LumosConstants {
     public static final String SERVICE_UUID = "E853EB6A-775C-4A49-A6BF-320E6A5CC609";
 
     /** Binds generated code to the register that produced it (TRS-CONST-005). */
-    public static final String CONSTANTS_HASH = "sha256:d65cfa8dfb493f4e4a78e6178b9cd9846c76731575da9fc12da6ea2a685c8586";
+    public static final String CONSTANTS_HASH = "sha256:8bb65dc5e630eb6df4261d8eb75296f6cdc5191f09de248c33dfbe2803e6e373";
 
     /** Register schema version. */
     public static final int SCHEMA_VERSION = 1;
@@ -123,6 +123,54 @@ public final class LumosConstants {
     /** crypto_protocol.CONFIG_SIGNING_INFO.value */
     public static final String CONFIG_SIGNING_INFO_VALUE = "lumos/config/signed-package/v1";
 
+    /** crypto_protocol.HELLO_ACK_V1_LAYOUT.auth_sig_len */
+    public static final int HELLO_ACK_V1_LAYOUT_AUTH_SIG_LEN = 64;
+
+    /** crypto_protocol.HELLO_ACK_V1_LAYOUT.overridable */
+    public static final boolean HELLO_ACK_V1_LAYOUT_OVERRIDABLE = false;
+
+    /** crypto_protocol.HELLO_ACK_V1_LAYOUT.total_len */
+    public static final int HELLO_ACK_V1_LAYOUT_TOTAL_LEN = 228;
+
+    /** crypto_protocol.HELLO_AUTH_INFO.overridable */
+    public static final boolean HELLO_AUTH_INFO_OVERRIDABLE = false;
+
+    /** crypto_protocol.HELLO_AUTH_INFO.value */
+    public static final String HELLO_AUTH_INFO_VALUE = "lumos/hello/auth/v1";
+
+    /** crypto_protocol.HELLO_V1_LAYOUT.binding_sig_len */
+    public static final int HELLO_V1_LAYOUT_BINDING_SIG_LEN = 64;
+
+    /** crypto_protocol.HELLO_V1_LAYOUT.capability_bits_len */
+    public static final int HELLO_V1_LAYOUT_CAPABILITY_BITS_LEN = 2;
+
+    /** crypto_protocol.HELLO_V1_LAYOUT.ed_public_len */
+    public static final int HELLO_V1_LAYOUT_ED_PUBLIC_LEN = 32;
+
+    /** crypto_protocol.HELLO_V1_LAYOUT.eid_len */
+    public static final int HELLO_V1_LAYOUT_EID_LEN = 12;
+
+    /** crypto_protocol.HELLO_V1_LAYOUT.hello_version_len */
+    public static final int HELLO_V1_LAYOUT_HELLO_VERSION_LEN = 1;
+
+    /** crypto_protocol.HELLO_V1_LAYOUT.nonce_len */
+    public static final int HELLO_V1_LAYOUT_NONCE_LEN = 16;
+
+    /** crypto_protocol.HELLO_V1_LAYOUT.overridable */
+    public static final boolean HELLO_V1_LAYOUT_OVERRIDABLE = false;
+
+    /** crypto_protocol.HELLO_V1_LAYOUT.protocol_version_len */
+    public static final int HELLO_V1_LAYOUT_PROTOCOL_VERSION_LEN = 1;
+
+    /** crypto_protocol.HELLO_V1_LAYOUT.total_len */
+    public static final int HELLO_V1_LAYOUT_TOTAL_LEN = 164;
+
+    /** crypto_protocol.HELLO_V1_LAYOUT.venue_hint_len */
+    public static final int HELLO_V1_LAYOUT_VENUE_HINT_LEN = 4;
+
+    /** crypto_protocol.HELLO_V1_LAYOUT.x_public_len */
+    public static final int HELLO_V1_LAYOUT_X_PUBLIC_LEN = 32;
+
     /** crypto_protocol.MEDIA_OBJECT_KEY_INFO.overridable */
     public static final boolean MEDIA_OBJECT_KEY_INFO_OVERRIDABLE = false;
 
@@ -134,6 +182,18 @@ public final class LumosConstants {
 
     /** crypto_protocol.MEDIA_OBJECT_KEY_WRAP_INFO.value */
     public static final String MEDIA_OBJECT_KEY_WRAP_INFO_VALUE = "lumos/media/object-key-wrap/v1";
+
+    /** crypto_protocol.PEER_ID_KDF_INFO.overridable */
+    public static final boolean PEER_ID_KDF_INFO_OVERRIDABLE = false;
+
+    /** crypto_protocol.PEER_ID_KDF_INFO.value */
+    public static final String PEER_ID_KDF_INFO_VALUE = "lumos/peer-id/v1";
+
+    /** crypto_protocol.PEER_ID_LEN.default */
+    public static final int PEER_ID_LEN_DEFAULT = 16;
+
+    /** crypto_protocol.PEER_ID_LEN.overridable */
+    public static final boolean PEER_ID_LEN_OVERRIDABLE = false;
 
     /** crypto_protocol.RATCHET_HEADER_LAYOUT.dh_len */
     public static final int RATCHET_HEADER_LAYOUT_DH_LEN = 32;

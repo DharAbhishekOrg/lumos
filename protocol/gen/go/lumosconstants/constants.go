@@ -6,7 +6,7 @@
 // GENERATED - DO NOT EDIT. Generator: tools/constantsgen
 // Source register: protocol/constants/lumos_constants.json
 // Baseline: TRS v1.1 Sec. 23 / EDP v1.0 Sec. 4 (ADR-004)
-// constants_hash: sha256:d65cfa8dfb493f4e4a78e6178b9cd9846c76731575da9fc12da6ea2a685c8586
+// constants_hash: sha256:8bb65dc5e630eb6df4261d8eb75296f6cdc5191f09de248c33dfbe2803e6e373
 
 package lumosconstants
 
@@ -14,7 +14,7 @@ package lumosconstants
 const ServiceUUID = "E853EB6A-775C-4A49-A6BF-320E6A5CC609"
 
 // ConstantsHash binds generated code to the register that produced it (TRS-CONST-005).
-const ConstantsHash = "sha256:d65cfa8dfb493f4e4a78e6178b9cd9846c76731575da9fc12da6ea2a685c8586"
+const ConstantsHash = "sha256:8bb65dc5e630eb6df4261d8eb75296f6cdc5191f09de248c33dfbe2803e6e373"
 
 // SchemaVersion is the register schema version.
 const SchemaVersion = 1
@@ -113,6 +113,54 @@ const ConfigSigningInfoOverridable = false
 // ConfigSigningInfoValue is crypto_protocol.CONFIG_SIGNING_INFO.value.
 const ConfigSigningInfoValue = "lumos/config/signed-package/v1"
 
+// HelloAckV1LayoutAuthSigLen is crypto_protocol.HELLO_ACK_V1_LAYOUT.auth_sig_len.
+const HelloAckV1LayoutAuthSigLen = 64
+
+// HelloAckV1LayoutOverridable is crypto_protocol.HELLO_ACK_V1_LAYOUT.overridable.
+const HelloAckV1LayoutOverridable = false
+
+// HelloAckV1LayoutTotalLen is crypto_protocol.HELLO_ACK_V1_LAYOUT.total_len.
+const HelloAckV1LayoutTotalLen = 228
+
+// HelloAuthInfoOverridable is crypto_protocol.HELLO_AUTH_INFO.overridable.
+const HelloAuthInfoOverridable = false
+
+// HelloAuthInfoValue is crypto_protocol.HELLO_AUTH_INFO.value.
+const HelloAuthInfoValue = "lumos/hello/auth/v1"
+
+// HelloV1LayoutBindingSigLen is crypto_protocol.HELLO_V1_LAYOUT.binding_sig_len.
+const HelloV1LayoutBindingSigLen = 64
+
+// HelloV1LayoutCapabilityBitsLen is crypto_protocol.HELLO_V1_LAYOUT.capability_bits_len.
+const HelloV1LayoutCapabilityBitsLen = 2
+
+// HelloV1LayoutEdPublicLen is crypto_protocol.HELLO_V1_LAYOUT.ed_public_len.
+const HelloV1LayoutEdPublicLen = 32
+
+// HelloV1LayoutEIDLen is crypto_protocol.HELLO_V1_LAYOUT.eid_len.
+const HelloV1LayoutEIDLen = 12
+
+// HelloV1LayoutHelloVersionLen is crypto_protocol.HELLO_V1_LAYOUT.hello_version_len.
+const HelloV1LayoutHelloVersionLen = 1
+
+// HelloV1LayoutNonceLen is crypto_protocol.HELLO_V1_LAYOUT.nonce_len.
+const HelloV1LayoutNonceLen = 16
+
+// HelloV1LayoutOverridable is crypto_protocol.HELLO_V1_LAYOUT.overridable.
+const HelloV1LayoutOverridable = false
+
+// HelloV1LayoutProtocolVersionLen is crypto_protocol.HELLO_V1_LAYOUT.protocol_version_len.
+const HelloV1LayoutProtocolVersionLen = 1
+
+// HelloV1LayoutTotalLen is crypto_protocol.HELLO_V1_LAYOUT.total_len.
+const HelloV1LayoutTotalLen = 164
+
+// HelloV1LayoutVenueHintLen is crypto_protocol.HELLO_V1_LAYOUT.venue_hint_len.
+const HelloV1LayoutVenueHintLen = 4
+
+// HelloV1LayoutXPublicLen is crypto_protocol.HELLO_V1_LAYOUT.x_public_len.
+const HelloV1LayoutXPublicLen = 32
+
 // MediaObjectKeyInfoOverridable is crypto_protocol.MEDIA_OBJECT_KEY_INFO.overridable.
 const MediaObjectKeyInfoOverridable = false
 
@@ -124,6 +172,18 @@ const MediaObjectKeyWrapInfoOverridable = false
 
 // MediaObjectKeyWrapInfoValue is crypto_protocol.MEDIA_OBJECT_KEY_WRAP_INFO.value.
 const MediaObjectKeyWrapInfoValue = "lumos/media/object-key-wrap/v1"
+
+// PeerIDKdfInfoOverridable is crypto_protocol.PEER_ID_KDF_INFO.overridable.
+const PeerIDKdfInfoOverridable = false
+
+// PeerIDKdfInfoValue is crypto_protocol.PEER_ID_KDF_INFO.value.
+const PeerIDKdfInfoValue = "lumos/peer-id/v1"
+
+// PeerIDLenDefault is crypto_protocol.PEER_ID_LEN.default.
+const PeerIDLenDefault = 16
+
+// PeerIDLenOverridable is crypto_protocol.PEER_ID_LEN.overridable.
+const PeerIDLenOverridable = false
 
 // RatchetHeaderLayoutDhLen is crypto_protocol.RATCHET_HEADER_LAYOUT.dh_len.
 const RatchetHeaderLayoutDhLen = 32
