@@ -24,7 +24,11 @@ import LumosProtocolGenerated
 /// The Lumos service UUID from the register.
 public enum LumosService {
     /// The 128-bit service UUID every Lumos peer advertises or scans for.
-    public static let uuid = CBUUID(string: LumosConstants.serviceUUID)
+    ///
+    /// Computed, not stored: CBUUID is not Sendable, so a stored static would
+    /// be shared mutable state under Swift 6 strict concurrency. Construction
+    /// from the register string is cheap and each caller gets its own value.
+    public static var uuid: CBUUID { CBUUID(string: LumosConstants.serviceUUID) }
 }
 
 /// BleScanning over a CBCentralManager.
