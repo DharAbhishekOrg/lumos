@@ -123,6 +123,13 @@ public final class FragmentReassembler {
         var lastAt: Int64
     }
 
+    /// The parsed 4-byte fragment header.
+    private struct Header {
+        let flags: Int
+        let id: UInt8
+        let index: Int
+    }
+
     private let timeoutMillis: Int64
     private var open: Open?
     private var completedID: UInt8?
@@ -150,17 +157,16 @@ public final class FragmentReassembler {
         guard flags & LumosConstants.fragFlagsReservedMaskDefault == 0 else {
             throw LumosCrypto.WireError(LumosErrors.errFragHeaderMalformed, "reserved flag bit set")
         }
-        let id = bytes[1]
-        let index = Int(bytes[2]) << 8 | Int(bytes[3])
+        let header = Header(flags: flags, id: bytes[1], index: Int(bytes[2]) << 8 | Int(bytes[3]))
         let content = Data(bytes[Fragmentation.headerLen...])
 
         let expiredNow = expireIfIdle(nowMillis: nowMillis)
 
         if flags & LumosConstants.fragFlagFirstDefault != 0 {
-            return try offerFirst(id: id, index: index, flags: flags, content: content,
+            return try offerFirst(header: header, content: content,
                                   nowMillis: nowMillis, expiredNow: expiredNow)
         }
-        return try offerContinuation(id: id, index: index, flags: flags, content: content,
+        return try offerContinuation(header: header, content: content,
                                      nowMillis: nowMillis, expiredNow: expiredNow)
     }
 
@@ -172,9 +178,9 @@ public final class FragmentReassembler {
         return true
     }
 
-    private func offerFirst(id: UInt8, index: Int, flags: Int, content: Data,
+    private func offerFirst(header: Header, content: Data,
                             nowMillis: Int64, expiredNow: Bool) throws -> Offer {
-        guard index == 0 else {
+        guard header.index == 0 else {
             throw LumosCrypto.WireError(LumosErrors.errFragHeaderMalformed,
                                         "FIRST fragment with a non-zero index")
         }
@@ -201,24 +207,24 @@ public final class FragmentReassembler {
         let restarted = open != nil
         var buf = Data(capacity: total)
         buf.append(data)
-        open = Open(id: id, next: 1, total: total, buf: buf, lastAt: nowMillis)
+        open = Open(id: header.id, next: 1, total: total, buf: buf, lastAt: nowMillis)
 
-        if flags & LumosConstants.fragFlagLastDefault != 0 {
+        if header.flags & LumosConstants.fragFlagLastDefault != 0 {
             return try complete(restarted: restarted, expiredNow: expiredNow)
         }
         return Offer(outcome: .accepted, payload: nil, restarted: restarted, expiredPrevious: expiredNow)
     }
 
-    private func offerContinuation(id: UInt8, index: Int, flags: Int, content: Data,
+    private func offerContinuation(header: Header, content: Data,
                                    nowMillis: Int64, expiredNow: Bool) throws -> Offer {
-        guard var live = open, id == live.id else {
-            if let done = completedID, id == done {
+        guard var live = open, header.id == live.id else {
+            if let done = completedID, header.id == done {
                 // A straggler of the completed assembly: a reconnect epoch
                 // re-sent it. Suppressed, never an error (TRS-PROTO-010).
                 return Offer(outcome: .duplicate, payload: nil,
                              restarted: false, expiredPrevious: expiredNow)
             }
-            if let aged = expiredID, id == aged {
+            if let aged = expiredID, header.id == aged {
                 throw LumosCrypto.WireError(LumosErrors.errFragReassemblyTimeout,
                                             "continuation of an assembly that aged out")
             }
@@ -226,13 +232,13 @@ public final class FragmentReassembler {
                                         "continuation of an assembly this receiver does not have")
         }
 
-        if index < live.next {
+        if header.index < live.next {
             // Already consumed: a link-level retransmit. Suppressed without
             // refreshing the idle clock - a duplicate is not progress.
             return Offer(outcome: .duplicate, payload: nil,
                          restarted: false, expiredPrevious: expiredNow)
         }
-        if index > live.next {
+        if header.index > live.next {
             open = nil
             throw LumosCrypto.WireError(LumosErrors.errFragSequenceGap,
                                         "a fragment index was skipped")
@@ -243,11 +249,11 @@ public final class FragmentReassembler {
                                         "content overruns the declared total")
         }
         live.buf.append(content)
-        live.next = index + 1
+        live.next = header.index + 1
         live.lastAt = nowMillis
         open = live
 
-        if flags & LumosConstants.fragFlagLastDefault != 0 {
+        if header.flags & LumosConstants.fragFlagLastDefault != 0 {
             return try complete(restarted: false, expiredNow: expiredNow)
         }
         return Offer(outcome: .accepted, payload: nil, restarted: false, expiredPrevious: expiredNow)

@@ -68,6 +68,7 @@ func Split(blob []byte, assemblyID uint8, chunkPayload int) ([][]byte, error) {
 	// The content stream is the u32 total followed by the blob; every fragment
 	// carries up to chunkPayload bytes of it.
 	content := make([]byte, 0, fragTotalPrefixLen+len(blob))
+	// #nosec G115 -- len(blob) is bounded above by the FRAG_REASSEMBLY_MAX_BYTES check
 	content = binary.BigEndian.AppendUint32(content, uint32(len(blob)))
 	content = append(content, blob...)
 

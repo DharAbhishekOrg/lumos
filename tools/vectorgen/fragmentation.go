@@ -108,12 +108,12 @@ func runFragScript(s fragScript) error {
 			case err == nil:
 				return fmt.Errorf("script %s step %d: expected %s, offer succeeded", s.Name, i, step.Error)
 			case !errors.As(err, &we) || we.Code != step.Error:
-				return fmt.Errorf("script %s step %d: expected %s, got %v", s.Name, i, step.Error, err)
+				return fmt.Errorf("script %s step %d: expected %s, got %w", s.Name, i, step.Error, err)
 			}
 			continue
 		}
 		if err != nil {
-			return fmt.Errorf("script %s step %d: unexpected error %v", s.Name, i, err)
+			return fmt.Errorf("script %s step %d: unexpected error %w", s.Name, i, err)
 		}
 		if got := outcomeName(res.Outcome); got != step.Expect {
 			return fmt.Errorf("script %s step %d: expected %s, got %s", s.Name, i, step.Expect, got)
