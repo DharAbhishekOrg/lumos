@@ -257,6 +257,10 @@ dependencies {
     // them on a device, instead of against a fake that would only ever agree
     // with its author (WP-01 closeout Sec. 5.2).
     testImplementation(libs.sqlite.jdbc)
+    // Gson reads the committed vector files in JVM tests: the android.jar
+    // org.json on the unit-test classpath is the stubbed not-mocked one. Same
+    // artifact, version and licence as the conformance module's approved use.
+    testImplementation(libs.gson)
 
     // Room, Apache-2.0. The Android production store, behind the SqlDatabase
     // seam (owner ruling 2026-08-14). room-compiler is an annotation processor:

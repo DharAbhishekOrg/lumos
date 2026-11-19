@@ -79,6 +79,15 @@
       ]
     },
     {
+      "path": "test-vectors/crypto/identity_binding.json",
+      "implements": [
+        "SRS-IDN-001",
+        "SRS-NFR-SEC-002",
+        "TRS-CRY-001",
+        "TRS-TST-001"
+      ]
+    },
+    {
       "path": "test-vectors/adv/ble_advertisement.json",
       "implements": [
         "TRS-PROTO-009",

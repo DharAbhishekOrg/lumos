@@ -29,6 +29,7 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import com.lumos.app.identity.JcaIdentityCrypto;
 import com.lumos.app.Fixtures;
 import com.lumos.app.identity.IdentityKeyGenerator;
 import com.lumos.app.identity.IdentityKeyRecord;
@@ -63,7 +64,7 @@ final class RecoveryFlowTest {
      * @throws Exception on key or store failure
      */
     private static IdentityKeyRecord populate(final Fixtures.Stack stack) throws Exception {
-        final IdentityKeyRecord identity = IdentityKeyGenerator.generate(stack.kek());
+        final IdentityKeyRecord identity = IdentityKeyGenerator.generate(new JcaIdentityCrypto(), stack.kek());
         new IdentityRepository(stack.store()).replace(identity);
         stack.store().put(RecordKind.LOCAL_PROFILE, "self",
                 LocalStore.payloadOf("lumos-profile/1\nfield\tALIAS\tTEXT\t" + ALIAS), null);
@@ -163,12 +164,12 @@ final class RecoveryFlowTest {
         // A different device, with its own identity already on it.
         try (Fixtures.Stack target = Fixtures.openInMemory()) {
             final IdentityRepository identities = new IdentityRepository(target.store());
-            final byte[] before = IdentityKeyGenerator.generate(target.kek()).ed25519Public();
-            identities.replace(IdentityKeyGenerator.generate(target.kek()));
+            final byte[] before = IdentityKeyGenerator.generate(new JcaIdentityCrypto(), target.kek()).ed25519Public();
+            identities.replace(IdentityKeyGenerator.generate(new JcaIdentityCrypto(), target.kek()));
             final byte[] actuallyBefore = identities.load().orElseThrow().ed25519Public();
 
             final RecoveryRestore.RestoreResult result =
-                    new RecoveryRestore(target.store(), record(), identities, target.kek())
+                    new RecoveryRestore(target.store(), record(), identities, target.kek(), new JcaIdentityCrypto())
                             .restore(passphrase(), sealed);
 
             assertTrue(result.identityIsNew(), "SRS-ONB-007: restore creates a new identity");
@@ -181,7 +182,7 @@ final class RecoveryFlowTest {
 
             final IdentityKeyRecord now = identities.load().orElseThrow();
             assertArrayEquals(result.newEd25519Public(), now.ed25519Public());
-            assertTrue(IdentityKeyGenerator.verifyBinding(now.ed25519Public(),
+            assertTrue(IdentityKeyGenerator.verifyBinding(new JcaIdentityCrypto(), now.ed25519Public(),
                     now.x25519Public(), now.bindingSignature()),
                     "the restored device's identity is a properly bound ADR-008 identity");
         }
@@ -198,7 +199,7 @@ final class RecoveryFlowTest {
         try (Fixtures.Stack target = Fixtures.openInMemory()) {
             final IdentityRepository identities = new IdentityRepository(target.store());
             final RecoveryRestore.RestoreResult result =
-                    new RecoveryRestore(target.store(), record(), identities, target.kek())
+                    new RecoveryRestore(target.store(), record(), identities, target.kek(), new JcaIdentityCrypto())
                             .restore(passphrase(), sealed);
 
             assertEquals(4, result.restoredRows());
@@ -230,7 +231,8 @@ final class RecoveryFlowTest {
         }
         try (Fixtures.Stack target = Fixtures.openInMemory()) {
             final RecoveryRestore.RestoreResult result = new RecoveryRestore(target.store(),
-                    record(), new IdentityRepository(target.store()), target.kek())
+                    record(), new IdentityRepository(target.store()), target.kek(),
+                    new JcaIdentityCrypto())
                     .restore(passphrase(), sealed);
             assertEquals(List.of(RecoverySection.MATCH_ROSTER,
                     RecoverySection.CONVERSATION_HISTORY), result.sectionsNotInTheFile(),
@@ -249,11 +251,11 @@ final class RecoveryFlowTest {
         }
         try (Fixtures.Stack target = Fixtures.openInMemory()) {
             final IdentityRepository identities = new IdentityRepository(target.store());
-            identities.replace(IdentityKeyGenerator.generate(target.kek()));
+            identities.replace(IdentityKeyGenerator.generate(new JcaIdentityCrypto(), target.kek()));
             final byte[] before = identities.load().orElseThrow().ed25519Public();
 
             final RecoveryRestore restore = new RecoveryRestore(target.store(), record(),
-                    identities, target.kek());
+                    identities, target.kek(), new JcaIdentityCrypto());
             assertThrows(RecoveryException.class, () -> restore.restore(
                     "wrong passphrase entirely".getBytes(StandardCharsets.UTF_8), sealed));
 

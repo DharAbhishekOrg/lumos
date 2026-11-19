@@ -23,6 +23,7 @@
 package com.lumos.app.onboarding;
 
 import com.lumos.app.data.DataKeyHierarchy;
+import com.lumos.app.identity.IdentityCrypto;
 import com.lumos.app.identity.IdentityKeyGenerator;
 import com.lumos.app.identity.IdentityKeyRecord;
 import com.lumos.app.identity.IdentityRepository;
@@ -40,6 +41,7 @@ public final class OnboardingService {
     private final ConsentRepository consent;
     private final IdentityRepository identities;
     private final KekStore kek;
+    private final IdentityCrypto crypto;
     private final LocalStore.Clock clock;
 
     /**
@@ -50,14 +52,17 @@ public final class OnboardingService {
      * @param consent where consent evidence is stored
      * @param identities where the device identity is stored
      * @param kek the key-encryption key the identity envelope is wrapped under
+     * @param crypto the identity backend - libsodium on Android, JCA on the JVM
      * @param clock the UTC clock
      */
     public OnboardingService(final OnboardingMachine machine, final ConsentRepository consent,
-            final IdentityRepository identities, final KekStore kek, final LocalStore.Clock clock) {
+            final IdentityRepository identities, final KekStore kek, final IdentityCrypto crypto,
+            final LocalStore.Clock clock) {
         this.machine = machine;
         this.consent = consent;
         this.identities = identities;
         this.kek = kek;
+        this.crypto = crypto;
         this.clock = clock;
     }
 
@@ -120,7 +125,7 @@ public final class OnboardingService {
             throw new IllegalStateException(
                     "identity creation runs after the gate and the documents, not before");
         }
-        final IdentityKeyRecord record = IdentityKeyGenerator.generate(kek);
+        final IdentityKeyRecord record = IdentityKeyGenerator.generate(crypto, kek);
         identities.replace(record);
         final DataKeyHierarchy hierarchy = DataKeyHierarchy.create(kek);
         machine.on(new OnboardingEvent.IdentityCreated());

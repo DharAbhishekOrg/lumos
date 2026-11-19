@@ -30,10 +30,10 @@ final class IdentityKeyGeneratorTest {
     @Test
     void bindingSignatureVerifies() throws GeneralSecurityException {
         final SoftwareKekStore kek = SoftwareKekStore.create();
-        final IdentityKeyRecord record = IdentityKeyGenerator.generate(kek);
+        final IdentityKeyRecord record = IdentityKeyGenerator.generate(new JcaIdentityCrypto(), kek);
         assertEquals(32, record.ed25519Public().length);
         assertEquals(32, record.x25519Public().length);
-        assertTrue(IdentityKeyGenerator.verifyBinding(
+        assertTrue(IdentityKeyGenerator.verifyBinding(new JcaIdentityCrypto(), 
                 record.ed25519Public(), record.x25519Public(), record.bindingSignature()),
                 "the ADR-008 binding must verify for a freshly generated identity");
     }
@@ -41,29 +41,29 @@ final class IdentityKeyGeneratorTest {
     @Test
     void verificationFailsClosedOnEveryTamperedInput() throws GeneralSecurityException {
         final SoftwareKekStore kek = SoftwareKekStore.create();
-        final IdentityKeyRecord record = IdentityKeyGenerator.generate(kek);
+        final IdentityKeyRecord record = IdentityKeyGenerator.generate(new JcaIdentityCrypto(), kek);
 
         final byte[] bentEd = record.ed25519Public();
         bentEd[3] ^= 0x01;
-        assertFalse(IdentityKeyGenerator.verifyBinding(bentEd, record.x25519Public(), record.bindingSignature()));
+        assertFalse(IdentityKeyGenerator.verifyBinding(new JcaIdentityCrypto(), bentEd, record.x25519Public(), record.bindingSignature()));
 
         final byte[] bentX = record.x25519Public();
         bentX[7] ^= 0x01;
-        assertFalse(IdentityKeyGenerator.verifyBinding(record.ed25519Public(), bentX, record.bindingSignature()));
+        assertFalse(IdentityKeyGenerator.verifyBinding(new JcaIdentityCrypto(), record.ed25519Public(), bentX, record.bindingSignature()));
 
         final byte[] bentSig = record.bindingSignature();
         bentSig[11] ^= 0x01;
-        assertFalse(IdentityKeyGenerator.verifyBinding(record.ed25519Public(), record.x25519Public(), bentSig));
+        assertFalse(IdentityKeyGenerator.verifyBinding(new JcaIdentityCrypto(), record.ed25519Public(), record.x25519Public(), bentSig));
 
-        assertFalse(IdentityKeyGenerator.verifyBinding(new byte[5], record.x25519Public(),
+        assertFalse(IdentityKeyGenerator.verifyBinding(new JcaIdentityCrypto(), new byte[5], record.x25519Public(),
                 record.bindingSignature()), "a malformed key is a verification failure, not an exception");
     }
 
     @Test
     void twoIdentitiesAreDistinct() throws GeneralSecurityException {
         final SoftwareKekStore kek = SoftwareKekStore.create();
-        final IdentityKeyRecord first = IdentityKeyGenerator.generate(kek);
-        final IdentityKeyRecord second = IdentityKeyGenerator.generate(kek);
+        final IdentityKeyRecord first = IdentityKeyGenerator.generate(new JcaIdentityCrypto(), kek);
+        final IdentityKeyRecord second = IdentityKeyGenerator.generate(new JcaIdentityCrypto(), kek);
         assertFalse(java.util.Arrays.equals(first.ed25519Public(), second.ed25519Public()),
                 "identity generation must draw from the CSPRNG, never repeat (SRS-NFR-SEC-002)");
         assertFalse(java.util.Arrays.equals(first.x25519Public(), second.x25519Public()));
@@ -72,7 +72,7 @@ final class IdentityKeyGeneratorTest {
     @Test
     void privateKeysExistOnlyInsideTheWrappedEnvelope() throws GeneralSecurityException {
         final SoftwareKekStore kek = SoftwareKekStore.create();
-        final IdentityKeyRecord record = IdentityKeyGenerator.generate(kek);
+        final IdentityKeyRecord record = IdentityKeyGenerator.generate(new JcaIdentityCrypto(), kek);
 
         // The envelope opens under the KEK with the right AAD, and its contents
         // are two well-formed PKCS#8 keys whose bytes appear NOWHERE in the
@@ -92,7 +92,7 @@ final class IdentityKeyGeneratorTest {
     @Test
     void destroyingTheKekErasesTheIdentity() throws GeneralSecurityException {
         final SoftwareKekStore kek = SoftwareKekStore.create();
-        final IdentityKeyRecord record = IdentityKeyGenerator.generate(kek);
+        final IdentityKeyRecord record = IdentityKeyGenerator.generate(new JcaIdentityCrypto(), kek);
         kek.destroy();
         assertThrows(GeneralSecurityException.class,
                 () -> kek.unwrap(record.wrappedPrivateKeys(),
@@ -105,7 +105,7 @@ final class IdentityKeyGeneratorTest {
     @Test
     void recordGettersAreDefensiveCopies() throws GeneralSecurityException {
         final SoftwareKekStore kek = SoftwareKekStore.create();
-        final IdentityKeyRecord record = IdentityKeyGenerator.generate(kek);
+        final IdentityKeyRecord record = IdentityKeyGenerator.generate(new JcaIdentityCrypto(), kek);
         final byte[] mutated = record.ed25519Public();
         mutated[0] ^= 0x7F;
         assertArrayEquals(record.ed25519Public(), record.ed25519Public());

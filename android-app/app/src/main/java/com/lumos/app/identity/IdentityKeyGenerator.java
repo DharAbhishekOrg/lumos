@@ -12,27 +12,15 @@
  * envelope; no API returns them, and IdentityKeyGeneratorTest asserts the
  * envelope is unopenable once the KEK is destroyed (crypto-erasure).
  *
- * PROVIDER AVAILABILITY, MEASURED RATHER THAN ASSUMED - and the measurement
- * corrects what this comment used to say. Slice S1 recorded that Ed25519 and
- * XDH "resolve on JDK 17 and on Android API 33+"; slice S4c ran generation on
- * an emulator for the first time and only half of that held:
- *
- *                                            JDK   API 30   API 34
- *   KeyPairGenerator.getInstance("XDH")      yes   no       yes
- *   Signature.getInstance("Ed25519")         yes   no       yes
- *   KeyPairGenerator.getInstance("Ed25519")  yes   no       NO
- *
- * Android gained Ed25519 for signing and verifying at API 33 and has never
- * gained it for key GENERATION. So generate() runs on the JDK - every unit test
- * and every JVM job in CI - and on no Android runtime at all, while
- * verifyBinding() works on API 33+. The boundary is not an API level; it is
- * Android.
- *
- * The ADR-001 answer is libsodium, which is already in the tree as Lazysodium
- * for the RecoveryRecord. The owner ruling of 2026-08-14 parks that wiring for
- * WP-03 device work rather than taking it inside WP-02, and
- * PlatformKeyAlgorithmInstrumentedTest is the tripwire that fails the day the
- * platform makes it unnecessary.
+ * WP-03 S1: the crypto moved behind the IdentityCrypto seam, because WP-02's
+ * closeout finding 5.1 measured that Android cannot generate an Ed25519 key at
+ * any API level - the JCA code this class used to call inline runs on the JVM
+ * and on no Android runtime at all. Callers inject the backend: JcaIdentityCrypto
+ * where the JCA has the algorithms (every unit test and CI job),
+ * LibsodiumIdentityCrypto on every shipping Android device (ADR-001). This
+ * class keeps what must not fork: the envelope discipline, the binding message
+ * and the zeroing. PlatformKeyAlgorithmInstrumentedTest remains the tripwire
+ * that fails the day the platform makes the seam unnecessary.
  */
 
 package com.lumos.app.identity;
@@ -41,10 +29,6 @@ import com.lumos.app.keystore.KekStore;
 import com.lumos.protocol.LumosConstants;
 import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
-import java.security.KeyPair;
-import java.security.KeyPairGenerator;
-import java.security.SecureRandom;
-import java.security.Signature;
 import java.util.Arrays;
 
 /** Generates and binds the two-key device identity of ADR-008. */
@@ -68,42 +52,35 @@ public final class IdentityKeyGenerator {
     /**
      * Generates a fresh identity and seals both private keys under the KEK.
      *
-     * <p>Key material comes from the platform CSPRNG via the JCA generators
+     * <p>Key material comes from the injected backend's CSPRNG
      * (SRS-NFR-SEC-002); the private keys' only surviving form is the returned
      * record's wrapped envelope.
      *
+     * @param crypto the identity backend - libsodium on Android, JCA on the JVM
      * @param kek the store that wraps the private-key envelope
      * @return the at-rest identity record
      * @throws GeneralSecurityException if generation, signing or wrapping fails
      */
-    public static IdentityKeyRecord generate(final KekStore kek) throws GeneralSecurityException {
-        final SecureRandom random = new SecureRandom();
-        final KeyPairGenerator edGenerator = KeyPairGenerator.getInstance("Ed25519");
-        edGenerator.initialize(255, random);
-        final KeyPair ed = edGenerator.generateKeyPair();
-
-        final KeyPairGenerator xGenerator = KeyPairGenerator.getInstance("XDH");
-        xGenerator.initialize(255, random);
-        final KeyPair x = xGenerator.generateKeyPair();
-
-        final byte[] edPublic = rawPublic(ed);
-        final byte[] xPublic = rawPublic(x);
-
-        final Signature signer = Signature.getInstance("Ed25519");
-        signer.initSign(ed.getPrivate());
-        signer.update(bindingMessage(xPublic));
-        final byte[] binding = signer.sign();
-
-        final byte[] envelope = PrivateKeyEnvelope.encode(
-                ed.getPrivate().getEncoded(), x.getPrivate().getEncoded());
-        final byte[] wrapped;
+    public static IdentityKeyRecord generate(final IdentityCrypto crypto, final KekStore kek)
+            throws GeneralSecurityException {
+        final IdentityCrypto.KeyMaterial ed = crypto.generateEd25519();
+        final IdentityCrypto.KeyMaterial x = crypto.generateX25519();
         try {
-            wrapped = kek.wrap(envelope, ENVELOPE_AAD.getBytes(StandardCharsets.UTF_8));
+            final byte[] binding = crypto.signBinding(ed.pkcs8(), bindingMessage(x.rawPublic()));
+            final byte[] envelope = PrivateKeyEnvelope.encode(ed.pkcs8(), x.pkcs8());
+            final byte[] wrapped;
+            try {
+                wrapped = kek.wrap(envelope, ENVELOPE_AAD.getBytes(StandardCharsets.UTF_8));
+            } finally {
+                // The plaintext envelope's only long-lived form is the wrapped one.
+                Arrays.fill(envelope, (byte) 0);
+            }
+            return new IdentityKeyRecord(ed.rawPublic(), x.rawPublic(), binding, wrapped,
+                    kek.protection());
         } finally {
-            // The plaintext envelope's only long-lived form is the wrapped one.
-            Arrays.fill(envelope, (byte) 0);
+            ed.destroy();
+            x.destroy();
         }
-        return new IdentityKeyRecord(edPublic, xPublic, binding, wrapped, kek.protection());
     }
 
     /**
@@ -114,21 +91,15 @@ public final class IdentityKeyGenerator {
      * signature is a verification failure, not a distinguishable error:
      * surfacing which would be an oracle (TRS-CRY-013).
      *
+     * @param crypto the identity backend that performs the verification
      * @param ed25519Public the raw Ed25519 identity public key
      * @param x25519Public the raw X25519 identity-DH public key
      * @param signature the claimed binding signature
      * @return true only when the signature verifies
      */
-    public static boolean verifyBinding(final byte[] ed25519Public, final byte[] x25519Public,
-            final byte[] signature) {
-        try {
-            final Signature verifier = Signature.getInstance("Ed25519");
-            verifier.initVerify(RawKeys.ed25519Public(ed25519Public));
-            verifier.update(bindingMessage(x25519Public));
-            return verifier.verify(signature);
-        } catch (GeneralSecurityException e) {
-            return false;
-        }
+    public static boolean verifyBinding(final IdentityCrypto crypto, final byte[] ed25519Public,
+            final byte[] x25519Public, final byte[] signature) {
+        return crypto.verifyBinding(ed25519Public, bindingMessage(x25519Public), signature);
     }
 
     /**
@@ -145,23 +116,4 @@ public final class IdentityKeyGenerator {
         return message;
     }
 
-    /**
-     * Extracts the raw 32-byte public key from a generated pair.
-     *
-     * <p>For both Ed25519 and X25519 the X.509 SubjectPublicKeyInfo encoding is
-     * a fixed DER prefix followed by the raw key, so the raw form is the final
-     * 32 bytes. The length check makes a malformed encoding loud rather than
-     * silently truncated.
-     *
-     * @param pair the generated pair
-     * @return the raw public key
-     * @throws GeneralSecurityException on an unexpectedly short encoding
-     */
-    private static byte[] rawPublic(final KeyPair pair) throws GeneralSecurityException {
-        final byte[] spki = pair.getPublic().getEncoded();
-        if (spki == null || spki.length < RAW_KEY_BYTES + 1) {
-            throw new GeneralSecurityException("unexpected public-key encoding");
-        }
-        return Arrays.copyOfRange(spki, spki.length - RAW_KEY_BYTES, spki.length);
-    }
 }
