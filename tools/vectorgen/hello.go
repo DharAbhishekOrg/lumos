@@ -147,7 +147,7 @@ func expectHelloError(n helloNegative) error {
 	}
 	var we *wire.Error
 	if got == nil || !errors.As(got, &we) || we.Code != n.ExpectedError {
-		return fmt.Errorf("negative %s: expected %s, got %v", n.Name, n.ExpectedError, got)
+		return fmt.Errorf("negative %s: expected %s, got %w", n.Name, n.ExpectedError, got)
 	}
 	return nil
 }
