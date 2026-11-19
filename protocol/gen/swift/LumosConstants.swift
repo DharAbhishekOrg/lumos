@@ -6,7 +6,7 @@
 /// GENERATED - DO NOT EDIT. Generator: tools/constantsgen
 /// Source register: protocol/constants/lumos_constants.json
 /// Baseline: TRS v1.1 Sec. 23 / EDP v1.0 Sec. 4 (ADR-004)
-/// constants_hash: sha256:8bb65dc5e630eb6df4261d8eb75296f6cdc5191f09de248c33dfbe2803e6e373
+/// constants_hash: sha256:cd16dcdf2cd4e16b4c90259fc5ee16f0e4890c9c00de72a7bd317b63475873fe
 
 public enum LumosConstants {
 
@@ -14,7 +14,7 @@ public enum LumosConstants {
     public static let serviceUUID = "E853EB6A-775C-4A49-A6BF-320E6A5CC609"
 
     /// Binds generated code to the register that produced it (TRS-CONST-005).
-    public static let constantsHash = "sha256:8bb65dc5e630eb6df4261d8eb75296f6cdc5191f09de248c33dfbe2803e6e373"
+    public static let constantsHash = "sha256:cd16dcdf2cd4e16b4c90259fc5ee16f0e4890c9c00de72a7bd317b63475873fe"
 
     /// Register schema version.
     public static let schemaVersion = 1
@@ -1097,6 +1097,18 @@ public enum LumosConstants {
 
     /// onboarding_safety.ADULT_AGE_MINIMUM.years
     public static let adultAgeMinimumYears = 18
+
+    /// onboarding_safety.VISIBLE_NEARBY_DURATION_SEC.default
+    public static let visibleNearbyDurationSecDefault = 3600
+
+    /// onboarding_safety.VISIBLE_NEARBY_DURATION_SEC.max
+    public static let visibleNearbyDurationSecMax = 28800
+
+    /// onboarding_safety.VISIBLE_NEARBY_DURATION_SEC.min
+    public static let visibleNearbyDurationSecMin = 900
+
+    /// onboarding_safety.VISIBLE_NEARBY_DURATION_SEC.overridable
+    public static let visibleNearbyDurationSecOverridable = true
 }
 
 /// Canonical Lumos message class (TRS Sec. 9.2).

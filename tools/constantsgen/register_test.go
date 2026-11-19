@@ -127,6 +127,9 @@ var expectedRegister = map[string][]string{
 	// floor at 18, and those two together leave nowhere else for it to live.
 	"onboarding_safety": {
 		"ADULT_AGE_MINIMUM",
+		// WP-03 S5: SRS-NBY-001's bounded visibility durations, fixed under
+		// the TRS Sec. 19 AI delivery rule like every derivation entry.
+		"VISIBLE_NEARBY_DURATION_SEC",
 	},
 }
 

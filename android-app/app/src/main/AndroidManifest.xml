@@ -46,6 +46,21 @@
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_CONNECTED_DEVICE" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 
+    <!-- Feature permissions, DECLARED here and REQUESTED only when the
+         related feature is first invoked (SRS-ONB-004; the table is
+         FeaturePermissions). The photo library needs no permission at all:
+         the platform photo picker hands over only what the user picked.
+         Neither camera nor microphone is required hardware - the app
+         continues with a reduced feature set without them (SRS-ONB-005). -->
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <uses-feature
+        android:name="android.hardware.camera.any"
+        android:required="false" />
+    <uses-feature
+        android:name="android.hardware.microphone"
+        android:required="false" />
+
     <application
         android:allowBackup="false"
         android:dataExtractionRules="@xml/data_extraction_rules"

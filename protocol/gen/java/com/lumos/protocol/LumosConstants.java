@@ -7,7 +7,7 @@
  * GENERATED - DO NOT EDIT. Generator: tools/constantsgen
  * Source register: protocol/constants/lumos_constants.json
  * Baseline: TRS v1.1 Sec. 23 / EDP v1.0 Sec. 4 (ADR-004)
- * constants_hash: sha256:8bb65dc5e630eb6df4261d8eb75296f6cdc5191f09de248c33dfbe2803e6e373
+ * constants_hash: sha256:cd16dcdf2cd4e16b4c90259fc5ee16f0e4890c9c00de72a7bd317b63475873fe
  */
 package com.lumos.protocol;
 
@@ -24,7 +24,7 @@ public final class LumosConstants {
     public static final String SERVICE_UUID = "E853EB6A-775C-4A49-A6BF-320E6A5CC609";
 
     /** Binds generated code to the register that produced it (TRS-CONST-005). */
-    public static final String CONSTANTS_HASH = "sha256:8bb65dc5e630eb6df4261d8eb75296f6cdc5191f09de248c33dfbe2803e6e373";
+    public static final String CONSTANTS_HASH = "sha256:cd16dcdf2cd4e16b4c90259fc5ee16f0e4890c9c00de72a7bd317b63475873fe";
 
     /** Register schema version. */
     public static final int SCHEMA_VERSION = 1;
@@ -1107,4 +1107,16 @@ public final class LumosConstants {
 
     /** onboarding_safety.ADULT_AGE_MINIMUM.years */
     public static final int ADULT_AGE_MINIMUM_YEARS = 18;
+
+    /** onboarding_safety.VISIBLE_NEARBY_DURATION_SEC.default */
+    public static final int VISIBLE_NEARBY_DURATION_SEC_DEFAULT = 3600;
+
+    /** onboarding_safety.VISIBLE_NEARBY_DURATION_SEC.max */
+    public static final int VISIBLE_NEARBY_DURATION_SEC_MAX = 28800;
+
+    /** onboarding_safety.VISIBLE_NEARBY_DURATION_SEC.min */
+    public static final int VISIBLE_NEARBY_DURATION_SEC_MIN = 900;
+
+    /** onboarding_safety.VISIBLE_NEARBY_DURATION_SEC.overridable */
+    public static final boolean VISIBLE_NEARBY_DURATION_SEC_OVERRIDABLE = true;
 }

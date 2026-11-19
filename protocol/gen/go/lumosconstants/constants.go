@@ -6,7 +6,7 @@
 // GENERATED - DO NOT EDIT. Generator: tools/constantsgen
 // Source register: protocol/constants/lumos_constants.json
 // Baseline: TRS v1.1 Sec. 23 / EDP v1.0 Sec. 4 (ADR-004)
-// constants_hash: sha256:8bb65dc5e630eb6df4261d8eb75296f6cdc5191f09de248c33dfbe2803e6e373
+// constants_hash: sha256:cd16dcdf2cd4e16b4c90259fc5ee16f0e4890c9c00de72a7bd317b63475873fe
 
 package lumosconstants
 
@@ -14,7 +14,7 @@ package lumosconstants
 const ServiceUUID = "E853EB6A-775C-4A49-A6BF-320E6A5CC609"
 
 // ConstantsHash binds generated code to the register that produced it (TRS-CONST-005).
-const ConstantsHash = "sha256:8bb65dc5e630eb6df4261d8eb75296f6cdc5191f09de248c33dfbe2803e6e373"
+const ConstantsHash = "sha256:cd16dcdf2cd4e16b4c90259fc5ee16f0e4890c9c00de72a7bd317b63475873fe"
 
 // SchemaVersion is the register schema version.
 const SchemaVersion = 1
@@ -1091,6 +1091,18 @@ const AdultAgeMinimumOverridable = false
 
 // AdultAgeMinimumYears is onboarding_safety.ADULT_AGE_MINIMUM.years.
 const AdultAgeMinimumYears = 18
+
+// VisibleNearbyDurationSecDefault is onboarding_safety.VISIBLE_NEARBY_DURATION_SEC.default.
+const VisibleNearbyDurationSecDefault = 3600
+
+// VisibleNearbyDurationSecMax is onboarding_safety.VISIBLE_NEARBY_DURATION_SEC.max.
+const VisibleNearbyDurationSecMax = 28800
+
+// VisibleNearbyDurationSecMin is onboarding_safety.VISIBLE_NEARBY_DURATION_SEC.min.
+const VisibleNearbyDurationSecMin = 900
+
+// VisibleNearbyDurationSecOverridable is onboarding_safety.VISIBLE_NEARBY_DURATION_SEC.overridable.
+const VisibleNearbyDurationSecOverridable = true
 
 // SafetyNumberEmojiAlphabetGlyphs is crypto_protocol.SAFETY_NUMBER_EMOJI_ALPHABET.glyphs. It is a var because Go has no array constants; treat it as read-only.
 var SafetyNumberEmojiAlphabetGlyphs = [...]string{"🐶", "🐱", "🐴", "🐮", "🐷", "🐸", "🐵", "🐔", "🐧", "🐢", "🐝", "🦋", "🐙", "🐬", "🐘", "🐊", "🍎", "🍌", "🍇", "🍓", "🍉", "🍍", "🌽", "🍄", "🍞", "🍕", "🎂", "🍩", "☕", "🍦", "🌵", "🌲", "🌻", "🌹", "🍁", "⭐", "🌈", "🔥", "💧", "⚡", "🔑", "🔒", "🎈", "🎁", "⚽", "🎸", "🎺", "🎯", "🚀", "⚓", "🚲", "🚂", "⏰", "💡", "🔔", "🎧", "📷", "🔭", "🎨", "🎪", "💙", "🎵", "🏆", "👑"}

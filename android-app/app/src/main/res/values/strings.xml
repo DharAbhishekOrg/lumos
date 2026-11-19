@@ -141,4 +141,56 @@
     <string name="nearby_notification_body">Lumos is finding people near you. Open the app to
         stop.</string>
 
+    <!-- How Lumos connects (SRS-ONB-003): plain words, before any permission
+         is requested. -->
+    <string name="connectivity_explainer">Finding people near you works over Bluetooth, between
+        phones, with no internet needed. Chatting with your matches when you are apart uses the
+        internet. That is the whole of it — there is no account behind either.</string>
+
+    <!-- Permission rationales and what is lost on denial (SRS-ONB-004/005).
+         Each rationale is shown at the feature\'s FIRST use, never at install,
+         and each denied string names the exact thing that stops working —
+         everything else continues. -->
+    <string name="perm_nearby_discovery_rationale">To see people near you — and be seen — Lumos
+        needs the Bluetooth permission. It is only used while Nearby is on.</string>
+    <string name="perm_nearby_discovery_denied">Without Bluetooth permission you cannot see
+        people nearby or be seen by them. Your profile, matches and chats still work.</string>
+    <string name="perm_profile_photo_capture_rationale">To take a photo for your profile, Lumos
+        needs the camera.</string>
+    <string name="perm_profile_photo_capture_denied">Without camera permission you cannot take
+        a new photo here. You can still choose one from your library.</string>
+    <string name="perm_profile_photo_library_rationale">You pick a photo; Lumos receives only
+        the one you picked.</string>
+    <string name="perm_profile_photo_library_denied">You did not pick a photo. Nothing else
+        changes.</string>
+    <string name="perm_voice_notes_rationale">To record a voice note, Lumos needs the
+        microphone. It records only while you hold the button.</string>
+    <string name="perm_voice_notes_denied">Without microphone permission you cannot record
+        voice notes. Text chat still works.</string>
+    <string name="perm_notifications_rationale">Lumos uses notifications to show when it is
+        finding people near you, and when a message arrives.</string>
+    <string name="perm_notifications_denied">Without notifications you will not see new
+        messages until you open the app. Everything inside the app still works.</string>
+
+    <!-- Visible Nearby (SRS-NBY-001/002/003): the choice, its durations, and
+         the always-on indicator while you are visible. -->
+    <string name="visible_nearby_title">Visible Nearby</string>
+    <string name="visible_nearby_explainer">While this is on, people near you can see your
+        preview. You choose for how long — an hour, a custom time, or until you leave the
+        venue — and it turns itself off when that ends. It never turns itself on.</string>
+    <string name="visible_nearby_duration_default">For an hour</string>
+    <string name="visible_nearby_duration_custom">For a time you choose</string>
+    <string name="visible_nearby_duration_venue">Until you leave the venue</string>
+    <string name="visible_nearby_indicator_on">You are visible to people nearby</string>
+    <string name="visible_nearby_indicator_until">Visible until %1$s</string>
+    <string name="visible_nearby_indicator_venue">Visible until you leave the venue</string>
+    <string name="visible_nearby_expired">Visible Nearby turned itself off. Turn it on again
+        any time.</string>
+
+    <!-- Proximity, in words (SRS-PRO-013). Indoor radio cannot honestly give
+         a distance in metres, so Lumos never shows one. -->
+    <string name="proximity_very_close">Very close</string>
+    <string name="proximity_nearby">Nearby</string>
+    <string name="proximity_around_venue">Around the venue</string>
+
 </resources>

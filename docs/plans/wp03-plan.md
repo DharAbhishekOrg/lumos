@@ -83,13 +83,17 @@ Delivered as two PRs for reviewability:
   (CI-provable halves).**
 
 ### S5 — First activities: Visible Nearby, permissions, app lock
-- Visible Nearby control with duration + indicator (SRS-NBY-001..003);
-  permissions trio at first feature use with plain-language copy
-  (SRS-ONB-003/004/005); profile media object store completing SRS-PRO-004;
-  App Lock + recents redaction (ADR-010/011 UI halves); AT-001 scenario
-  completion (fresh install blocks product entry); proximity bands per
-  SRS-PRO-013 from calibrated thresholds; respectful-copy rule extended
-  (SRS-PRO-012).
+Delivered as two PRs for reviewability (the S2 precedent):
+- **S5a:** Visible Nearby control with durations + indicator contract
+  (SRS-NBY-001..003, register-bounded); the feature-permission table with
+  plain-language rationale and exact-capability denial copy
+  (SRS-ONB-003/004/005); the encrypted media object store completing
+  SRS-PRO-004; proximity bands as words (SRS-PRO-013) with the
+  no-precise-distance copy rule; respectful-copy rule extended
+  (SRS-PRO-012); AT-001's blocking half instrumented over every AppSurface.
+- **S5b:** App Lock + recents redaction (ADR-010/011 UI halves), carried by
+  the schema v3 migration they need, done with the full Room-parity
+  discipline rather than squeezed into S5a.
 - **Graduates: the above on emulator/robolectric-free JVM + instrumented
   evidence; UI-polish rows stay for WP-10.**
 
