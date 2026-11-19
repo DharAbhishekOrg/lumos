@@ -120,4 +120,20 @@
     <Method name="&lt;init&gt;"/>
     <Bug pattern="EI_EXPOSE_REP2"/>
   </Match>
+  <!--
+    IdentityCrypto.KeyMaterial adopts and returns its live arrays ON PURPOSE,
+    and the EI_EXPOSE heuristic cannot see why: the private half is key
+    material whose only safe end state is being ZEROED IN PLACE via destroy().
+    A defensive copy at the constructor or accessor would hand every caller an
+    unzeroable duplicate of a private key - the heap-hygiene hole the live
+    array prevents - so here the "defensive" idiom is the defect and the
+    exposure is the feature. The class documents the adopt-and-zero contract,
+    its callers (IdentityKeyGenerator) zero in finally blocks, and the scope
+    is exactly this one nested class: every other EI_EXPOSE finding anywhere
+    else stays loud.
+  -->
+  <Match>
+    <Class name="com.lumos.app.identity.IdentityCrypto$KeyMaterial"/>
+    <Bug pattern="EI_EXPOSE_REP,EI_EXPOSE_REP2"/>
+  </Match>
 </FindBugsFilter>

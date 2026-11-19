@@ -445,30 +445,40 @@
    "req_id": "SRS-IDN-001",
    "status": "implemented",
    "code": [
+    "android-app/app/src/main/java/com/lumos/app/identity/IdentityCrypto.java",
     "android-app/app/src/main/java/com/lumos/app/identity/IdentityKeyGenerator.java",
     "android-app/app/src/main/java/com/lumos/app/identity/IdentityKeyRecord.java",
+    "android-app/app/src/main/java/com/lumos/app/identity/JcaIdentityCrypto.java",
+    "android-app/app/src/main/java/com/lumos/app/identity/LibsodiumIdentityCrypto.java",
+    "android-app/app/src/main/java/com/lumos/app/identity/RawKeys.java",
     "android-app/app/src/main/java/com/lumos/app/keystore/AndroidKekStore.java",
     "android-app/app/src/main/java/com/lumos/app/keystore/SoftwareKekStore.java",
     "ios-app/shell/Sources/LumosAppShell/Identity.swift",
-    "ios-app/shell/Sources/LumosAppShell/KekStore.swift"
+    "ios-app/shell/Sources/LumosAppShell/KekStore.swift",
+    "tools/vectorgen/identity.go"
    ],
    "tests": [
+    "java:app-dev:IdentityBindingVectorsTest.theJcaBackendReproducesEveryCommittedSignature",
     "java:app-dev:IdentityKeyGeneratorTest.bindingSignatureVerifies",
-    "java:app-dev:IdentityKeyGeneratorTest.verificationFailsClosedOnEveryTamperedInput",
     "java:app-dev:IdentityKeyGeneratorTest.destroyingTheKekErasesTheIdentity",
     "java:app-dev:IdentityKeyGeneratorTest.twoIdentitiesAreDistinct",
+    "java:app-dev:IdentityKeyGeneratorTest.verificationFailsClosedOnEveryTamperedInput",
+    "java:app-instrumented:IdentityGenerationInstrumentedTest.generationRunsOnThisRuntimeUnderTheRealKeystore",
+    "java:app-instrumented:IdentityGenerationInstrumentedTest.theLibsodiumBackendReproducesEveryCommittedVector",
+    "java:app-instrumented:IdentityGenerationInstrumentedTest.whereThisRuntimeHasJcaEd25519ItAgreesWithLibsodium",
+    "swift:LumosAppShell:IdentityKeyTests.testBindingMessageIsInfoThenRawKey",
     "swift:LumosAppShell:IdentityKeyTests.testBindingSignatureVerifies",
-    "swift:LumosAppShell:IdentityKeyTests.testVerificationFailsClosedOnEveryTamperedInput",
     "swift:LumosAppShell:IdentityKeyTests.testDestroyingTheKekErasesTheIdentity",
-    "swift:LumosAppShell:IdentityKeyTests.testBindingMessageIsInfoThenRawKey"
+    "swift:LumosAppShell:IdentityKeyTests.testVerificationFailsClosedOnEveryTamperedInput",
+    "swift:LumosProtocolConformance:IdentityBindingConformanceTests.testPositivesDeriveVerifyAndRoundTrip"
    ],
    "evidence": [],
    "adr": [
     "ADR-008",
     "ADR-010"
    ],
-   "last_commit": "34c6874",
-   "updated": "2026-08-19"
+   "last_commit": "5d1f2fe",
+   "updated": "2026-11-19"
   },
   {
    "req_id": "SRS-IDN-002",
@@ -482,7 +492,7 @@
   },
   {
    "req_id": "SRS-IDN-003",
-   "status": "implemented",
+   "status": "tested",
    "code": [
     "android-app/app/src/main/java/com/lumos/app/identity/IdentityRepository.java",
     "android-app/app/src/main/java/com/lumos/app/identity/IdentityReset.java",
@@ -502,6 +512,7 @@
     "java:app-dev:IdentityResetTest.thereIsExactlyOneStoredIdentityAfterwards",
     "java:app-dev:OnboardingCopyTest.theConfirmationPhrasesAreTheOnesTheCodeCompares",
     "java:app-dev:OnboardingCopyTest.theResetCopySaysWhatIsLostAndWhatIsKept",
+    "java:app-instrumented:IdentityGenerationInstrumentedTest.generationRunsOnThisRuntimeUnderTheRealKeystore",
     "swift:LumosAppShell:OnboardingTests.testAResetReplacesBothHalvesOfTheIdentityAndKeepsTheContent",
     "swift:LumosAppShell:OnboardingTests.testTheResetWarningNamesMatchesConversationsAndWhatSurvives"
    ],
@@ -511,8 +522,8 @@
     "ADR-008",
     "ADR-010"
    ],
-   "last_commit": "97e4624",
-   "updated": "2026-08-18"
+   "last_commit": "5d1f2fe",
+   "updated": "2026-11-19"
   },
   {
    "req_id": "SRS-IDN-004",
@@ -557,7 +568,7 @@
     "ADR-005",
     "ADR-009"
    ],
-   "last_commit": "474df8e",
+   "last_commit": "5d1f2fe",
    "updated": "2026-11-19"
   },
   {
@@ -1570,8 +1581,8 @@
     "ci:conformance#31528127667"
    ],
    "adr": [],
-   "last_commit": "34c6874",
-   "updated": "2026-08-19"
+   "last_commit": "5d1f2fe",
+   "updated": "2026-11-19"
   },
   {
    "req_id": "SRS-NFR-CMP-005",
@@ -2686,13 +2697,25 @@
   },
   {
    "req_id": "SRS-NFR-SEC-002",
-   "status": "not_started",
-   "code": [],
-   "tests": [],
+   "status": "tested",
+   "code": [
+    "android-app/app/src/main/java/com/lumos/app/identity/IdentityCrypto.java",
+    "android-app/app/src/main/java/com/lumos/app/identity/IdentityKeyGenerator.java",
+    "android-app/app/src/main/java/com/lumos/app/identity/JcaIdentityCrypto.java",
+    "android-app/app/src/main/java/com/lumos/app/identity/LibsodiumIdentityCrypto.java",
+    "android-app/app/src/main/java/com/lumos/app/identity/RawKeys.java",
+    "tools/vectorgen/identity.go"
+   ],
+   "tests": [
+    "go:protocol/crypto/x3dh:TestIdentityBindingVectorsReproduceThroughTheRealPath",
+    "java:app-dev:IdentityBindingVectorsTest.theJcaBackendReproducesEveryCommittedSignature",
+    "java:app-instrumented:IdentityGenerationInstrumentedTest.generationRunsOnThisRuntimeUnderTheRealKeystore",
+    "java:app-instrumented:IdentityGenerationInstrumentedTest.theLibsodiumBackendReproducesEveryCommittedVector"
+   ],
    "evidence": [],
    "adr": [],
-   "last_commit": null,
-   "updated": null
+   "last_commit": "5d1f2fe",
+   "updated": "2026-11-19"
   },
   {
    "req_id": "SRS-NFR-SEC-003",
@@ -2717,8 +2740,8 @@
     "ADR-003",
     "ADR-010"
    ],
-   "last_commit": "34c6874",
-   "updated": "2026-08-19"
+   "last_commit": "5d1f2fe",
+   "updated": "2026-11-19"
   },
   {
    "req_id": "SRS-NFR-SEC-004",
@@ -3174,8 +3197,9 @@
   },
   {
    "req_id": "SRS-ONB-006",
-   "status": "implemented",
+   "status": "tested",
    "code": [
+    "android-app/app/src/androidTest/java/com/lumos/app/onboarding/OnboardingInstrumentedTest.java",
     "android-app/app/src/main/java/com/lumos/app/identity/IdentityCodec.java",
     "android-app/app/src/main/java/com/lumos/app/identity/IdentityKeyGenerator.java",
     "android-app/app/src/main/java/com/lumos/app/identity/IdentityRepository.java",
@@ -3190,6 +3214,7 @@
     "java:app-dev:OnboardingServiceTest.anAdultOnboardsWithNoAccountAndEndsWithAnIdentity",
     "java:app-dev:OnboardingServiceTest.identityCreationRefusesToRunBeforeTheGate",
     "java:app-dev:OnboardingServiceTest.theOnboardingPathTouchesNoNetworkOrAccountApi",
+    "java:app-instrumented:OnboardingInstrumentedTest.at002OnboardingCompletesOfflineAndCreatesALocalIdentity",
     "java:app-instrumented:PlatformKeyAlgorithmInstrumentedTest.ed25519SignatureSupportTracksTheApiLevelWhileGenerationNeverArrives",
     "java:app-instrumented:PlatformKeyAlgorithmInstrumentedTest.thePlatformStillCannotGenerateEd25519Keys",
     "java:app-instrumented:PlatformKeyAlgorithmInstrumentedTest.x25519GenerationTracksTheApiLevelExactlyAsSliceS1Said"
@@ -3198,8 +3223,8 @@
    "adr": [
     "ADR-008"
    ],
-   "last_commit": "97e4624",
-   "updated": "2026-08-18"
+   "last_commit": "5d1f2fe",
+   "updated": "2026-11-19"
   },
   {
    "req_id": "SRS-ONB-007",
@@ -4685,7 +4710,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "474df8e",
+   "last_commit": "5d1f2fe",
    "updated": "2026-11-19"
   },
   {
@@ -4695,7 +4720,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "474df8e",
+   "last_commit": "5d1f2fe",
    "updated": "2026-11-19"
   },
   {
@@ -4705,7 +4730,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "474df8e",
+   "last_commit": "5d1f2fe",
    "updated": "2026-11-19"
   },
   {
@@ -4729,7 +4754,7 @@
    "adr": [
     "ADR-003"
    ],
-   "last_commit": "474df8e",
+   "last_commit": "5d1f2fe",
    "updated": "2026-11-19"
   },
   {
@@ -4739,7 +4764,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "474df8e",
+   "last_commit": "5d1f2fe",
    "updated": "2026-11-19"
   },
   {
@@ -4749,7 +4774,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "474df8e",
+   "last_commit": "5d1f2fe",
    "updated": "2026-11-19"
   },
   {
@@ -4759,7 +4784,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "474df8e",
+   "last_commit": "5d1f2fe",
    "updated": "2026-11-19"
   },
   {
@@ -4769,7 +4794,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "474df8e",
+   "last_commit": "5d1f2fe",
    "updated": "2026-11-19"
   },
   {
@@ -4779,7 +4804,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "474df8e",
+   "last_commit": "5d1f2fe",
    "updated": "2026-11-19"
   },
   {
@@ -4789,7 +4814,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "474df8e",
+   "last_commit": "5d1f2fe",
    "updated": "2026-11-19"
   },
   {
@@ -4799,7 +4824,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "474df8e",
+   "last_commit": "5d1f2fe",
    "updated": "2026-11-19"
   },
   {
@@ -4809,7 +4834,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "474df8e",
+   "last_commit": "5d1f2fe",
    "updated": "2026-11-19"
   },
   {
@@ -5353,7 +5378,7 @@
     "ci:conformance#31528127667"
    ],
    "adr": [],
-   "last_commit": "474df8e",
+   "last_commit": "5d1f2fe",
    "updated": "2026-11-19"
   },
   {
@@ -5571,7 +5596,7 @@
    ],
    "evidence": [],
    "adr": [],
-   "last_commit": "474df8e",
+   "last_commit": "5d1f2fe",
    "updated": "2026-11-19"
   },
   {
@@ -5622,7 +5647,7 @@
     "ci:pipeline#31737418465"
    ],
    "adr": [],
-   "last_commit": "474df8e",
+   "last_commit": "5d1f2fe",
    "updated": "2026-11-19"
   },
   {
@@ -5700,7 +5725,7 @@
     "ADR-005",
     "ADR-006"
    ],
-   "last_commit": "474df8e",
+   "last_commit": "5d1f2fe",
    "updated": "2026-11-19"
   },
   {
@@ -5724,7 +5749,7 @@
     "ADR-004",
     "ADR-006"
    ],
-   "last_commit": "474df8e",
+   "last_commit": "5d1f2fe",
    "updated": "2026-11-19"
   },
   {
@@ -5745,7 +5770,7 @@
    "adr": [
     "ADR-004"
    ],
-   "last_commit": "474df8e",
+   "last_commit": "5d1f2fe",
    "updated": "2026-11-19"
   },
   {
@@ -5755,7 +5780,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "474df8e",
+   "last_commit": "5d1f2fe",
    "updated": "2026-11-19"
   },
   {
@@ -5783,7 +5808,7 @@
    "adr": [
     "ADR-004"
    ],
-   "last_commit": "474df8e",
+   "last_commit": "5d1f2fe",
    "updated": "2026-11-19"
   },
   {
@@ -5793,13 +5818,18 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "474df8e",
+   "last_commit": "5d1f2fe",
    "updated": "2026-11-19"
   },
   {
    "req_id": "TRS-CRY-001",
    "status": "tested",
    "code": [
+    "android-app/app/src/main/java/com/lumos/app/identity/IdentityCrypto.java",
+    "android-app/app/src/main/java/com/lumos/app/identity/IdentityKeyGenerator.java",
+    "android-app/app/src/main/java/com/lumos/app/identity/JcaIdentityCrypto.java",
+    "android-app/app/src/main/java/com/lumos/app/identity/LibsodiumIdentityCrypto.java",
+    "android-app/app/src/main/java/com/lumos/app/identity/RawKeys.java",
     "android-app/app/src/main/java/com/lumos/app/recovery/LibsodiumRecoveryCrypto.java",
     "android-app/app/src/main/java/com/lumos/app/recovery/RecoveryCrypto.java",
     "android-app/app/src/main/java/com/lumos/app/recovery/RecoveryException.java",
@@ -5814,6 +5844,7 @@
     "test-vectors/crypto/safety_number.json",
     "test-vectors/crypto/x3dh_kat.json",
     "tools/vectorgen/crypto.go",
+    "tools/vectorgen/identity.go",
     "tools/vectorgen/recovery.go"
    ],
    "tests": [
@@ -5825,6 +5856,8 @@
     "go:protocol/crypto/recovery:TestTheRegisterAgreesWithTheSingleLaneRule",
     "go:protocol/crypto/x3dh:TestBothSidesDeriveTheSameSessionWithOPK",
     "go:protocol/crypto/x3dh:TestBothSidesDeriveTheSameSessionWithoutOPK",
+    "go:protocol/crypto/x3dh:TestIdentityBindingNegativesAllFailVerification",
+    "go:protocol/crypto/x3dh:TestIdentityBindingVectorsReproduceThroughTheRealPath",
     "go:protocol/crypto/x3dh:TestTamperedSignaturesAreRejected",
     "go:protocol/crypto:TestConformanceRecoveryDerivation",
     "go:protocol/crypto:TestConformanceRecoveryFailuresAreIndistinguishable",
@@ -5832,6 +5865,10 @@
     "go:protocol/crypto:TestConformanceRecoveryNegatives",
     "go:protocol/crypto:TestConformanceRecoveryPositives",
     "go:protocol/crypto:TestConformanceX3DHKAT",
+    "java:app-dev:IdentityBindingVectorsTest.everyNegativeFailsVerification",
+    "java:app-dev:IdentityBindingVectorsTest.theJcaBackendReproducesEveryCommittedSignature",
+    "java:app-dev:IdentityBindingVectorsTest.thePkcs8PrefixesAreTheOnesTheJdkItselfParses",
+    "java:app-instrumented:IdentityGenerationInstrumentedTest.theLibsodiumBackendReproducesEveryCommittedVector",
     "java:app-instrumented:RecoveryRecordInstrumentedTest.anExportedRecordLeaksNeitherPassphraseNorContent",
     "java:app-instrumented:RecoveryRecordInstrumentedTest.argon2idAgreesWithTheReferenceDerivation",
     "java:app-instrumented:RecoveryRecordInstrumentedTest.everyCommittedRecordOpensAndReSeals",
@@ -5848,14 +5885,16 @@
     "swift:LumosAppShell:RecoveryRecordTests.testEveryNegativeVectorIsRefusedWithTheRightCode",
     "swift:LumosAppShell:RecoveryRecordTests.testFormatConstantsMatchTheVectorFile",
     "swift:LumosAppShell:RecoveryRecordTests.testOpeningFailuresCarryNoDistinguishingDetail",
-    "swift:LumosAppShell:RecoveryRecordTests.testTwoExportsOfTheSameContentDiffer"
+    "swift:LumosAppShell:RecoveryRecordTests.testTwoExportsOfTheSameContentDiffer",
+    "swift:LumosProtocolConformance:IdentityBindingConformanceTests.testEveryNegativeIsRejected",
+    "swift:LumosProtocolConformance:IdentityBindingConformanceTests.testPositivesDeriveVerifyAndRoundTrip"
    ],
    "evidence": [],
    "adr": [
     "ADR-001",
     "ADR-008"
    ],
-   "last_commit": "474df8e",
+   "last_commit": "5d1f2fe",
    "updated": "2026-11-19"
   },
   {
@@ -5880,7 +5919,7 @@
    "adr": [
     "ADR-001"
    ],
-   "last_commit": "474df8e",
+   "last_commit": "5d1f2fe",
    "updated": "2026-11-19"
   },
   {
@@ -5899,7 +5938,7 @@
    "adr": [
     "ADR-001"
    ],
-   "last_commit": "474df8e",
+   "last_commit": "5d1f2fe",
    "updated": "2026-11-19"
   },
   {
@@ -5918,7 +5957,7 @@
     "ADR-001",
     "ADR-008"
    ],
-   "last_commit": "474df8e",
+   "last_commit": "5d1f2fe",
    "updated": "2026-11-19"
   },
   {
@@ -5928,7 +5967,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "474df8e",
+   "last_commit": "5d1f2fe",
    "updated": "2026-11-19"
   },
   {
@@ -5947,7 +5986,7 @@
    "adr": [
     "ADR-001"
    ],
-   "last_commit": "474df8e",
+   "last_commit": "5d1f2fe",
    "updated": "2026-11-19"
   },
   {
@@ -5971,7 +6010,7 @@
    "adr": [
     "ADR-001"
    ],
-   "last_commit": "474df8e",
+   "last_commit": "5d1f2fe",
    "updated": "2026-11-19"
   },
   {
@@ -5992,7 +6031,7 @@
    "adr": [
     "ADR-001"
    ],
-   "last_commit": "474df8e",
+   "last_commit": "5d1f2fe",
    "updated": "2026-11-19"
   },
   {
@@ -6016,7 +6055,7 @@
    "adr": [
     "ADR-001"
    ],
-   "last_commit": "474df8e",
+   "last_commit": "5d1f2fe",
    "updated": "2026-11-19"
   },
   {
@@ -6026,7 +6065,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "474df8e",
+   "last_commit": "5d1f2fe",
    "updated": "2026-11-19"
   },
   {
@@ -6050,7 +6089,7 @@
    "adr": [
     "ADR-001"
    ],
-   "last_commit": "474df8e",
+   "last_commit": "5d1f2fe",
    "updated": "2026-11-19"
   },
   {
@@ -6060,7 +6099,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "474df8e",
+   "last_commit": "5d1f2fe",
    "updated": "2026-11-19"
   },
   {
@@ -6093,7 +6132,7 @@
    "adr": [
     "ADR-001"
    ],
-   "last_commit": "474df8e",
+   "last_commit": "5d1f2fe",
    "updated": "2026-11-19"
   },
   {
@@ -6115,7 +6154,7 @@
     "ADR-005",
     "ADR-008"
    ],
-   "last_commit": "474df8e",
+   "last_commit": "5d1f2fe",
    "updated": "2026-11-19"
   },
   {
@@ -6174,7 +6213,7 @@
    "adr": [
     "ADR-001"
    ],
-   "last_commit": "474df8e",
+   "last_commit": "5d1f2fe",
    "updated": "2026-11-19"
   },
   {
@@ -6184,7 +6223,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "474df8e",
+   "last_commit": "5d1f2fe",
    "updated": "2026-11-19"
   },
   {
@@ -6334,8 +6373,8 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "059b325",
-   "updated": "2026-08-18"
+   "last_commit": "5d1f2fe",
+   "updated": "2026-11-19"
   },
   {
    "req_id": "TRS-IOS-002",
@@ -6344,8 +6383,8 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "059b325",
-   "updated": "2026-08-18"
+   "last_commit": "5d1f2fe",
+   "updated": "2026-11-19"
   },
   {
    "req_id": "TRS-IOS-003",
@@ -6354,8 +6393,8 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "059b325",
-   "updated": "2026-08-18"
+   "last_commit": "5d1f2fe",
+   "updated": "2026-11-19"
   },
   {
    "req_id": "TRS-IOS-004",
@@ -6364,8 +6403,8 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "059b325",
-   "updated": "2026-08-18"
+   "last_commit": "5d1f2fe",
+   "updated": "2026-11-19"
   },
   {
    "req_id": "TRS-IOS-005",
@@ -6374,8 +6413,8 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "059b325",
-   "updated": "2026-08-18"
+   "last_commit": "5d1f2fe",
+   "updated": "2026-11-19"
   },
   {
    "req_id": "TRS-IOS-006",
@@ -6384,8 +6423,8 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "059b325",
-   "updated": "2026-08-18"
+   "last_commit": "5d1f2fe",
+   "updated": "2026-11-19"
   },
   {
    "req_id": "TRS-IOS-007",
@@ -6406,8 +6445,8 @@
     "ADR-003",
     "ADR-010"
    ],
-   "last_commit": "059b325",
-   "updated": "2026-08-18"
+   "last_commit": "5d1f2fe",
+   "updated": "2026-11-19"
   },
   {
    "req_id": "TRS-IOS-008",
@@ -6416,8 +6455,8 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "059b325",
-   "updated": "2026-08-18"
+   "last_commit": "5d1f2fe",
+   "updated": "2026-11-19"
   },
   {
    "req_id": "TRS-IOS-009",
@@ -6426,8 +6465,8 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "059b325",
-   "updated": "2026-08-18"
+   "last_commit": "5d1f2fe",
+   "updated": "2026-11-19"
   },
   {
    "req_id": "TRS-IOS-010",
@@ -6436,8 +6475,8 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "059b325",
-   "updated": "2026-08-18"
+   "last_commit": "5d1f2fe",
+   "updated": "2026-11-19"
   },
   {
    "req_id": "TRS-IOS-011",
@@ -6446,8 +6485,8 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "059b325",
-   "updated": "2026-08-18"
+   "last_commit": "5d1f2fe",
+   "updated": "2026-11-19"
   },
   {
    "req_id": "TRS-IOS-012",
@@ -6456,8 +6495,8 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "059b325",
-   "updated": "2026-08-18"
+   "last_commit": "5d1f2fe",
+   "updated": "2026-11-19"
   },
   {
    "req_id": "TRS-LOC-001",
@@ -6966,7 +7005,7 @@
    "adr": [
     "ADR-007"
    ],
-   "last_commit": "474df8e",
+   "last_commit": "5d1f2fe",
    "updated": "2026-11-19"
   },
   {
@@ -7005,7 +7044,7 @@
    "adr": [
     "ADR-007"
    ],
-   "last_commit": "474df8e",
+   "last_commit": "5d1f2fe",
    "updated": "2026-11-19"
   },
   {
@@ -7030,7 +7069,7 @@
     "ci:conformance#31528127667"
    ],
    "adr": [],
-   "last_commit": "474df8e",
+   "last_commit": "5d1f2fe",
    "updated": "2026-11-19"
   },
   {
@@ -7061,7 +7100,7 @@
     "ci:conformance#31528127667"
    ],
    "adr": [],
-   "last_commit": "474df8e",
+   "last_commit": "5d1f2fe",
    "updated": "2026-11-19"
   },
   {
@@ -7088,7 +7127,7 @@
     "ci:conformance#31528127667"
    ],
    "adr": [],
-   "last_commit": "474df8e",
+   "last_commit": "5d1f2fe",
    "updated": "2026-11-19"
   },
   {
@@ -7128,7 +7167,7 @@
    "adr": [
     "ADR-007"
    ],
-   "last_commit": "474df8e",
+   "last_commit": "5d1f2fe",
    "updated": "2026-11-19"
   },
   {
@@ -7167,7 +7206,7 @@
     "ci:conformance#31528127667"
    ],
    "adr": [],
-   "last_commit": "474df8e",
+   "last_commit": "5d1f2fe",
    "updated": "2026-11-19"
   },
   {
@@ -7177,7 +7216,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "474df8e",
+   "last_commit": "5d1f2fe",
    "updated": "2026-11-19"
   },
   {
@@ -7204,7 +7243,7 @@
    "adr": [
     "ADR-002"
    ],
-   "last_commit": "474df8e",
+   "last_commit": "5d1f2fe",
    "updated": "2026-11-19"
   },
   {
@@ -7214,7 +7253,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "474df8e",
+   "last_commit": "5d1f2fe",
    "updated": "2026-11-19"
   },
   {
@@ -7231,7 +7270,7 @@
    ],
    "evidence": [],
    "adr": [],
-   "last_commit": "474df8e",
+   "last_commit": "5d1f2fe",
    "updated": "2026-11-19"
   },
   {
@@ -7241,7 +7280,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "474df8e",
+   "last_commit": "5d1f2fe",
    "updated": "2026-11-19"
   },
   {
@@ -7267,7 +7306,7 @@
     "ci:conformance#31528127667"
    ],
    "adr": [],
-   "last_commit": "474df8e",
+   "last_commit": "5d1f2fe",
    "updated": "2026-11-19"
   },
   {
@@ -7287,7 +7326,7 @@
    ],
    "evidence": [],
    "adr": [],
-   "last_commit": "474df8e",
+   "last_commit": "5d1f2fe",
    "updated": "2026-11-19"
   },
   {
@@ -7316,7 +7355,7 @@
     "ci:conformance#31528127667"
    ],
    "adr": [],
-   "last_commit": "474df8e",
+   "last_commit": "5d1f2fe",
    "updated": "2026-11-19"
   },
   {
@@ -7326,7 +7365,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "474df8e",
+   "last_commit": "5d1f2fe",
    "updated": "2026-11-19"
   },
   {
@@ -7336,7 +7375,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "474df8e",
+   "last_commit": "5d1f2fe",
    "updated": "2026-11-19"
   },
   {
@@ -7346,7 +7385,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "474df8e",
+   "last_commit": "5d1f2fe",
    "updated": "2026-11-19"
   },
   {
@@ -7463,7 +7502,7 @@
    ],
    "evidence": [],
    "adr": [],
-   "last_commit": "474df8e",
+   "last_commit": "5d1f2fe",
    "updated": "2026-11-19"
   },
   {
@@ -7524,7 +7563,7 @@
    ],
    "evidence": [],
    "adr": [],
-   "last_commit": "474df8e",
+   "last_commit": "5d1f2fe",
    "updated": "2026-11-19"
   },
   {
@@ -7728,6 +7767,7 @@
     "tools/vectorgen/recovery.go"
    ],
    "tests": [
+    "go:protocol/crypto/x3dh:TestIdentityBindingVectorsReproduceThroughTheRealPath",
     "go:protocol/crypto:TestConformanceRecoveryDerivation",
     "go:protocol/crypto:TestConformanceRecoveryFailuresAreIndistinguishable",
     "go:protocol/crypto:TestConformanceRecoveryFormatAndLimits",
@@ -7735,6 +7775,8 @@
     "go:protocol/crypto:TestConformanceRecoveryPositives",
     "go:protocol/crypto:TestConformanceX3DHKAT",
     "go:protocol/wire:TestConformanceFrameRoundtripVectors",
+    "java:app-dev:IdentityBindingVectorsTest.theJcaBackendReproducesEveryCommittedSignature",
+    "java:app-instrumented:IdentityGenerationInstrumentedTest.theLibsodiumBackendReproducesEveryCommittedVector",
     "java:app-instrumented:RecoveryRecordInstrumentedTest.anExportedRecordLeaksNeitherPassphraseNorContent",
     "java:app-instrumented:RecoveryRecordInstrumentedTest.argon2idAgreesWithTheReferenceDerivation",
     "java:app-instrumented:RecoveryRecordInstrumentedTest.everyCommittedRecordOpensAndReSeals",
@@ -7757,7 +7799,8 @@
     "swift:LumosAppShell:RecoveryRecordTests.testOpeningFailuresCarryNoDistinguishingDetail",
     "swift:LumosAppShell:RecoveryRecordTests.testTwoExportsOfTheSameContentDiffer",
     "swift:LumosProtocolConformance:CryptoConformanceTests.testAEADKnownAnswersAndTampers",
-    "swift:LumosProtocolConformance:FramingConformanceTests.testFrameRoundtripReproducesCommittedBytes"
+    "swift:LumosProtocolConformance:FramingConformanceTests.testFrameRoundtripReproducesCommittedBytes",
+    "swift:LumosProtocolConformance:IdentityBindingConformanceTests.testPositivesDeriveVerifyAndRoundTrip"
    ],
    "evidence": [
     "ci:conformance#31528127667"
@@ -7765,7 +7808,7 @@
    "adr": [
     "ADR-004"
    ],
-   "last_commit": "474df8e",
+   "last_commit": "5d1f2fe",
    "updated": "2026-11-19"
   },
   {

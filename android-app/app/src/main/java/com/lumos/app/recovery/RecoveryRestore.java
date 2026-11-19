@@ -23,6 +23,7 @@
 
 package com.lumos.app.recovery;
 
+import com.lumos.app.identity.IdentityCrypto;
 import com.lumos.app.identity.IdentityKeyGenerator;
 import com.lumos.app.identity.IdentityKeyRecord;
 import com.lumos.app.identity.IdentityRepository;
@@ -110,6 +111,7 @@ public final class RecoveryRestore {
     private final RecoveryRecord record;
     private final IdentityRepository identities;
     private final KekStore kek;
+    private final IdentityCrypto crypto;
 
     /**
      * Assembles the restore flow from its collaborators.
@@ -118,13 +120,16 @@ public final class RecoveryRestore {
      * @param record the S4b record format, over its crypto seam
      * @param identities where the device identity is stored
      * @param kek the key-encryption key the new identity is wrapped under
+     * @param crypto the identity backend - libsodium on Android, JCA on the JVM
      */
     public RecoveryRestore(final LocalStore store, final RecoveryRecord record,
-            final IdentityRepository identities, final KekStore kek) {
+            final IdentityRepository identities, final KekStore kek,
+            final IdentityCrypto crypto) {
         this.store = store;
         this.record = record;
         this.identities = identities;
         this.kek = kek;
+        this.crypto = crypto;
     }
 
     /**
@@ -155,7 +160,7 @@ public final class RecoveryRestore {
         }
 
         final Optional<IdentityKeyRecord> before = identities.load();
-        final IdentityKeyRecord fresh = IdentityKeyGenerator.generate(kek);
+        final IdentityKeyRecord fresh = IdentityKeyGenerator.generate(crypto, kek);
         identities.replace(fresh);
 
         int rows = 0;

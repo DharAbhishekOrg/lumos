@@ -23,6 +23,7 @@ import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import com.lumos.app.identity.JcaIdentityCrypto;
 import com.lumos.app.Fixtures;
 import com.lumos.app.identity.IdentityKeyGenerator;
 import com.lumos.app.identity.IdentityKeyRecord;
@@ -47,7 +48,7 @@ final class OnboardingServiceTest {
         return new OnboardingService(new OnboardingMachine(),
                 new ConsentRepository(stack.store()),
                 new IdentityRepository(stack.store()),
-                stack.kek(), () -> NOW);
+                stack.kek(), new JcaIdentityCrypto(), () -> NOW);
     }
 
     @Test
@@ -69,7 +70,7 @@ final class OnboardingServiceTest {
             final IdentityKeyRecord identity = identities.load().orElseThrow();
             assertEquals(32, identity.ed25519Public().length);
             assertEquals(32, identity.x25519Public().length);
-            assertTrue(IdentityKeyGenerator.verifyBinding(identity.ed25519Public(),
+            assertTrue(IdentityKeyGenerator.verifyBinding(new JcaIdentityCrypto(), identity.ed25519Public(),
                     identity.x25519Public(), identity.bindingSignature()),
                     "the ADR-008 binding must verify on the identity onboarding created");
         }

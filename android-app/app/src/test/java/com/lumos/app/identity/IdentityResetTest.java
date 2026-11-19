@@ -46,11 +46,11 @@ final class IdentityResetTest {
     void theIdentityIsReplacedAndTheOldPublicKeyIsGone() throws Exception {
         try (Fixtures.Stack stack = Fixtures.openInMemory()) {
             final IdentityRepository identities = new IdentityRepository(stack.store());
-            identities.replace(IdentityKeyGenerator.generate(stack.kek()));
+            identities.replace(IdentityKeyGenerator.generate(new JcaIdentityCrypto(), stack.kek()));
             final IdentityKeyRecord before = identities.load().orElseThrow();
 
             final IdentityReset.ResetResult result =
-                    new IdentityReset(identities, stack.kek()).reset(resetConfirmation());
+                    new IdentityReset(identities, stack.kek(), new JcaIdentityCrypto()).reset(resetConfirmation());
 
             assertTrue(result.identityIsNew());
             assertArrayEquals(before.ed25519Public(), result.previousEd25519Public());
@@ -67,11 +67,11 @@ final class IdentityResetTest {
     void theNewIdentityIsAProperlyBoundOne() throws Exception {
         try (Fixtures.Stack stack = Fixtures.openInMemory()) {
             final IdentityRepository identities = new IdentityRepository(stack.store());
-            identities.replace(IdentityKeyGenerator.generate(stack.kek()));
-            new IdentityReset(identities, stack.kek()).reset(resetConfirmation());
+            identities.replace(IdentityKeyGenerator.generate(new JcaIdentityCrypto(), stack.kek()));
+            new IdentityReset(identities, stack.kek(), new JcaIdentityCrypto()).reset(resetConfirmation());
 
             final IdentityKeyRecord now = identities.load().orElseThrow();
-            assertTrue(IdentityKeyGenerator.verifyBinding(now.ed25519Public(),
+            assertTrue(IdentityKeyGenerator.verifyBinding(new JcaIdentityCrypto(), now.ed25519Public(),
                     now.x25519Public(), now.bindingSignature()),
                     "a reset that produced an unbound identity would fail closed at the "
                             + "first handshake, which is a worse way to find out");
@@ -82,8 +82,8 @@ final class IdentityResetTest {
     void thereIsExactlyOneStoredIdentityAfterwards() throws Exception {
         try (Fixtures.Stack stack = Fixtures.openInMemory()) {
             final IdentityRepository identities = new IdentityRepository(stack.store());
-            identities.replace(IdentityKeyGenerator.generate(stack.kek()));
-            new IdentityReset(identities, stack.kek()).reset(resetConfirmation());
+            identities.replace(IdentityKeyGenerator.generate(new JcaIdentityCrypto(), stack.kek()));
+            new IdentityReset(identities, stack.kek(), new JcaIdentityCrypto()).reset(resetConfirmation());
             assertTrue(1 == stack.store().count(RecordKind.IDENTITY_KEY_RECORD),
                     "the row is replaced, not appended to; a second identity row would "
                             + "leave the old wrapped envelope openable");
@@ -94,13 +94,13 @@ final class IdentityResetTest {
     void contentSurvivesAResetBecauseAResetIsNotAWipe() throws Exception {
         try (Fixtures.Stack stack = Fixtures.openInMemory()) {
             final IdentityRepository identities = new IdentityRepository(stack.store());
-            identities.replace(IdentityKeyGenerator.generate(stack.kek()));
+            identities.replace(IdentityKeyGenerator.generate(new JcaIdentityCrypto(), stack.kek()));
             stack.store().put(RecordKind.LOCAL_PROFILE, "self",
                     LocalStore.payloadOf("my profile"), null);
             final byte[] blocked = LocalStore.payloadOf("peer");
             stack.store().put(RecordKind.BLOCK_ENTRY, "b1", blocked, blocked);
 
-            new IdentityReset(identities, stack.kek()).reset(resetConfirmation());
+            new IdentityReset(identities, stack.kek(), new JcaIdentityCrypto()).reset(resetConfirmation());
 
             assertTrue(stack.store().get(RecordKind.LOCAL_PROFILE, "self").isPresent(),
                     "the user asked to stop being this person, not to lose their profile");
@@ -115,9 +115,9 @@ final class IdentityResetTest {
     void aResetWithoutAConfirmationIsRefused() throws Exception {
         try (Fixtures.Stack stack = Fixtures.openInMemory()) {
             final IdentityRepository identities = new IdentityRepository(stack.store());
-            identities.replace(IdentityKeyGenerator.generate(stack.kek()));
+            identities.replace(IdentityKeyGenerator.generate(new JcaIdentityCrypto(), stack.kek()));
             final byte[] before = identities.load().orElseThrow().ed25519Public();
-            final IdentityReset reset = new IdentityReset(identities, stack.kek());
+            final IdentityReset reset = new IdentityReset(identities, stack.kek(), new JcaIdentityCrypto());
 
             assertThrows(IllegalArgumentException.class, () -> reset.reset(null));
             assertArrayEquals(before, identities.load().orElseThrow().ed25519Public());
@@ -131,7 +131,8 @@ final class IdentityResetTest {
                     .issue(DeliberateConfirmation.Action.EMERGENCY_WIPE, "erase everything", NOW)
                     .confirm("erase everything", NOW + 1);
             final IdentityReset reset =
-                    new IdentityReset(new IdentityRepository(stack.store()), stack.kek());
+                    new IdentityReset(new IdentityRepository(stack.store()), stack.kek(),
+                            new JcaIdentityCrypto());
             assertThrows(IllegalArgumentException.class, () -> reset.reset(forWipe));
         }
     }
@@ -140,10 +141,10 @@ final class IdentityResetTest {
     void theWarningNamesMatchesConversationsAndWhatSurvives() throws Exception {
         try (Fixtures.Stack stack = Fixtures.openInMemory()) {
             final IdentityRepository identities = new IdentityRepository(stack.store());
-            identities.replace(IdentityKeyGenerator.generate(stack.kek()));
+            identities.replace(IdentityKeyGenerator.generate(new JcaIdentityCrypto(), stack.kek()));
 
             final IdentityReset.Consequences consequences =
-                    new IdentityReset(identities, stack.kek()).consequences();
+                    new IdentityReset(identities, stack.kek(), new JcaIdentityCrypto()).consequences();
             final String lost = String.join(" ", consequences.lost()).toLowerCase(Locale.ROOT);
             final String kept = String.join(" ", consequences.kept()).toLowerCase(Locale.ROOT);
             final String residual =
@@ -164,8 +165,8 @@ final class IdentityResetTest {
     void theWarningIsHonestOnADeviceWithNoIdentityYet() throws Exception {
         try (Fixtures.Stack stack = Fixtures.openInMemory()) {
             final IdentityReset.Consequences consequences =
-                    new IdentityReset(new IdentityRepository(stack.store()), stack.kek())
-                            .consequences();
+                    new IdentityReset(new IdentityRepository(stack.store()), stack.kek(),
+                            new JcaIdentityCrypto()).consequences();
             final String lost = String.join(" ", consequences.lost()).toLowerCase(Locale.ROOT);
             assertFalse(lost.contains("any match you already have"),
                     "a device with no identity has no matches, and telling someone they "

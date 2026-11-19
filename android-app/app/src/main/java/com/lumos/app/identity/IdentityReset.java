@@ -130,16 +130,20 @@ public final class IdentityReset {
 
     private final IdentityRepository identities;
     private final KekStore kek;
+    private final IdentityCrypto crypto;
 
     /**
      * Assembles the reset from its collaborators.
      *
      * @param identities where the device identity is stored
      * @param kek the key-encryption key the new envelope is wrapped under
+     * @param crypto the identity backend - libsodium on Android, JCA on the JVM
      */
-    public IdentityReset(final IdentityRepository identities, final KekStore kek) {
+    public IdentityReset(final IdentityRepository identities, final KekStore kek,
+            final IdentityCrypto crypto) {
         this.identities = identities;
         this.kek = kek;
+        this.crypto = crypto;
     }
 
     /**
@@ -196,7 +200,7 @@ public final class IdentityReset {
                     "identity reset requires a confirmation issued for identity reset");
         }
         final Optional<IdentityKeyRecord> before = identities.load();
-        final IdentityKeyRecord fresh = IdentityKeyGenerator.generate(kek);
+        final IdentityKeyRecord fresh = IdentityKeyGenerator.generate(crypto, kek);
         identities.replace(fresh);
         return new ResetResult(before.map(IdentityKeyRecord::ed25519Public).orElse(null),
                 fresh.ed25519Public());

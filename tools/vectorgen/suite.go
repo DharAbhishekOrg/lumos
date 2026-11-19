@@ -49,6 +49,7 @@ var TRS184Files = []string{
 // Keeping it in its own list means the completeness gate still covers it while
 // the Sec. 18.4 transcription above cannot be quietly grown to hide an addition.
 var ExtensionFiles = []string{
+	"test-vectors/crypto/identity_binding.json",
 	"test-vectors/crypto/recovery_record.json",
 }
 

@@ -1,0 +1,75 @@
+{
+  "schema_version": 1,
+  "generator": "tools/vectorgen",
+  "constants_hash": "sha256:5b73a3fd6a3d99e5e35ec5a93c857d16a6b8c1e4207823e331afeeac6b808d29",
+  "implements": [
+    "SRS-IDN-001",
+    "SRS-NFR-SEC-002",
+    "TRS-CRY-001",
+    "TRS-TST-001"
+  ],
+  "key_provenance": "TESTONLY-lumos-vectors-v1",
+  "notes": "The ADR-008 two-key identity, pinned across Go, JCA, libsodium and CryptoKit. binding_message is UTF-8(binding_info) || x_public and binding_signature is Ed25519 over it under ed_seed's key. Platforms with deterministic signing (Go, JCA, libsodium) must reproduce the signature byte for byte; CryptoKit randomises signing, so the Swift consumer verifies the committed signature and round-trips one of its own. x_scalar_hex is the raw Curve25519 scalar - clamping happens inside the scalar multiplication on every platform, never in storage.",
+  "binding_info": "lumos/x3dh/identity-dh-binding/v1",
+  "positive": [
+    {
+      "name": "identity-binding-1",
+      "testonly_ed_seed_hex": "8222922673514c897f406a041b87353c86608c446456d923fa44733d75907a3c",
+      "testonly_x_scalar_hex": "7c58668f4257b5b476e2eeb9147581c8ed3a4ec71b0936b0ded6bab53dcc0b40",
+      "ed_public_hex": "ddb34ce95552b62051150bbab6526313b6e3271c1b7f9655f07968a0729ccc9f",
+      "x_public_hex": "0149b29e366f3d43ad1b2538125120de23b12e4497bd54bdf7a7dba14e627c78",
+      "binding_message_hex": "6c756d6f732f783364682f6964656e746974792d64682d62696e64696e672f76310149b29e366f3d43ad1b2538125120de23b12e4497bd54bdf7a7dba14e627c78",
+      "binding_signature_hex": "8d0bfa7be56777db7992c536c70027f8e40b2a1c01816e1df168940f3328fe4aedb58762e34e756769a8e4f3b4cb6a87df6205b74cf51ee88dd36fe2c6b88508"
+    },
+    {
+      "name": "identity-binding-2",
+      "testonly_ed_seed_hex": "f79e83d677df53e9717d13a7a1d51c94af860ea24960513cb10ac46cb1462123",
+      "testonly_x_scalar_hex": "4ee0811c5c39afcec683308fade1555bf2439883120e21025779a9f1d5d36825",
+      "ed_public_hex": "d2bd9074f2e2051eacfbcd1bc5da8ed32002cbd4eb9b30cfefe7b7d799152d42",
+      "x_public_hex": "8cd3b964cc9bc5cf954363ad9a0b6a68a1c1a13071f279829a537f4cf3ad5d1a",
+      "binding_message_hex": "6c756d6f732f783364682f6964656e746974792d64682d62696e64696e672f76318cd3b964cc9bc5cf954363ad9a0b6a68a1c1a13071f279829a537f4cf3ad5d1a",
+      "binding_signature_hex": "d364518c95178f2143b8ad2396d898776787d1382b4c349e325174aabf40d4991578fb0f6213ec41186767a403a63bdb942d42453814c23aef85344b21f29f0b"
+    },
+    {
+      "name": "identity-binding-3",
+      "testonly_ed_seed_hex": "bff3f8559a8f7165e8dbd907297ec744720db6925b869a4a7d869cc728470381",
+      "testonly_x_scalar_hex": "09475285046c7bd5cb8585f93bae658e2b1465d98c0826ec329e3cbdff5a8440",
+      "ed_public_hex": "820403d1b97bfa364fe9453360802654db5a6355e73453c203a3c41c66c398ce",
+      "x_public_hex": "a03c13140e73d134f064c67da1b8af930ee096c604242fbfc2c01599113c5618",
+      "binding_message_hex": "6c756d6f732f783364682f6964656e746974792d64682d62696e64696e672f7631a03c13140e73d134f064c67da1b8af930ee096c604242fbfc2c01599113c5618",
+      "binding_signature_hex": "4894168184a463488340c7a682391a3cd867c8038a5b6c5723221be6aeb6f255fa1c1a328b099170ee8c57a4e7c992af0fbb7c361409f78e055cfc7006474607"
+    },
+    {
+      "name": "identity-binding-4",
+      "testonly_ed_seed_hex": "c32da1063bc9af1770761288fca19f6b2559aa35dec3fe407f0ef6fc081126a6",
+      "testonly_x_scalar_hex": "972aea32b156dcfb0f1bfe595571e2af2abfb97bb10e03298a2e190b50e0d323",
+      "ed_public_hex": "3846e8a49de6d855402dd80f7cd60858a4d1a9156ad2d3aae98cb6f6d5e1e43b",
+      "x_public_hex": "a89e2ed4d20b16b6b9e527eb0ebb5b876fc8bb4833b7711dd90acd07d6e34f2d",
+      "binding_message_hex": "6c756d6f732f783364682f6964656e746974792d64682d62696e64696e672f7631a89e2ed4d20b16b6b9e527eb0ebb5b876fc8bb4833b7711dd90acd07d6e34f2d",
+      "binding_signature_hex": "a90aa06963e6d0b29e074e8904fd147085f9cfddb7179dd28fdbbb0511d743d00931c559c6af61c1446eb02b4a9ea1e920e2719209fb8aff9c315e16924dad0c"
+    }
+  ],
+  "negative": [
+    {
+      "name": "binding-signature-bit-flipped",
+      "reason": "one flipped bit in the signature must fail verification",
+      "ed_public_hex": "ddb34ce95552b62051150bbab6526313b6e3271c1b7f9655f07968a0729ccc9f",
+      "x_public_hex": "0149b29e366f3d43ad1b2538125120de23b12e4497bd54bdf7a7dba14e627c78",
+      "binding_signature_hex": "8c0bfa7be56777db7992c536c70027f8e40b2a1c01816e1df168940f3328fe4aedb58762e34e756769a8e4f3b4cb6a87df6205b74cf51ee88dd36fe2c6b88508"
+    },
+    {
+      "name": "binding-signature-for-another-dh-key",
+      "reason": "a valid signature over a DIFFERENT identity-DH key must not transplant",
+      "ed_public_hex": "ddb34ce95552b62051150bbab6526313b6e3271c1b7f9655f07968a0729ccc9f",
+      "x_public_hex": "8cd3b964cc9bc5cf954363ad9a0b6a68a1c1a13071f279829a537f4cf3ad5d1a",
+      "binding_signature_hex": "8d0bfa7be56777db7992c536c70027f8e40b2a1c01816e1df168940f3328fe4aedb58762e34e756769a8e4f3b4cb6a87df6205b74cf51ee88dd36fe2c6b88508"
+    },
+    {
+      "name": "binding-signature-under-another-identity",
+      "reason": "a signature by a DIFFERENT Ed25519 identity must not verify",
+      "ed_public_hex": "d2bd9074f2e2051eacfbcd1bc5da8ed32002cbd4eb9b30cfefe7b7d799152d42",
+      "x_public_hex": "0149b29e366f3d43ad1b2538125120de23b12e4497bd54bdf7a7dba14e627c78",
+      "binding_signature_hex": "8d0bfa7be56777db7992c536c70027f8e40b2a1c01816e1df168940f3328fe4aedb58762e34e756769a8e4f3b4cb6a87df6205b74cf51ee88dd36fe2c6b88508"
+    }
+  ]
+}
