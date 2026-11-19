@@ -72,20 +72,21 @@ let package = Package(
         // signing material never exists in source or CI (TRS-REP-005). WP-02 S1
         // adds the key hierarchy here, which consumes the generated constants
         // (ADR-004: the X3DH binding info string is never copied).
+        //
+        // LumosProtocol became a MAIN dependency in WP-03 S3: the BLE channel
+        // ships the fragmentation layer and the adv hint parser, and the whole
+        // point of the S2a extraction - on both platforms - is that the bytes
+        // the conformance suite holds green are the bytes the radio sends.
         .target(
             name: "LumosAppShell",
             dependencies: [
+                "LumosProtocol",
                 "LumosProtocolGenerated",
                 .product(name: "Clibsodium", package: "swift-sodium")
             ],
             path: "ios-app/shell/Sources/LumosAppShell",
             swiftSettings: [.swiftLanguageMode(.v6)]
         ),
-        // LumosProtocol is a TEST dependency here, for its committed-vector
-        // loader alone. The shell's RecoveryRecord is held to the same
-        // test-vectors/crypto/recovery_record.json the conformance runner reads,
-        // and writing a second loader for it would be a second thing to keep
-        // agreeing with the first.
         .testTarget(
             name: "LumosAppShellTests",
             dependencies: ["LumosAppShell", "LumosProtocol", "LumosProtocolGenerated"],
