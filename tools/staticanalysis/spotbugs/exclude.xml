@@ -90,6 +90,17 @@
     <Method name="&lt;init&gt;"/>
     <Bug pattern="EI_EXPOSE_REP2"/>
   </Match>
+  <!--
+    WP-03 slice S5b: AppLock stores the injected LocalStore and the DeviceAuth
+    seam - the same long-lived-service rationale as the block above, and the
+    DeviceAuth interface is precisely the thing that must be shared, because a
+    copied prompt would be a prompt the tests could not script.
+  -->
+  <Match>
+    <Class name="com.lumos.app.safety.AppLock"/>
+    <Method name="&lt;init&gt;"/>
+    <Bug pattern="EI_EXPOSE_REP2"/>
+  </Match>
   <Match>
     <Class name="com.lumos.app.onboarding.OnboardingService"/>
     <Method name="&lt;init&gt;"/>

@@ -46,6 +46,7 @@ import com.lumos.app.store.LocalSchema;
             SealedRecordEntity.DiagnosticEventRow.class,
             SealedRecordEntity.ConsentRecordRow.class,
             SealedRecordEntity.DiscoveryVisibilityRow.class,
+            SealedRecordEntity.AppLockRow.class,
         },
         version = LocalSchema.VERSION,
         exportSchema = true)
@@ -83,6 +84,23 @@ public abstract class LumosRoomDatabase extends RoomDatabase {
     };
 
     /**
+     * Room's version of the canonical 2-to-3 step (WP-03 slice S5b), the same
+     * shape as 1-to-2: the canonical DDL executes, then the meta row advances
+     * so the cross-platform seam and Room agree on the version.
+     */
+    public static final Migration MIGRATION_2_3 = new Migration(2, 3) {
+        @Override
+        public void migrate(@NonNull final SupportSQLiteDatabase database) {
+            for (final String sql : LocalSchema.migrationToVersion3()) {
+                database.execSQL(sql);
+            }
+            database.execSQL("INSERT OR REPLACE INTO " + LocalSchema.TABLE_META + " ("
+                    + LocalSchema.META_KEY + ", " + LocalSchema.META_VALUE + ") VALUES (?, ?)",
+                    new Object[] {LocalSchema.META_SCHEMA_VERSION, String.valueOf(3)});
+        }
+    };
+
+    /**
      * Opens the database in the application's private storage.
      *
      * @param context the application context
@@ -90,7 +108,7 @@ public abstract class LumosRoomDatabase extends RoomDatabase {
      */
     public static LumosRoomDatabase open(final Context context) {
         return Room.databaseBuilder(context, LumosRoomDatabase.class, DATABASE_FILE)
-                .addMigrations(MIGRATION_1_2)
+                .addMigrations(MIGRATION_1_2, MIGRATION_2_3)
                 .addCallback(new Callback() {
                     @Override
                     public void onCreate(@NonNull final SupportSQLiteDatabase database) {

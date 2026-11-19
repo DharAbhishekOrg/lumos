@@ -39,6 +39,10 @@ public enum RecordKind: String, CaseIterable, Sendable {
     /// Whether the user has turned Visible Nearby on, and when (SRS-ONB-008).
     /// Added at version 2. Absence reads as off.
     case discoveryVisibility = "discovery_visibility"
+    /// Whether the user has turned App Lock on (ADR-010). Added at version 3.
+    /// Absence reads as not enabled; the record carries the choice, never
+    /// anything that could unlock it.
+    case appLock = "app_lock"
 
     /// The table name for this kind.
     public var table: String { rawValue }
@@ -64,7 +68,7 @@ public struct Migration: Sendable {
 public enum LocalSchema {
 
     /// The schema version this build writes and expects.
-    public static let version = 2
+    public static let version = 3
 
     /// The version of an absent or empty database, before any migration runs.
     public static let versionEmpty = 0
@@ -133,6 +137,9 @@ public enum LocalSchema {
     /// The record kinds version 2 added (WP-02 slice S4c).
     private static let version2Kinds: [RecordKind] = [.consentRecord, .discoveryVisibility]
 
+    /// The record kinds version 3 added (WP-03 slice S5b).
+    private static let version3Kinds: [RecordKind] = [.appLock]
+
     /// The complete statement list taking an empty database to version 1.
     public static var migrationToVersion1: [String] {
         ["CREATE TABLE \(tableMeta) ("
@@ -146,6 +153,10 @@ public enum LocalSchema {
     /// is rewritten, so an interrupted upgrade leaves a version-1 database
     /// rather than a half-converted one.
     public static var migrationToVersion2: [String] { createTables(for: version2Kinds) }
+
+    /// The statements taking a version-2 database to version 3: one new
+    /// table, the same interruption-safe shape as the step before it.
+    public static var migrationToVersion3: [String] { createTables(for: version3Kinds) }
 
     /// The create-table and create-index pair for each of the given kinds.
     /// - Parameter kinds: the kinds a migration step introduces
@@ -162,6 +173,7 @@ public enum LocalSchema {
     /// from the future is refused, not "handled" (TRS-LOC-003).
     public static var migrations: [Migration] {
         [Migration(fromVersion: versionEmpty, toVersion: 1, statements: migrationToVersion1),
-         Migration(fromVersion: 1, toVersion: 2, statements: migrationToVersion2)]
+         Migration(fromVersion: 1, toVersion: 2, statements: migrationToVersion2),
+         Migration(fromVersion: 2, toVersion: 3, statements: migrationToVersion3)]
     }
 }
