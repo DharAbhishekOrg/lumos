@@ -90,6 +90,12 @@ var expectedRegister = map[string][]string{
 	},
 	"transport": {
 		"BLE_CHUNK_PAYLOAD", "BLE_TARGET_ATT_MTU", "CIRCUIT_BREAKER",
+		// The FRAG_* entries are not TRS Sec. 23 transcriptions: they fix the
+		// TRS-PROTO-010 fragment layout under the TRS Sec. 19 AI delivery
+		// rule (WP-03 S2), the same footing as the framing flag bits.
+		"FRAG_FLAGS_RESERVED_MASK", "FRAG_FLAG_FIRST", "FRAG_FLAG_LAST",
+		"FRAG_HEADER_LEN", "FRAG_MAX_FRAGMENTS", "FRAG_REASSEMBLY_MAX_BYTES",
+		"FRAG_TOTAL_PREFIX_LEN",
 		"LAN_CHUNK_PAYLOAD_BYTES", "QR_BOOTSTRAP_MAX_BYTES",
 		"REASSEMBLY_TIMEOUT_SEC", "RETRY_BACKOFF", "RETRY_BUDGET_PER_PATH",
 	},

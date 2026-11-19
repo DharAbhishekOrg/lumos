@@ -124,11 +124,10 @@ android {
             // docs/ would satisfy a reviewer and not that condition.
             assets.directories.add(rootProject.file("docs/legal").absolutePath)
 
-            // Generated constants, message classes and error codes, consumed from
-            // the generator's output directory exactly as :protocol-conformance
-            // does. ADR-004: no constant is copied, anywhere, ever - the KDF info
-            // strings the key hierarchy signs under come from here.
-            java.directories.add(rootProject.file("protocol/gen/java").absolutePath)
+            // The generated constants reach this module through :protocol-java
+            // since WP-03 S2 (see the dependencies block): one module carries
+            // the generator's output directory on its source path, everything
+            // else depends on it. ADR-004 unchanged: no constant is copied.
         }
     }
 
@@ -245,6 +244,14 @@ android {
 }
 
 dependencies {
+    // The shared pure-JVM protocol library (WP-03 S2): the frame codec,
+    // fragmentation layer and JCA primitives the conformance suite holds to
+    // the golden vectors, plus the generated constants on its source path.
+    // First-party code, not a dependency-manifest entry. api, not
+    // implementation, would overexpose; the app's own classes import
+    // com.lumos.protocol.* directly, so implementation is the right scope.
+    implementation(project(":protocol-java"))
+
     // JUnit 5, EPL-2.0. Test scope only, never linked into an APK. Already
     // declared for :protocol-conformance in tools/toolchain/toolchain-manifest.json.
     testImplementation(platform(libs.junit.bom))

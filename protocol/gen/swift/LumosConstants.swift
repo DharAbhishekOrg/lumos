@@ -6,7 +6,7 @@
 /// GENERATED - DO NOT EDIT. Generator: tools/constantsgen
 /// Source register: protocol/constants/lumos_constants.json
 /// Baseline: TRS v1.1 Sec. 23 / EDP v1.0 Sec. 4 (ADR-004)
-/// constants_hash: sha256:5b73a3fd6a3d99e5e35ec5a93c857d16a6b8c1e4207823e331afeeac6b808d29
+/// constants_hash: sha256:d65cfa8dfb493f4e4a78e6178b9cd9846c76731575da9fc12da6ea2a685c8586
 
 public enum LumosConstants {
 
@@ -14,7 +14,7 @@ public enum LumosConstants {
     public static let serviceUUID = "E853EB6A-775C-4A49-A6BF-320E6A5CC609"
 
     /// Binds generated code to the register that produced it (TRS-CONST-005).
-    public static let constantsHash = "sha256:5b73a3fd6a3d99e5e35ec5a93c857d16a6b8c1e4207823e331afeeac6b808d29"
+    public static let constantsHash = "sha256:d65cfa8dfb493f4e4a78e6178b9cd9846c76731575da9fc12da6ea2a685c8586"
 
     /// Register schema version.
     public static let schemaVersion = 1
@@ -687,6 +687,48 @@ public enum LumosConstants {
 
     /// transport.CIRCUIT_BREAKER.overridable
     public static let circuitBreakerOverridable = false
+
+    /// transport.FRAG_FLAGS_RESERVED_MASK.default
+    public static let fragFlagsReservedMaskDefault = 252
+
+    /// transport.FRAG_FLAGS_RESERVED_MASK.overridable
+    public static let fragFlagsReservedMaskOverridable = false
+
+    /// transport.FRAG_FLAG_FIRST.default
+    public static let fragFlagFirstDefault = 1
+
+    /// transport.FRAG_FLAG_FIRST.overridable
+    public static let fragFlagFirstOverridable = false
+
+    /// transport.FRAG_FLAG_LAST.default
+    public static let fragFlagLastDefault = 2
+
+    /// transport.FRAG_FLAG_LAST.overridable
+    public static let fragFlagLastOverridable = false
+
+    /// transport.FRAG_HEADER_LEN.default
+    public static let fragHeaderLenDefault = 4
+
+    /// transport.FRAG_HEADER_LEN.overridable
+    public static let fragHeaderLenOverridable = false
+
+    /// transport.FRAG_MAX_FRAGMENTS.default
+    public static let fragMaxFragmentsDefault = 65536
+
+    /// transport.FRAG_MAX_FRAGMENTS.overridable
+    public static let fragMaxFragmentsOverridable = false
+
+    /// transport.FRAG_REASSEMBLY_MAX_BYTES.default
+    public static let fragReassemblyMaxBytesDefault = 2097210
+
+    /// transport.FRAG_REASSEMBLY_MAX_BYTES.overridable
+    public static let fragReassemblyMaxBytesOverridable = false
+
+    /// transport.FRAG_TOTAL_PREFIX_LEN.default
+    public static let fragTotalPrefixLenDefault = 4
+
+    /// transport.FRAG_TOTAL_PREFIX_LEN.overridable
+    public static let fragTotalPrefixLenOverridable = false
 
     /// transport.LAN_CHUNK_PAYLOAD_BYTES.default
     public static let lanChunkPayloadBytesDefault = 65536

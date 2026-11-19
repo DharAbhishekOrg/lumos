@@ -487,9 +487,14 @@ func buildFramingVectors(root string, reg *schema.Register, constantsHash string
 	if err != nil {
 		return nil, err
 	}
+	fragmentation, err := buildFragmentation(constantsHash)
+	if err != nil {
+		return nil, err
+	}
 	return collectVectorFiles(
 		vectorDoc{"test-vectors/framing/frame_roundtrip.json", roundtrips.Implements, roundtrips},
 		vectorDoc{"test-vectors/framing/frame_invalid.json", invalids.Implements, invalids},
+		vectorDoc{"test-vectors/framing/fragmentation.json", fragmentation.implementsIDs(), fragmentation},
 		vectorDoc{"test-vectors/errors/error_codes.json", errSnapshot.Implements, errSnapshot},
 	)
 }

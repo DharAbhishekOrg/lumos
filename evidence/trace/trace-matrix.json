@@ -1565,8 +1565,8 @@
    "req_id": "SRS-NFR-CMP-004",
    "status": "tested",
    "code": [
-    "android-app/protocol-conformance/src/main/java/com/lumos/protocol/conformance/Frame.java",
-    "android-app/protocol-conformance/src/main/java/com/lumos/protocol/conformance/LumosCrypto.java",
+    "android-app/protocol-java/src/main/java/com/lumos/protocol/wire/Frame.java",
+    "android-app/protocol-java/src/main/java/com/lumos/protocol/wire/LumosCrypto.java",
     "ios-app/protocol-conformance/Sources/LumosProtocol/Frame.swift",
     "ios-app/protocol-conformance/Sources/LumosProtocol/LumosCrypto.swift"
    ],
@@ -1581,7 +1581,7 @@
     "ci:conformance#31528127667"
    ],
    "adr": [],
-   "last_commit": "5d1f2fe",
+   "last_commit": "34c047f",
    "updated": "2026-11-19"
   },
   {
@@ -4710,7 +4710,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "5d1f2fe",
+   "last_commit": "34c047f",
    "updated": "2026-11-19"
   },
   {
@@ -4720,7 +4720,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "5d1f2fe",
+   "last_commit": "34c047f",
    "updated": "2026-11-19"
   },
   {
@@ -4730,7 +4730,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "5d1f2fe",
+   "last_commit": "34c047f",
    "updated": "2026-11-19"
   },
   {
@@ -4754,7 +4754,7 @@
    "adr": [
     "ADR-003"
    ],
-   "last_commit": "5d1f2fe",
+   "last_commit": "34c047f",
    "updated": "2026-11-19"
   },
   {
@@ -4764,7 +4764,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "5d1f2fe",
+   "last_commit": "34c047f",
    "updated": "2026-11-19"
   },
   {
@@ -4774,7 +4774,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "5d1f2fe",
+   "last_commit": "34c047f",
    "updated": "2026-11-19"
   },
   {
@@ -4784,7 +4784,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "5d1f2fe",
+   "last_commit": "34c047f",
    "updated": "2026-11-19"
   },
   {
@@ -4794,7 +4794,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "5d1f2fe",
+   "last_commit": "34c047f",
    "updated": "2026-11-19"
   },
   {
@@ -4804,7 +4804,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "5d1f2fe",
+   "last_commit": "34c047f",
    "updated": "2026-11-19"
   },
   {
@@ -4814,7 +4814,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "5d1f2fe",
+   "last_commit": "34c047f",
    "updated": "2026-11-19"
   },
   {
@@ -4824,7 +4824,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "5d1f2fe",
+   "last_commit": "34c047f",
    "updated": "2026-11-19"
   },
   {
@@ -4834,7 +4834,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "5d1f2fe",
+   "last_commit": "34c047f",
    "updated": "2026-11-19"
   },
   {
@@ -5207,7 +5207,7 @@
    "adr": [
     "ADR-004"
    ],
-   "last_commit": "474df8e",
+   "last_commit": "34c047f",
    "updated": "2026-11-19"
   },
   {
@@ -5217,7 +5217,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "474df8e",
+   "last_commit": "34c047f",
    "updated": "2026-11-19"
   },
   {
@@ -5227,7 +5227,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "474df8e",
+   "last_commit": "34c047f",
    "updated": "2026-11-19"
   },
   {
@@ -5237,7 +5237,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "474df8e",
+   "last_commit": "34c047f",
    "updated": "2026-11-19"
   },
   {
@@ -5247,7 +5247,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "474df8e",
+   "last_commit": "34c047f",
    "updated": "2026-11-19"
   },
   {
@@ -5257,7 +5257,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "474df8e",
+   "last_commit": "34c047f",
    "updated": "2026-11-19"
   },
   {
@@ -5267,7 +5267,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "474df8e",
+   "last_commit": "34c047f",
    "updated": "2026-11-19"
   },
   {
@@ -5277,7 +5277,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "474df8e",
+   "last_commit": "34c047f",
    "updated": "2026-11-19"
   },
   {
@@ -5300,7 +5300,7 @@
     "ci:conformance#31528127667"
    ],
    "adr": [],
-   "last_commit": "474df8e",
+   "last_commit": "34c047f",
    "updated": "2026-11-19"
   },
   {
@@ -5310,7 +5310,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "474df8e",
+   "last_commit": "34c047f",
    "updated": "2026-11-19"
   },
   {
@@ -5320,7 +5320,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "474df8e",
+   "last_commit": "34c047f",
    "updated": "2026-11-19"
   },
   {
@@ -5330,7 +5330,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "474df8e",
+   "last_commit": "34c047f",
    "updated": "2026-11-19"
   },
   {
@@ -5340,7 +5340,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "474df8e",
+   "last_commit": "34c047f",
    "updated": "2026-11-19"
   },
   {
@@ -5350,7 +5350,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "474df8e",
+   "last_commit": "34c047f",
    "updated": "2026-11-19"
   },
   {
@@ -5378,7 +5378,7 @@
     "ci:conformance#31528127667"
    ],
    "adr": [],
-   "last_commit": "5d1f2fe",
+   "last_commit": "34c047f",
    "updated": "2026-11-19"
   },
   {
@@ -5429,8 +5429,8 @@
    "adr": [
     "ADR-004"
    ],
-   "last_commit": "059b325",
-   "updated": "2026-08-18"
+   "last_commit": "34c047f",
+   "updated": "2026-11-19"
   },
   {
    "req_id": "TRS-CICD-006",
@@ -5466,7 +5466,7 @@
    ],
    "evidence": [],
    "adr": [],
-   "last_commit": "474df8e",
+   "last_commit": "34c047f",
    "updated": "2026-11-19"
   },
   {
@@ -5725,7 +5725,7 @@
     "ADR-005",
     "ADR-006"
    ],
-   "last_commit": "5d1f2fe",
+   "last_commit": "34c047f",
    "updated": "2026-11-19"
   },
   {
@@ -5749,7 +5749,7 @@
     "ADR-004",
     "ADR-006"
    ],
-   "last_commit": "5d1f2fe",
+   "last_commit": "34c047f",
    "updated": "2026-11-19"
   },
   {
@@ -5770,7 +5770,7 @@
    "adr": [
     "ADR-004"
    ],
-   "last_commit": "5d1f2fe",
+   "last_commit": "34c047f",
    "updated": "2026-11-19"
   },
   {
@@ -5780,7 +5780,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "5d1f2fe",
+   "last_commit": "34c047f",
    "updated": "2026-11-19"
   },
   {
@@ -5808,7 +5808,7 @@
    "adr": [
     "ADR-004"
    ],
-   "last_commit": "5d1f2fe",
+   "last_commit": "34c047f",
    "updated": "2026-11-19"
   },
   {
@@ -5818,7 +5818,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "5d1f2fe",
+   "last_commit": "34c047f",
    "updated": "2026-11-19"
   },
   {
@@ -6161,7 +6161,7 @@
    "req_id": "TRS-CRY-015",
    "status": "tested",
    "code": [
-    "android-app/protocol-conformance/src/main/java/com/lumos/protocol/conformance/LumosCrypto.java",
+    "android-app/protocol-java/src/main/java/com/lumos/protocol/wire/LumosCrypto.java",
     "ios-app/protocol-conformance/Sources/LumosProtocol/LumosCrypto.swift",
     "protocol/crypto/recovery_vectors_test.go",
     "protocol/crypto/vectors_test.go",
@@ -6213,7 +6213,7 @@
    "adr": [
     "ADR-001"
    ],
-   "last_commit": "5d1f2fe",
+   "last_commit": "34c047f",
    "updated": "2026-11-19"
   },
   {
@@ -6373,7 +6373,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "5d1f2fe",
+   "last_commit": "34c047f",
    "updated": "2026-11-19"
   },
   {
@@ -6383,7 +6383,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "5d1f2fe",
+   "last_commit": "34c047f",
    "updated": "2026-11-19"
   },
   {
@@ -6393,7 +6393,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "5d1f2fe",
+   "last_commit": "34c047f",
    "updated": "2026-11-19"
   },
   {
@@ -6403,7 +6403,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "5d1f2fe",
+   "last_commit": "34c047f",
    "updated": "2026-11-19"
   },
   {
@@ -6413,7 +6413,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "5d1f2fe",
+   "last_commit": "34c047f",
    "updated": "2026-11-19"
   },
   {
@@ -6423,7 +6423,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "5d1f2fe",
+   "last_commit": "34c047f",
    "updated": "2026-11-19"
   },
   {
@@ -6445,7 +6445,7 @@
     "ADR-003",
     "ADR-010"
    ],
-   "last_commit": "5d1f2fe",
+   "last_commit": "34c047f",
    "updated": "2026-11-19"
   },
   {
@@ -6455,7 +6455,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "5d1f2fe",
+   "last_commit": "34c047f",
    "updated": "2026-11-19"
   },
   {
@@ -6465,7 +6465,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "5d1f2fe",
+   "last_commit": "34c047f",
    "updated": "2026-11-19"
   },
   {
@@ -6475,7 +6475,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "5d1f2fe",
+   "last_commit": "34c047f",
    "updated": "2026-11-19"
   },
   {
@@ -6485,7 +6485,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "5d1f2fe",
+   "last_commit": "34c047f",
    "updated": "2026-11-19"
   },
   {
@@ -6495,7 +6495,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "5d1f2fe",
+   "last_commit": "34c047f",
    "updated": "2026-11-19"
   },
   {
@@ -6971,7 +6971,7 @@
    "req_id": "TRS-PROTO-001",
    "status": "tested",
    "code": [
-    "android-app/protocol-conformance/src/main/java/com/lumos/protocol/conformance/Frame.java",
+    "android-app/protocol-java/src/main/java/com/lumos/protocol/wire/Frame.java",
     "ios-app/protocol-conformance/Sources/LumosProtocol/Frame.swift",
     "protocol/gen/go/lumosconstants/class_limits.go",
     "protocol/gen/go/lumoserrors/error_codes.go",
@@ -7005,14 +7005,14 @@
    "adr": [
     "ADR-007"
    ],
-   "last_commit": "5d1f2fe",
+   "last_commit": "34c047f",
    "updated": "2026-11-19"
   },
   {
    "req_id": "TRS-PROTO-002",
    "status": "tested",
    "code": [
-    "android-app/protocol-conformance/src/main/java/com/lumos/protocol/conformance/Frame.java",
+    "android-app/protocol-java/src/main/java/com/lumos/protocol/wire/Frame.java",
     "ios-app/protocol-conformance/Sources/LumosProtocol/Frame.swift",
     "protocol/gen/go/lumosconstants/class_limits.go",
     "protocol/gen/go/lumoserrors/error_codes.go",
@@ -7044,14 +7044,14 @@
    "adr": [
     "ADR-007"
    ],
-   "last_commit": "5d1f2fe",
+   "last_commit": "34c047f",
    "updated": "2026-11-19"
   },
   {
    "req_id": "TRS-PROTO-003",
    "status": "tested",
    "code": [
-    "android-app/protocol-conformance/src/main/java/com/lumos/protocol/conformance/Frame.java",
+    "android-app/protocol-java/src/main/java/com/lumos/protocol/wire/Frame.java",
     "ios-app/protocol-conformance/Sources/LumosProtocol/Frame.swift",
     "protocol/schema/schema.go",
     "protocol/schemas/adv_v1.schema.json",
@@ -7069,14 +7069,14 @@
     "ci:conformance#31528127667"
    ],
    "adr": [],
-   "last_commit": "5d1f2fe",
+   "last_commit": "34c047f",
    "updated": "2026-11-19"
   },
   {
    "req_id": "TRS-PROTO-004",
    "status": "tested",
    "code": [
-    "android-app/protocol-conformance/src/main/java/com/lumos/protocol/conformance/Frame.java",
+    "android-app/protocol-java/src/main/java/com/lumos/protocol/wire/Frame.java",
     "ios-app/protocol-conformance/Sources/LumosProtocol/Frame.swift",
     "protocol/gen/go/lumosconstants/class_limits.go",
     "protocol/gen/go/lumoserrors/error_codes.go",
@@ -7100,14 +7100,14 @@
     "ci:conformance#31528127667"
    ],
    "adr": [],
-   "last_commit": "5d1f2fe",
+   "last_commit": "34c047f",
    "updated": "2026-11-19"
   },
   {
    "req_id": "TRS-PROTO-005",
    "status": "tested",
    "code": [
-    "android-app/protocol-conformance/src/main/java/com/lumos/protocol/conformance/Frame.java",
+    "android-app/protocol-java/src/main/java/com/lumos/protocol/wire/Frame.java",
     "ios-app/protocol-conformance/Sources/LumosProtocol/Frame.swift",
     "protocol/schema/schema.go",
     "protocol/schemas/adv_v1.schema.json",
@@ -7127,14 +7127,14 @@
     "ci:conformance#31528127667"
    ],
    "adr": [],
-   "last_commit": "5d1f2fe",
+   "last_commit": "34c047f",
    "updated": "2026-11-19"
   },
   {
    "req_id": "TRS-PROTO-006",
    "status": "tested",
    "code": [
-    "android-app/protocol-conformance/src/main/java/com/lumos/protocol/conformance/Frame.java",
+    "android-app/protocol-java/src/main/java/com/lumos/protocol/wire/Frame.java",
     "ios-app/protocol-conformance/Sources/LumosProtocol/Frame.swift",
     "protocol/gen/go/lumosconstants/class_limits.go",
     "protocol/gen/go/lumoserrors/error_codes.go",
@@ -7167,14 +7167,14 @@
    "adr": [
     "ADR-007"
    ],
-   "last_commit": "5d1f2fe",
+   "last_commit": "34c047f",
    "updated": "2026-11-19"
   },
   {
    "req_id": "TRS-PROTO-007",
    "status": "tested",
    "code": [
-    "android-app/protocol-conformance/src/main/java/com/lumos/protocol/conformance/Frame.java",
+    "android-app/protocol-java/src/main/java/com/lumos/protocol/wire/Frame.java",
     "ios-app/protocol-conformance/Sources/LumosProtocol/Frame.swift",
     "protocol/gen/go/lumosconstants/class_limits.go",
     "protocol/gen/go/lumoserrors/error_codes.go",
@@ -7206,7 +7206,7 @@
     "ci:conformance#31528127667"
    ],
    "adr": [],
-   "last_commit": "5d1f2fe",
+   "last_commit": "34c047f",
    "updated": "2026-11-19"
   },
   {
@@ -7216,7 +7216,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "5d1f2fe",
+   "last_commit": "34c047f",
    "updated": "2026-11-19"
   },
   {
@@ -7243,17 +7243,36 @@
    "adr": [
     "ADR-002"
    ],
-   "last_commit": "5d1f2fe",
+   "last_commit": "34c047f",
    "updated": "2026-11-19"
   },
   {
    "req_id": "TRS-PROTO-010",
-   "status": "not_started",
-   "code": [],
-   "tests": [],
+   "status": "tested",
+   "code": [
+    "protocol/wire/fragment.go",
+    "tools/vectorgen/fragmentation.go",
+    "test-vectors/framing/fragmentation.json",
+    "android-app/protocol-java/src/main/java/com/lumos/protocol/wire/Fragmenter.java",
+    "android-app/protocol-java/src/main/java/com/lumos/protocol/wire/FragmentReassembler.java",
+    "ios-app/protocol-conformance/Sources/LumosProtocol/Fragmentation.swift"
+   ],
+   "tests": [
+    "go:protocol/wire:TestSplitAndReassembleRoundTrip",
+    "go:protocol/wire:TestDuplicateFragmentsAreSuppressed",
+    "go:protocol/wire:TestReassemblyTimeoutExpiresTheAssembly",
+    "go:protocol/wire:TestConformanceFragmentationSplitVectors",
+    "go:protocol/wire:TestConformanceFragmentationScripts",
+    "java:protocol-conformance:FragmentationConformanceTest.splitVectorsReproduceByteForByte",
+    "java:protocol-conformance:FragmentationConformanceTest.scriptedTimelinesPlayOutExactly",
+    "swift:LumosProtocolConformance:FragmentationConformanceTests.testSplitVectorsReproduceByteForByte",
+    "swift:LumosProtocolConformance:FragmentationConformanceTests.testScriptedTimelinesPlayOutExactly"
+   ],
    "evidence": [],
-   "adr": [],
-   "last_commit": "5d1f2fe",
+   "adr": [
+    "ADR-004"
+   ],
+   "last_commit": "34c047f",
    "updated": "2026-11-19"
   },
   {
@@ -7270,7 +7289,7 @@
    ],
    "evidence": [],
    "adr": [],
-   "last_commit": "5d1f2fe",
+   "last_commit": "34c047f",
    "updated": "2026-11-19"
   },
   {
@@ -7280,7 +7299,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "5d1f2fe",
+   "last_commit": "34c047f",
    "updated": "2026-11-19"
   },
   {
@@ -7306,7 +7325,7 @@
     "ci:conformance#31528127667"
    ],
    "adr": [],
-   "last_commit": "5d1f2fe",
+   "last_commit": "34c047f",
    "updated": "2026-11-19"
   },
   {
@@ -7326,18 +7345,19 @@
    ],
    "evidence": [],
    "adr": [],
-   "last_commit": "5d1f2fe",
+   "last_commit": "34c047f",
    "updated": "2026-11-19"
   },
   {
    "req_id": "TRS-PROTO-015",
    "status": "tested",
    "code": [
-    "android-app/protocol-conformance/src/main/java/com/lumos/protocol/conformance/Frame.java",
+    "android-app/protocol-java/src/main/java/com/lumos/protocol/wire/Frame.java",
     "ios-app/protocol-conformance/Sources/LumosProtocol/Frame.swift",
     "tools/vectorgen/gen.go",
     "tools/vectorgen/recovery.go",
-    "tools/vectorgen/suite.go"
+    "tools/vectorgen/suite.go",
+    "test-vectors/framing/fragmentation.json"
    ],
    "tests": [
     "go:tools/vectorgen:TestEveryPrescribedFileIsCommitted",
@@ -7355,7 +7375,7 @@
     "ci:conformance#31528127667"
    ],
    "adr": [],
-   "last_commit": "5d1f2fe",
+   "last_commit": "34c047f",
    "updated": "2026-11-19"
   },
   {
@@ -7365,7 +7385,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "5d1f2fe",
+   "last_commit": "34c047f",
    "updated": "2026-11-19"
   },
   {
@@ -7375,7 +7395,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "5d1f2fe",
+   "last_commit": "34c047f",
    "updated": "2026-11-19"
   },
   {
@@ -7385,7 +7405,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "5d1f2fe",
+   "last_commit": "34c047f",
    "updated": "2026-11-19"
   },
   {
@@ -7438,7 +7458,7 @@
    "adr": [
     "ADR-004"
    ],
-   "last_commit": "474df8e",
+   "last_commit": "34c047f",
    "updated": "2026-11-19"
   },
   {
@@ -7502,7 +7522,7 @@
    ],
    "evidence": [],
    "adr": [],
-   "last_commit": "5d1f2fe",
+   "last_commit": "34c047f",
    "updated": "2026-11-19"
   },
   {
@@ -7563,7 +7583,7 @@
    ],
    "evidence": [],
    "adr": [],
-   "last_commit": "5d1f2fe",
+   "last_commit": "34c047f",
    "updated": "2026-11-19"
   },
   {
@@ -7757,8 +7777,8 @@
     "Package.swift",
     "android-app/app/src/androidTest/java/com/lumos/app/recovery/RecoveryVectors.java",
     "android-app/protocol-conformance/build.gradle.kts",
-    "android-app/protocol-conformance/src/main/java/com/lumos/protocol/conformance/Frame.java",
-    "android-app/protocol-conformance/src/main/java/com/lumos/protocol/conformance/LumosCrypto.java",
+    "android-app/protocol-java/src/main/java/com/lumos/protocol/wire/Frame.java",
+    "android-app/protocol-java/src/main/java/com/lumos/protocol/wire/LumosCrypto.java",
     "ios-app/protocol-conformance/Sources/LumosProtocol/Frame.swift",
     "ios-app/protocol-conformance/Sources/LumosProtocol/LumosCrypto.swift",
     "protocol/crypto/recovery_vectors_test.go",
@@ -7808,7 +7828,7 @@
    "adr": [
     "ADR-004"
    ],
-   "last_commit": "5d1f2fe",
+   "last_commit": "34c047f",
    "updated": "2026-11-19"
   },
   {

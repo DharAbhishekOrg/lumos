@@ -22,6 +22,12 @@ pluginManagement {
 
 rootProject.name = "lumos"
 
+// The shared pure-JVM protocol library (WP-03 S2): frame codec, fragmentation
+// and JCA primitives, consumed by :protocol-conformance's vector tests and
+// shipped inside :app. Always included - it needs only a JDK.
+include(":protocol-java")
+project(":protocol-java").projectDir = file("android-app/protocol-java")
+
 include(":protocol-conformance")
 project(":protocol-conformance").projectDir = file("android-app/protocol-conformance")
 

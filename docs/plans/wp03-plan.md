@@ -47,16 +47,24 @@ work follows; UI mounts last on proven plumbing.
   SRS-NFR-SEC-002; SRS-IDN-001 remains hardware-half owner-executed.**
 
 ### S2 — BLE adapter foundation, Android (ADR-002)
-- Scan/advertise controllers with bounded register duty cycles; Service-Data
-  hint `adv_v1` + scan response; degraded UUID-only mode as a supported mode;
-  serialized GATT queue with epochs; TRS-PROTO-010 fragmentation at the link
-  layer (reassembly timeout, duplicate suppression) against the committed
-  framing vectors.
+Delivered as two PRs for reviewability:
+- **S2a (protocol):** extract the shared pure-JVM `:protocol-java` library
+  (frame codec + JCA primitives out of `:protocol-conformance`, consumed by
+  both the conformance suite and the APK) and land TRS-PROTO-010 fragmentation
+  three ways — Go reference, Java port, Swift port — under a new scripted
+  vector family (`test-vectors/framing/fragmentation.json`: byte-exact splits
+  plus offer-by-offer timelines with an injected clock). TRS-PROTO-010
+  graduates here: the vector evidence is the cross-language half, and the
+  synthetic harness in S2b then drives the same code.
+- **S2b (adapter):** scan/advertise controllers with bounded register duty
+  cycles; Service-Data hint `adv_v1` + scan response; degraded UUID-only mode
+  as a supported mode; serialized GATT queue with epochs, driving the shared
+  fragmentation layer.
 - Synthetic-peer harness: injected transport driving 100+ peers (TRS-ENV-001
   CI half).
-- **Graduates: TRS-PROTO-010 → tested (vector + synthetic evidence);
-  TRS-AND-005/006 → implemented; TRS-PROTO-009 stays implemented (radio is
-  G-01).**
+- **Graduates: TRS-PROTO-010 → tested (S2a, three-language vector evidence);
+  TRS-AND-005/006 → implemented (S2b); TRS-PROTO-009 stays implemented (radio
+  is G-01).**
 
 ### S3 — BLE adapter foundation, iOS (ADR-002)
 - UUID-only advertising (`CBAdvertisementDataServiceUUIDsKey`), central scan +

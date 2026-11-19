@@ -20,6 +20,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.lumos.protocol.LumosConstants;
+import com.lumos.protocol.wire.LumosCrypto;
 import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
 import org.junit.jupiter.api.Test;

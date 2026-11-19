@@ -7,8 +7,11 @@
  * Notes: NO Android plugin, NO Android framework dependency, NO Android SDK.
  * TRS Sec. 18.4 requires this module to be pure JVM so the conformance gate runs
  * on a plain JDK container. It CONSUMES the committed /test-vectors files and
- * never generates them (single-generator rule); the generated protocol constants
- * and error codes come from /protocol/gen/java, so no constant is hand-written.
+ * never generates them (single-generator rule). Since WP-03 S2 the code under
+ * test lives in :protocol-java - the same bytes the APK ships - and this module
+ * is tests only: holding the SHARED implementation to the vectors is the whole
+ * point of the extraction, because a conformance pass over a private copy would
+ * prove nothing about what the radio sends.
  */
 
 plugins {
@@ -26,19 +29,12 @@ java {
     }
 }
 
-sourceSets {
-    main {
-        java.srcDirs(
-            "src/main/java",
-            // Generated constants, message classes, error codes and class limits.
-            // Consuming them from the generator's output directory is what makes
-            // TRS-REP-002 true of a real build rather than of a copy.
-            rootProject.file("protocol/gen/java"),
-        )
-    }
-}
-
 dependencies {
+    // The shared protocol library under test: frame codec, fragmentation and
+    // JCA primitives, plus the generated constants on its source path. Test
+    // scope because this module has no main sources of its own any more.
+    testImplementation(project(":protocol-java"))
+
     // Gson 2.11.0, Apache-2.0. Test-scope JSON reader for the committed vector
     // files. The JDK ships no JSON parser and hand-rolling one inside a
     // conformance runner would put unreviewed parsing between the vectors and
@@ -60,13 +56,11 @@ tasks.withType<JavaCompile>().configureEach {
 
 // ---- TRS-CODE-006: Checkstyle + SpotBugs, zero warnings --------------------
 //
-// The generated register at protocol/gen/java is on this module's main source
-// path (see sourceSets above) so that no constant is ever copied. It is
-// therefore also, by default, on the analysers' input path - and it must not be:
-// the files are overwritten on every generation and byte-compared by the
-// constants gate, so a finding there names a defect nobody may fix in place.
-// Both analysers exclude it, Checkstyle by source directory and SpotBugs by
-// package, and both leave com.lumos.protocol.conformance fully analysed.
+// The generated register moved to :protocol-java's source path with the code
+// that uses it (WP-03 S2), but the exclusion stays: generated sources are
+// overwritten on every generation and byte-compared by the constants gate, so
+// a finding there names a defect nobody may fix in place, wherever a source
+// set picks them up. The test sources here are fully analysed.
 val generatedJavaDir = rootProject.file("protocol/gen/java")
 
 checkstyle {

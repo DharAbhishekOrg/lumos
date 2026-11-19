@@ -6,7 +6,7 @@
 // GENERATED - DO NOT EDIT. Generator: tools/constantsgen
 // Source register: protocol/constants/lumos_constants.json
 // Baseline: TRS v1.1 Sec. 23 / EDP v1.0 Sec. 4 (ADR-004)
-// constants_hash: sha256:5b73a3fd6a3d99e5e35ec5a93c857d16a6b8c1e4207823e331afeeac6b808d29
+// constants_hash: sha256:d65cfa8dfb493f4e4a78e6178b9cd9846c76731575da9fc12da6ea2a685c8586
 // Source schema: protocol/schemas/error_codes.schema.json
 
 // Package lumoserrors holds the stable machine-readable error codes of
@@ -66,6 +66,16 @@ const (
 	ErrMediaChunkOutOfRange = "ERR_MEDIA_CHUNK_OUT_OF_RANGE"
 	// ERR_ADV_AUTH_TAG_MISMATCH (110, adv): Advertisement authTag did not match the expected HMAC prefix for the epoch; the advertisement is discarded before connection.
 	ErrAdvAuthTagMismatch = "ERR_ADV_AUTH_TAG_MISMATCH"
+	// ERR_FRAG_HEADER_MALFORMED (120, transport): Fragment shorter than its header, a reserved flag bit set, a FIRST without a usable total-length prefix or a zero total, a non-zero index on a FIRST, or a fragment carrying no content byte (TRS-PROTO-010 layer rules).
+	ErrFragHeaderMalformed = "ERR_FRAG_HEADER_MALFORMED"
+	// ERR_FRAG_TOTAL_TOO_LARGE (121, transport): Declared reassembled length exceeds FRAG_REASSEMBLY_MAX_BYTES, or a split would need more than FRAG_MAX_FRAGMENTS. Rejected before any reassembly allocation (TRS Sec. 9.4).
+	ErrFragTotalTooLarge = "ERR_FRAG_TOTAL_TOO_LARGE"
+	// ERR_FRAG_SEQUENCE_GAP (122, transport): A continuation fragment skipped an index, or continued an assembly the receiver does not have open or remembered.
+	ErrFragSequenceGap = "ERR_FRAG_SEQUENCE_GAP"
+	// ERR_FRAG_LENGTH_MISMATCH (123, transport): Fragment content overran the declared total, or a LAST fragment completed with fewer bytes than declared.
+	ErrFragLengthMismatch = "ERR_FRAG_LENGTH_MISMATCH"
+	// ERR_FRAG_REASSEMBLY_TIMEOUT (124, transport): A continuation arrived for an assembly that already expired under REASSEMBLY_TIMEOUT_SEC (TRS-PROTO-010 reassembly timeout).
+	ErrFragReassemblyTimeout = "ERR_FRAG_REASSEMBLY_TIMEOUT"
 	// ERR_CONFIG_SIGNATURE_INVALID (80, config): Signed configuration or voucher failed signature verification.
 	ErrConfigSignatureInvalid = "ERR_CONFIG_SIGNATURE_INVALID"
 	// ERR_CONFIG_SCHEMA_INVALID (81, config): Configuration failed schema validation, including an out-of-bounds override (TRS-CONST-002).
@@ -112,6 +122,11 @@ var Numeric = map[string]int{
 	ErrMediaObjectKeyUnwrapFailed:   101,
 	ErrMediaChunkOutOfRange:         102,
 	ErrAdvAuthTagMismatch:           110,
+	ErrFragHeaderMalformed:          120,
+	ErrFragTotalTooLarge:            121,
+	ErrFragSequenceGap:              122,
+	ErrFragLengthMismatch:           123,
+	ErrFragReassemblyTimeout:        124,
 	ErrConfigSignatureInvalid:       80,
 	ErrConfigSchemaInvalid:          81,
 	ErrConfigRollback:               82,
