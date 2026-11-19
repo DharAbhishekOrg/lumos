@@ -5,7 +5,7 @@
  "$generator": "tools/constantsgen",
  "service_uuid": "E853EB6A-775C-4A49-A6BF-320E6A5CC609",
  "$service_uuid_provenance": "One fixed 128-bit GATT service UUID per ADR-002 / TRS Sec. 9.3, generated once from a CSPRNG as an RFC 4122 version-4 UUID in WP-01 slice S2 and frozen here. Advertised by both platforms and used for scan filtering. No 16-bit alias is registered for flagship. Regenerating this value is a breaking protocol change.",
- "constants_hash": "sha256:d65cfa8dfb493f4e4a78e6178b9cd9846c76731575da9fc12da6ea2a685c8586",
+ "constants_hash": "sha256:8bb65dc5e630eb6df4261d8eb75296f6cdc5191f09de248c33dfbe2803e6e373",
  "constants_hash_algorithm": {
   "digest": "SHA-256",
   "encoding": "lowercase hex, prefixed 'sha256:'",
@@ -450,6 +450,37 @@
    "dh_len": 32, "pn_len": 4, "n_len": 4, "total_len": 40, "overridable": false,
    "notes": "Ratchet message header: dh_public(32) | pn(4,BE) | n(4,BE). Rides at the head of the frame payload; the AEAD associated data is frame_header(58) || ratchet_header(40), satisfying TRS-PROTO-003 and authenticated ratchet headers simultaneously.",
    "anchors": ["TRS-CRY-002", "TRS-PROTO-003"], "source": "Signal Double Ratchet Sec. 4"
+  },
+  "HELLO_V1_LAYOUT": {
+   "protocol_version_len": 1, "hello_version_len": 1, "capability_bits_len": 2,
+   "venue_hint_len": 4, "eid_len": 12, "ed_public_len": 32, "x_public_len": 32,
+   "binding_sig_len": 64, "nonce_len": 16, "total_len": 164,
+   "overridable": false,
+   "notes": "The HELLO payload (class 0x01), fixed here per the TRS Sec. 19 AI delivery rule (WP-03 S4): protocol_version (encoded, re-confirmed in-band per TRS-PROTO-017) | hello_version (=1) | capabilityBits | venueHint | current rotating EID (zeros when no hint is advertised) | Ed25519 identity public | X25519 identity-DH public | ADR-008 binding signature | fresh nonce. Everything the advertisement hinted is re-established HERE, authenticated; the hint itself is never trusted.",
+   "anchors": ["TRS-PROTO-017", "TRS-PROTO-018", "SRS-IDN-002"], "adr": ["ADR-002", "ADR-008"],
+   "source": "TRS 9.2 derivation"
+  },
+  "HELLO_ACK_V1_LAYOUT": {
+   "auth_sig_len": 64, "total_len": 228,
+   "overridable": false,
+   "notes": "HELLO_ACK (0x02) = the responder's own hello_v1 fields followed by auth_sig: Ed25519 over UTF-8(HELLO_AUTH_INFO) | SHA-256(the initiator's exact HELLO payload bytes) | every ACK byte before the signature. Freshness comes from the initiator's nonce inside that hash; presence is granted ONLY to a peer whose ACK answers one's own fresh HELLO, so both sides run the exchange once per link direction and a replayed message grants nothing (TRS-ENV-002).",
+   "anchors": ["TRS-PROTO-017", "TRS-ENV-002"], "adr": ["ADR-002", "ADR-008"],
+   "source": "TRS 9.2 derivation"
+  },
+  "HELLO_AUTH_INFO": {
+   "value": "lumos/hello/auth/v1", "overridable": false,
+   "notes": "Domain prefix of the HELLO_ACK authentication signature.",
+   "anchors": ["TRS-PROTO-017"], "adr": ["ADR-002"], "source": "TRS 9.2 derivation"
+  },
+  "PEER_ID_KDF_INFO": {
+   "value": "lumos/peer-id/v1", "overridable": false,
+   "notes": "Domain prefix of the public peer identifier: PEER_ID_LEN bytes of SHA-256(info | Ed25519 identity public). Derived from cryptographic identity material and nothing else - no MAC address, phone number or store account anywhere near it (SRS-IDN-002). Presence and dedup key on this identifier, which is stable across EID rotations (SRS-NBY-006).",
+   "anchors": ["SRS-IDN-002", "SRS-NBY-006"], "adr": ["ADR-008"], "source": "SRS-IDN-002 derivation"
+  },
+  "PEER_ID_LEN": {
+   "default": 16, "overridable": false,
+   "notes": "Bytes of the derived peer identifier.",
+   "anchors": ["SRS-IDN-002"], "source": "SRS-IDN-002 derivation"
   },
   "ADV_KEY_KDF_INFO": {
    "value": "lumos/adv/k-adv/v1", "overridable": false,

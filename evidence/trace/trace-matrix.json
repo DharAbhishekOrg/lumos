@@ -477,18 +477,29 @@
     "ADR-008",
     "ADR-010"
    ],
-   "last_commit": "472dd99",
+   "last_commit": "2fdb7fb",
    "updated": "2026-11-19"
   },
   {
    "req_id": "SRS-IDN-002",
-   "status": "not_started",
-   "code": [],
-   "tests": [],
+   "status": "tested",
+   "code": [
+    "protocol/hello/hello.go",
+    "android-app/protocol-java/src/main/java/com/lumos/protocol/hello/Hello.java",
+    "ios-app/protocol-conformance/Sources/LumosProtocol/Hello.swift",
+    "test-vectors/session/hello_exchange.json"
+   ],
+   "tests": [
+    "go:protocol/hello:TestPeerIDIsStableAcrossEIDRotation",
+    "java:protocol-conformance:HelloConformanceTest.thePeerIdDerivationIsIdentityMaterialAlone",
+    "swift:LumosAppShell:PresenceTableTests.testOneIdentityStaysOneCardAcrossEidRotations"
+   ],
    "evidence": [],
-   "adr": [],
-   "last_commit": null,
-   "updated": null
+   "adr": [
+    "ADR-008"
+   ],
+   "last_commit": "ffc44dd",
+   "updated": "2026-11-19"
   },
   {
    "req_id": "SRS-IDN-003",
@@ -1236,23 +1247,41 @@
   },
   {
    "req_id": "SRS-NBY-006",
-   "status": "not_started",
-   "code": [],
-   "tests": [],
+   "status": "tested",
+   "code": [
+    "android-app/app/src/main/java/com/lumos/app/ble/PresenceTable.java",
+    "ios-app/shell/Sources/LumosAppShell/PresenceTable.swift",
+    "protocol/hello/hello.go"
+   ],
+   "tests": [
+    "java:app-dev:PresenceTableTest.oneIdentityStaysOneCardAcrossEidRotations",
+    "swift:LumosAppShell:PresenceTableTests.testOneIdentityStaysOneCardAcrossEidRotations"
+   ],
    "evidence": [],
-   "adr": [],
-   "last_commit": null,
-   "updated": null
+   "adr": [
+    "ADR-002",
+    "ADR-008"
+   ],
+   "last_commit": "ffc44dd",
+   "updated": "2026-11-19"
   },
   {
    "req_id": "SRS-NBY-007",
-   "status": "not_started",
-   "code": [],
-   "tests": [],
+   "status": "tested",
+   "code": [
+    "android-app/app/src/main/java/com/lumos/app/ble/PresenceTable.java",
+    "ios-app/shell/Sources/LumosAppShell/PresenceTable.swift"
+   ],
+   "tests": [
+    "java:app-dev:PresenceTableTest.staleCardsAgeOutOnTheRegisterBound",
+    "swift:LumosAppShell:PresenceTableTests.testStaleCardsAgeOutOnTheRegisterBound"
+   ],
    "evidence": [],
-   "adr": [],
-   "last_commit": null,
-   "updated": null
+   "adr": [
+    "ADR-002"
+   ],
+   "last_commit": "ffc44dd",
+   "updated": "2026-11-19"
   },
   {
    "req_id": "SRS-NBY-008",
@@ -1584,7 +1613,7 @@
     "ci:conformance#31528127667"
    ],
    "adr": [],
-   "last_commit": "472dd99",
+   "last_commit": "2fdb7fb",
    "updated": "2026-11-19"
   },
   {
@@ -2743,7 +2772,7 @@
     "ADR-003",
     "ADR-010"
    ],
-   "last_commit": "472dd99",
+   "last_commit": "2fdb7fb",
    "updated": "2026-11-19"
   },
   {
@@ -4713,7 +4742,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "e6e3250",
+   "last_commit": "2fdb7fb",
    "updated": "2026-11-19"
   },
   {
@@ -4723,7 +4752,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "e6e3250",
+   "last_commit": "2fdb7fb",
    "updated": "2026-11-19"
   },
   {
@@ -4733,7 +4762,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "e6e3250",
+   "last_commit": "2fdb7fb",
    "updated": "2026-11-19"
   },
   {
@@ -4757,7 +4786,7 @@
    "adr": [
     "ADR-003"
    ],
-   "last_commit": "e6e3250",
+   "last_commit": "2fdb7fb",
    "updated": "2026-11-19"
   },
   {
@@ -4779,7 +4808,7 @@
    "adr": [
     "ADR-002"
    ],
-   "last_commit": "e6e3250",
+   "last_commit": "2fdb7fb",
    "updated": "2026-11-19"
   },
   {
@@ -4798,7 +4827,7 @@
    "adr": [
     "ADR-002"
    ],
-   "last_commit": "e6e3250",
+   "last_commit": "2fdb7fb",
    "updated": "2026-11-19"
   },
   {
@@ -4808,7 +4837,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "e6e3250",
+   "last_commit": "2fdb7fb",
    "updated": "2026-11-19"
   },
   {
@@ -4818,7 +4847,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "e6e3250",
+   "last_commit": "2fdb7fb",
    "updated": "2026-11-19"
   },
   {
@@ -4828,7 +4857,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "e6e3250",
+   "last_commit": "2fdb7fb",
    "updated": "2026-11-19"
   },
   {
@@ -4838,7 +4867,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "e6e3250",
+   "last_commit": "2fdb7fb",
    "updated": "2026-11-19"
   },
   {
@@ -4848,7 +4877,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "e6e3250",
+   "last_commit": "2fdb7fb",
    "updated": "2026-11-19"
   },
   {
@@ -4858,7 +4887,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "e6e3250",
+   "last_commit": "2fdb7fb",
    "updated": "2026-11-19"
   },
   {
@@ -5231,7 +5260,7 @@
    "adr": [
     "ADR-004"
    ],
-   "last_commit": "a01e9a9",
+   "last_commit": "2fdb7fb",
    "updated": "2026-11-19"
   },
   {
@@ -5241,7 +5270,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "a01e9a9",
+   "last_commit": "2fdb7fb",
    "updated": "2026-11-19"
   },
   {
@@ -5251,7 +5280,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "a01e9a9",
+   "last_commit": "2fdb7fb",
    "updated": "2026-11-19"
   },
   {
@@ -5261,7 +5290,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "a01e9a9",
+   "last_commit": "2fdb7fb",
    "updated": "2026-11-19"
   },
   {
@@ -5271,7 +5300,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "a01e9a9",
+   "last_commit": "2fdb7fb",
    "updated": "2026-11-19"
   },
   {
@@ -5281,7 +5310,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "a01e9a9",
+   "last_commit": "2fdb7fb",
    "updated": "2026-11-19"
   },
   {
@@ -5291,7 +5320,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "a01e9a9",
+   "last_commit": "2fdb7fb",
    "updated": "2026-11-19"
   },
   {
@@ -5301,7 +5330,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "a01e9a9",
+   "last_commit": "2fdb7fb",
    "updated": "2026-11-19"
   },
   {
@@ -5324,7 +5353,7 @@
     "ci:conformance#31528127667"
    ],
    "adr": [],
-   "last_commit": "a01e9a9",
+   "last_commit": "2fdb7fb",
    "updated": "2026-11-19"
   },
   {
@@ -5334,7 +5363,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "a01e9a9",
+   "last_commit": "2fdb7fb",
    "updated": "2026-11-19"
   },
   {
@@ -5344,7 +5373,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "a01e9a9",
+   "last_commit": "2fdb7fb",
    "updated": "2026-11-19"
   },
   {
@@ -5354,7 +5383,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "a01e9a9",
+   "last_commit": "2fdb7fb",
    "updated": "2026-11-19"
   },
   {
@@ -5364,7 +5393,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "a01e9a9",
+   "last_commit": "2fdb7fb",
    "updated": "2026-11-19"
   },
   {
@@ -5374,7 +5403,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "a01e9a9",
+   "last_commit": "2fdb7fb",
    "updated": "2026-11-19"
   },
   {
@@ -5453,7 +5482,7 @@
    "adr": [
     "ADR-004"
    ],
-   "last_commit": "a01e9a9",
+   "last_commit": "2fdb7fb",
    "updated": "2026-11-19"
   },
   {
@@ -5749,7 +5778,7 @@
     "ADR-005",
     "ADR-006"
    ],
-   "last_commit": "a01e9a9",
+   "last_commit": "2fdb7fb",
    "updated": "2026-11-19"
   },
   {
@@ -5773,7 +5802,7 @@
     "ADR-004",
     "ADR-006"
    ],
-   "last_commit": "a01e9a9",
+   "last_commit": "2fdb7fb",
    "updated": "2026-11-19"
   },
   {
@@ -5794,7 +5823,7 @@
    "adr": [
     "ADR-004"
    ],
-   "last_commit": "a01e9a9",
+   "last_commit": "2fdb7fb",
    "updated": "2026-11-19"
   },
   {
@@ -5804,7 +5833,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "a01e9a9",
+   "last_commit": "2fdb7fb",
    "updated": "2026-11-19"
   },
   {
@@ -5832,7 +5861,7 @@
    "adr": [
     "ADR-004"
    ],
-   "last_commit": "a01e9a9",
+   "last_commit": "2fdb7fb",
    "updated": "2026-11-19"
   },
   {
@@ -5842,7 +5871,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "a01e9a9",
+   "last_commit": "2fdb7fb",
    "updated": "2026-11-19"
   },
   {
@@ -6237,7 +6266,7 @@
    "adr": [
     "ADR-001"
    ],
-   "last_commit": "a01e9a9",
+   "last_commit": "2fdb7fb",
    "updated": "2026-11-19"
   },
   {
@@ -6271,13 +6300,25 @@
   },
   {
    "req_id": "TRS-ENV-002",
-   "status": "not_started",
-   "code": [],
-   "tests": [],
+   "status": "implemented",
+   "code": [
+    "android-app/app/src/main/java/com/lumos/app/ble/PresenceTable.java",
+    "ios-app/shell/Sources/LumosAppShell/PresenceTable.swift",
+    "protocol/hello/hello.go",
+    "test-vectors/session/hello_exchange.json"
+   ],
+   "tests": [
+    "java:app-dev:PresenceTableTest.aReplayedAckThrowsBeforeAnyCardCanExist",
+    "swift:LumosAppShell:PresenceTableTests.testAReplayedAckThrowsBeforeAnyCardCanExist",
+    "go:protocol/hello:TestAReplayedAckGrantsNothing"
+   ],
    "evidence": [],
-   "adr": [],
-   "last_commit": null,
-   "updated": null
+   "adr": [
+    "ADR-002",
+    "ADR-008"
+   ],
+   "last_commit": "ffc44dd",
+   "updated": "2026-11-19"
   },
   {
    "req_id": "TRS-ENV-003",
@@ -6406,7 +6447,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "472dd99",
+   "last_commit": "2fdb7fb",
    "updated": "2026-11-19"
   },
   {
@@ -6416,7 +6457,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "472dd99",
+   "last_commit": "2fdb7fb",
    "updated": "2026-11-19"
   },
   {
@@ -6436,7 +6477,7 @@
    "adr": [
     "ADR-002"
    ],
-   "last_commit": "472dd99",
+   "last_commit": "2fdb7fb",
    "updated": "2026-11-19"
   },
   {
@@ -6446,7 +6487,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "472dd99",
+   "last_commit": "2fdb7fb",
    "updated": "2026-11-19"
   },
   {
@@ -6456,7 +6497,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "472dd99",
+   "last_commit": "2fdb7fb",
    "updated": "2026-11-19"
   },
   {
@@ -6466,7 +6507,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "472dd99",
+   "last_commit": "2fdb7fb",
    "updated": "2026-11-19"
   },
   {
@@ -6488,7 +6529,7 @@
     "ADR-003",
     "ADR-010"
    ],
-   "last_commit": "472dd99",
+   "last_commit": "2fdb7fb",
    "updated": "2026-11-19"
   },
   {
@@ -6498,7 +6539,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "472dd99",
+   "last_commit": "2fdb7fb",
    "updated": "2026-11-19"
   },
   {
@@ -6508,7 +6549,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "472dd99",
+   "last_commit": "2fdb7fb",
    "updated": "2026-11-19"
   },
   {
@@ -6518,7 +6559,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "472dd99",
+   "last_commit": "2fdb7fb",
    "updated": "2026-11-19"
   },
   {
@@ -6528,7 +6569,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "472dd99",
+   "last_commit": "2fdb7fb",
    "updated": "2026-11-19"
   },
   {
@@ -6538,7 +6579,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "472dd99",
+   "last_commit": "2fdb7fb",
    "updated": "2026-11-19"
   },
   {
@@ -6676,7 +6717,7 @@
    "adr": [
     "ADR-003"
    ],
-   "last_commit": "472dd99",
+   "last_commit": "2fdb7fb",
    "updated": "2026-11-19"
   },
   {
@@ -7048,7 +7089,7 @@
    "adr": [
     "ADR-007"
    ],
-   "last_commit": "a01e9a9",
+   "last_commit": "2fdb7fb",
    "updated": "2026-11-19"
   },
   {
@@ -7087,7 +7128,7 @@
    "adr": [
     "ADR-007"
    ],
-   "last_commit": "a01e9a9",
+   "last_commit": "2fdb7fb",
    "updated": "2026-11-19"
   },
   {
@@ -7112,7 +7153,7 @@
     "ci:conformance#31528127667"
    ],
    "adr": [],
-   "last_commit": "a01e9a9",
+   "last_commit": "2fdb7fb",
    "updated": "2026-11-19"
   },
   {
@@ -7143,7 +7184,7 @@
     "ci:conformance#31528127667"
    ],
    "adr": [],
-   "last_commit": "a01e9a9",
+   "last_commit": "2fdb7fb",
    "updated": "2026-11-19"
   },
   {
@@ -7170,7 +7211,7 @@
     "ci:conformance#31528127667"
    ],
    "adr": [],
-   "last_commit": "a01e9a9",
+   "last_commit": "2fdb7fb",
    "updated": "2026-11-19"
   },
   {
@@ -7210,7 +7251,7 @@
    "adr": [
     "ADR-007"
    ],
-   "last_commit": "a01e9a9",
+   "last_commit": "2fdb7fb",
    "updated": "2026-11-19"
   },
   {
@@ -7249,7 +7290,7 @@
     "ci:conformance#31528127667"
    ],
    "adr": [],
-   "last_commit": "a01e9a9",
+   "last_commit": "2fdb7fb",
    "updated": "2026-11-19"
   },
   {
@@ -7259,7 +7300,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "a01e9a9",
+   "last_commit": "2fdb7fb",
    "updated": "2026-11-19"
   },
   {
@@ -7292,7 +7333,7 @@
    "adr": [
     "ADR-002"
    ],
-   "last_commit": "a01e9a9",
+   "last_commit": "2fdb7fb",
    "updated": "2026-11-19"
   },
   {
@@ -7321,7 +7362,7 @@
    "adr": [
     "ADR-004"
    ],
-   "last_commit": "e6e3250",
+   "last_commit": "2fdb7fb",
    "updated": "2026-11-19"
   },
   {
@@ -7338,7 +7379,7 @@
    ],
    "evidence": [],
    "adr": [],
-   "last_commit": "a01e9a9",
+   "last_commit": "2fdb7fb",
    "updated": "2026-11-19"
   },
   {
@@ -7348,7 +7389,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "a01e9a9",
+   "last_commit": "2fdb7fb",
    "updated": "2026-11-19"
   },
   {
@@ -7374,7 +7415,7 @@
     "ci:conformance#31528127667"
    ],
    "adr": [],
-   "last_commit": "a01e9a9",
+   "last_commit": "2fdb7fb",
    "updated": "2026-11-19"
   },
   {
@@ -7394,7 +7435,7 @@
    ],
    "evidence": [],
    "adr": [],
-   "last_commit": "a01e9a9",
+   "last_commit": "2fdb7fb",
    "updated": "2026-11-19"
   },
   {
@@ -7424,7 +7465,7 @@
     "ci:conformance#31528127667"
    ],
    "adr": [],
-   "last_commit": "472dd99",
+   "last_commit": "2fdb7fb",
    "updated": "2026-11-19"
   },
   {
@@ -7434,36 +7475,58 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "a01e9a9",
+   "last_commit": "2fdb7fb",
    "updated": "2026-11-19"
   },
   {
    "req_id": "TRS-PROTO-017",
-   "status": "not_started",
-   "code": [],
-   "tests": [],
+   "status": "tested",
+   "code": [
+    "protocol/hello/hello.go",
+    "tools/vectorgen/hello.go",
+    "test-vectors/session/hello_exchange.json",
+    "android-app/protocol-java/src/main/java/com/lumos/protocol/hello/Hello.java",
+    "android-app/protocol-java/src/main/java/com/lumos/protocol/hello/HelloExchange.java",
+    "ios-app/protocol-conformance/Sources/LumosProtocol/Hello.swift"
+   ],
+   "tests": [
+    "go:protocol/hello:TestConformanceHelloExchangeReplaysByteForByte",
+    "go:protocol/hello:TestConformanceHelloNegativesFailWithTheirCodes",
+    "go:protocol/hello:TestTheDualExchangeAuthenticatesBothSides",
+    "java:protocol-conformance:HelloConformanceTest.theDualExchangeReplaysByteForByte",
+    "java:protocol-conformance:HelloConformanceTest.everyNegativeFailsWithItsStableCode",
+    "swift:LumosProtocolConformance:HelloConformanceTests.testHellosByteMatchAndCommittedAcksVerify",
+    "swift:LumosProtocolConformance:HelloConformanceTests.testTheDualExchangeRoundTripsWithCryptoKitSigners",
+    "swift:LumosProtocolConformance:HelloConformanceTests.testEveryNegativeFailsWithItsStableCode"
+   ],
    "evidence": [],
-   "adr": [],
-   "last_commit": "a01e9a9",
+   "adr": [
+    "ADR-002",
+    "ADR-008"
+   ],
+   "last_commit": "2fdb7fb",
    "updated": "2026-11-19"
   },
   {
    "req_id": "TRS-PROTO-018",
-   "status": "implemented",
+   "status": "tested",
    "code": [
-    "ios-app/shell/Sources/LumosAppShell/CoreBluetoothLink.swift",
-    "ios-app/shell/Sources/LumosAppShell/DiscoveryTriage.swift",
-    "android-app/app/src/main/java/com/lumos/app/ble/DiscoveryTriage.java"
+    "protocol/hello/hello.go",
+    "test-vectors/session/hello_exchange.json",
+    "android-app/app/src/main/java/com/lumos/app/ble/DiscoveryTriage.java",
+    "ios-app/shell/Sources/LumosAppShell/DiscoveryTriage.swift"
    ],
    "tests": [
+    "go:protocol/hello:TestAHintlessPeerWalksTheSamePath",
+    "java:protocol-conformance:HelloConformanceTest.theDualExchangeReplaysByteForByte",
     "java:app-dev:DiscoveryTriageTest.hintlessPeersAreFirstClassCandidates",
-    "swift:LumosAppShell:DiscoveryTriageTests.testAHundredPlusAdvertisersTriageBoundedAndSorted"
+    "swift:LumosProtocolConformance:HelloConformanceTests.testHellosByteMatchAndCommittedAcksVerify"
    ],
    "evidence": [],
    "adr": [
     "ADR-002"
    ],
-   "last_commit": "a01e9a9",
+   "last_commit": "2fdb7fb",
    "updated": "2026-11-19"
   },
   {
@@ -7516,7 +7579,7 @@
    "adr": [
     "ADR-004"
    ],
-   "last_commit": "a01e9a9",
+   "last_commit": "2fdb7fb",
    "updated": "2026-11-19"
   },
   {
@@ -7580,7 +7643,7 @@
    ],
    "evidence": [],
    "adr": [],
-   "last_commit": "472dd99",
+   "last_commit": "2fdb7fb",
    "updated": "2026-11-19"
   },
   {
@@ -7641,7 +7704,7 @@
    ],
    "evidence": [],
    "adr": [],
-   "last_commit": "472dd99",
+   "last_commit": "2fdb7fb",
    "updated": "2026-11-19"
   },
   {
@@ -7904,7 +7967,7 @@
    "adr": [
     "ADR-004"
    ],
-   "last_commit": "472dd99",
+   "last_commit": "2fdb7fb",
    "updated": "2026-11-19"
   },
   {

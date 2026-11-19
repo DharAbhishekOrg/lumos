@@ -56,6 +56,11 @@ var ExtensionFiles = []string{
 	// so it gets the same treatment the Sec. 18.4 families get - including
 	// scripted timelines, which a stateful layer needs and KATs cannot give.
 	"test-vectors/framing/fragmentation.json",
+	// WP-03 S4: the HELLO/HELLO_ACK canonical trust point (TRS-PROTO-017).
+	// Three implementations grant presence from this exchange, and
+	// TRS-ENV-002's zero-false-positive rule is only as strong as their
+	// agreement on exactly which bytes verify and which are rejected.
+	"test-vectors/session/hello_exchange.json",
 }
 
 // SuiteFiles is everything generation must emit: the specification's tree plus

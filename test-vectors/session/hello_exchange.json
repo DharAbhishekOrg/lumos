@@ -1,0 +1,99 @@
+{
+  "schema_version": 1,
+  "generator": "tools/vectorgen",
+  "constants_hash": "sha256:8bb65dc5e630eb6df4261d8eb75296f6cdc5191f09de248c33dfbe2803e6e373",
+  "implements": [
+    "TRS-PROTO-017",
+    "TRS-PROTO-018",
+    "TRS-ENV-002",
+    "SRS-IDN-002",
+    "TRS-TST-001"
+  ],
+  "key_provenance": "TESTONLY-lumos-vectors-v1",
+  "notes": "The HELLO/HELLO_ACK canonical trust point (register layouts HELLO_V1_LAYOUT / HELLO_ACK_V1_LAYOUT). The dual exchange is pinned byte for byte: Ed25519 signing is deterministic, so Go, the JCA and libsodium must reproduce every payload exactly; CryptoKit randomises signing and VERIFIES the committed bytes instead, round-tripping its own (the identity_binding precedent). The responder is deliberately the TRS-PROTO-018 hintless shape (zero EID). Negatives carry the mode a consumer must drive: parse_hello, verify_ack (against own_hello_hex), or ack_without_outstanding - the bare replay, which must fail with the nonce code BEFORE any cryptography runs (TRS-ENV-002).",
+  "initiator": {
+    "name": "initiator",
+    "testonly_ed_seed_hex": "009d5267e089163f48f8c6d90499dec6008de5e83d11e73cf1a28feca358ec79",
+    "testonly_x_scalar_hex": "8b241f65b522926020e857bcc0e6cebcb976619ed10a5f76c42ddc6225894439",
+    "capability_bits": 3,
+    "venue_hint": 0,
+    "eid_hex": "2e78443a9f50469a702b5325",
+    "ed_public_hex": "e47dd7fe3f1a3895a841165d96967ac43aea0451850bde261fc9bf714a574123",
+    "x_public_hex": "36695fc8db4358ad72d602c70a4c53a82bc1aa31ed8349dba97694001e858338",
+    "binding_sig_hex": "7e8061186b942d3cbed3f0f3c2c000f5fd23ddbfa3a7773e6358e763b37be07b64006c6eda1f7afb73a4449921597c3863bfeb0b9b3ef77c1a06e8bdceb2ee08",
+    "peer_id_hex": "20458e7e1325cdf136ef6fcc7d774c64"
+  },
+  "responder": {
+    "name": "responder-hintless",
+    "testonly_ed_seed_hex": "1beb490a0ff4d9e94cb41670a178cabad448874ce29748467f866e65158aa023",
+    "testonly_x_scalar_hex": "b9367b63ffb0b49077f6c8f54124e43c91df969d06d9e3e24792ce7b8c90a2cd",
+    "capability_bits": 1,
+    "venue_hint": 0,
+    "eid_hex": "000000000000000000000000",
+    "ed_public_hex": "0974944191206338bc2289bf0cb2acc2861cb8d2a92ee1f38db7aded9b5862ec",
+    "x_public_hex": "fec16904b166561baff450f995d8d675871a920fbf7edf835dfcf43e153b3766",
+    "binding_sig_hex": "eaf329025d28250995f6c202aeb3db6caf082e74672c0186f4cb4d819ad065b88ff19b4fd96e6ea78994afb0d3b126f56c903648bc674ac3e782dd2e87b50609",
+    "peer_id_hex": "fb0726c5a60f0bccd64af78f918e0739"
+  },
+  "exchange": {
+    "initiator_nonce_hex": "cc92428826a86ed96a902004f07fc2ef",
+    "initiator_hello_hex": "10010003000000002e78443a9f50469a702b5325e47dd7fe3f1a3895a841165d96967ac43aea0451850bde261fc9bf714a57412336695fc8db4358ad72d602c70a4c53a82bc1aa31ed8349dba97694001e8583387e8061186b942d3cbed3f0f3c2c000f5fd23ddbfa3a7773e6358e763b37be07b64006c6eda1f7afb73a4449921597c3863bfeb0b9b3ef77c1a06e8bdceb2ee08cc92428826a86ed96a902004f07fc2ef",
+    "responder_ack_hex": "10010001000000000000000000000000000000000974944191206338bc2289bf0cb2acc2861cb8d2a92ee1f38db7aded9b5862ecfec16904b166561baff450f995d8d675871a920fbf7edf835dfcf43e153b3766eaf329025d28250995f6c202aeb3db6caf082e74672c0186f4cb4d819ad065b88ff19b4fd96e6ea78994afb0d3b126f56c903648bc674ac3e782dd2e87b506090000000000000000000000000000000087d5ce0be8c1f405ba60abe13ba4d02cd4e56d89646267d771caf5b88676cfb600475c8185db8c187d75e74065038cd3fc833ea1dd6511efe7456c8684e6a903",
+    "responder_nonce_hex": "53b89ad1f120ffe91cbbbb16c0207390",
+    "responder_hello_hex": "10010001000000000000000000000000000000000974944191206338bc2289bf0cb2acc2861cb8d2a92ee1f38db7aded9b5862ecfec16904b166561baff450f995d8d675871a920fbf7edf835dfcf43e153b3766eaf329025d28250995f6c202aeb3db6caf082e74672c0186f4cb4d819ad065b88ff19b4fd96e6ea78994afb0d3b126f56c903648bc674ac3e782dd2e87b5060953b89ad1f120ffe91cbbbb16c0207390",
+    "initiator_ack_hex": "10010003000000002e78443a9f50469a702b5325e47dd7fe3f1a3895a841165d96967ac43aea0451850bde261fc9bf714a57412336695fc8db4358ad72d602c70a4c53a82bc1aa31ed8349dba97694001e8583387e8061186b942d3cbed3f0f3c2c000f5fd23ddbfa3a7773e6358e763b37be07b64006c6eda1f7afb73a4449921597c3863bfeb0b9b3ef77c1a06e8bdceb2ee08000000000000000000000000000000003f6f4c68a1db394c99fa95c2a4744049044b56d9cfa13c53358f385a1b13e05e738f687d277fb36e44ebbb4aaf29d4a7ca9cd0000c5f954c12e42b6492b3f405"
+  },
+  "negatives": [
+    {
+      "name": "truncated_hello",
+      "mode": "parse_hello",
+      "payload_hex": "10010003000000002e78443a9f50469a702b5325e47dd7fe3f1a3895a841165d96967ac43aea0451850bde261fc9bf714a57412336695fc8db4358ad72d602c70a4c53a82bc1aa31ed8349dba97694001e8583387e8061186b942d3cbed3f0f3c2c000f5fd23ddbfa3a7773e6358e763b37be07b64006c6eda1f7afb73a4449921597c3863bfeb0b9b3ef77c1a06e8bdceb2ee08cc92428826a86ed96a902004f07fc2",
+      "expected_error": "ERR_HELLO_MALFORMED",
+      "description": "One byte short of HELLO_V1_LAYOUT.total_len."
+    },
+    {
+      "name": "wrong_hello_version",
+      "mode": "parse_hello",
+      "payload_hex": "10020003000000002e78443a9f50469a702b5325e47dd7fe3f1a3895a841165d96967ac43aea0451850bde261fc9bf714a57412336695fc8db4358ad72d602c70a4c53a82bc1aa31ed8349dba97694001e8583387e8061186b942d3cbed3f0f3c2c000f5fd23ddbfa3a7773e6358e763b37be07b64006c6eda1f7afb73a4449921597c3863bfeb0b9b3ef77c1a06e8bdceb2ee08cc92428826a86ed96a902004f07fc2ef",
+      "expected_error": "ERR_HELLO_MALFORMED",
+      "description": "hello_version 2 does not exist."
+    },
+    {
+      "name": "wrong_major_version",
+      "mode": "parse_hello",
+      "payload_hex": "20010003000000002e78443a9f50469a702b5325e47dd7fe3f1a3895a841165d96967ac43aea0451850bde261fc9bf714a57412336695fc8db4358ad72d602c70a4c53a82bc1aa31ed8349dba97694001e8583387e8061186b942d3cbed3f0f3c2c000f5fd23ddbfa3a7773e6358e763b37be07b64006c6eda1f7afb73a4449921597c3863bfeb0b9b3ef77c1a06e8bdceb2ee08cc92428826a86ed96a902004f07fc2ef",
+      "expected_error": "ERR_HELLO_VERSION_UNSUPPORTED",
+      "description": "Version 0x20 (v2.0): the in-band TRS-PROTO-017 re-confirmation fails closed on a differing major."
+    },
+    {
+      "name": "transplanted_binding",
+      "mode": "parse_hello",
+      "payload_hex": "100100030000000020cf523d892b5604f7cc081d949b78a572fe13a629cfa9f87b35d4878cc0d57a1e4827cdb3a6cfab04c2e5c6fec16904b166561baff450f995d8d675871a920fbf7edf835dfcf43e153b3766b8b653acf70dab745e488fca8ff50c683bfb51e8947661614d5d98601b2d4c0c51372b1385b48d34375d030bdba6c59cd76c667d6c8865aa04aeadafb40b9e01cc92428826a86ed96a902004f07fc2ef",
+      "expected_error": "ERR_HELLO_BINDING_INVALID",
+      "description": "Another identity's DH key under one's own Ed25519: the ADR-008 binding does not transplant."
+    },
+    {
+      "name": "spoofed_ack_signature",
+      "mode": "verify_ack",
+      "own_hello_hex": "10010003000000002e78443a9f50469a702b5325e47dd7fe3f1a3895a841165d96967ac43aea0451850bde261fc9bf714a57412336695fc8db4358ad72d602c70a4c53a82bc1aa31ed8349dba97694001e8583387e8061186b942d3cbed3f0f3c2c000f5fd23ddbfa3a7773e6358e763b37be07b64006c6eda1f7afb73a4449921597c3863bfeb0b9b3ef77c1a06e8bdceb2ee08cc92428826a86ed96a902004f07fc2ef",
+      "payload_hex": "10010001000000000000000000000000000000000974944191206338bc2289bf0cb2acc2861cb8d2a92ee1f38db7aded9b5862ecfec16904b166561baff450f995d8d675871a920fbf7edf835dfcf43e153b3766eaf329025d28250995f6c202aeb3db6caf082e74672c0186f4cb4d819ad065b88ff19b4fd96e6ea78994afb0d3b126f56c903648bc674ac3e782dd2e87b506090000000000000000000000000000000043f4b1ab075d925d931857120c4f17a1653c3eb2dd27f96f0bdc2eb94cf2c73d0bd52f1a4d0e436f7f5a644270ae497927f982f17d7f2764b8dd0fa595b45808",
+      "expected_error": "ERR_HELLO_SIGNATURE_INVALID",
+      "description": "An ACK carrying the responder's identity but signed by someone else."
+    },
+    {
+      "name": "stale_ack_fresh_hello",
+      "mode": "verify_ack",
+      "own_hello_hex": "10010003000000002e78443a9f50469a702b5325e47dd7fe3f1a3895a841165d96967ac43aea0451850bde261fc9bf714a57412336695fc8db4358ad72d602c70a4c53a82bc1aa31ed8349dba97694001e8583387e8061186b942d3cbed3f0f3c2c000f5fd23ddbfa3a7773e6358e763b37be07b64006c6eda1f7afb73a4449921597c3863bfeb0b9b3ef77c1a06e8bdceb2ee085f5f5f5f5f5f5f5f5f5f5f5f5f5f5f5f",
+      "payload_hex": "10010001000000000000000000000000000000000974944191206338bc2289bf0cb2acc2861cb8d2a92ee1f38db7aded9b5862ecfec16904b166561baff450f995d8d675871a920fbf7edf835dfcf43e153b3766eaf329025d28250995f6c202aeb3db6caf082e74672c0186f4cb4d819ad065b88ff19b4fd96e6ea78994afb0d3b126f56c903648bc674ac3e782dd2e87b506090000000000000000000000000000000087d5ce0be8c1f405ba60abe13ba4d02cd4e56d89646267d771caf5b88676cfb600475c8185db8c187d75e74065038cd3fc833ea1dd6511efe7456c8684e6a903",
+      "expected_error": "ERR_HELLO_SIGNATURE_INVALID",
+      "description": "A genuine ACK for an earlier nonce, replayed against a fresh HELLO: the signature no longer covers the transcript."
+    },
+    {
+      "name": "ack_without_outstanding",
+      "mode": "ack_without_outstanding",
+      "payload_hex": "10010001000000000000000000000000000000000974944191206338bc2289bf0cb2acc2861cb8d2a92ee1f38db7aded9b5862ecfec16904b166561baff450f995d8d675871a920fbf7edf835dfcf43e153b3766eaf329025d28250995f6c202aeb3db6caf082e74672c0186f4cb4d819ad065b88ff19b4fd96e6ea78994afb0d3b126f56c903648bc674ac3e782dd2e87b506090000000000000000000000000000000087d5ce0be8c1f405ba60abe13ba4d02cd4e56d89646267d771caf5b88676cfb600475c8185db8c187d75e74065038cd3fc833ea1dd6511efe7456c8684e6a903",
+      "expected_error": "ERR_HELLO_NONCE_MISMATCH",
+      "description": "The bare replay: an ACK arriving with no HELLO outstanding grants nothing, before any cryptography runs (TRS-ENV-002)."
+    }
+  ]
+}

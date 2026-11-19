@@ -6,7 +6,7 @@
 // GENERATED - DO NOT EDIT. Generator: tools/constantsgen
 // Source register: protocol/constants/lumos_constants.json
 // Baseline: TRS v1.1 Sec. 23 / EDP v1.0 Sec. 4 (ADR-004)
-// constants_hash: sha256:d65cfa8dfb493f4e4a78e6178b9cd9846c76731575da9fc12da6ea2a685c8586
+// constants_hash: sha256:8bb65dc5e630eb6df4261d8eb75296f6cdc5191f09de248c33dfbe2803e6e373
 // Source schema: protocol/schemas/error_codes.schema.json
 
 // Package lumoserrors holds the stable machine-readable error codes of
@@ -76,6 +76,16 @@ const (
 	ErrFragLengthMismatch = "ERR_FRAG_LENGTH_MISMATCH"
 	// ERR_FRAG_REASSEMBLY_TIMEOUT (124, transport): A continuation arrived for an assembly that already expired under REASSEMBLY_TIMEOUT_SEC (TRS-PROTO-010 reassembly timeout).
 	ErrFragReassemblyTimeout = "ERR_FRAG_REASSEMBLY_TIMEOUT"
+	// ERR_HELLO_MALFORMED (130, session): A HELLO or HELLO_ACK payload was not a well-formed hello_v1: wrong length, or an unsupported hello_version.
+	ErrHelloMalformed = "ERR_HELLO_MALFORMED"
+	// ERR_HELLO_VERSION_UNSUPPORTED (131, session): The in-band protocol_version's major nibble differs from this build's (TRS-PROTO-017 re-confirmation; same rule as the frame header, ADR-007).
+	ErrHelloVersionUnsupported = "ERR_HELLO_VERSION_UNSUPPORTED"
+	// ERR_HELLO_BINDING_INVALID (132, session): The ADR-008 binding signature inside a HELLO or HELLO_ACK did not verify: the claimed identity-DH key does not belong to the claimed Ed25519 identity.
+	ErrHelloBindingInvalid = "ERR_HELLO_BINDING_INVALID"
+	// ERR_HELLO_SIGNATURE_INVALID (133, session): A HELLO_ACK auth signature did not verify over this side's HELLO transcript - a spoofed identity or a tampered exchange.
+	ErrHelloSignatureInvalid = "ERR_HELLO_SIGNATURE_INVALID"
+	// ERR_HELLO_NONCE_MISMATCH (134, session): A HELLO_ACK answered a nonce this side did not issue, or did not issue recently - the replay shape (TRS-ENV-002).
+	ErrHelloNonceMismatch = "ERR_HELLO_NONCE_MISMATCH"
 	// ERR_CONFIG_SIGNATURE_INVALID (80, config): Signed configuration or voucher failed signature verification.
 	ErrConfigSignatureInvalid = "ERR_CONFIG_SIGNATURE_INVALID"
 	// ERR_CONFIG_SCHEMA_INVALID (81, config): Configuration failed schema validation, including an out-of-bounds override (TRS-CONST-002).
@@ -127,6 +137,11 @@ var Numeric = map[string]int{
 	ErrFragSequenceGap:              122,
 	ErrFragLengthMismatch:           123,
 	ErrFragReassemblyTimeout:        124,
+	ErrHelloMalformed:               130,
+	ErrHelloVersionUnsupported:      131,
+	ErrHelloBindingInvalid:          132,
+	ErrHelloSignatureInvalid:        133,
+	ErrHelloNonceMismatch:           134,
 	ErrConfigSignatureInvalid:       80,
 	ErrConfigSchemaInvalid:          81,
 	ErrConfigRollback:               82,

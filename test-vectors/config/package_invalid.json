@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "generator": "tools/vectorgen",
-  "constants_hash": "sha256:d65cfa8dfb493f4e4a78e6178b9cd9846c76731575da9fc12da6ea2a685c8586",
+  "constants_hash": "sha256:8bb65dc5e630eb6df4261d8eb75296f6cdc5191f09de248c33dfbe2803e6e373",
   "implements": [
     "TRS-CFG-001",
     "TRS-CONST-005",
@@ -17,7 +17,7 @@
       "payload": {
         "version": 5,
         "environment": "staging",
-        "constants_hash": "sha256:d65cfa8dfb493f4e4a78e6178b9cd9846c76731575da9fc12da6ea2a685c8586",
+        "constants_hash": "sha256:8bb65dc5e630eb6df4261d8eb75296f6cdc5191f09de248c33dfbe2803e6e373",
         "valid_from": 1699000000,
         "valid_until": 1800000000,
         "overrides": {
@@ -28,7 +28,7 @@
           "disable_venue_rooms": true
         }
       },
-      "signature_hex": "8e68f18d0470a3960eb89dd06438c04bbf23e1b093dc798f1137c5ab831727d707251e2cab45137c5540247e732e1619734c306fe38b49da060292afa1393b08",
+      "signature_hex": "749bd552603fe261f94ee965dcf48c3317967e3b208a5a3c266b57c248b294e56f0527214fd4683fb5c92799b237ed75f9b94133609c0b83fa80567ae1170705",
       "now_unix": 1700000000,
       "active_version": 4,
       "expected_environment": "staging",
@@ -40,7 +40,7 @@
       "payload": {
         "version": 5,
         "environment": "staging",
-        "constants_hash": "sha256:d65cfa8dfb493f4e4a78e6178b9cd9846c76731575da9fc12da6ea2a685c8586",
+        "constants_hash": "sha256:8bb65dc5e630eb6df4261d8eb75296f6cdc5191f09de248c33dfbe2803e6e373",
         "valid_from": 1699000000,
         "valid_until": 1800000000,
         "overrides": {
@@ -51,7 +51,7 @@
           "disable_venue_rooms": true
         }
       },
-      "signature_hex": "50149c970c8f4843a4334960b8aec3ad2e7b20ea0e77d60962792938ae840246064b0e031e3fc0e530b1c2b8828e2fcb6abf2240a94c92165d0b40351e678403",
+      "signature_hex": "7038bbc27544b02b70fec3b2a25acd26179d6de57ca7f28a65b211b8646597db3a8047e3d8ca9c27398534258ddd2256fe15e06b46baf807138dcaaf47ce1f0d",
       "now_unix": 1700000000,
       "active_version": 4,
       "expected_environment": "staging",
@@ -63,7 +63,7 @@
       "payload": {
         "version": 5,
         "environment": "staging",
-        "constants_hash": "sha256:d65cfa8dfb493f4e4a78e6178b9cd9846c76731575da9fc12da6ea2a685c8586",
+        "constants_hash": "sha256:8bb65dc5e630eb6df4261d8eb75296f6cdc5191f09de248c33dfbe2803e6e373",
         "valid_from": 1699000000,
         "valid_until": 1800000000,
         "overrides": {
@@ -74,7 +74,7 @@
           "disable_venue_rooms": true
         }
       },
-      "signature_hex": "8f68f18d0470a3960eb89dd06438c04bbf23e1b093dc798f1137c5ab831727d707251e2cab45137c5540247e732e1619734c306fe38b49da060292afa1393b08",
+      "signature_hex": "759bd552603fe261f94ee965dcf48c3317967e3b208a5a3c266b57c248b294e56f0527214fd4683fb5c92799b237ed75f9b94133609c0b83fa80567ae1170705",
       "now_unix": 1700000000,
       "active_version": 4,
       "expected_environment": "staging",
@@ -109,7 +109,7 @@
       "payload": {
         "version": 5,
         "environment": "production",
-        "constants_hash": "sha256:d65cfa8dfb493f4e4a78e6178b9cd9846c76731575da9fc12da6ea2a685c8586",
+        "constants_hash": "sha256:8bb65dc5e630eb6df4261d8eb75296f6cdc5191f09de248c33dfbe2803e6e373",
         "valid_from": 1699000000,
         "valid_until": 1800000000,
         "overrides": {
@@ -120,7 +120,7 @@
           "disable_venue_rooms": true
         }
       },
-      "signature_hex": "0f06a3383cf8948f07d5f55c7631110ba139afd2ba8128a6051ea8a701a268ef76e1f938928650e340180523e27c629744f5443048d8c3f652d9cab76a18ee0b",
+      "signature_hex": "3c8bb40936161a3607f27bb79fd519689033c24d512cd7329a75c3a3292437e7dd750bb79ccae57a5efc7735bf291f2e9d7eb1931e6fe1bda9c5e8b187e8d000",
       "now_unix": 1700000000,
       "active_version": 4,
       "expected_environment": "staging",
@@ -132,7 +132,7 @@
       "payload": {
         "version": 5,
         "environment": "staging",
-        "constants_hash": "sha256:d65cfa8dfb493f4e4a78e6178b9cd9846c76731575da9fc12da6ea2a685c8586",
+        "constants_hash": "sha256:8bb65dc5e630eb6df4261d8eb75296f6cdc5191f09de248c33dfbe2803e6e373",
         "valid_from": 1699000000,
         "valid_until": 1699997000,
         "overrides": {
@@ -143,7 +143,7 @@
           "disable_venue_rooms": true
         }
       },
-      "signature_hex": "864cb072bdd8727623aac4a8e1f6f34376335d64e1dd95a57cb682935904115b074e627e574c433601df8ef2cc12f95c36c51f33382b7dba45b0da1258b80302",
+      "signature_hex": "5b48873e0f2cf56c2b194dd9a262c90b3434199fd0d7e17de6bc5217be1e5c922c804662209dae7819b9e91b91686a2616e6a13989dda67bdaad36a7048fb901",
       "now_unix": 1700000000,
       "active_version": 4,
       "expected_environment": "staging",
@@ -155,7 +155,7 @@
       "payload": {
         "version": 5,
         "environment": "staging",
-        "constants_hash": "sha256:d65cfa8dfb493f4e4a78e6178b9cd9846c76731575da9fc12da6ea2a685c8586",
+        "constants_hash": "sha256:8bb65dc5e630eb6df4261d8eb75296f6cdc5191f09de248c33dfbe2803e6e373",
         "valid_from": 1700003000,
         "valid_until": 1800000000,
         "overrides": {
@@ -166,7 +166,7 @@
           "disable_venue_rooms": true
         }
       },
-      "signature_hex": "97fa179fd3669a22e455d1ab8fd55060ee7e2b32b1780df95d069eec872d42a39a2850c06f45db538104c7bc518a90c01db4d451f9d56be8d509a23eb1aea205",
+      "signature_hex": "8d1d3f290c88607ff65eb082322ef4513c43b93d1af85410bb714bbdfeae335c29f5d2b3e7264f27755621b4af0ade0f70baad800859022bd7031b863218d707",
       "now_unix": 1700000000,
       "active_version": 4,
       "expected_environment": "staging",
@@ -178,7 +178,7 @@
       "payload": {
         "version": 5,
         "environment": "staging",
-        "constants_hash": "sha256:d65cfa8dfb493f4e4a78e6178b9cd9846c76731575da9fc12da6ea2a685c8586",
+        "constants_hash": "sha256:8bb65dc5e630eb6df4261d8eb75296f6cdc5191f09de248c33dfbe2803e6e373",
         "valid_from": 1699000000,
         "valid_until": 1800000000,
         "overrides": {
@@ -189,7 +189,7 @@
           "disable_venue_rooms": true
         }
       },
-      "signature_hex": "8f68f18d0470a3960eb89dd06438c04bbf23e1b093dc798f1137c5ab831727d707251e2cab45137c5540247e732e1619734c306fe38b49da060292afa1393b08",
+      "signature_hex": "759bd552603fe261f94ee965dcf48c3317967e3b208a5a3c266b57c248b294e56f0527214fd4683fb5c92799b237ed75f9b94133609c0b83fa80567ae1170705",
       "now_unix": 1700000000,
       "active_version": 5,
       "expected_environment": "staging",
@@ -201,7 +201,7 @@
       "payload": {
         "version": 2,
         "environment": "staging",
-        "constants_hash": "sha256:d65cfa8dfb493f4e4a78e6178b9cd9846c76731575da9fc12da6ea2a685c8586",
+        "constants_hash": "sha256:8bb65dc5e630eb6df4261d8eb75296f6cdc5191f09de248c33dfbe2803e6e373",
         "valid_from": 1699000000,
         "valid_until": 1800000000,
         "overrides": {
@@ -212,7 +212,7 @@
           "disable_venue_rooms": true
         }
       },
-      "signature_hex": "8ce71c934e09ada363bdb7a43ec2fe5d7afe999ab334c85b1fc437e369cf52c5bc668b7576b7d51b256339f012d1905a50232425a3aeb715f9f32cf17fe56f08",
+      "signature_hex": "76240faaca60bdafe8ca2c10e9e5a8dd8c75f03065b2a043a007b3efcdf1414b6367e42663d8726850ed553f9b5f85ed7556f6057c8287918e027b07309a1f04",
       "now_unix": 1700000000,
       "active_version": 9,
       "expected_environment": "staging",
