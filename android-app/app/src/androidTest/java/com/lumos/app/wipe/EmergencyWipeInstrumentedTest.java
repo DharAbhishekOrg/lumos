@@ -120,8 +120,12 @@ public class EmergencyWipeInstrumentedTest {
             assertEquals(kind + " survived the wipe on device", 0, store.count(kind));
         }
         // WAL and journal contents count as "the files"; fold them into the
-        // main database before the directory is read.
-        seam.execute("PRAGMA wal_checkpoint(TRUNCATE)");
+        // main database before the directory is read. Android's framework
+        // SQLite refuses a row-returning PRAGMA through execSQL ("Queries can
+        // be performed using query or rawQuery methods only") while JDBC's
+        // execute accepts the same statement - this line found that divergence
+        // on the emulator's first AT-019 run, so it goes through query().
+        seam.query("PRAGMA wal_checkpoint(TRUNCATE)", java.util.List.of());
 
         final byte[] onDisk = readEveryByteIn(databaseDirectory);
         assertTrue("the scan must have real files to search, or it proves nothing",

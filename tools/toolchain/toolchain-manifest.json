@@ -255,9 +255,10 @@
    },
    {
     "path": "typescript-eslint",
-    "version": "8.67.0",
+    "version": "8.73.0",
     "license": "MIT",
-    "why": "TypeScript parser and rules for ESLint 9 flat config."
+    "why": "TypeScript parser and rules for ESLint 9 flat config.",
+    "version_note": "Raised 8.67.0 -> 8.73.0 (semver-minor) at WP-03 S0: GHSA-g3hv-75wg-m249 (moderate, minimatch 7.0.0-11.0.0 DoS) reached the lockfile through @typescript-eslint/typescript-estree's minimatch ^10; 8.73.0 moved to ^11.0.1, which is fixed. Chosen over `npm audit fix --force`, whose path was an ESLint 10 major jump the WP-01 ruling reserves for a deliberate decision. The same npm-audit pass also refreshed transitive brace-expansion and js-yaml (both high, lockfile-only moves). "
    },
    {
     "path": "@types/node",
