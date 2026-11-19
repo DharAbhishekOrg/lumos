@@ -477,7 +477,7 @@
     "ADR-008",
     "ADR-010"
    ],
-   "last_commit": "e6e3250",
+   "last_commit": "be7d810",
    "updated": "2026-11-19"
   },
   {
@@ -532,7 +532,8 @@
     "protocol/adv/adv.go",
     "test-vectors/adv/ble_advertisement.json",
     "tools/vectorgen/close.go",
-    "android-app/app/src/main/java/com/lumos/app/ble/AdvertisingController.java"
+    "android-app/app/src/main/java/com/lumos/app/ble/AdvertisingController.java",
+    "ios-app/protocol-conformance/Sources/LumosProtocol/Adv.swift"
    ],
    "tests": [
     "go:protocol/adv:TestConformanceAdvSchedule",
@@ -1583,7 +1584,7 @@
     "ci:conformance#31528127667"
    ],
    "adr": [],
-   "last_commit": "e6e3250",
+   "last_commit": "be7d810",
    "updated": "2026-11-19"
   },
   {
@@ -2742,7 +2743,7 @@
     "ADR-003",
     "ADR-010"
    ],
-   "last_commit": "e6e3250",
+   "last_commit": "be7d810",
    "updated": "2026-11-19"
   },
   {
@@ -6254,10 +6255,12 @@
    "status": "implemented",
    "code": [
     "android-app/app/src/main/java/com/lumos/app/ble/DiscoveryTriage.java",
-    "android-app/app/src/main/java/com/lumos/app/ble/ScanDutyCycle.java"
+    "android-app/app/src/main/java/com/lumos/app/ble/ScanDutyCycle.java",
+    "ios-app/shell/Sources/LumosAppShell/DiscoveryTriage.swift"
    ],
    "tests": [
-    "java:app-dev:DiscoveryTriageTest.aHundredPlusAdvertisersTriageBoundedAndSorted"
+    "java:app-dev:DiscoveryTriageTest.aHundredPlusAdvertisersTriageBoundedAndSorted",
+    "swift:LumosAppShell:DiscoveryTriageTests.testAHundredPlusAdvertisersTriageBoundedAndSorted"
    ],
    "evidence": [],
    "adr": [
@@ -6403,7 +6406,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "a01e9a9",
+   "last_commit": "be7d810",
    "updated": "2026-11-19"
   },
   {
@@ -6413,17 +6416,27 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "a01e9a9",
+   "last_commit": "be7d810",
    "updated": "2026-11-19"
   },
   {
    "req_id": "TRS-IOS-003",
-   "status": "not_started",
-   "code": [],
-   "tests": [],
+   "status": "implemented",
+   "code": [
+    "ios-app/shell/Sources/LumosAppShell/CoreBluetoothLink.swift",
+    "ios-app/shell/Sources/LumosAppShell/PacedWriteQueue.swift",
+    "ios-app/shell/Sources/LumosAppShell/BleTransport.swift"
+   ],
+   "tests": [
+    "swift:LumosAppShell:PacedWriteQueueTests.testWritesFlowWhileTheGateSaysYes",
+    "swift:LumosAppShell:PacedWriteQueueTests.testWritesPauseTheInstantTheGateSaysNo",
+    "swift:LumosAppShell:PacedWriteQueueTests.testReconnectDiscardsTheOldConnectionsWrites"
+   ],
    "evidence": [],
-   "adr": [],
-   "last_commit": "a01e9a9",
+   "adr": [
+    "ADR-002"
+   ],
+   "last_commit": "be7d810",
    "updated": "2026-11-19"
   },
   {
@@ -6433,7 +6446,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "a01e9a9",
+   "last_commit": "be7d810",
    "updated": "2026-11-19"
   },
   {
@@ -6443,7 +6456,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "a01e9a9",
+   "last_commit": "be7d810",
    "updated": "2026-11-19"
   },
   {
@@ -6453,7 +6466,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "a01e9a9",
+   "last_commit": "be7d810",
    "updated": "2026-11-19"
   },
   {
@@ -6475,7 +6488,7 @@
     "ADR-003",
     "ADR-010"
    ],
-   "last_commit": "a01e9a9",
+   "last_commit": "be7d810",
    "updated": "2026-11-19"
   },
   {
@@ -6485,7 +6498,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "a01e9a9",
+   "last_commit": "be7d810",
    "updated": "2026-11-19"
   },
   {
@@ -6495,7 +6508,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "a01e9a9",
+   "last_commit": "be7d810",
    "updated": "2026-11-19"
   },
   {
@@ -6505,7 +6518,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "a01e9a9",
+   "last_commit": "be7d810",
    "updated": "2026-11-19"
   },
   {
@@ -6515,7 +6528,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "a01e9a9",
+   "last_commit": "be7d810",
    "updated": "2026-11-19"
   },
   {
@@ -6525,7 +6538,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "a01e9a9",
+   "last_commit": "be7d810",
    "updated": "2026-11-19"
   },
   {
@@ -6663,8 +6676,8 @@
    "adr": [
     "ADR-003"
    ],
-   "last_commit": "059b325",
-   "updated": "2026-08-18"
+   "last_commit": "be7d810",
+   "updated": "2026-11-19"
   },
   {
    "req_id": "TRS-LOC-010",
@@ -7258,7 +7271,8 @@
     "tools/vectorgen/close.go",
     "android-app/protocol-java/src/main/java/com/lumos/protocol/adv/Adv.java",
     "android-app/app/src/main/java/com/lumos/app/ble/AndroidBleAdvertiser.java",
-    "android-app/app/src/main/java/com/lumos/app/ble/AdvertisingController.java"
+    "android-app/app/src/main/java/com/lumos/app/ble/AdvertisingController.java",
+    "ios-app/protocol-conformance/Sources/LumosProtocol/Adv.swift"
    ],
    "tests": [
     "go:protocol/adv:TestConformanceAdvNegatives",
@@ -7269,7 +7283,8 @@
     "go:protocol/adv:TestVerifyRejectsWrongEpochAndTamper",
     "java:protocol-conformance:CryptoConformanceTest.advertisement",
     "swift:LumosProtocolConformance:CryptoConformanceTests.testAdvertisementScheduleAndNegatives",
-    "java:protocol-conformance:AdvConformanceTest.scheduleReproducesThroughTheSharedClass"
+    "java:protocol-conformance:AdvConformanceTest.scheduleReproducesThroughTheSharedClass",
+    "swift:LumosProtocolConformance:AdvConformanceTests.testScheduleReproducesThroughTheSharedType"
    ],
    "evidence": [
     "ci:conformance#31528127667"
@@ -7409,7 +7424,7 @@
     "ci:conformance#31528127667"
    ],
    "adr": [],
-   "last_commit": "e6e3250",
+   "last_commit": "be7d810",
    "updated": "2026-11-19"
   },
   {
@@ -7434,11 +7449,20 @@
   },
   {
    "req_id": "TRS-PROTO-018",
-   "status": "not_started",
-   "code": [],
-   "tests": [],
+   "status": "implemented",
+   "code": [
+    "ios-app/shell/Sources/LumosAppShell/CoreBluetoothLink.swift",
+    "ios-app/shell/Sources/LumosAppShell/DiscoveryTriage.swift",
+    "android-app/app/src/main/java/com/lumos/app/ble/DiscoveryTriage.java"
+   ],
+   "tests": [
+    "java:app-dev:DiscoveryTriageTest.hintlessPeersAreFirstClassCandidates",
+    "swift:LumosAppShell:DiscoveryTriageTests.testAHundredPlusAdvertisersTriageBoundedAndSorted"
+   ],
    "evidence": [],
-   "adr": [],
+   "adr": [
+    "ADR-002"
+   ],
    "last_commit": "a01e9a9",
    "updated": "2026-11-19"
   },
@@ -7556,7 +7580,7 @@
    ],
    "evidence": [],
    "adr": [],
-   "last_commit": "e6e3250",
+   "last_commit": "be7d810",
    "updated": "2026-11-19"
   },
   {
@@ -7617,7 +7641,7 @@
    ],
    "evidence": [],
    "adr": [],
-   "last_commit": "e6e3250",
+   "last_commit": "be7d810",
    "updated": "2026-11-19"
   },
   {
@@ -7685,13 +7709,21 @@
   },
   {
    "req_id": "TRS-TRN-004",
-   "status": "not_started",
-   "code": [],
-   "tests": [],
+   "status": "implemented",
+   "code": [
+    "ios-app/shell/Sources/LumosAppShell/PacedWriteQueue.swift",
+    "ios-app/shell/Sources/LumosAppShell/FrameChannel.swift"
+   ],
+   "tests": [
+    "swift:LumosAppShell:PacedWriteQueueTests.testWritesPauseTheInstantTheGateSaysNo",
+    "swift:LumosAppShell:FrameChannelTests.testABlobCrossesTheChannelWholeAndPaced"
+   ],
    "evidence": [],
-   "adr": [],
-   "last_commit": null,
-   "updated": null
+   "adr": [
+    "ADR-002"
+   ],
+   "last_commit": "be7d810",
+   "updated": "2026-11-19"
   },
   {
    "req_id": "TRS-TRN-005",
@@ -7872,7 +7904,7 @@
    "adr": [
     "ADR-004"
    ],
-   "last_commit": "e6e3250",
+   "last_commit": "be7d810",
    "updated": "2026-11-19"
   },
   {
