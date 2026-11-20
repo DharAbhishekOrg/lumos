@@ -48,6 +48,9 @@ import com.lumos.app.store.LocalSchema;
             SealedRecordEntity.DiscoveryVisibilityRow.class,
             SealedRecordEntity.AppLockRow.class,
             SealedRecordEntity.HiddenPeerRow.class,
+            SealedRecordEntity.InterestRecordRow.class,
+            SealedRecordEntity.MatchRecordRow.class,
+            SealedRecordEntity.InterestBudgetRow.class,
         },
         version = LocalSchema.VERSION,
         exportSchema = true)
@@ -119,6 +122,22 @@ public abstract class LumosRoomDatabase extends RoomDatabase {
     };
 
     /**
+     * Room's version of the canonical 4-to-5 step (WP-04 slice S3), the
+     * same shape as every step before it.
+     */
+    public static final Migration MIGRATION_4_5 = new Migration(4, 5) {
+        @Override
+        public void migrate(@NonNull final SupportSQLiteDatabase database) {
+            for (final String sql : LocalSchema.migrationToVersion5()) {
+                database.execSQL(sql);
+            }
+            database.execSQL("INSERT OR REPLACE INTO " + LocalSchema.TABLE_META + " ("
+                    + LocalSchema.META_KEY + ", " + LocalSchema.META_VALUE + ") VALUES (?, ?)",
+                    new Object[] {LocalSchema.META_SCHEMA_VERSION, String.valueOf(5)});
+        }
+    };
+
+    /**
      * Opens the database in the application's private storage.
      *
      * @param context the application context
@@ -126,7 +145,7 @@ public abstract class LumosRoomDatabase extends RoomDatabase {
      */
     public static LumosRoomDatabase open(final Context context) {
         return Room.databaseBuilder(context, LumosRoomDatabase.class, DATABASE_FILE)
-                .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4)
+                .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5)
                 .addCallback(new Callback() {
                     @Override
                     public void onCreate(@NonNull final SupportSQLiteDatabase database) {

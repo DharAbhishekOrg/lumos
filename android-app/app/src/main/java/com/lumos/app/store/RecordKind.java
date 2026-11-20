@@ -83,7 +83,38 @@ public enum RecordKind {
      * <p>Added at schema version 4. Hiding is silent: nothing here is ever
      * sent, and the hidden peer cannot observe any of it.
      */
-    HIDDEN_PEER(true);
+    HIDDEN_PEER(true),
+
+    /**
+     * The per-peer interest machine state (TRS Sec. 4.2), looked up by a
+     * blind index over the authenticated peer identifier: who the user is
+     * interested in - and who declined whom - is at least as private as who
+     * they blocked. The payload is the machine state and its timestamps,
+     * never a message body.
+     *
+     * <p>Added at schema version 5 (WP-04 S3).
+     */
+    INTEREST_RECORD(true),
+
+    /**
+     * An established match (SRS-MAT-005, SRS-MAT-007): the stable match
+     * identifier, keyed like every peer list by the identity's blind index.
+     * TRS-LOC-001 names "match" as its own schema item, and the row outlives
+     * interest churn - unmatching changes its state, never silently deletes
+     * the fact for the safety flows that may need it (SRS-MAT-010).
+     *
+     * <p>Added at schema version 5 (WP-04 S3).
+     */
+    MATCH_RECORD(true),
+
+    /**
+     * The single-row rolling-hour interest budget (SRS-MAT-011): sent-at
+     * timestamps and nothing else, persisted so a process restart cannot
+     * reset the flood limit (SRS-SAF-006).
+     *
+     * <p>Added at schema version 5 (WP-04 S3).
+     */
+    INTEREST_BUDGET(false);
 
     private final boolean lookupByTag;
 
@@ -103,11 +134,12 @@ public enum RecordKind {
     /**
      * Whether this kind is looked up by a blind index over a natural key.
      *
-     * <p>BLOCK_ENTRY and HIDDEN_PEER. Both lists must answer "is this peer
-     * on the list?" without the peer identifier being readable in the file -
-     * the threat model treats the block list as a safety asset, not a
-     * preference (data map Sec. 2.4), and the hidden list reveals who the
-     * user chose to avoid, which is the same secret at lower stakes.
+     * <p>The peer-keyed kinds: BLOCK_ENTRY, HIDDEN_PEER, INTEREST_RECORD
+     * and MATCH_RECORD. Each must answer "what do we hold for this peer?"
+     * without the peer identifier being readable in the file - the threat
+     * model treats the block list as a safety asset, not a preference
+     * (data map Sec. 2.4), and who the user avoided, wanted or matched is
+     * the same secret in different tenses.
      *
      * @return true when writes must supply a lookup tag
      */
