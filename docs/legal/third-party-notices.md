@@ -474,6 +474,24 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 ---
 
+## Material Components for Android 1.12.0 - Apache License 2.0
+
+<https://github.com/material-components/material-components-android>. From
+Maven Central at `com.google.android.material:material:1.12.0`. Used
+unmodified; the licence text is reproduced once at the end of this file.
+
+## AndroidX AppCompat 1.7.0 - Apache License 2.0
+
+<https://developer.android.com/jetpack/androidx/releases/appcompat>. From
+Google's Maven repository at `androidx.appcompat:appcompat:1.7.0`. Used
+unmodified; the licence text is reproduced once at the end of this file.
+
+## AndroidX RecyclerView 1.3.2 - Apache License 2.0
+
+<https://developer.android.com/jetpack/androidx/releases/recyclerview>. From
+Google's Maven repository at `androidx.recyclerview:recyclerview:1.3.2`. Used
+unmodified; the licence text is reproduced once at the end of this file.
+
 ## Java Native Access (JNA) 5.17.0 - Apache License 2.0
 
 <https://github.com/java-native-access/jna>. JNA is dual-licensed under the

@@ -65,12 +65,21 @@
         android:allowBackup="false"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
-        android:label="Lumos">
+        android:label="Lumos"
+        android:theme="@style/Theme.Lumos">
 
         <service
             android:name="com.lumos.app.ble.ProximityService"
             android:exported="false"
             android:foregroundServiceType="connectedDevice" />
+
+        <!-- Not exported and no launcher filter yet: the app opens through
+             the onboarding flow, whose UI is a later slice, and NearbyActivity
+             itself refuses to create unless the onboarding machine has made
+             this surface reachable (SRS-ONB-001 / AT-001). -->
+        <activity
+            android:name="com.lumos.app.nearby.NearbyActivity"
+            android:exported="false" />
 
     </application>
 

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Lumos - android-app/app / The Material 3 application theme.
+  Author: dhar.abhishek.email@gmail.com
+  Implements: TRS-AND-003
+  ADRs: -
+  Threading: n/a
+  Notes: Theme.Material3.DayNight follows the system light/dark setting with
+  the Material 3 defaults; brand colour work is WP-10's. NoActionBar because
+  each screen owns its own top area - the Nearby screen's is the visibility
+  indicator, which SRS-NBY-003 wants persistent and understandable, not a
+  generic toolbar.
+-->
+<resources>
+    <style name="Theme.Lumos" parent="Theme.Material3.DayNight.NoActionBar" />
+</resources>
