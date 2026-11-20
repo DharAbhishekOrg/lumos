@@ -1,16 +1,17 @@
 {
   "schema_version": 1,
   "generator": "tools/vectorgen",
-  "constants_hash": "sha256:2825a45f23c9533252baf7e6699dff84d80ea1c2af29880a7f6cad911c967151",
+  "constants_hash": "sha256:4fb89c6c38259e018245239b69a55a6eb61c015ce5f49709774bd2618f384cb4",
   "implements": [
     "SRS-MAT-004",
     "SRS-MAT-005",
     "SRS-MAT-007",
+    "SRS-MAT-008",
     "SRS-MAT-014",
     "TRS-PAT-002"
   ],
   "key_provenance": "TESTONLY-lumos-vectors-v1",
-  "notes": "The interest/consent state machine and the SRS-MAT-007 identifier. derivations: match_id = SHA-256(MATCH_ID_KDF_INFO | lower | higher)[:MATCH_ID_LEN] over the two peer ids in lexicographic byte order - symmetric, so both sides of an accept-accept race derive the same id with no message; initiator_on_race is the lower id. scripts: event timelines starting at state none; consumers replay each and compare state and effect after every step. Effects accept_and_establish and match_established are the ONLY unlocking effects (SRS-MAT-005); no decline or ignore step anywhere carries a transmitting effect (SRS-MAT-004); absorbed duplicates and reorders appear as steps whose state and effect repeat unchanged (SRS-MAT-014).",
+  "notes": "The interest/consent state machine and the SRS-MAT-007 identifier. derivations: match_id = SHA-256(MATCH_ID_KDF_INFO | lower | higher)[:MATCH_ID_LEN] over the two peer ids in lexicographic byte order - symmetric, so both sides of an accept-accept race derive the same id with no message; initiator_on_race is the lower id. tokens: the SRS-MAT-008 venue token - SHA-256(MATCH_TOKEN_KDF_INFO | match_id), 6+6 bits into the ADR-009 emoji alphabet, 3 bits into the named colour palette. scripts: event timelines starting at state none; consumers replay each and compare state and effect after every step. Effects accept_and_establish and match_established are the ONLY unlocking effects (SRS-MAT-005); no decline or ignore step anywhere carries a transmitting effect (SRS-MAT-004); absorbed duplicates and reorders appear as steps whose state and effect repeat unchanged (SRS-MAT-014).",
   "derivations": [
     {
       "name": "pair_0",
@@ -39,6 +40,68 @@
       "peer_b_hex": "e3a39eb68d9952fcf07d74e77a69edc2",
       "match_id_hex": "b79f1e6d87d39a3d79da0da9f27c37f8",
       "initiator_on_race_hex": "25823982051a62a835b6bc1c3edbec70"
+    }
+  ],
+  "tokens": [
+    {
+      "name": "pair_0",
+      "match_id_hex": "9d0707b7a72bba240239501e332433c1",
+      "emoji_indices": [
+        5,
+        3
+      ],
+      "color_index": 6,
+      "emoji": [
+        "🐸",
+        "🐮"
+      ],
+      "color_name": "rose",
+      "color_hex": "#D81B60"
+    },
+    {
+      "name": "pair_1",
+      "match_id_hex": "6d2abe6e05cece7ef8d7cdf3ef35e9a4",
+      "emoji_indices": [
+        32,
+        62
+      ],
+      "color_index": 7,
+      "emoji": [
+        "🌻",
+        "🏆"
+      ],
+      "color_name": "slate",
+      "color_hex": "#546E7A"
+    },
+    {
+      "name": "pair_2",
+      "match_id_hex": "382661fad07e34460ac963309455af09",
+      "emoji_indices": [
+        34,
+        40
+      ],
+      "color_index": 0,
+      "emoji": [
+        "🍁",
+        "🔑"
+      ],
+      "color_name": "coral",
+      "color_hex": "#FF6F61"
+    },
+    {
+      "name": "pair_3",
+      "match_id_hex": "b79f1e6d87d39a3d79da0da9f27c37f8",
+      "emoji_indices": [
+        53,
+        60
+      ],
+      "color_index": 0,
+      "emoji": [
+        "💡",
+        "💙"
+      ],
+      "color_name": "coral",
+      "color_hex": "#FF6F61"
     }
   ],
   "scripts": [

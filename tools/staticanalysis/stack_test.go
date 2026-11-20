@@ -231,6 +231,18 @@ func TestGosecExclusionsAreScopedToBuildTooling(t *testing.T) {
 			continue
 		}
 		scope := strings.TrimSpace(strings.SplitN(block, "\n", 2)[0])
+		// The generated constants file joined the allowed scopes in WP-04 S4,
+		// for G101 alone: that rule pattern-matches identifier NAMES for
+		// credential words, and MATCH_TOKEN_KDF_INFO is a public
+		// domain-separation string, not a secret. The block must still name
+		// G101 and nothing wider - a generated-file exclusion that grew past
+		// one rule is the gutting this test exists to catch.
+		if strings.HasPrefix(scope, "^protocol/gen/go/lumosconstants/") {
+			if !strings.Contains(block, "\"^G101:\"") {
+				t.Errorf("the generated-constants gosec exclusion must be G101 and only G101")
+			}
+			continue
+		}
 		if scope != "^tools/" && !strings.HasPrefix(scope, "^protocol/schema/") && scope != "_test\\.go" {
 			t.Errorf("gosec is excluded for scope %q; the exclusions are meant to cover build tooling only", scope)
 		}

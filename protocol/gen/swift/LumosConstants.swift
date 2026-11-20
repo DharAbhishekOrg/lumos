@@ -6,7 +6,7 @@
 /// GENERATED - DO NOT EDIT. Generator: tools/constantsgen
 /// Source register: protocol/constants/lumos_constants.json
 /// Baseline: TRS v1.1 Sec. 23 / EDP v1.0 Sec. 4 (ADR-004)
-/// constants_hash: sha256:2825a45f23c9533252baf7e6699dff84d80ea1c2af29880a7f6cad911c967151
+/// constants_hash: sha256:4fb89c6c38259e018245239b69a55a6eb61c015ce5f49709774bd2618f384cb4
 
 public enum LumosConstants {
 
@@ -14,7 +14,7 @@ public enum LumosConstants {
     public static let serviceUUID = "E853EB6A-775C-4A49-A6BF-320E6A5CC609"
 
     /// Binds generated code to the register that produced it (TRS-CONST-005).
-    public static let constantsHash = "sha256:2825a45f23c9533252baf7e6699dff84d80ea1c2af29880a7f6cad911c967151"
+    public static let constantsHash = "sha256:4fb89c6c38259e018245239b69a55a6eb61c015ce5f49709774bd2618f384cb4"
 
     /// Register schema version.
     public static let schemaVersion = 1
@@ -172,6 +172,21 @@ public enum LumosConstants {
 
     /// crypto_protocol.MATCH_ID_LEN.overridable
     public static let matchIDLenOverridable = false
+
+    /// crypto_protocol.MATCH_TOKEN_COLORS.hex
+    public static let matchTokenColorsHex: [String] = ["#FF6F61", "#FFB300", "#43A047", "#00897B", "#1E88E5", "#8E24AA", "#D81B60", "#546E7A"]
+
+    /// crypto_protocol.MATCH_TOKEN_COLORS.names
+    public static let matchTokenColorsNames: [String] = ["coral", "amber", "leaf", "teal", "sky", "violet", "rose", "slate"]
+
+    /// crypto_protocol.MATCH_TOKEN_COLORS.overridable
+    public static let matchTokenColorsOverridable = false
+
+    /// crypto_protocol.MATCH_TOKEN_KDF_INFO.overridable
+    public static let matchTokenKdfInfoOverridable = false
+
+    /// crypto_protocol.MATCH_TOKEN_KDF_INFO.value
+    public static let matchTokenKdfInfoValue = "lumos/match-token/v1"
 
     /// crypto_protocol.MEDIA_OBJECT_KEY_INFO.overridable
     public static let mediaObjectKeyInfoOverridable = false

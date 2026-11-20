@@ -23,6 +23,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.lumos.protocol.match.MatchId;
 import com.lumos.protocol.match.MatchMachine;
+import com.lumos.protocol.match.MatchToken;
 import org.junit.jupiter.api.Test;
 
 /** Holds the Java match mirror to the committed golden vectors. */
@@ -47,6 +48,30 @@ public class MatchConformanceTest {
                     name + ": argument order must not matter (SRS-MAT-007)");
             assertEquals(Vectors.str(c, "initiator_on_race_hex"),
                     Vectors.toHex(MatchId.initiatorOnRace(a, b)), name + ": tiebreak");
+        }
+    }
+
+    @Test
+    void committedTokensReproduceExactly() {
+        final JsonObject root = Vectors.load(FILE);
+        assertFalse(Vectors.arr(root, "tokens").isEmpty(),
+                "a token section with no cases proves nothing");
+        for (final JsonElement e : Vectors.arr(root, "tokens")) {
+            final JsonObject c = Vectors.obj(e);
+            final String name = Vectors.str(c, "name");
+            final MatchToken token = MatchToken.derive(Vectors.hex(c, "match_id_hex"));
+            assertEquals(Vectors.arr(c, "emoji_indices").get(0).getAsInt(),
+                    token.emojiFirstIndex(), name + ": first emoji index");
+            assertEquals(Vectors.arr(c, "emoji_indices").get(1).getAsInt(),
+                    token.emojiSecondIndex(), name + ": second emoji index");
+            assertEquals(Vectors.i(c, "color_index"), token.colorIndex(),
+                    name + ": colour index");
+            assertEquals(Vectors.arr(c, "emoji").get(0).getAsString(),
+                    token.emoji()[0], name + ": first glyph");
+            assertEquals(Vectors.arr(c, "emoji").get(1).getAsString(),
+                    token.emoji()[1], name + ": second glyph");
+            assertEquals(Vectors.str(c, "color_name"), token.colorName(), name + ": name");
+            assertEquals(Vectors.str(c, "color_hex"), token.colorHex(), name + ": hex");
         }
     }
 

@@ -131,6 +131,16 @@ linters:
         linters: [gosec]
         text: "^G304:"
 
+      # G101 pattern-matches identifier NAMES for credential words, and the
+      # generated register constants legitimately carry "token" in theirs:
+      # MATCH_TOKEN_KDF_INFO is a public domain-separation string (WP-04 S4),
+      # the opposite of a secret - the register note says so in as many
+      # words. Scoped to the one generated file and the one rule; a real
+      # hardcoded credential anywhere hand-written still fails the build.
+      - path: ^protocol/gen/go/lumosconstants/constants\.go$
+        linters: [gosec]
+        text: "^G101:"
+
       # ---- test files -------------------------------------------------------
       #
       # gocyclo on a table-driven conformance test measures its assertion count.

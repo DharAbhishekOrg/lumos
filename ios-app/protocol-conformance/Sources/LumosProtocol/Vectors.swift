@@ -108,6 +108,30 @@ public enum Vectors {
     /// - Parameters:
     ///   - object: containing object
     ///   - key: field name
+    /// - Returns: the integer-array value
+    /// - Throws: when absent
+    public static func intArray(_ object: [String: Any], _ key: String) throws -> [Int] {
+        guard let a = object[key] as? [NSNumber] else {
+            throw LoadError("missing integer-array field \(key)")
+        }
+        return a.map(\.intValue)
+    }
+
+    /// - Parameters:
+    ///   - object: containing object
+    ///   - key: field name
+    /// - Returns: the string-array value
+    /// - Throws: when absent
+    public static func stringArray(_ object: [String: Any], _ key: String) throws -> [String] {
+        guard let a = object[key] as? [String] else {
+            throw LoadError("missing string-array field \(key)")
+        }
+        return a
+    }
+
+    /// - Parameters:
+    ///   - object: containing object
+    ///   - key: field name
     /// - Returns: the string value
     /// - Throws: when absent
     public static func string(_ object: [String: Any], _ key: String) throws -> String {

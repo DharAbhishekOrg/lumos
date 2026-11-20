@@ -39,6 +39,26 @@ final class MatchConformanceTests: XCTestCase {
         }
     }
 
+    func testCommittedTokensReproduceExactly() throws {
+        let file = try Vectors.load(path, root: root)
+        let cases = try Vectors.array(file, "tokens")
+        XCTAssertFalse(cases.isEmpty, "a token section with no cases proves nothing")
+        for c in cases {
+            let name = try Vectors.string(c, "name")
+            let token = try MatchToken.derive(matchID: try Vectors.hex(c, "match_id_hex"))
+            let indices = try Vectors.intArray(c, "emoji_indices")
+            XCTAssertEqual(indices[0], token.emojiIndices.0, "\(name): first emoji index")
+            XCTAssertEqual(indices[1], token.emojiIndices.1, "\(name): second emoji index")
+            XCTAssertEqual(try Vectors.int(c, "color_index"), token.colorIndex,
+                           "\(name): colour index")
+            let glyphs = try Vectors.stringArray(c, "emoji")
+            XCTAssertEqual(glyphs[0], token.emoji.0, "\(name): first glyph")
+            XCTAssertEqual(glyphs[1], token.emoji.1, "\(name): second glyph")
+            XCTAssertEqual(try Vectors.string(c, "color_name"), token.colorName)
+            XCTAssertEqual(try Vectors.string(c, "color_hex"), token.colorHex)
+        }
+    }
+
     func testCommittedTimelinesReplayStepForStep() throws {
         let file = try Vectors.load(path, root: root)
         let scripts = try Vectors.array(file, "scripts")

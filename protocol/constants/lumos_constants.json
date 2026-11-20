@@ -5,7 +5,7 @@
  "$generator": "tools/constantsgen",
  "service_uuid": "E853EB6A-775C-4A49-A6BF-320E6A5CC609",
  "$service_uuid_provenance": "One fixed 128-bit GATT service UUID per ADR-002 / TRS Sec. 9.3, generated once from a CSPRNG as an RFC 4122 version-4 UUID in WP-01 slice S2 and frozen here. Advertised by both platforms and used for scan filtering. No 16-bit alias is registered for flagship. Regenerating this value is a breaking protocol change.",
- "constants_hash": "sha256:2825a45f23c9533252baf7e6699dff84d80ea1c2af29880a7f6cad911c967151",
+ "constants_hash": "sha256:4fb89c6c38259e018245239b69a55a6eb61c015ce5f49709774bd2618f384cb4",
  "constants_hash_algorithm": {
   "digest": "SHA-256",
   "encoding": "lowercase hex, prefixed 'sha256:'",
@@ -496,6 +496,18 @@
    "default": 16, "overridable": false,
    "notes": "Bytes of the derived match identifier.",
    "anchors": ["SRS-MAT-007"], "source": "SRS-MAT-007 derivation"
+  },
+  "MATCH_TOKEN_KDF_INFO": {
+   "value": "lumos/match-token/v1", "overridable": false,
+   "notes": "Domain prefix of the SRS-MAT-008 in-venue verification token: SHA-256(info | match_id), first two 6-bit groups indexing SAFETY_NUMBER_EMOJI_ALPHABET (the emoji pair), next 3 bits indexing MATCH_TOKEN_COLORS (the colour pulse). Both sides derive it from the match identifier alone, so no message carries it. It is a human co-presence check, not a secret - like the safety number it binds to, anyone holding both public identities could compute it; what it defeats is the stranger claiming 'I'm your match' across a crowded room, not a cryptographic adversary (that is SRS-IDN-005's job, one layer down). Added in WP-04 S4 under the TRS Sec. 19 AI delivery rule.",
+   "anchors": ["SRS-MAT-008"], "adr": ["ADR-005", "ADR-009"], "source": "SRS-MAT-008 derivation"
+  },
+  "MATCH_TOKEN_COLORS": {
+   "names": ["coral", "amber", "leaf", "teal", "sky", "violet", "rose", "slate"],
+   "hex": ["#FF6F61", "#FFB300", "#43A047", "#00897B", "#1E88E5", "#8E24AA", "#D81B60", "#546E7A"],
+   "overridable": false,
+   "notes": "The eight-colour pulse palette of the verification token: 3 bits of the token hash. Named so the UI can SAY the colour as well as show it - a colour-only distinction would fail the ADR-009 criterion the emoji alphabet was curated under, and fail colour-blind users with it. Hues chosen pairwise distinguishable under common dichromacy; the name is the accessible channel, the pulse is the glanceable one.",
+   "anchors": ["SRS-MAT-008", "SRS-NFR-ACC-001"], "adr": ["ADR-009"], "source": "SRS-MAT-008 derivation"
   },
   "ADV_KEY_KDF_INFO": {
    "value": "lumos/adv/k-adv/v1", "overridable": false,

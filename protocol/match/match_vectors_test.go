@@ -33,6 +33,15 @@ type matchVectorFile struct {
 		MatchIDHex   string `json:"match_id_hex"`
 		InitiatorHex string `json:"initiator_on_race_hex"`
 	} `json:"derivations"`
+	Tokens []struct {
+		Name         string    `json:"name"`
+		MatchIDHex   string    `json:"match_id_hex"`
+		EmojiIndices [2]int    `json:"emoji_indices"`
+		ColorIndex   int       `json:"color_index"`
+		Emoji        [2]string `json:"emoji"`
+		ColorName    string    `json:"color_name"`
+		ColorHex     string    `json:"color_hex"`
+	} `json:"tokens"`
 	Scripts []struct {
 		Name  string `json:"name"`
 		Steps []struct {
@@ -112,6 +121,30 @@ func TestCommittedDerivationsReproduceByteForByte(t *testing.T) {
 		}
 		if hex.EncodeToString(InitiatorOnRace(a, b)) != d.InitiatorHex {
 			t.Errorf("%s: tiebreak mismatch", d.Name)
+		}
+	}
+}
+
+func TestCommittedTokensReproduceExactly(t *testing.T) {
+	file := loadMatchVectors(t)
+	if len(file.Tokens) == 0 {
+		t.Fatal("a token section with no cases proves nothing")
+	}
+	for _, c := range file.Tokens {
+		id, err := hex.DecodeString(c.MatchIDHex)
+		if err != nil {
+			t.Fatal(err)
+		}
+		token, err := DeriveToken(id)
+		if err != nil {
+			t.Fatalf("%s: %v", c.Name, err)
+		}
+		if token.EmojiIndices != c.EmojiIndices || token.ColorIndex != c.ColorIndex {
+			t.Errorf("%s: indices mismatch", c.Name)
+		}
+		if token.Emoji() != c.Emoji || token.ColorName() != c.ColorName ||
+			token.ColorHex() != c.ColorHex {
+			t.Errorf("%s: rendered channels mismatch", c.Name)
 		}
 	}
 }

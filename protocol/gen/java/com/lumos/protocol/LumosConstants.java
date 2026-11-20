@@ -7,7 +7,7 @@
  * GENERATED - DO NOT EDIT. Generator: tools/constantsgen
  * Source register: protocol/constants/lumos_constants.json
  * Baseline: TRS v1.1 Sec. 23 / EDP v1.0 Sec. 4 (ADR-004)
- * constants_hash: sha256:2825a45f23c9533252baf7e6699dff84d80ea1c2af29880a7f6cad911c967151
+ * constants_hash: sha256:4fb89c6c38259e018245239b69a55a6eb61c015ce5f49709774bd2618f384cb4
  */
 package com.lumos.protocol;
 
@@ -24,7 +24,7 @@ public final class LumosConstants {
     public static final String SERVICE_UUID = "E853EB6A-775C-4A49-A6BF-320E6A5CC609";
 
     /** Binds generated code to the register that produced it (TRS-CONST-005). */
-    public static final String CONSTANTS_HASH = "sha256:2825a45f23c9533252baf7e6699dff84d80ea1c2af29880a7f6cad911c967151";
+    public static final String CONSTANTS_HASH = "sha256:4fb89c6c38259e018245239b69a55a6eb61c015ce5f49709774bd2618f384cb4";
 
     /** Register schema version. */
     public static final int SCHEMA_VERSION = 1;
@@ -182,6 +182,21 @@ public final class LumosConstants {
 
     /** crypto_protocol.MATCH_ID_LEN.overridable */
     public static final boolean MATCH_ID_LEN_OVERRIDABLE = false;
+
+    /** crypto_protocol.MATCH_TOKEN_COLORS.hex */
+    public static final List<String> MATCH_TOKEN_COLORS_HEX = List.of("#FF6F61", "#FFB300", "#43A047", "#00897B", "#1E88E5", "#8E24AA", "#D81B60", "#546E7A");
+
+    /** crypto_protocol.MATCH_TOKEN_COLORS.names */
+    public static final List<String> MATCH_TOKEN_COLORS_NAMES = List.of("coral", "amber", "leaf", "teal", "sky", "violet", "rose", "slate");
+
+    /** crypto_protocol.MATCH_TOKEN_COLORS.overridable */
+    public static final boolean MATCH_TOKEN_COLORS_OVERRIDABLE = false;
+
+    /** crypto_protocol.MATCH_TOKEN_KDF_INFO.overridable */
+    public static final boolean MATCH_TOKEN_KDF_INFO_OVERRIDABLE = false;
+
+    /** crypto_protocol.MATCH_TOKEN_KDF_INFO.value */
+    public static final String MATCH_TOKEN_KDF_INFO_VALUE = "lumos/match-token/v1";
 
     /** crypto_protocol.MEDIA_OBJECT_KEY_INFO.overridable */
     public static final boolean MEDIA_OBJECT_KEY_INFO_OVERRIDABLE = false;

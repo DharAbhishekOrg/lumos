@@ -61,6 +61,10 @@ var expectedRegister = map[string][]string{
 		// and the accept-accept race tiebreak under the TRS Sec. 19 AI
 		// delivery rule (WP-04 S2) - the PEER_ID_* precedent one layer up.
 		"MATCH_ID_KDF_INFO", "MATCH_ID_LEN",
+		// MATCH_TOKEN_* fix the SRS-MAT-008 in-venue verification token
+		// (WP-04 S4, TRS Sec. 19): the derivation prefix and the named,
+		// colour-blind-safe pulse palette.
+		"MATCH_TOKEN_COLORS", "MATCH_TOKEN_KDF_INFO",
 		"MEDIA_OBJECT_KEY_INFO", "MEDIA_OBJECT_KEY_WRAP_INFO",
 		"PEER_ID_KDF_INFO", "PEER_ID_LEN",
 		"RATCHET_HEADER_LAYOUT", "RATCHET_MESSAGE_KDF_INFO",
