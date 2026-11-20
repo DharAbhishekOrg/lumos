@@ -140,6 +140,20 @@
     <Class name="com.lumos.app.nearby.NearbyActivity"/>
     <Bug pattern="BC_UNCONFIRMED_CAST_OF_RETURN_VALUE"/>
   </Match>
+  <!--
+    WP-04 S3b: the interest ledger and its budget store the injected
+    LocalStore, the same long-lived-service rationale as every entry above.
+  -->
+  <Match>
+    <Class name="com.lumos.app.match.InterestLedger"/>
+    <Method name="&lt;init&gt;"/>
+    <Bug pattern="EI_EXPOSE_REP2"/>
+  </Match>
+  <Match>
+    <Class name="com.lumos.app.match.PersistedBudget"/>
+    <Method name="&lt;init&gt;"/>
+    <Bug pattern="EI_EXPOSE_REP2"/>
+  </Match>
   <Match>
     <Class name="com.lumos.app.onboarding.OnboardingService"/>
     <Method name="&lt;init&gt;"/>

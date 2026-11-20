@@ -214,6 +214,33 @@ public final class LocalStore {
     }
 
     /**
+     * Writes THE record for a natural key: replaces the existing row when
+     * one carries this key's tag, inserts a fresh one otherwise. The upsert
+     * the per-peer kinds need - without it every state change would mint a
+     * new row and "the peer's record" would quietly become "the oldest of
+     * several" (WP-04 S3b). The row identifier stays an opaque UUID either
+     * way (TRS-LOC-010): deriving one from the key would hand anyone with a
+     * candidate identifier an unkeyed way to confirm the relationship that
+     * the blind index exists to prevent.
+     *
+     * @param kind the record's table
+     * @param plaintext the record content
+     * @param naturalKey the blind-index input
+     * @return the row identifier written
+     * @throws StoreException on low storage or engine failure
+     */
+    public String putByNaturalKey(final RecordKind kind, final byte[] plaintext,
+            final byte[] naturalKey) throws StoreException {
+        final List<Map<String, Object>> rows = database.query(
+                "SELECT " + LocalSchema.COLUMN_ID + " FROM " + kind.table()
+                        + " WHERE " + LocalSchema.COLUMN_LOOKUP_TAG + " = ?",
+                List.of((Object) codec.lookupTag(kind, naturalKey)));
+        final String id = rows.isEmpty()
+                ? null : String.valueOf(rows.get(0).get(LocalSchema.COLUMN_ID));
+        return put(kind, id, plaintext, naturalKey);
+    }
+
+    /**
      * Finds records by their blind-index tag.
      *
      * @param kind the record's table

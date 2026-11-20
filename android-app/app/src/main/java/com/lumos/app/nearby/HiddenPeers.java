@@ -11,14 +11,14 @@
  * hidden peer stays hidden across every EID rotation by construction - the
  * same reasoning SRS-NBY-013 applies to blocks. Lookups go through the
  * store's blind index: the file answers "is this peer hidden?" without the
- * identifier being readable in it. This class fixes the canonical natural-key
- * definition for peer lists - the RAW id bytes, not their hex spelling - and
- * BlockedPeers follows it.
+ * identifier being readable in it. The canonical natural-key definition lives in
+ * store.PeerKeys; this class and every other peer list consume it.
  */
 
 package com.lumos.app.nearby;
 
 import com.lumos.app.store.LocalStore;
+import com.lumos.app.store.PeerKeys;
 import com.lumos.app.store.RecordKind;
 import com.lumos.app.store.StoreException;
 import java.nio.charset.StandardCharsets;
@@ -67,20 +67,12 @@ public final class HiddenPeers {
     }
 
     /**
-     * The canonical peer-list natural key: the raw identifier bytes.
+     * The canonical peer-list natural key, from the one shared definition.
      *
      * @param peerKeyHex the identifier as a presence card spells it
      * @return the raw bytes the blind index is computed over
      */
     static byte[] naturalKey(final String peerKeyHex) {
-        final int len = peerKeyHex.length();
-        if (len % 2 != 0) {
-            throw new IllegalArgumentException("peer key hex has odd length");
-        }
-        final byte[] raw = new byte[len / 2];
-        for (int i = 0; i < raw.length; i++) {
-            raw[i] = (byte) Integer.parseInt(peerKeyHex.substring(i * 2, i * 2 + 2), 16);
-        }
-        return raw;
+        return PeerKeys.naturalKey(peerKeyHex);
     }
 }

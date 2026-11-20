@@ -265,7 +265,7 @@
    "adr": [
     "ADR-003"
    ],
-   "last_commit": "9139e50",
+   "last_commit": "cd785f1",
    "updated": "2026-11-20"
   },
   {
@@ -477,7 +477,7 @@
     "ADR-008",
     "ADR-010"
    ],
-   "last_commit": "9139e50",
+   "last_commit": "cd785f1",
    "updated": "2026-11-20"
   },
   {
@@ -642,14 +642,18 @@
    "req_id": "SRS-MAT-003",
    "status": "implemented",
    "code": [
+    "android-app/app/src/main/java/com/lumos/app/match/InterestLedger.java",
     "android-app/protocol-java/src/main/java/com/lumos/protocol/match/MatchMachine.java",
     "ios-app/protocol-conformance/Sources/LumosProtocol/Match.swift",
+    "ios-app/shell/Sources/LumosAppShell/InterestLedger.swift",
     "protocol/match/machine.go",
     "test-vectors/matches/match_timelines.json"
    ],
    "tests": [
     "go:protocol/match:TestEveryPairIsEitherATransitionOrADeliberateAbsorption",
+    "java:app-dev:InterestLedgerTest.stateSurvivesARestartAndOnePeerKeepsOneRow",
     "java:protocol-conformance:MatchConformanceTest.committedTimelinesReplayStepForStep",
+    "swift:LumosAppShell:InterestLedgerTests.testStateSurvivesARestartAndOnePeerKeepsOneRow",
     "swift:LumosProtocolConformance:MatchConformanceTests.testCommittedTimelinesReplayStepForStep"
    ],
    "evidence": [],
@@ -686,14 +690,18 @@
    "req_id": "SRS-MAT-005",
    "status": "implemented",
    "code": [
+    "android-app/app/src/main/java/com/lumos/app/match/InterestLedger.java",
     "android-app/protocol-java/src/main/java/com/lumos/protocol/match/MatchMachine.java",
     "ios-app/protocol-conformance/Sources/LumosProtocol/Match.swift",
+    "ios-app/shell/Sources/LumosAppShell/InterestLedger.swift",
     "protocol/match/machine.go",
     "test-vectors/matches/match_timelines.json"
    ],
    "tests": [
     "go:protocol/match:TestTheOnlyDoorIsMutualAcceptance",
+    "java:app-dev:InterestLedgerTest.bothSidesOfTheRaceDeriveTheSameMatchIdentifier",
     "java:protocol-conformance:MatchConformanceTest.committedTimelinesReplayStepForStep",
+    "swift:LumosAppShell:InterestLedgerTests.testBothSidesOfTheRaceDeriveTheSameMatchIdentifier",
     "swift:LumosProtocolConformance:MatchConformanceTests.testCommittedTimelinesReplayStepForStep"
    ],
    "evidence": [],
@@ -717,9 +725,11 @@
    "req_id": "SRS-MAT-007",
    "status": "implemented",
    "code": [
+    "android-app/app/src/main/java/com/lumos/app/match/InterestLedger.java",
     "android-app/app/src/main/java/com/lumos/app/store/LocalSchema.java",
     "android-app/protocol-java/src/main/java/com/lumos/protocol/match/MatchId.java",
     "ios-app/protocol-conformance/Sources/LumosProtocol/Match.swift",
+    "ios-app/shell/Sources/LumosAppShell/InterestLedger.swift",
     "ios-app/shell/Sources/LumosAppShell/LocalSchema.swift",
     "protocol/match/id.go",
     "test-vectors/matches/match_timelines.json"
@@ -727,7 +737,9 @@
    "tests": [
     "go:protocol/match:TestCommittedDerivationsReproduceByteForByte",
     "go:protocol/match:TestTheIdentifierIsSymmetricAndTheRightLength",
+    "java:app-dev:InterestLedgerTest.bothSidesOfTheRaceDeriveTheSameMatchIdentifier",
     "java:protocol-conformance:MatchConformanceTest.committedDerivationsReproduceByteForByte",
+    "swift:LumosAppShell:InterestLedgerTests.testBothSidesOfTheRaceDeriveTheSameMatchIdentifier",
     "swift:LumosProtocolConformance:MatchConformanceTests.testCommittedDerivationsReproduceByteForByte"
    ],
    "evidence": [],
@@ -759,23 +771,38 @@
   },
   {
    "req_id": "SRS-MAT-010",
-   "status": "not_started",
-   "code": [],
-   "tests": [],
+   "status": "implemented",
+   "code": [
+    "android-app/app/src/main/java/com/lumos/app/match/InterestLedger.java",
+    "ios-app/shell/Sources/LumosAppShell/InterestLedger.swift"
+   ],
+   "tests": [
+    "java:app-dev:InterestLedgerTest.unmatchingFlipsTheMatchRecordWithoutDeletingIt",
+    "swift:LumosAppShell:InterestLedgerTests.testUnmatchingFlipsTheMatchRecordWithoutDeletingIt"
+   ],
    "evidence": [],
-   "adr": [],
-   "last_commit": null,
-   "updated": null
+   "adr": [
+    "ADR-003"
+   ],
+   "last_commit": "cd785f1",
+   "updated": "2026-11-20"
   },
   {
    "req_id": "SRS-MAT-011",
    "status": "implemented",
    "code": [
+    "android-app/app/src/main/java/com/lumos/app/match/InterestLedger.java",
+    "android-app/app/src/main/java/com/lumos/app/match/PersistedBudget.java",
+    "ios-app/shell/Sources/LumosAppShell/InterestLedger.swift",
     "protocol/match/budget.go"
    ],
    "tests": [
     "go:protocol/match:TestTheBudgetIsARollingHour",
-    "go:protocol/match:TestTheCooldownHoldsItsFloorAndItsTruth"
+    "go:protocol/match:TestTheCooldownHoldsItsFloorAndItsTruth",
+    "java:app-dev:InterestLedgerTest.aRateLimitedRequestNeverReachesTheMachineAndTheBudgetSurvivesRestart",
+    "java:app-dev:PersistedBudgetTest.theBudgetIsARollingHourOverTheSealedRow",
+    "java:app-dev:PersistedBudgetTest.theCooldownHoldsItsFloorAndItsTruth",
+    "swift:LumosAppShell:InterestLedgerTests.testARateLimitedRequestNeverReachesTheMachineAndSurvivesRestart"
    ],
    "evidence": [],
    "adr": [
@@ -808,8 +835,10 @@
    "req_id": "SRS-MAT-014",
    "status": "implemented",
    "code": [
+    "android-app/app/src/main/java/com/lumos/app/match/InterestLedger.java",
     "android-app/protocol-java/src/main/java/com/lumos/protocol/match/MatchMachine.java",
     "ios-app/protocol-conformance/Sources/LumosProtocol/Match.swift",
+    "ios-app/shell/Sources/LumosAppShell/InterestLedger.swift",
     "protocol/match/machine.go",
     "test-vectors/matches/match_timelines.json"
    ],
@@ -817,7 +846,9 @@
     "go:protocol/match:TestCommittedTimelinesReplayExactly",
     "go:protocol/match:TestDuplicatesReordersAndDeadEchoesAllAbsorb",
     "go:protocol/match:TestTheAcceptAcceptRaceYieldsOneMatchAndOneIdentifier",
+    "java:app-dev:InterestLedgerTest.absorbedReplaysWriteNothing",
     "java:protocol-conformance:MatchConformanceTest.committedTimelinesReplayStepForStep",
+    "swift:LumosAppShell:InterestLedgerTests.testAbsorbedReplaysWriteNothing",
     "swift:LumosProtocolConformance:MatchConformanceTests.testCommittedTimelinesReplayStepForStep"
    ],
    "evidence": [],
@@ -1509,6 +1540,9 @@
    "code": [
     "android-app/app/src/main/java/com/lumos/app/nearby/BlockedPeers.java",
     "android-app/app/src/main/java/com/lumos/app/nearby/NearbyFeedController.java",
+    "android-app/app/src/main/java/com/lumos/app/store/LocalStore.java",
+    "android-app/app/src/main/java/com/lumos/app/store/PeerKeys.java",
+    "ios-app/shell/Sources/LumosAppShell/LocalStore.swift",
     "ios-app/shell/Sources/LumosAppShell/NearbyFeed.swift"
    ],
    "tests": [
@@ -3012,7 +3046,7 @@
     "ADR-003",
     "ADR-010"
    ],
-   "last_commit": "9139e50",
+   "last_commit": "cd785f1",
    "updated": "2026-11-20"
   },
   {
@@ -5068,7 +5102,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "9139e50",
+   "last_commit": "cd785f1",
    "updated": "2026-11-20"
   },
   {
@@ -5078,7 +5112,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "9139e50",
+   "last_commit": "cd785f1",
    "updated": "2026-11-20"
   },
   {
@@ -5088,7 +5122,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "9139e50",
+   "last_commit": "cd785f1",
    "updated": "2026-11-20"
   },
   {
@@ -5112,7 +5146,7 @@
    "adr": [
     "ADR-003"
    ],
-   "last_commit": "9139e50",
+   "last_commit": "cd785f1",
    "updated": "2026-11-20"
   },
   {
@@ -5134,7 +5168,7 @@
    "adr": [
     "ADR-002"
    ],
-   "last_commit": "9139e50",
+   "last_commit": "cd785f1",
    "updated": "2026-11-20"
   },
   {
@@ -5153,7 +5187,7 @@
    "adr": [
     "ADR-002"
    ],
-   "last_commit": "9139e50",
+   "last_commit": "cd785f1",
    "updated": "2026-11-20"
   },
   {
@@ -5163,7 +5197,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "9139e50",
+   "last_commit": "cd785f1",
    "updated": "2026-11-20"
   },
   {
@@ -5173,7 +5207,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "9139e50",
+   "last_commit": "cd785f1",
    "updated": "2026-11-20"
   },
   {
@@ -5183,7 +5217,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "9139e50",
+   "last_commit": "cd785f1",
    "updated": "2026-11-20"
   },
   {
@@ -5193,7 +5227,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "9139e50",
+   "last_commit": "cd785f1",
    "updated": "2026-11-20"
   },
   {
@@ -5203,7 +5237,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "9139e50",
+   "last_commit": "cd785f1",
    "updated": "2026-11-20"
   },
   {
@@ -5213,7 +5247,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "9139e50",
+   "last_commit": "cd785f1",
    "updated": "2026-11-20"
   },
   {
@@ -5757,7 +5791,7 @@
     "ci:conformance#31528127667"
    ],
    "adr": [],
-   "last_commit": "e782693",
+   "last_commit": "cd785f1",
    "updated": "2026-11-20"
   },
   {
@@ -5975,7 +6009,7 @@
    ],
    "evidence": [],
    "adr": [],
-   "last_commit": "e782693",
+   "last_commit": "cd785f1",
    "updated": "2026-11-20"
   },
   {
@@ -6026,7 +6060,7 @@
     "ci:pipeline#31737418465"
    ],
    "adr": [],
-   "last_commit": "e782693",
+   "last_commit": "cd785f1",
    "updated": "2026-11-20"
   },
   {
@@ -6809,7 +6843,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "9139e50",
+   "last_commit": "cd785f1",
    "updated": "2026-11-20"
   },
   {
@@ -6819,7 +6853,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "9139e50",
+   "last_commit": "cd785f1",
    "updated": "2026-11-20"
   },
   {
@@ -6839,7 +6873,7 @@
    "adr": [
     "ADR-002"
    ],
-   "last_commit": "9139e50",
+   "last_commit": "cd785f1",
    "updated": "2026-11-20"
   },
   {
@@ -6849,7 +6883,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "9139e50",
+   "last_commit": "cd785f1",
    "updated": "2026-11-20"
   },
   {
@@ -6859,7 +6893,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "9139e50",
+   "last_commit": "cd785f1",
    "updated": "2026-11-20"
   },
   {
@@ -6869,7 +6903,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "9139e50",
+   "last_commit": "cd785f1",
    "updated": "2026-11-20"
   },
   {
@@ -6891,7 +6925,7 @@
     "ADR-003",
     "ADR-010"
    ],
-   "last_commit": "9139e50",
+   "last_commit": "cd785f1",
    "updated": "2026-11-20"
   },
   {
@@ -6901,7 +6935,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "9139e50",
+   "last_commit": "cd785f1",
    "updated": "2026-11-20"
   },
   {
@@ -6911,7 +6945,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "9139e50",
+   "last_commit": "cd785f1",
    "updated": "2026-11-20"
   },
   {
@@ -6921,7 +6955,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "9139e50",
+   "last_commit": "cd785f1",
    "updated": "2026-11-20"
   },
   {
@@ -6931,7 +6965,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "9139e50",
+   "last_commit": "cd785f1",
    "updated": "2026-11-20"
   },
   {
@@ -6941,7 +6975,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "9139e50",
+   "last_commit": "cd785f1",
    "updated": "2026-11-20"
   },
   {
@@ -6975,7 +7009,7 @@
    "adr": [
     "ADR-003"
    ],
-   "last_commit": "9139e50",
+   "last_commit": "cd785f1",
    "updated": "2026-11-20"
   },
   {
@@ -7003,7 +7037,7 @@
    ],
    "evidence": [],
    "adr": [],
-   "last_commit": "9139e50",
+   "last_commit": "cd785f1",
    "updated": "2026-11-20"
   },
   {
@@ -7079,7 +7113,7 @@
    "adr": [
     "ADR-003"
    ],
-   "last_commit": "9139e50",
+   "last_commit": "cd785f1",
    "updated": "2026-11-20"
   },
   {
@@ -7098,7 +7132,7 @@
    ],
    "evidence": [],
    "adr": [],
-   "last_commit": "9139e50",
+   "last_commit": "cd785f1",
    "updated": "2026-11-20"
   },
   {
@@ -8011,7 +8045,7 @@
    ],
    "evidence": [],
    "adr": [],
-   "last_commit": "9139e50",
+   "last_commit": "cd785f1",
    "updated": "2026-11-20"
   },
   {
@@ -8072,7 +8106,7 @@
    ],
    "evidence": [],
    "adr": [],
-   "last_commit": "9139e50",
+   "last_commit": "cd785f1",
    "updated": "2026-11-20"
   },
   {
