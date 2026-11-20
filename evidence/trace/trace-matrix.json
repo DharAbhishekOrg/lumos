@@ -636,7 +636,7 @@
   },
   {
    "req_id": "SRS-MAT-002",
-   "status": "implemented",
+   "status": "tested",
    "code": [
     "android-app/app/src/main/java/com/lumos/app/match/InterestSession.java",
     "android-app/protocol-java/src/main/java/com/lumos/protocol/match/InterestWire.java",
@@ -685,7 +685,7 @@
   },
   {
    "req_id": "SRS-MAT-004",
-   "status": "implemented",
+   "status": "tested",
    "code": [
     "android-app/app/src/main/java/com/lumos/app/match/InterestSession.java",
     "android-app/protocol-java/src/main/java/com/lumos/protocol/match/InterestWire.java",
@@ -713,7 +713,7 @@
   },
   {
    "req_id": "SRS-MAT-005",
-   "status": "implemented",
+   "status": "tested",
    "code": [
     "android-app/app/src/main/java/com/lumos/app/match/InterestLedger.java",
     "android-app/app/src/main/java/com/lumos/app/match/InterestSession.java",
@@ -762,7 +762,7 @@
   },
   {
    "req_id": "SRS-MAT-007",
-   "status": "implemented",
+   "status": "tested",
    "code": [
     "android-app/app/src/main/java/com/lumos/app/match/InterestLedger.java",
     "android-app/app/src/main/java/com/lumos/app/store/LocalSchema.java",
@@ -813,7 +813,7 @@
   },
   {
    "req_id": "SRS-MAT-009",
-   "status": "implemented",
+   "status": "tested",
    "code": [
     "android-app/app/src/main/java/com/lumos/app/match/InterestSession.java",
     "android-app/protocol-java/src/main/java/com/lumos/protocol/match/InterestWire.java",
@@ -854,7 +854,7 @@
   },
   {
    "req_id": "SRS-MAT-011",
-   "status": "implemented",
+   "status": "tested",
    "code": [
     "android-app/app/src/main/java/com/lumos/app/match/InterestLedger.java",
     "android-app/app/src/main/java/com/lumos/app/match/PersistedBudget.java",
@@ -898,7 +898,7 @@
   },
   {
    "req_id": "SRS-MAT-014",
-   "status": "implemented",
+   "status": "tested",
    "code": [
     "android-app/app/src/main/java/com/lumos/app/match/InterestLedger.java",
     "android-app/app/src/main/java/com/lumos/app/match/InterestSession.java",
@@ -949,13 +949,23 @@
   },
   {
    "req_id": "SRS-MED-003",
-   "status": "not_started",
-   "code": [],
-   "tests": [],
+   "status": "tested",
+   "code": [
+    "android-app/app/src/main/java/com/lumos/app/match/InterestSession.java",
+    "android-app/protocol-java/src/main/java/com/lumos/protocol/match/ConsentGate.java",
+    "ios-app/protocol-conformance/Sources/LumosProtocol/Match.swift"
+   ],
+   "tests": [
+    "java:app-dev:MutualConsentFlowTest.aDeclineTransmitsNothingAndNoConversationCrossesBeforeAMatch",
+    "java:protocol-conformance:ConsentGateTest.conversationNeverFlowsBeforeAMatchAndConsentNeverAfterABlock",
+    "swift:LumosProtocolConformance:MatchConformanceTests.testTheConsentGateDecidesEveryClassOnceAndHoldsTheDoor"
+   ],
    "evidence": [],
-   "adr": [],
-   "last_commit": null,
-   "updated": null
+   "adr": [
+    "ADR-002"
+   ],
+   "last_commit": "1e058a2",
+   "updated": "2026-11-20"
   },
   {
    "req_id": "SRS-MED-004",
@@ -2887,13 +2897,26 @@
   },
   {
    "req_id": "SRS-NFR-REL-004",
-   "status": "not_started",
-   "code": [],
-   "tests": [],
+   "status": "tested",
+   "code": [
+    "android-app/protocol-java/src/main/java/com/lumos/protocol/match/MatchMachine.java",
+    "ios-app/protocol-conformance/Sources/LumosProtocol/Match.swift",
+    "protocol/match/machine.go",
+    "test-vectors/matches/match_timelines.json"
+   ],
+   "tests": [
+    "go:protocol/match:TestCommittedTimelinesReplayExactly",
+    "go:protocol/match:TestDuplicatesReordersAndDeadEchoesAllAbsorb",
+    "go:protocol/match:TestEveryPairIsEitherATransitionOrADeliberateAbsorption",
+    "java:protocol-conformance:MatchConformanceTest.committedTimelinesReplayStepForStep",
+    "swift:LumosProtocolConformance:MatchConformanceTests.testCommittedTimelinesReplayStepForStep"
+   ],
    "evidence": [],
-   "adr": [],
-   "last_commit": null,
-   "updated": null
+   "adr": [
+    "ADR-002"
+   ],
+   "last_commit": "1e058a2",
+   "updated": "2026-11-20"
   },
   {
    "req_id": "SRS-NFR-REL-005",
@@ -4314,13 +4337,22 @@
   },
   {
    "req_id": "SRS-SAF-002",
-   "status": "not_started",
-   "code": [],
-   "tests": [],
+   "status": "implemented",
+   "code": [
+    "android-app/app/src/main/java/com/lumos/app/nearby/BlockedPeers.java",
+    "android-app/protocol-java/src/main/java/com/lumos/protocol/match/ConsentGate.java",
+    "ios-app/shell/Sources/LumosAppShell/NearbyFeed.swift"
+   ],
+   "tests": [
+    "java:app-dev:NearbyFeedControllerTest.aBlockedIdentityNeverReappearsUnderRotation",
+    "java:protocol-conformance:ConsentGateTest.conversationNeverFlowsBeforeAMatchAndConsentNeverAfterABlock"
+   ],
    "evidence": [],
-   "adr": [],
-   "last_commit": null,
-   "updated": null
+   "adr": [
+    "ADR-002"
+   ],
+   "last_commit": "1e058a2",
+   "updated": "2026-11-20"
   },
   {
    "req_id": "SRS-SAF-003",
