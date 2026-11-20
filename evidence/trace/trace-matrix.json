@@ -477,7 +477,7 @@
     "ADR-008",
     "ADR-010"
    ],
-   "last_commit": "cd785f1",
+   "last_commit": "96de473",
    "updated": "2026-11-20"
   },
   {
@@ -620,18 +620,25 @@
   },
   {
    "req_id": "SRS-MAT-001",
-   "status": "not_started",
-   "code": [],
-   "tests": [],
+   "status": "implemented",
+   "code": [
+    "android-app/app/src/main/java/com/lumos/app/match/InterestSession.java"
+   ],
+   "tests": [
+    "java:app-dev:MutualConsentFlowTest.aDeclineTransmitsNothingAndNoConversationCrossesBeforeAMatch"
+   ],
    "evidence": [],
-   "adr": [],
-   "last_commit": null,
-   "updated": null
+   "adr": [
+    "ADR-002"
+   ],
+   "last_commit": "96de473",
+   "updated": "2026-11-20"
   },
   {
    "req_id": "SRS-MAT-002",
    "status": "implemented",
    "code": [
+    "android-app/app/src/main/java/com/lumos/app/match/InterestSession.java",
     "android-app/protocol-java/src/main/java/com/lumos/protocol/match/InterestWire.java",
     "ios-app/protocol-conformance/Sources/LumosProtocol/Match.swift",
     "protocol/match/wire.go",
@@ -640,6 +647,7 @@
    "tests": [
     "go:protocol/match:TestCommittedWireCasesReproduceByteForByte",
     "go:protocol/match:TestRequestRoundTripsAndRefusesStructurally",
+    "java:app-dev:MutualConsentFlowTest.aDeclineTransmitsNothingAndNoConversationCrossesBeforeAMatch",
     "java:protocol-conformance:MatchConformanceTest.committedWireCasesReproduceByteForByte",
     "swift:LumosProtocolConformance:MatchConformanceTests.testCommittedWireCasesReproduceByteForByte"
    ],
@@ -679,6 +687,7 @@
    "req_id": "SRS-MAT-004",
    "status": "implemented",
    "code": [
+    "android-app/app/src/main/java/com/lumos/app/match/InterestSession.java",
     "android-app/protocol-java/src/main/java/com/lumos/protocol/match/InterestWire.java",
     "android-app/protocol-java/src/main/java/com/lumos/protocol/match/MatchMachine.java",
     "ios-app/protocol-conformance/Sources/LumosProtocol/Match.swift",
@@ -691,6 +700,7 @@
     "go:protocol/match:TestDecliningAndIgnoringNeverTransmitAnything",
     "go:protocol/match:TestTheFamilyItselfKeepsTheSilenceAndTheSingleDoor",
     "go:protocol/match:TestTheResponseAlphabetHoldsExactlyTwoWords",
+    "java:app-dev:MutualConsentFlowTest.aDeclineTransmitsNothingAndNoConversationCrossesBeforeAMatch",
     "java:protocol-conformance:MatchConformanceTest.theFamilyKeepsTheSilenceAndTheSingleDoorOnThisPlatformToo",
     "swift:LumosProtocolConformance:MatchConformanceTests.testTheFamilyKeepsTheSilenceAndTheSingleDoorOnThisPlatformToo"
    ],
@@ -706,6 +716,8 @@
    "status": "implemented",
    "code": [
     "android-app/app/src/main/java/com/lumos/app/match/InterestLedger.java",
+    "android-app/app/src/main/java/com/lumos/app/match/InterestSession.java",
+    "android-app/protocol-java/src/main/java/com/lumos/protocol/match/ConsentGate.java",
     "android-app/protocol-java/src/main/java/com/lumos/protocol/match/MatchMachine.java",
     "ios-app/protocol-conformance/Sources/LumosProtocol/Match.swift",
     "ios-app/shell/Sources/LumosAppShell/InterestLedger.swift",
@@ -715,6 +727,7 @@
    "tests": [
     "go:protocol/match:TestTheOnlyDoorIsMutualAcceptance",
     "java:app-dev:InterestLedgerTest.bothSidesOfTheRaceDeriveTheSameMatchIdentifier",
+    "java:app-dev:MutualConsentFlowTest.mutualAcceptanceOpensTheDoorWithOneIdentifierAndOneToken",
     "java:protocol-conformance:MatchConformanceTest.committedTimelinesReplayStepForStep",
     "swift:LumosAppShell:InterestLedgerTests.testBothSidesOfTheRaceDeriveTheSameMatchIdentifier",
     "swift:LumosProtocolConformance:MatchConformanceTests.testCommittedTimelinesReplayStepForStep"
@@ -728,13 +741,24 @@
   },
   {
    "req_id": "SRS-MAT-006",
-   "status": "not_started",
-   "code": [],
-   "tests": [],
+   "status": "tested",
+   "code": [
+    "android-app/app/src/main/java/com/lumos/app/match/InterestSession.java",
+    "android-app/protocol-java/src/main/java/com/lumos/protocol/match/ConsentGate.java",
+    "ios-app/protocol-conformance/Sources/LumosProtocol/Match.swift"
+   ],
+   "tests": [
+    "java:app-dev:MutualConsentFlowTest.aDeclineTransmitsNothingAndNoConversationCrossesBeforeAMatch",
+    "java:protocol-conformance:ConsentGateTest.conversationNeverFlowsBeforeAMatchAndConsentNeverAfterABlock",
+    "java:protocol-conformance:ConsentGateTest.everyClassIsDecidedExactlyOnce",
+    "swift:LumosProtocolConformance:MatchConformanceTests.testTheConsentGateDecidesEveryClassOnceAndHoldsTheDoor"
+   ],
    "evidence": [],
-   "adr": [],
-   "last_commit": null,
-   "updated": null
+   "adr": [
+    "ADR-002"
+   ],
+   "last_commit": "96de473",
+   "updated": "2026-11-20"
   },
   {
    "req_id": "SRS-MAT-007",
@@ -791,6 +815,7 @@
    "req_id": "SRS-MAT-009",
    "status": "implemented",
    "code": [
+    "android-app/app/src/main/java/com/lumos/app/match/InterestSession.java",
     "android-app/protocol-java/src/main/java/com/lumos/protocol/match/InterestWire.java",
     "ios-app/protocol-conformance/Sources/LumosProtocol/Match.swift",
     "protocol/match/wire.go",
@@ -798,6 +823,7 @@
    ],
    "tests": [
     "go:protocol/match:TestTheResponseAlphabetHoldsExactlyTwoWords",
+    "java:app-dev:MutualConsentFlowTest.mutualAcceptanceOpensTheDoorWithOneIdentifierAndOneToken",
     "java:protocol-conformance:MatchConformanceTest.committedWireCasesReproduceByteForByte",
     "swift:LumosProtocolConformance:MatchConformanceTests.testCommittedWireCasesReproduceByteForByte"
    ],
@@ -875,6 +901,7 @@
    "status": "implemented",
    "code": [
     "android-app/app/src/main/java/com/lumos/app/match/InterestLedger.java",
+    "android-app/app/src/main/java/com/lumos/app/match/InterestSession.java",
     "android-app/protocol-java/src/main/java/com/lumos/protocol/match/MatchMachine.java",
     "ios-app/protocol-conformance/Sources/LumosProtocol/Match.swift",
     "ios-app/shell/Sources/LumosAppShell/InterestLedger.swift",
@@ -886,6 +913,8 @@
     "go:protocol/match:TestDuplicatesReordersAndDeadEchoesAllAbsorb",
     "go:protocol/match:TestTheAcceptAcceptRaceYieldsOneMatchAndOneIdentifier",
     "java:app-dev:InterestLedgerTest.absorbedReplaysWriteNothing",
+    "java:app-dev:MutualConsentFlowTest.mutualAcceptanceOpensTheDoorWithOneIdentifierAndOneToken",
+    "java:app-dev:MutualConsentFlowTest.theAcceptAcceptRaceOverTheWireYieldsOneMatch",
     "java:protocol-conformance:MatchConformanceTest.committedTimelinesReplayStepForStep",
     "swift:LumosAppShell:InterestLedgerTests.testAbsorbedReplaysWriteNothing",
     "swift:LumosProtocolConformance:MatchConformanceTests.testCommittedTimelinesReplayStepForStep"
@@ -1914,7 +1943,7 @@
     "ci:conformance#31528127667"
    ],
    "adr": [],
-   "last_commit": "17d5f88",
+   "last_commit": "96de473",
    "updated": "2026-11-20"
   },
   {
@@ -3085,7 +3114,7 @@
     "ADR-003",
     "ADR-010"
    ],
-   "last_commit": "cd785f1",
+   "last_commit": "96de473",
    "updated": "2026-11-20"
   },
   {
@@ -5018,8 +5047,8 @@
    ],
    "evidence": [],
    "adr": [],
-   "last_commit": "bce1370",
-   "updated": "2026-11-19"
+   "last_commit": "96de473",
+   "updated": "2026-11-20"
   },
   {
    "req_id": "TRS-AI-004",
@@ -5041,8 +5070,8 @@
    "tests": null,
    "evidence": [],
    "adr": [],
-   "last_commit": "bce1370",
-   "updated": "2026-11-19"
+   "last_commit": "96de473",
+   "updated": "2026-11-20"
   },
   {
    "req_id": "TRS-AI-006",
@@ -5141,7 +5170,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "17d5f88",
+   "last_commit": "96de473",
    "updated": "2026-11-20"
   },
   {
@@ -5151,7 +5180,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "17d5f88",
+   "last_commit": "96de473",
    "updated": "2026-11-20"
   },
   {
@@ -5161,7 +5190,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "17d5f88",
+   "last_commit": "96de473",
    "updated": "2026-11-20"
   },
   {
@@ -5185,7 +5214,7 @@
    "adr": [
     "ADR-003"
    ],
-   "last_commit": "17d5f88",
+   "last_commit": "96de473",
    "updated": "2026-11-20"
   },
   {
@@ -5207,7 +5236,7 @@
    "adr": [
     "ADR-002"
    ],
-   "last_commit": "17d5f88",
+   "last_commit": "96de473",
    "updated": "2026-11-20"
   },
   {
@@ -5226,7 +5255,7 @@
    "adr": [
     "ADR-002"
    ],
-   "last_commit": "17d5f88",
+   "last_commit": "96de473",
    "updated": "2026-11-20"
   },
   {
@@ -5236,7 +5265,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "17d5f88",
+   "last_commit": "96de473",
    "updated": "2026-11-20"
   },
   {
@@ -5246,7 +5275,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "17d5f88",
+   "last_commit": "96de473",
    "updated": "2026-11-20"
   },
   {
@@ -5256,7 +5285,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "17d5f88",
+   "last_commit": "96de473",
    "updated": "2026-11-20"
   },
   {
@@ -5266,7 +5295,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "17d5f88",
+   "last_commit": "96de473",
    "updated": "2026-11-20"
   },
   {
@@ -5276,7 +5305,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "17d5f88",
+   "last_commit": "96de473",
    "updated": "2026-11-20"
   },
   {
@@ -5286,7 +5315,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "17d5f88",
+   "last_commit": "96de473",
    "updated": "2026-11-20"
   },
   {
@@ -5376,13 +5405,19 @@
   },
   {
    "req_id": "TRS-ARCH-009",
-   "status": "not_started",
-   "code": [],
-   "tests": [],
+   "status": "implemented",
+   "code": [
+    "android-app/app/src/main/java/com/lumos/app/match/InterestSession.java"
+   ],
+   "tests": [
+    "java:app-dev:MutualConsentFlowTest.aGarbledFrameIsRefusedWithItsCodeAndChangesNothing"
+   ],
    "evidence": [],
-   "adr": [],
-   "last_commit": null,
-   "updated": null
+   "adr": [
+    "ADR-002"
+   ],
+   "last_commit": "96de473",
+   "updated": "2026-11-20"
   },
   {
    "req_id": "TRS-ARCH-010",
@@ -6882,7 +6917,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "17d5f88",
+   "last_commit": "96de473",
    "updated": "2026-11-20"
   },
   {
@@ -6892,7 +6927,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "17d5f88",
+   "last_commit": "96de473",
    "updated": "2026-11-20"
   },
   {
@@ -6912,7 +6947,7 @@
    "adr": [
     "ADR-002"
    ],
-   "last_commit": "17d5f88",
+   "last_commit": "96de473",
    "updated": "2026-11-20"
   },
   {
@@ -6922,7 +6957,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "17d5f88",
+   "last_commit": "96de473",
    "updated": "2026-11-20"
   },
   {
@@ -6932,7 +6967,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "17d5f88",
+   "last_commit": "96de473",
    "updated": "2026-11-20"
   },
   {
@@ -6942,7 +6977,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "17d5f88",
+   "last_commit": "96de473",
    "updated": "2026-11-20"
   },
   {
@@ -6964,7 +6999,7 @@
     "ADR-003",
     "ADR-010"
    ],
-   "last_commit": "17d5f88",
+   "last_commit": "96de473",
    "updated": "2026-11-20"
   },
   {
@@ -6974,7 +7009,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "17d5f88",
+   "last_commit": "96de473",
    "updated": "2026-11-20"
   },
   {
@@ -6984,7 +7019,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "17d5f88",
+   "last_commit": "96de473",
    "updated": "2026-11-20"
   },
   {
@@ -6994,7 +7029,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "17d5f88",
+   "last_commit": "96de473",
    "updated": "2026-11-20"
   },
   {
@@ -7004,7 +7039,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "17d5f88",
+   "last_commit": "96de473",
    "updated": "2026-11-20"
   },
   {
@@ -7014,7 +7049,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "17d5f88",
+   "last_commit": "96de473",
    "updated": "2026-11-20"
   },
   {
@@ -7803,7 +7838,7 @@
    "adr": [
     "ADR-004"
    ],
-   "last_commit": "17d5f88",
+   "last_commit": "96de473",
    "updated": "2026-11-20"
   },
   {
@@ -7906,7 +7941,7 @@
     "ci:conformance#31528127667"
    ],
    "adr": [],
-   "last_commit": "17d5f88",
+   "last_commit": "96de473",
    "updated": "2026-11-20"
   },
   {
@@ -8084,7 +8119,7 @@
    ],
    "evidence": [],
    "adr": [],
-   "last_commit": "cd785f1",
+   "last_commit": "96de473",
    "updated": "2026-11-20"
   },
   {
@@ -8145,7 +8180,7 @@
    ],
    "evidence": [],
    "adr": [],
-   "last_commit": "cd785f1",
+   "last_commit": "96de473",
    "updated": "2026-11-20"
   },
   {
@@ -8421,7 +8456,7 @@
    "adr": [
     "ADR-004"
    ],
-   "last_commit": "17d5f88",
+   "last_commit": "96de473",
    "updated": "2026-11-20"
   },
   {
