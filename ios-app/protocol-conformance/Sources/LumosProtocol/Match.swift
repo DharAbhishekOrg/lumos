@@ -1,0 +1,159 @@
+/// Lumos - LumosProtocol / The match identifier and machine, mirrored.
+/// Author: dhar.abhishek.email@gmail.com
+/// Implements: SRS-MAT-003, SRS-MAT-004, SRS-MAT-005, SRS-MAT-007, SRS-MAT-014,
+///             TRS-PAT-002
+/// ADRs: ADR-002, ADR-008
+/// Threading: any
+/// Notes: The Go reference row for row, held to it by the committed timeline
+/// vectors. MatchID: SHA-256(MATCH_ID_KDF_INFO | lower | higher) over the two
+/// peer identifiers in lexicographic byte order, truncated to MATCH_ID_LEN -
+/// symmetric, so both sides of an accept-accept race derive the same
+/// identifier without a message, and the lower identifier is the initiator
+/// tiebreak. MatchMachine: unlisted pairs absorb (same state, no effect);
+/// no decline or ignore row transmits (SRS-MAT-004); the two establishing
+/// effects are the only door (SRS-MAT-005).
+
+import CryptoKit
+import Foundation
+import LumosProtocolGenerated
+
+/// Derives the SRS-MAT-007 stable match identifier.
+public enum MatchID {
+
+    /// Derivation refusals: malformed inputs, never protocol surprises.
+    public enum DerivationError: Error, Equatable {
+        /// A peer identifier was not PEER_ID_LEN bytes.
+        case badLength
+        /// Both identifiers were the same peer.
+        case samePeer
+    }
+
+    /// Derives the identifier; argument order does not matter.
+    public static func derive(_ a: Data, _ b: Data) throws -> Data {
+        guard a.count == LumosConstants.peerIDLenDefault,
+              b.count == LumosConstants.peerIDLenDefault else {
+            throw DerivationError.badLength
+        }
+        guard a != b else { throw DerivationError.samePeer }
+        let (lower, higher) = lexicographicallyOrdered(a, b)
+        var hasher = SHA256()
+        hasher.update(data: Data(LumosConstants.matchIDKdfInfoValue.utf8))
+        hasher.update(data: lower)
+        hasher.update(data: higher)
+        return Data(hasher.finalize()).prefix(LumosConstants.matchIDLenDefault)
+    }
+
+    /// The accept-accept race tiebreak: the lexicographically lower
+    /// identifier acts as session initiator.
+    public static func initiatorOnRace(_ a: Data, _ b: Data) -> Data {
+        lexicographicallyOrdered(a, b).0
+    }
+
+    private static func lexicographicallyOrdered(_ a: Data, _ b: Data) -> (Data, Data) {
+        for (x, y) in zip(a, b) where x != y {
+            return x < y ? (a, b) : (b, a)
+        }
+        return a.count <= b.count ? (a, b) : (b, a)
+    }
+}
+
+/// The per-peer interest state machine (TRS Sec. 4.2).
+public enum MatchMachine {
+
+    /// Where one peer relationship stands, seen from this device.
+    public enum State: String, Sendable {
+        case none
+        case requestedOut = "requested_out"
+        case requestedIn = "requested_in"
+        case bothRequested = "both_requested"
+        case matched
+        case declinedIn = "declined_in"
+        case ignoredIn = "ignored_in"
+        case unmatched
+        case blocked
+    }
+
+    /// One typed input, local action or remote frame.
+    public enum Event: String, Sendable {
+        case localRequest = "local_request"
+        case localAccept = "local_accept"
+        case localDecline = "local_decline"
+        case localIgnore = "local_ignore"
+        case localBlock = "local_block"
+        case localUnmatch = "local_unmatch"
+        case remoteRequest = "remote_request"
+        case remoteAccept = "remote_accept"
+        case remoteUnmatch = "remote_unmatch"
+    }
+
+    /// The single instruction a step hands back.
+    public enum Effect: String, Sendable {
+        case none
+        case sendRequest = "send_request"
+        case acceptAndEstablish = "accept_and_establish"
+        case matchEstablished = "match_established"
+        case sendUnmatch = "send_unmatch"
+
+        /// Whether this effect opens the SRS-MAT-005 door.
+        public var establishes: Bool {
+            self == .acceptAndEstablish || self == .matchEstablished
+        }
+    }
+
+    /// Every pair that CHANGES anything; unlisted pairs absorb.
+    private static let table: [State: [Event: (State, Effect)]] = [
+        .none: [
+            .localRequest: (.requestedOut, .sendRequest),
+            .remoteRequest: (.requestedIn, .none),
+            .localBlock: (.blocked, .none)
+        ],
+        .requestedOut: [
+            .remoteRequest: (.bothRequested, .none),
+            .remoteAccept: (.matched, .matchEstablished),
+            .localBlock: (.blocked, .none)
+        ],
+        .requestedIn: [
+            .localAccept: (.matched, .acceptAndEstablish),
+            .localDecline: (.declinedIn, .none),
+            .localIgnore: (.ignoredIn, .none),
+            .localRequest: (.bothRequested, .sendRequest),
+            .localBlock: (.blocked, .none)
+        ],
+        .bothRequested: [
+            .localAccept: (.matched, .acceptAndEstablish),
+            .remoteAccept: (.matched, .matchEstablished),
+            // Declining THEIR request leaves OUR request standing.
+            .localDecline: (.requestedOut, .none),
+            .localIgnore: (.requestedOut, .none),
+            .localBlock: (.blocked, .none)
+        ],
+        .matched: [
+            .localUnmatch: (.unmatched, .sendUnmatch),
+            .remoteUnmatch: (.unmatched, .none),
+            .localBlock: (.blocked, .none)
+        ],
+        .declinedIn: [
+            .remoteRequest: (.requestedIn, .none),
+            .localRequest: (.requestedOut, .sendRequest),
+            .localBlock: (.blocked, .none)
+        ],
+        .ignoredIn: [
+            .localRequest: (.requestedOut, .sendRequest),
+            .localBlock: (.blocked, .none)
+        ],
+        .unmatched: [
+            .localRequest: (.requestedOut, .sendRequest),
+            .remoteRequest: (.requestedIn, .none),
+            .localBlock: (.blocked, .none)
+        ],
+        .blocked: [:]
+    ]
+
+    /// Applies one event. Unlisted pairs absorb: same state, no effect.
+    public static func step(_ state: State, _ event: Event) -> (state: State, effect: Effect) {
+        if let (next, effect) = table[state]?[event] {
+            return (next, effect)
+        }
+        return (state, .none)
+    }
+}

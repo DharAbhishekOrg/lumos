@@ -102,4 +102,16 @@ public class SealedRecordEntity {
     /** Hidden Nearby peers (SRS-NBY-012). Schema version 4. */
     @Entity(tableName = "hidden_peer")
     public static class HiddenPeerRow extends SealedRecordEntity { }
+
+    /** Per-peer interest machine state (TRS Sec. 4.2). Schema version 5. */
+    @Entity(tableName = "interest_record")
+    public static class InterestRecordRow extends SealedRecordEntity { }
+
+    /** Established matches (SRS-MAT-005/007). Schema version 5. */
+    @Entity(tableName = "match_record")
+    public static class MatchRecordRow extends SealedRecordEntity { }
+
+    /** The rolling-hour interest budget (SRS-MAT-011). Schema version 5. */
+    @Entity(tableName = "interest_budget")
+    public static class InterestBudgetRow extends SealedRecordEntity { }
 }

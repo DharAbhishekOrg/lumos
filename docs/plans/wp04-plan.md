@@ -82,7 +82,9 @@ rendering layers with the instrumented state demo that closes the WP-03
   pattern) covering races, replays, reorders, and the silent-decline rule.
 - **Graduates: TRS §4.2 match-domain reference, SRS-NFR-REL-004 groundwork.**
 
-### S3 — Platform match domain (schema v4)
+### S3 — Platform match domain (split as it happened: S3a schema v5 +
+### three-language mirrors with vector conformance; S3b the store-backed
+### ledgers, request-stage policy and budget persistence)
 - The match store on both platforms: interest and match records join the
   ladder as version 4, one-new-table-per-kind, full Room-parity discipline
   (the v3 precedent).

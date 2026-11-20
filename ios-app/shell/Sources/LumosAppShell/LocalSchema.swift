@@ -47,15 +47,32 @@ public enum RecordKind: String, CaseIterable, Sendable {
     /// version 4. Keyed by authenticated identity, blind-indexed like the
     /// block list and for the same reason; hiding is silent.
     case hiddenPeer = "hidden_peer"
+    /// Per-peer interest machine state (TRS Sec. 4.2). Added at version 5;
+    /// blind-indexed - who the user is interested in, and who declined
+    /// whom, is at least as private as who they blocked.
+    case interestRecord = "interest_record"
+    /// Established matches (SRS-MAT-005/007): the stable identifier, keyed
+    /// by the identity's blind index. Added at version 5; unmatching
+    /// changes its state, never silently deletes the fact (SRS-MAT-010).
+    case matchRecord = "match_record"
+    /// The single-row rolling-hour interest budget (SRS-MAT-011): sent-at
+    /// timestamps only, persisted so a restart cannot reset the flood
+    /// limit (SRS-SAF-006). Added at version 5.
+    case interestBudget = "interest_budget"
 
     /// The table name for this kind.
     public var table: String { rawValue }
 
     /// Whether this kind is looked up by a blind index over a natural key.
     ///
-    /// `blockEntry` and `hiddenPeer`: both must answer "is this peer on the
-    /// list?" without the peer identifier being readable in the file.
-    public var isLookedUpByTag: Bool { self == .blockEntry || self == .hiddenPeer }
+    /// The peer-keyed kinds: each must answer "what do we hold for this
+    /// peer?" without the peer identifier being readable in the file.
+    public var isLookedUpByTag: Bool {
+        switch self {
+        case .blockEntry, .hiddenPeer, .interestRecord, .matchRecord: return true
+        default: return false
+        }
+    }
 }
 
 /// One step of the forward-only migration ladder.
@@ -72,7 +89,7 @@ public struct Migration: Sendable {
 public enum LocalSchema {
 
     /// The schema version this build writes and expects.
-    public static let version = 4
+    public static let version = 5
 
     /// The version of an absent or empty database, before any migration runs.
     public static let versionEmpty = 0
@@ -147,6 +164,11 @@ public enum LocalSchema {
     /// The record kinds version 4 added (WP-04 slice S1a).
     private static let version4Kinds: [RecordKind] = [.hiddenPeer]
 
+    /// The record kinds version 5 added (WP-04 slice S3).
+    private static let version5Kinds: [RecordKind] = [
+        .interestRecord, .matchRecord, .interestBudget
+    ]
+
     /// The complete statement list taking an empty database to version 1.
     public static var migrationToVersion1: [String] {
         ["CREATE TABLE \(tableMeta) ("
@@ -169,6 +191,10 @@ public enum LocalSchema {
     /// table, the interruption-safe shape every step of this ladder keeps.
     public static var migrationToVersion4: [String] { createTables(for: version4Kinds) }
 
+    /// The statements taking a version-4 database to version 5: three new
+    /// tables, the interruption-safe shape every step of this ladder keeps.
+    public static var migrationToVersion5: [String] { createTables(for: version5Kinds) }
+
     /// The create-table and create-index pair for each of the given kinds.
     /// - Parameter kinds: the kinds a migration step introduces
     /// - Returns: the ordered statements
@@ -186,6 +212,7 @@ public enum LocalSchema {
         [Migration(fromVersion: versionEmpty, toVersion: 1, statements: migrationToVersion1),
          Migration(fromVersion: 1, toVersion: 2, statements: migrationToVersion2),
          Migration(fromVersion: 2, toVersion: 3, statements: migrationToVersion3),
-         Migration(fromVersion: 3, toVersion: 4, statements: migrationToVersion4)]
+         Migration(fromVersion: 3, toVersion: 4, statements: migrationToVersion4),
+         Migration(fromVersion: 4, toVersion: 5, statements: migrationToVersion5)]
     }
 }
