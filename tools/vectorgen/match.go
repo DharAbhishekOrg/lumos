@@ -45,10 +45,22 @@ type matchScript struct {
 	Steps       []matchStep `json:"steps"`
 }
 
+// matchToken pins one SRS-MAT-008 verification-token derivation.
+type matchToken struct {
+	Name         string    `json:"name"`
+	MatchIDHex   string    `json:"match_id_hex"`
+	EmojiIndices [2]int    `json:"emoji_indices"`
+	ColorIndex   int       `json:"color_index"`
+	Emoji        [2]string `json:"emoji"`
+	ColorName    string    `json:"color_name"`
+	ColorHex     string    `json:"color_hex"`
+}
+
 // matchVectorsFile is the emitted matches/match_timelines.json.
 type matchVectorsFile struct {
 	fileMeta
 	Derivations []matchDerivation `json:"derivations"`
+	Tokens      []matchToken      `json:"tokens"`
 	Scripts     []matchScript     `json:"scripts"`
 }
 
@@ -108,13 +120,13 @@ func buildMatchVectors(constantsHash string) (*matchVectorsFile, error) {
 	file := &matchVectorsFile{
 		fileMeta: fileMeta{
 			SchemaVersion: 1, Generator: GeneratorName, ConstantsHash: constantsHash,
-			Implements:    []string{"SRS-MAT-004", "SRS-MAT-005", "SRS-MAT-007", "SRS-MAT-014", "TRS-PAT-002"},
+			Implements:    []string{"SRS-MAT-004", "SRS-MAT-005", "SRS-MAT-007", "SRS-MAT-008", "SRS-MAT-014", "TRS-PAT-002"},
 			KeyProvenance: KeyProvenance,
 			Notes: "The interest/consent state machine and the SRS-MAT-007 identifier. " +
 				"derivations: match_id = SHA-256(MATCH_ID_KDF_INFO | lower | higher)" +
 				"[:MATCH_ID_LEN] over the two peer ids in lexicographic byte order - " +
 				"symmetric, so both sides of an accept-accept race derive the same id " +
-				"with no message; initiator_on_race is the lower id. scripts: event " +
+				"with no message; initiator_on_race is the lower id. tokens: the SRS-MAT-008 venue token - SHA-256(MATCH_TOKEN_KDF_INFO | match_id), 6+6 bits into the ADR-009 emoji alphabet, 3 bits into the named colour palette. scripts: event " +
 				"timelines starting at state none; consumers replay each and compare " +
 				"state and effect after every step. Effects accept_and_establish and " +
 				"match_established are the ONLY unlocking effects (SRS-MAT-005); no " +
@@ -144,6 +156,19 @@ func buildMatchVectors(constantsHash string) (*matchVectorsFile, error) {
 			PeerBHex:     hex.EncodeToString(b),
 			MatchIDHex:   hex.EncodeToString(id),
 			InitiatorHex: hex.EncodeToString(match.InitiatorOnRace(a, b)),
+		})
+		token, err := match.DeriveToken(id)
+		if err != nil {
+			return nil, fmt.Errorf("match token %d: %w", i, err)
+		}
+		file.Tokens = append(file.Tokens, matchToken{
+			Name:         fmt.Sprintf("pair_%d", i),
+			MatchIDHex:   hex.EncodeToString(id),
+			EmojiIndices: token.EmojiIndices,
+			ColorIndex:   token.ColorIndex,
+			Emoji:        token.Emoji(),
+			ColorName:    token.ColorName(),
+			ColorHex:     token.ColorHex(),
 		})
 	}
 

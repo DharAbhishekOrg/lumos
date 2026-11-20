@@ -57,6 +57,48 @@ public enum MatchID {
     }
 }
 
+/// The SRS-MAT-008 shared verification token: SHA-256(MATCH_TOKEN_KDF_INFO |
+/// match_id), first two 6-bit groups into the frozen ADR-009 emoji alphabet,
+/// next 3 bits into the named colour palette. Both sides derive it from the
+/// match identifier alone; the venue comparison is two screens side by side.
+public struct MatchToken: Sendable, Equatable {
+
+    /// The two alphabet positions (0..63).
+    public let emojiIndices: (Int, Int)
+    /// The palette position (0..7).
+    public let colorIndex: Int
+
+    /// The pair's glyphs from the frozen alphabet.
+    public var emoji: (String, String) {
+        (LumosConstants.safetyNumberEmojiAlphabetGlyphs[emojiIndices.0],
+         LumosConstants.safetyNumberEmojiAlphabetGlyphs[emojiIndices.1])
+    }
+
+    /// The pulse colour's accessible name.
+    public var colorName: String { LumosConstants.matchTokenColorsNames[colorIndex] }
+
+    /// The pulse colour's displayed value.
+    public var colorHex: String { LumosConstants.matchTokenColorsHex[colorIndex] }
+
+    /// Derives the token for a match identifier.
+    public static func derive(matchID: Data) throws -> MatchToken {
+        guard matchID.count == LumosConstants.matchIDLenDefault else {
+            throw MatchID.DerivationError.badLength
+        }
+        var hasher = SHA256()
+        hasher.update(data: Data(LumosConstants.matchTokenKdfInfoValue.utf8))
+        hasher.update(data: matchID)
+        let sum = Array(hasher.finalize())
+        let bits = Int(sum[0]) << 8 | Int(sum[1])
+        return MatchToken(emojiIndices: ((bits >> 10) & 0x3F, (bits >> 4) & 0x3F),
+                          colorIndex: (bits >> 1) & 0x07)
+    }
+
+    public static func == (lhs: MatchToken, rhs: MatchToken) -> Bool {
+        lhs.emojiIndices == rhs.emojiIndices && lhs.colorIndex == rhs.colorIndex
+    }
+}
+
 /// The per-peer interest state machine (TRS Sec. 4.2).
 public enum MatchMachine {
 

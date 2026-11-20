@@ -6,7 +6,7 @@
 // GENERATED - DO NOT EDIT. Generator: tools/constantsgen
 // Source register: protocol/constants/lumos_constants.json
 // Baseline: TRS v1.1 Sec. 23 / EDP v1.0 Sec. 4 (ADR-004)
-// constants_hash: sha256:2825a45f23c9533252baf7e6699dff84d80ea1c2af29880a7f6cad911c967151
+// constants_hash: sha256:4fb89c6c38259e018245239b69a55a6eb61c015ce5f49709774bd2618f384cb4
 
 package lumosconstants
 
@@ -14,7 +14,7 @@ package lumosconstants
 const ServiceUUID = "E853EB6A-775C-4A49-A6BF-320E6A5CC609"
 
 // ConstantsHash binds generated code to the register that produced it (TRS-CONST-005).
-const ConstantsHash = "sha256:2825a45f23c9533252baf7e6699dff84d80ea1c2af29880a7f6cad911c967151"
+const ConstantsHash = "sha256:4fb89c6c38259e018245239b69a55a6eb61c015ce5f49709774bd2618f384cb4"
 
 // SchemaVersion is the register schema version.
 const SchemaVersion = 1
@@ -172,6 +172,15 @@ const MatchIDLenDefault = 16
 
 // MatchIDLenOverridable is crypto_protocol.MATCH_ID_LEN.overridable.
 const MatchIDLenOverridable = false
+
+// MatchTokenColorsOverridable is crypto_protocol.MATCH_TOKEN_COLORS.overridable.
+const MatchTokenColorsOverridable = false
+
+// MatchTokenKdfInfoOverridable is crypto_protocol.MATCH_TOKEN_KDF_INFO.overridable.
+const MatchTokenKdfInfoOverridable = false
+
+// MatchTokenKdfInfoValue is crypto_protocol.MATCH_TOKEN_KDF_INFO.value.
+const MatchTokenKdfInfoValue = "lumos/match-token/v1"
 
 // MediaObjectKeyInfoOverridable is crypto_protocol.MEDIA_OBJECT_KEY_INFO.overridable.
 const MediaObjectKeyInfoOverridable = false
@@ -1127,6 +1136,12 @@ const VisibleNearbyDurationSecMin = 900
 
 // VisibleNearbyDurationSecOverridable is onboarding_safety.VISIBLE_NEARBY_DURATION_SEC.overridable.
 const VisibleNearbyDurationSecOverridable = true
+
+// MatchTokenColorsHex is crypto_protocol.MATCH_TOKEN_COLORS.hex. It is a var because Go has no array constants; treat it as read-only.
+var MatchTokenColorsHex = [...]string{"#FF6F61", "#FFB300", "#43A047", "#00897B", "#1E88E5", "#8E24AA", "#D81B60", "#546E7A"}
+
+// MatchTokenColorsNames is crypto_protocol.MATCH_TOKEN_COLORS.names. It is a var because Go has no array constants; treat it as read-only.
+var MatchTokenColorsNames = [...]string{"coral", "amber", "leaf", "teal", "sky", "violet", "rose", "slate"}
 
 // SafetyNumberEmojiAlphabetGlyphs is crypto_protocol.SAFETY_NUMBER_EMOJI_ALPHABET.glyphs. It is a var because Go has no array constants; treat it as read-only.
 var SafetyNumberEmojiAlphabetGlyphs = [...]string{"🐶", "🐱", "🐴", "🐮", "🐷", "🐸", "🐵", "🐔", "🐧", "🐢", "🐝", "🦋", "🐙", "🐬", "🐘", "🐊", "🍎", "🍌", "🍇", "🍓", "🍉", "🍍", "🌽", "🍄", "🍞", "🍕", "🎂", "🍩", "☕", "🍦", "🌵", "🌲", "🌻", "🌹", "🍁", "⭐", "🌈", "🔥", "💧", "⚡", "🔑", "🔒", "🎈", "🎁", "⚽", "🎸", "🎺", "🎯", "🚀", "⚓", "🚲", "🚂", "⏰", "💡", "🔔", "🎧", "📷", "🔭", "🎨", "🎪", "💙", "🎵", "🏆", "👑"}
