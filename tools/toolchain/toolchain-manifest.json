@@ -3,7 +3,7 @@
  "schema_version": 1,
  "work_package": "WP-01",
  "slice": "S0",
- "last_updated_slice": "WP-02 S4b",
+ "last_updated_slice": "WP-04 S1c",
  "implements": [
   "TRS-REP-003",
   "TRS-REP-006",
@@ -311,6 +311,36 @@
     "why": "The native-call layer Lazysodium binds through. Declared explicitly, and the transitive excluded, because the POM asks for the JAR and Android needs the AAR variant that carries libjnidispatch.so.",
     "catalogue_alias": "jna",
     "licence_note": "Dual-licensed at the user's option; Lumos takes Apache-2.0 and reproduces that text in the notices file. The LGPL option is not exercised."
+   },
+   {
+    "path": "com.google.android.material:material",
+    "version": "1.12.0",
+    "license": "Apache-2.0",
+    "why": "The Material 3 Views components and theme (TRS-AND-003): MaterialCardView, buttons and Theme.Material3.DayNight for the Nearby feed.",
+    "catalogue_alias": "material",
+    "licence_note": "Apache-2.0, permissive; reproduced in docs/legal/third-party-notices.md as the notices file the app ships.",
+    "artefact_sha256": "4a672941b626b9ab91ae893ed22598ea53ad69125c858c0a59fa9b90daa5cb08",
+    "raised_in": "WP-04 slice S1c: TRS-AND-003 mandates Material 3-compatible native Views/XML, and these three are the smallest runtime set that renders the Nearby feed. Declared explicitly because feed code imports them directly; their androidx transitives resolve through Gradle's locked graph."
+   },
+   {
+    "path": "androidx.appcompat:appcompat",
+    "version": "1.7.0",
+    "license": "Apache-2.0",
+    "why": "AppCompatActivity, the Activity base the Material themes require; NearbyActivity extends it.",
+    "catalogue_alias": "appcompat",
+    "licence_note": "Apache-2.0, permissive; reproduced in docs/legal/third-party-notices.md as the notices file the app ships.",
+    "artefact_sha256": "67189713b30a3fab6971713cc5fab1cb7f022bcf648a257563715c91d719d584",
+    "raised_in": "WP-04 slice S1c: TRS-AND-003 mandates Material 3-compatible native Views/XML, and these three are the smallest runtime set that renders the Nearby feed. Declared explicitly because feed code imports them directly; their androidx transitives resolve through Gradle's locked graph."
+   },
+   {
+    "path": "androidx.recyclerview:recyclerview",
+    "version": "1.3.2",
+    "license": "Apache-2.0",
+    "why": "The Nearby card list (SRS-NBY-015: a recycling list is what keeps 100+ cards cheap to show).",
+    "catalogue_alias": "recyclerview",
+    "licence_note": "Apache-2.0, permissive; reproduced in docs/legal/third-party-notices.md as the notices file the app ships.",
+    "artefact_sha256": "005cf51510493a24fa48baae1a455a5258515391351a71717dd33cba95211966",
+    "raised_in": "WP-04 slice S1c: TRS-AND-003 mandates Material 3-compatible native Views/XML, and these three are the smallest runtime set that renders the Nearby feed. Declared explicitly because feed code imports them directly; their androidx transitives resolve through Gradle's locked graph."
    }
   ]
  },

@@ -306,6 +306,7 @@ dependencies {
     // Instrumented-test scope only; never in a release APK.
     androidTestImplementation(libs.androidx.test.junit)
     androidTestImplementation(libs.androidx.test.runner)
+    androidTestImplementation(libs.androidx.test.core)
     androidTestImplementation(libs.room.testing)
 }
 

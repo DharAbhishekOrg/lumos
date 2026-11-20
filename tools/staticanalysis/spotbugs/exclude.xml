@@ -124,6 +124,22 @@
     <Method name="&lt;init&gt;"/>
     <Bug pattern="EI_EXPOSE_REP2"/>
   </Match>
+  <!--
+    WP-04 S1c: NearbyActivity is an Android Activity, which the OS constructs
+    and then initialises through onCreate - fields set there are "not
+    initialised in the constructor" by design of the platform, and
+    findViewById's generic return makes every typed lookup an "unconfirmed
+    cast". Both detectors assume plain-Java construction; neither assumption
+    holds for a lifecycle class. Scoped to this one class, not the package.
+  -->
+  <Match>
+    <Class name="com.lumos.app.nearby.NearbyActivity"/>
+    <Bug pattern="UWF_FIELD_NOT_INITIALIZED_IN_CONSTRUCTOR"/>
+  </Match>
+  <Match>
+    <Class name="com.lumos.app.nearby.NearbyActivity"/>
+    <Bug pattern="BC_UNCONFIRMED_CAST_OF_RETURN_VALUE"/>
+  </Match>
   <Match>
     <Class name="com.lumos.app.onboarding.OnboardingService"/>
     <Method name="&lt;init&gt;"/>

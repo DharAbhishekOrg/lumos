@@ -477,8 +477,8 @@
     "ADR-008",
     "ADR-010"
    ],
-   "last_commit": "5d1076c",
-   "updated": "2026-11-19"
+   "last_commit": "e782693",
+   "updated": "2026-11-20"
   },
   {
    "req_id": "SRS-IDN-002",
@@ -1239,17 +1239,20 @@
    "req_id": "SRS-NBY-003",
    "status": "implemented",
    "code": [
+    "android-app/app/src/main/java/com/lumos/app/nearby/NearbyActivity.java",
     "android-app/app/src/main/java/com/lumos/app/onboarding/DiscoveryVisibility.java",
+    "android-app/app/src/main/res/layout/activity_nearby.xml",
     "android-app/app/src/main/res/values/strings.xml"
    ],
    "tests": [
-    "java:app-dev:VisibleNearbyDurationTest.theIndicatorReportsTheModeAndTheEnd"
+    "java:app-dev:VisibleNearbyDurationTest.theIndicatorReportsTheModeAndTheEnd",
+    "java:app-instrumented:NearbyStatesInstrumentedTest.theIndicatorShowsOnlyWhileAdvertisingAndStopIsOneAction"
    ],
    "evidence": [],
    "adr": [
     "ADR-002"
    ],
-   "last_commit": "b083220",
+   "last_commit": "e782693",
    "updated": "2026-11-20"
   },
   {
@@ -1341,13 +1344,21 @@
   },
   {
    "req_id": "SRS-NBY-008",
-   "status": "not_started",
-   "code": [],
-   "tests": [],
+   "status": "implemented",
+   "code": [
+    "android-app/app/src/main/java/com/lumos/app/nearby/NearbyCardAdapter.java",
+    "android-app/app/src/main/res/layout/item_nearby_card.xml",
+    "android-app/app/src/main/res/values/strings.xml"
+   ],
+   "tests": [
+    "java:app-dev:NearbyCopyTest.noPlumbingVocabularyReachesAUser"
+   ],
    "evidence": [],
-   "adr": [],
-   "last_commit": null,
-   "updated": null
+   "adr": [
+    "ADR-002"
+   ],
+   "last_commit": "e782693",
+   "updated": "2026-11-20"
   },
   {
    "req_id": "SRS-NBY-009",
@@ -1361,22 +1372,26 @@
   },
   {
    "req_id": "SRS-NBY-010",
-   "status": "implemented",
+   "status": "tested",
    "code": [
     "android-app/app/src/main/java/com/lumos/app/nearby/FeedState.java",
+    "android-app/app/src/main/java/com/lumos/app/nearby/NearbyActivity.java",
     "android-app/app/src/main/java/com/lumos/app/nearby/NearbyFeedController.java",
+    "android-app/app/src/main/res/layout/activity_nearby.xml",
+    "android-app/app/src/main/res/values/strings.xml",
     "ios-app/shell/Sources/LumosAppShell/NearbyFeed.swift"
    ],
    "tests": [
     "java:app-dev:NearbyFeedControllerTest.everyTypedScanFailureFoldsToAStateTheUserCanActOn",
+    "java:app-instrumented:NearbyStatesInstrumentedTest.everyRadioSituationShowsItsOwnSentenceAndEmptyIsASentenceNotASpinner",
     "swift:LumosAppShell:NearbyFeedTests.testEveryTypedScanFailureFoldsToAStateTheUserCanActOn"
    ],
    "evidence": [],
    "adr": [
     "ADR-002"
    ],
-   "last_commit": "f2670dc",
-   "updated": "2026-11-19"
+   "last_commit": "e782693",
+   "updated": "2026-11-20"
   },
   {
    "req_id": "SRS-NBY-011",
@@ -1443,19 +1458,23 @@
    "status": "implemented",
    "code": [
     "android-app/app/src/main/java/com/lumos/app/nearby/FeedState.java",
+    "android-app/app/src/main/java/com/lumos/app/nearby/NearbyActivity.java",
     "android-app/app/src/main/java/com/lumos/app/nearby/NearbyFeedController.java",
+    "android-app/app/src/main/res/layout/activity_nearby.xml",
+    "android-app/app/src/main/res/values/strings.xml",
     "ios-app/shell/Sources/LumosAppShell/NearbyFeed.swift"
    ],
    "tests": [
     "java:app-dev:NearbyFeedControllerTest.emptyIsAFirstClassStateAndCardsArriveNewestConfirmedFirst",
+    "java:app-instrumented:NearbyStatesInstrumentedTest.everyRadioSituationShowsItsOwnSentenceAndEmptyIsASentenceNotASpinner",
     "swift:LumosAppShell:NearbyFeedTests.testTheInterestFilterIsLocalAndOptInAndCardsArriveNewestFirst"
    ],
    "evidence": [],
    "adr": [
     "ADR-002"
    ],
-   "last_commit": "f2670dc",
-   "updated": "2026-11-19"
+   "last_commit": "e782693",
+   "updated": "2026-11-20"
   },
   {
    "req_id": "SRS-NBY-015",
@@ -1483,24 +1502,34 @@
     "android-app/app/src/main/res/values/strings.xml"
    ],
    "tests": [
+    "java:app-dev:NearbyCopyTest.noStringClaimsADistance",
     "java:app-dev:OnboardingCopyTest.proximityIsWordsAndNeverADistance"
    ],
    "evidence": [],
    "adr": [
     "ADR-002"
    ],
-   "last_commit": "7147fc8",
-   "updated": "2026-11-19"
+   "last_commit": "e782693",
+   "updated": "2026-11-20"
   },
   {
    "req_id": "SRS-NBY-017",
-   "status": "not_started",
-   "code": [],
-   "tests": [],
+   "status": "implemented",
+   "code": [
+    "android-app/app/src/main/java/com/lumos/app/nearby/NearbyActivity.java",
+    "android-app/app/src/main/java/com/lumos/app/nearby/NearbyHost.java",
+    "android-app/app/src/main/res/layout/activity_nearby.xml",
+    "android-app/app/src/main/res/values/strings.xml"
+   ],
+   "tests": [
+    "java:app-instrumented:NearbyStatesInstrumentedTest.theIndicatorShowsOnlyWhileAdvertisingAndStopIsOneAction"
+   ],
    "evidence": [],
-   "adr": [],
-   "last_commit": null,
-   "updated": null
+   "adr": [
+    "ADR-002"
+   ],
+   "last_commit": "e782693",
+   "updated": "2026-11-20"
   },
   {
    "req_id": "SRS-NFR-A11Y-001",
@@ -2913,8 +2942,8 @@
     "ADR-003",
     "ADR-010"
    ],
-   "last_commit": "5d1076c",
-   "updated": "2026-11-19"
+   "last_commit": "e782693",
+   "updated": "2026-11-20"
   },
   {
    "req_id": "SRS-NFR-SEC-004",
@@ -3013,6 +3042,7 @@
     "android-app/app/src/main/AndroidManifest.xml",
     "android-app/app/src/main/java/com/lumos/app/ble/DiscoverySuccessMetric.java",
     "android-app/app/src/main/java/com/lumos/app/media/MediaObjectStore.java",
+    "android-app/app/src/main/java/com/lumos/app/nearby/NearbyActivity.java",
     "android-app/app/src/main/java/com/lumos/app/safety/AppLock.java",
     "android-app/app/src/main/java/com/lumos/app/safety/DeviceAuth.java",
     "android-app/app/src/main/java/com/lumos/app/safety/ScreenPrivacyPolicy.java",
@@ -3043,8 +3073,8 @@
     "ADR-010",
     "ADR-011"
    ],
-   "last_commit": "787a202",
-   "updated": "2026-11-19"
+   "last_commit": "e782693",
+   "updated": "2026-11-20"
   },
   {
    "req_id": "SRS-NFR-SEC-014",
@@ -3270,6 +3300,8 @@
    "req_id": "SRS-ONB-001",
    "status": "tested",
    "code": [
+    "android-app/app/src/main/java/com/lumos/app/nearby/NearbyActivity.java",
+    "android-app/app/src/main/java/com/lumos/app/nearby/NearbyHost.java",
     "android-app/app/src/main/java/com/lumos/app/onboarding/AgeGate.java",
     "android-app/app/src/main/java/com/lumos/app/onboarding/AppSurface.java",
     "android-app/app/src/main/java/com/lumos/app/onboarding/OnboardingEvent.java",
@@ -3298,6 +3330,8 @@
     "java:app-dev:OnboardingGateTest.everythingOpensOnlyWhenOnboardingIsComplete",
     "java:app-dev:OnboardingMachineTest.anUnderAgeAnswerIsATerminalStateNotAReturnedValue",
     "java:app-dev:OnboardingServiceTest.aRefusedUserGetsNoIdentityAndNoConsentRecord",
+    "java:app-instrumented:NearbyStatesInstrumentedTest.aGateThatSaysNoMeansTheScreenNeverInflates",
+    "java:app-instrumented:NearbyStatesInstrumentedTest.noHostAtAllIsTheFreshInstallShapeAndAlsoRefuses",
     "java:app-instrumented:ProductEntryInstrumentedTest.at001AFreshInstallBlocksEveryProductSurfaceUntilConsent",
     "swift:LumosAppShell:OnboardingTests.testABlockedUserReachesNothingAtAll",
     "swift:LumosAppShell:OnboardingTests.testADateInTheFutureIsNotAnAdult",
@@ -3312,8 +3346,8 @@
    "adr": [
     "ADR-004"
    ],
-   "last_commit": "97e4624",
-   "updated": "2026-08-18"
+   "last_commit": "e782693",
+   "updated": "2026-11-20"
   },
   {
    "req_id": "SRS-ONB-002",
@@ -4964,8 +4998,8 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "f2670dc",
-   "updated": "2026-11-19"
+   "last_commit": "e782693",
+   "updated": "2026-11-20"
   },
   {
    "req_id": "TRS-AND-002",
@@ -4974,8 +5008,8 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "f2670dc",
-   "updated": "2026-11-19"
+   "last_commit": "e782693",
+   "updated": "2026-11-20"
   },
   {
    "req_id": "TRS-AND-003",
@@ -4984,8 +5018,8 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "f2670dc",
-   "updated": "2026-11-19"
+   "last_commit": "e782693",
+   "updated": "2026-11-20"
   },
   {
    "req_id": "TRS-AND-004",
@@ -5008,8 +5042,8 @@
    "adr": [
     "ADR-003"
    ],
-   "last_commit": "f2670dc",
-   "updated": "2026-11-19"
+   "last_commit": "e782693",
+   "updated": "2026-11-20"
   },
   {
    "req_id": "TRS-AND-005",
@@ -5030,8 +5064,8 @@
    "adr": [
     "ADR-002"
    ],
-   "last_commit": "f2670dc",
-   "updated": "2026-11-19"
+   "last_commit": "e782693",
+   "updated": "2026-11-20"
   },
   {
    "req_id": "TRS-AND-006",
@@ -5049,8 +5083,8 @@
    "adr": [
     "ADR-002"
    ],
-   "last_commit": "f2670dc",
-   "updated": "2026-11-19"
+   "last_commit": "e782693",
+   "updated": "2026-11-20"
   },
   {
    "req_id": "TRS-AND-007",
@@ -5059,8 +5093,8 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "f2670dc",
-   "updated": "2026-11-19"
+   "last_commit": "e782693",
+   "updated": "2026-11-20"
   },
   {
    "req_id": "TRS-AND-008",
@@ -5069,8 +5103,8 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "f2670dc",
-   "updated": "2026-11-19"
+   "last_commit": "e782693",
+   "updated": "2026-11-20"
   },
   {
    "req_id": "TRS-AND-009",
@@ -5079,8 +5113,8 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "f2670dc",
-   "updated": "2026-11-19"
+   "last_commit": "e782693",
+   "updated": "2026-11-20"
   },
   {
    "req_id": "TRS-AND-010",
@@ -5089,8 +5123,8 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "f2670dc",
-   "updated": "2026-11-19"
+   "last_commit": "e782693",
+   "updated": "2026-11-20"
   },
   {
    "req_id": "TRS-AND-011",
@@ -5099,8 +5133,8 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "f2670dc",
-   "updated": "2026-11-19"
+   "last_commit": "e782693",
+   "updated": "2026-11-20"
   },
   {
    "req_id": "TRS-AND-012",
@@ -5109,8 +5143,8 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "f2670dc",
-   "updated": "2026-11-19"
+   "last_commit": "e782693",
+   "updated": "2026-11-20"
   },
   {
    "req_id": "TRS-ARCH-001",
@@ -5653,8 +5687,8 @@
     "ci:conformance#31528127667"
    ],
    "adr": [],
-   "last_commit": "f2670dc",
-   "updated": "2026-11-19"
+   "last_commit": "e782693",
+   "updated": "2026-11-20"
   },
   {
    "req_id": "TRS-CICD-002",
@@ -5871,8 +5905,8 @@
    ],
    "evidence": [],
    "adr": [],
-   "last_commit": "f2670dc",
-   "updated": "2026-11-19"
+   "last_commit": "e782693",
+   "updated": "2026-11-20"
   },
   {
    "req_id": "TRS-CODE-005",
@@ -5922,8 +5956,8 @@
     "ci:pipeline#31737418465"
    ],
    "adr": [],
-   "last_commit": "f2670dc",
-   "updated": "2026-11-19"
+   "last_commit": "e782693",
+   "updated": "2026-11-20"
   },
   {
    "req_id": "TRS-CODE-007",
@@ -7871,8 +7905,8 @@
    ],
    "evidence": [],
    "adr": [],
-   "last_commit": "474df8e",
-   "updated": "2026-11-19"
+   "last_commit": "e782693",
+   "updated": "2026-11-20"
   },
   {
    "req_id": "TRS-REP-004",
@@ -7901,8 +7935,8 @@
    ],
    "evidence": [],
    "adr": [],
-   "last_commit": "5d1076c",
-   "updated": "2026-11-19"
+   "last_commit": "e782693",
+   "updated": "2026-11-20"
   },
   {
    "req_id": "TRS-REP-005",
@@ -7943,8 +7977,8 @@
    ],
    "evidence": [],
    "adr": [],
-   "last_commit": "474df8e",
-   "updated": "2026-11-19"
+   "last_commit": "e782693",
+   "updated": "2026-11-20"
   },
   {
    "req_id": "TRS-REP-007",
@@ -7962,8 +7996,8 @@
    ],
    "evidence": [],
    "adr": [],
-   "last_commit": "5d1076c",
-   "updated": "2026-11-19"
+   "last_commit": "e782693",
+   "updated": "2026-11-20"
   },
   {
    "req_id": "TRS-REP-008",
