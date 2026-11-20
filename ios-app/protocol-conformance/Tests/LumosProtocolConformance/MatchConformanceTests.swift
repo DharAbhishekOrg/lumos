@@ -11,6 +11,7 @@
 /// Java port answer to.
 
 import Foundation
+import LumosProtocolGenerated
 import XCTest
 @testable import LumosProtocol
 
@@ -120,6 +121,30 @@ final class MatchConformanceTests: XCTestCase {
                 XCTFail("\(name): decode must refuse")
             } catch let error as InterestWire.WireError {
                 XCTAssertEqual(wantCode, error.code, "\(name): stable code")
+            }
+        }
+    }
+
+    func testTheConsentGateDecidesEveryClassOnceAndHoldsTheDoor() {
+        let states: [MatchMachine.State] = [
+            .none, .requestedOut, .requestedIn, .bothRequested, .matched,
+            .declinedIn, .ignoredIn, .unmatched, .blocked
+        ]
+        for messageClass in MessageClass.allCases {
+            let homes = [ConsentGate.matchOnly, ConsentGate.consentStage, ConsentGate.notThisGate]
+                .filter { $0.contains(messageClass) }.count
+            XCTAssertEqual(homes, 1, "\(messageClass) must belong to exactly one gate set")
+            for state in states {
+                let expected: Bool
+                if ConsentGate.matchOnly.contains(messageClass) {
+                    expected = state == .matched
+                } else if ConsentGate.consentStage.contains(messageClass) {
+                    expected = state != .blocked
+                } else {
+                    expected = true
+                }
+                XCTAssertEqual(ConsentGate.permits(messageClass, state), expected,
+                               "\(messageClass) in \(state) (SRS-MAT-006)")
             }
         }
     }

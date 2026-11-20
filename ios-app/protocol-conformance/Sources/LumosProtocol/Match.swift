@@ -176,6 +176,39 @@ public enum InterestWire {
     }
 }
 
+/// The SRS-MAT-006 pre-match gate, the Java table mirrored: conversation
+/// classes pass only in matched, consent-stage classes in every state but
+/// blocked, and session/mesh/venue/housekeeping classes are other gates'.
+/// The three sets are disjoint and cover every MessageClass case - the test
+/// walks allCases, so a new class cannot open a pre-match path by default.
+public enum ConsentGate {
+
+    /// Classes that exist only between matched people.
+    public static let matchOnly: Set<MessageClass> = [
+        .profileFull, .textMessage, .deliveryReceipt, .readReceipt, .typing,
+        .objectMeta, .objectChunk, .objectAck, .objectCancel, .voiceMeta
+    ]
+
+    /// The consent stage itself: open in every state but blocked.
+    public static let consentStage: Set<MessageClass> = [
+        .interestRequest, .interestResponse, .profilePreview
+    ]
+
+    /// Session, mesh, venue and housekeeping: other gates own these.
+    public static let notThisGate: Set<MessageClass> = [
+        .hello, .helloAck, .meshRelay, .storeForward, .venuePackageHint,
+        .venueRoomEvent, .voucherToken, .heartbeat, .error
+    ]
+
+    /// Whether a class may flow with a peer in a state; unknown fails closed.
+    public static func permits(_ messageClass: MessageClass,
+                               _ state: MatchMachine.State) -> Bool {
+        if matchOnly.contains(messageClass) { return state == .matched }
+        if consentStage.contains(messageClass) { return state != .blocked }
+        return notThisGate.contains(messageClass)
+    }
+}
+
 /// The per-peer interest state machine (TRS Sec. 4.2).
 public enum MatchMachine {
 

@@ -399,3 +399,27 @@ func TestWPThreeScopeIsTheBriefNotWhatMoved(t *testing.T) {
 		}
 	}
 }
+
+// TestWPFourScopeIsTheBriefNotWhatMoved transcribes the WP-04 brief's "Key
+// requirements" row independently of the production list. AT-005 is an
+// owner acceptance run; the feed-surface rows the WP-03 closeout routed here
+// keep their WP-03 scope; TRS-PAT-002 moved in this package but is not in
+// the brief's row - all must read as out of scope.
+func TestWPFourScopeIsTheBriefNotWhatMoved(t *testing.T) {
+	inScope := []string{"SRS-IDN-005", "SRS-IDN-006", "SRS-MED-003", "SRS-SAF-001",
+		"SRS-SAF-002", "TRS-ARCH-009", "SRS-NFR-REL-004"}
+	for i := 1; i <= 14; i++ {
+		inScope = append(inScope, fmt.Sprintf("SRS-MAT-%03d", i))
+	}
+	for _, id := range inScope {
+		if !InScope("WP-04", id) {
+			t.Errorf("%s is named by the WP-04 brief but reads as out of scope", id)
+		}
+	}
+	for _, id := range []string{"AT-005", "SRS-MAT-015", "SRS-NBY-008", "TRS-PAT-002",
+		"SRS-IDN-004", "SRS-SAF-003", "SRS-MED-002"} {
+		if InScope("WP-04", id) {
+			t.Errorf("%s is not in the WP-04 brief's row but reads as in scope", id)
+		}
+	}
+}
