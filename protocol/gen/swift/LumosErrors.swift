@@ -6,7 +6,7 @@
 /// GENERATED - DO NOT EDIT. Generator: tools/constantsgen
 /// Source register: protocol/constants/lumos_constants.json
 /// Baseline: TRS v1.1 Sec. 23 / EDP v1.0 Sec. 4 (ADR-004)
-/// constants_hash: sha256:cd16dcdf2cd4e16b4c90259fc5ee16f0e4890c9c00de72a7bd317b63475873fe
+/// constants_hash: sha256:2825a45f23c9533252baf7e6699dff84d80ea1c2af29880a7f6cad911c967151
 
 /// Stable machine-readable error codes of TRS-PROTO-013. Append-only.
 public enum LumosErrors {
@@ -143,6 +143,15 @@ public enum LumosErrors {
     /// ERR_VOUCHER_REVOKED (87, config): Voucher appears in the revocation set.
     public static let errVoucherRevoked = "ERR_VOUCHER_REVOKED"
 
+    /// ERR_MATCH_RATE_LIMITED (140, match): The rolling-hour interest budget (INTEREST_RATE_LIMIT_PER_HOUR) is spent; retry after INTEREST_COOLDOWN_SEC (SRS-MAT-011).
+    public static let errMatchRateLimited = "ERR_MATCH_RATE_LIMITED"
+
+    /// ERR_MATCH_UNKNOWN_PEER (141, match): An interest event referenced a peer with no authenticated presence or match history on this device (SRS-MAT-001).
+    public static let errMatchUnknownPeer = "ERR_MATCH_UNKNOWN_PEER"
+
+    /// ERR_MATCH_NOT_MATCHED (142, match): A chat or media action was attempted outside the MATCHED state; mutual acceptance is the only gate that opens those paths (SRS-MAT-005, SRS-MAT-006).
+    public static let errMatchNotMatched = "ERR_MATCH_NOT_MATCHED"
+
     /// Maps each stable code to its registry number.
     public static let numeric: [String: Int] = [
         "ERR_FRAME_BAD_MAGIC": 1,
@@ -189,6 +198,9 @@ public enum LumosErrors {
         "ERR_CONFIG_CONSTANTS_HASH_MISMATCH": 85,
         "ERR_VOUCHER_NONCE_REPLAY": 86,
         "ERR_VOUCHER_REVOKED": 87,
+        "ERR_MATCH_RATE_LIMITED": 140,
+        "ERR_MATCH_UNKNOWN_PEER": 141,
+        "ERR_MATCH_NOT_MATCHED": 142,
     ]
 
     /// Reports whether a code is in the stable registry.

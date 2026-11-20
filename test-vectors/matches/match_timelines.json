@@ -1,0 +1,280 @@
+{
+  "schema_version": 1,
+  "generator": "tools/vectorgen",
+  "constants_hash": "sha256:2825a45f23c9533252baf7e6699dff84d80ea1c2af29880a7f6cad911c967151",
+  "implements": [
+    "SRS-MAT-004",
+    "SRS-MAT-005",
+    "SRS-MAT-007",
+    "SRS-MAT-014",
+    "TRS-PAT-002"
+  ],
+  "key_provenance": "TESTONLY-lumos-vectors-v1",
+  "notes": "The interest/consent state machine and the SRS-MAT-007 identifier. derivations: match_id = SHA-256(MATCH_ID_KDF_INFO | lower | higher)[:MATCH_ID_LEN] over the two peer ids in lexicographic byte order - symmetric, so both sides of an accept-accept race derive the same id with no message; initiator_on_race is the lower id. scripts: event timelines starting at state none; consumers replay each and compare state and effect after every step. Effects accept_and_establish and match_established are the ONLY unlocking effects (SRS-MAT-005); no decline or ignore step anywhere carries a transmitting effect (SRS-MAT-004); absorbed duplicates and reorders appear as steps whose state and effect repeat unchanged (SRS-MAT-014).",
+  "derivations": [
+    {
+      "name": "pair_0",
+      "peer_a_hex": "dee336e9d4f27abdcbe2c0f1da4f9259",
+      "peer_b_hex": "96012bcd16f391aabb713eb2e6a97453",
+      "match_id_hex": "9d0707b7a72bba240239501e332433c1",
+      "initiator_on_race_hex": "96012bcd16f391aabb713eb2e6a97453"
+    },
+    {
+      "name": "pair_1",
+      "peer_a_hex": "7730adfd34bd4de910d36822c8aa80b6",
+      "peer_b_hex": "52ed9fe5fdb5a92a5d85103192484f7c",
+      "match_id_hex": "6d2abe6e05cece7ef8d7cdf3ef35e9a4",
+      "initiator_on_race_hex": "52ed9fe5fdb5a92a5d85103192484f7c"
+    },
+    {
+      "name": "pair_2",
+      "peer_a_hex": "1cf1651308461bb3f9f43fadec4e2e55",
+      "peer_b_hex": "6ab756ae5b808ddc60dd24a4a1fa8ca6",
+      "match_id_hex": "382661fad07e34460ac963309455af09",
+      "initiator_on_race_hex": "1cf1651308461bb3f9f43fadec4e2e55"
+    },
+    {
+      "name": "pair_3",
+      "peer_a_hex": "25823982051a62a835b6bc1c3edbec70",
+      "peer_b_hex": "e3a39eb68d9952fcf07d74e77a69edc2",
+      "match_id_hex": "b79f1e6d87d39a3d79da0da9f27c37f8",
+      "initiator_on_race_hex": "25823982051a62a835b6bc1c3edbec70"
+    }
+  ],
+  "scripts": [
+    {
+      "name": "request_then_remote_accept",
+      "description": "The plain happy path from the requester's side.",
+      "steps": [
+        {
+          "event": "local_request",
+          "expect_state": "requested_out",
+          "expect_effect": "send_request"
+        },
+        {
+          "event": "remote_accept",
+          "expect_state": "matched",
+          "expect_effect": "match_established"
+        },
+        {
+          "event": "remote_accept",
+          "expect_state": "matched",
+          "expect_effect": "none"
+        }
+      ]
+    },
+    {
+      "name": "remote_request_then_local_accept",
+      "description": "The plain happy path from the recipient's side.",
+      "steps": [
+        {
+          "event": "remote_request",
+          "expect_state": "requested_in",
+          "expect_effect": "none"
+        },
+        {
+          "event": "remote_request",
+          "expect_state": "requested_in",
+          "expect_effect": "none"
+        },
+        {
+          "event": "local_accept",
+          "expect_state": "matched",
+          "expect_effect": "accept_and_establish"
+        }
+      ]
+    },
+    {
+      "name": "decline_is_silent_and_not_final",
+      "description": "A decline transmits nothing, leaves the asker's view unchanged, and a genuinely new request may try again.",
+      "steps": [
+        {
+          "event": "remote_request",
+          "expect_state": "requested_in",
+          "expect_effect": "none"
+        },
+        {
+          "event": "local_decline",
+          "expect_state": "declined_in",
+          "expect_effect": "none"
+        },
+        {
+          "event": "remote_request",
+          "expect_state": "requested_in",
+          "expect_effect": "none"
+        },
+        {
+          "event": "local_ignore",
+          "expect_state": "ignored_in",
+          "expect_effect": "none"
+        },
+        {
+          "event": "remote_request",
+          "expect_state": "ignored_in",
+          "expect_effect": "none"
+        }
+      ]
+    },
+    {
+      "name": "accept_accept_race_local_side",
+      "description": "Both requested before either answered; our acceptance lands first on our side.",
+      "steps": [
+        {
+          "event": "local_request",
+          "expect_state": "requested_out",
+          "expect_effect": "send_request"
+        },
+        {
+          "event": "remote_request",
+          "expect_state": "both_requested",
+          "expect_effect": "none"
+        },
+        {
+          "event": "local_accept",
+          "expect_state": "matched",
+          "expect_effect": "accept_and_establish"
+        },
+        {
+          "event": "remote_accept",
+          "expect_state": "matched",
+          "expect_effect": "none"
+        }
+      ]
+    },
+    {
+      "name": "accept_accept_race_remote_side",
+      "description": "The same race seen from the peer whose acceptance was still in flight.",
+      "steps": [
+        {
+          "event": "local_request",
+          "expect_state": "requested_out",
+          "expect_effect": "send_request"
+        },
+        {
+          "event": "remote_request",
+          "expect_state": "both_requested",
+          "expect_effect": "none"
+        },
+        {
+          "event": "remote_accept",
+          "expect_state": "matched",
+          "expect_effect": "match_established"
+        },
+        {
+          "event": "local_accept",
+          "expect_state": "matched",
+          "expect_effect": "none"
+        }
+      ]
+    },
+    {
+      "name": "declining_the_race_keeps_our_request",
+      "description": "Declining THEIR request in the race does not retract ours, and their later acceptance still matches.",
+      "steps": [
+        {
+          "event": "local_request",
+          "expect_state": "requested_out",
+          "expect_effect": "send_request"
+        },
+        {
+          "event": "remote_request",
+          "expect_state": "both_requested",
+          "expect_effect": "none"
+        },
+        {
+          "event": "local_decline",
+          "expect_state": "requested_out",
+          "expect_effect": "none"
+        },
+        {
+          "event": "remote_accept",
+          "expect_state": "matched",
+          "expect_effect": "match_established"
+        }
+      ]
+    },
+    {
+      "name": "unmatch_then_dead_echoes",
+      "description": "After an unmatch, replayed accepts and unmatches from the dead match are absorbed; a fresh round may start.",
+      "steps": [
+        {
+          "event": "remote_request",
+          "expect_state": "requested_in",
+          "expect_effect": "none"
+        },
+        {
+          "event": "local_accept",
+          "expect_state": "matched",
+          "expect_effect": "accept_and_establish"
+        },
+        {
+          "event": "local_unmatch",
+          "expect_state": "unmatched",
+          "expect_effect": "send_unmatch"
+        },
+        {
+          "event": "remote_accept",
+          "expect_state": "unmatched",
+          "expect_effect": "none"
+        },
+        {
+          "event": "remote_unmatch",
+          "expect_state": "unmatched",
+          "expect_effect": "none"
+        },
+        {
+          "event": "remote_request",
+          "expect_state": "requested_in",
+          "expect_effect": "none"
+        }
+      ]
+    },
+    {
+      "name": "block_absorbs_everything",
+      "description": "Blocking wins from anywhere and nothing leaves it here.",
+      "steps": [
+        {
+          "event": "remote_request",
+          "expect_state": "requested_in",
+          "expect_effect": "none"
+        },
+        {
+          "event": "local_block",
+          "expect_state": "blocked",
+          "expect_effect": "none"
+        },
+        {
+          "event": "remote_request",
+          "expect_state": "blocked",
+          "expect_effect": "none"
+        },
+        {
+          "event": "remote_accept",
+          "expect_state": "blocked",
+          "expect_effect": "none"
+        },
+        {
+          "event": "local_request",
+          "expect_state": "blocked",
+          "expect_effect": "none"
+        }
+      ]
+    },
+    {
+      "name": "reorder_accept_before_any_request",
+      "description": "A remote accept with nothing outstanding is absorbed, never trusted.",
+      "steps": [
+        {
+          "event": "remote_accept",
+          "expect_state": "none",
+          "expect_effect": "none"
+        },
+        {
+          "event": "local_request",
+          "expect_state": "requested_out",
+          "expect_effect": "send_request"
+        }
+      ]
+    }
+  ]
+}

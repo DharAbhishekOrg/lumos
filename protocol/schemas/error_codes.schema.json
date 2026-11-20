@@ -3,169 +3,363 @@
  "schema_id": "lumos.error_codes",
  "schema_version": 1,
  "source": "TRS Sec. 9.2 class 0x7F, TRS-PROTO-013",
- "implements": ["TRS-PROTO-006", "TRS-PROTO-007", "TRS-PROTO-008", "TRS-PROTO-010", "TRS-PROTO-012", "TRS-PROTO-013"],
-
+ "implements": [
+  "TRS-PROTO-006",
+  "TRS-PROTO-007",
+  "TRS-PROTO-008",
+  "TRS-PROTO-010",
+  "TRS-PROTO-012",
+  "TRS-PROTO-013"
+ ],
  "policy": {
   "stability": "Codes are append-only. Removing or renumbering one is a breaking protocol change under TRS-PROTO-016.",
   "privacy": "No error may distinguish 'declined' from 'ignored', or reveal that a given identity exists, is blocked, or has been reported (SRS-MAT no-rejection-signal, SRS-SAF).",
   "fail_closed": "Every 'shall reject' condition maps to exactly one code, and every code has at least one negative golden vector in WP-01 slice S4."
  },
-
  "codes": [
-  {"code": "ERR_FRAME_BAD_MAGIC", "numeric": 1, "category": "framing",
+  {
+   "code": "ERR_FRAME_BAD_MAGIC",
+   "numeric": 1,
+   "category": "framing",
    "meaning": "Frame magic did not match framing.FRAME_MAGIC.",
-   "user_message": "Couldn't connect. Try again when you're closer."},
-  {"code": "ERR_FRAME_UNSUPPORTED_VERSION", "numeric": 2, "category": "framing",
+   "user_message": "Couldn't connect. Try again when you're closer."
+  },
+  {
+   "code": "ERR_FRAME_UNSUPPORTED_VERSION",
+   "numeric": 2,
+   "category": "framing",
    "meaning": "Protocol major version differs from this build's.",
-   "user_message": "One of you needs a newer version of the app."},
-  {"code": "ERR_FRAME_UNKNOWN_TYPE", "numeric": 3, "category": "framing",
+   "user_message": "One of you needs a newer version of the app."
+  },
+  {
+   "code": "ERR_FRAME_UNKNOWN_TYPE",
+   "numeric": 3,
+   "category": "framing",
    "meaning": "Unknown message class on a frame marked critical.",
-   "user_message": "One of you needs a newer version of the app."},
-  {"code": "ERR_FRAME_BAD_HEADER_LENGTH", "numeric": 4, "category": "framing",
+   "user_message": "One of you needs a newer version of the app."
+  },
+  {
+   "code": "ERR_FRAME_BAD_HEADER_LENGTH",
+   "numeric": 4,
+   "category": "framing",
    "meaning": "header_length disagreed with the fixed length for this protocol version.",
-   "user_message": "Couldn't connect. Try again when you're closer."},
-  {"code": "ERR_FRAME_TRUNCATED", "numeric": 5, "category": "framing",
+   "user_message": "Couldn't connect. Try again when you're closer."
+  },
+  {
+   "code": "ERR_FRAME_TRUNCATED",
+   "numeric": 5,
+   "category": "framing",
    "meaning": "Fewer bytes available than header_length or payload_length require.",
-   "user_message": "The connection dropped. Try again."},
-  {"code": "ERR_FRAME_RESERVED_FLAG", "numeric": 6, "category": "framing",
+   "user_message": "The connection dropped. Try again."
+  },
+  {
+   "code": "ERR_FRAME_RESERVED_FLAG",
+   "numeric": 6,
+   "category": "framing",
    "meaning": "A reserved flag bit was set on a frame marked critical.",
-   "user_message": "One of you needs a newer version of the app."},
-  {"code": "ERR_FRAME_RESERVED_FIELD", "numeric": 7, "category": "framing",
+   "user_message": "One of you needs a newer version of the app."
+  },
+  {
+   "code": "ERR_FRAME_RESERVED_FIELD",
+   "numeric": 7,
+   "category": "framing",
    "meaning": "The reserved header byte was non-zero on a frame marked critical.",
-   "user_message": "One of you needs a newer version of the app."},
-  {"code": "ERR_FRAME_PAYLOAD_TOO_LARGE", "numeric": 8, "category": "framing",
+   "user_message": "One of you needs a newer version of the app."
+  },
+  {
+   "code": "ERR_FRAME_PAYLOAD_TOO_LARGE",
+   "numeric": 8,
+   "category": "framing",
    "meaning": "payload_length exceeded the maximum for its message class.",
-   "user_message": "That was too large to send."},
-
-  {"code": "ERR_PAYLOAD_DECOMPRESSION_BOMB", "numeric": 20, "category": "payload",
+   "user_message": "That was too large to send."
+  },
+  {
+   "code": "ERR_PAYLOAD_DECOMPRESSION_BOMB",
+   "numeric": 20,
+   "category": "payload",
    "meaning": "Declared or actual decompressed size exceeded the class maximum.",
-   "user_message": "That message couldn't be opened."},
-  {"code": "ERR_PAYLOAD_MALFORMED", "numeric": 21, "category": "payload",
+   "user_message": "That message couldn't be opened."
+  },
+  {
+   "code": "ERR_PAYLOAD_MALFORMED",
+   "numeric": 21,
+   "category": "payload",
    "meaning": "Payload did not decode against its class schema.",
-   "user_message": "That message couldn't be opened."},
-  {"code": "ERR_TEXT_UNKNOWN_EVENT_KIND", "numeric": 22, "category": "payload",
+   "user_message": "That message couldn't be opened."
+  },
+  {
+   "code": "ERR_TEXT_UNKNOWN_EVENT_KIND",
+   "numeric": 22,
+   "category": "payload",
    "meaning": "Unknown inner event_kind on a critical TEXT_MESSAGE (AMD-005).",
-   "user_message": "One of you needs a newer version of the app."},
-  {"code": "ERR_TEXT_MISSING_TARGET", "numeric": 23, "category": "payload",
+   "user_message": "One of you needs a newer version of the app."
+  },
+  {
+   "code": "ERR_TEXT_MISSING_TARGET",
+   "numeric": 23,
+   "category": "payload",
    "meaning": "An edit, delete or reaction arrived without target_message_id.",
-   "user_message": "That message couldn't be opened."},
-
-  {"code": "ERR_CRYPTO_AEAD_AUTH_FAILED", "numeric": 40, "category": "crypto",
+   "user_message": "That message couldn't be opened."
+  },
+  {
+   "code": "ERR_CRYPTO_AEAD_AUTH_FAILED",
+   "numeric": 40,
+   "category": "crypto",
    "meaning": "AEAD authentication failed; header-as-AAD mismatch or tampering.",
-   "user_message": "That message couldn't be verified. It wasn't shown."},
-  {"code": "ERR_CRYPTO_MAX_SKIP_EXCEEDED", "numeric": 41, "category": "crypto",
+   "user_message": "That message couldn't be verified. It wasn't shown."
+  },
+  {
+   "code": "ERR_CRYPTO_MAX_SKIP_EXCEEDED",
+   "numeric": 41,
+   "category": "crypto",
    "meaning": "Ratchet skip exceeded sessions_remote_text.MAX_SKIP_PER_CHAIN.",
-   "user_message": "Messages arrived out of order and couldn't be read."},
-  {"code": "ERR_CRYPTO_SKIPPED_KEY_CAP", "numeric": 42, "category": "crypto",
+   "user_message": "Messages arrived out of order and couldn't be read."
+  },
+  {
+   "code": "ERR_CRYPTO_SKIPPED_KEY_CAP",
+   "numeric": 42,
+   "category": "crypto",
    "meaning": "Stored skipped keys would exceed SKIPPED_KEYS_PER_SESSION_CAP.",
-   "user_message": "Messages arrived out of order and couldn't be read."},
-  {"code": "ERR_CRYPTO_PREKEY_SIGNATURE_INVALID", "numeric": 44, "category": "crypto",
+   "user_message": "Messages arrived out of order and couldn't be read."
+  },
+  {
+   "code": "ERR_CRYPTO_PREKEY_SIGNATURE_INVALID",
+   "numeric": 44,
+   "category": "crypto",
    "meaning": "X3DH prekey bundle signature failed verification (identity-DH binding or signed prekey).",
-   "user_message": "Couldn't start a secure chat. Try again."},
-  {"code": "ERR_CRYPTO_RECOVERY_OPEN_FAILED", "numeric": 45, "category": "crypto",
+   "user_message": "Couldn't start a secure chat. Try again."
+  },
+  {
+   "code": "ERR_CRYPTO_RECOVERY_OPEN_FAILED",
+   "numeric": 45,
+   "category": "crypto",
    "meaning": "A RecoveryRecord could not be opened. ONE code for every cause - wrong passphrase, tampered header, corrupted ciphertext, unknown format - because distinguishing them is an oracle over the passphrase (TRS-CRY-013).",
-   "user_message": "That passphrase didn't open this backup, or the file has been changed."},
-  {"code": "ERR_CRYPTO_RECOVERY_PARAMS_REJECTED", "numeric": 46, "category": "crypto",
+   "user_message": "That passphrase didn't open this backup, or the file has been changed."
+  },
+  {
+   "code": "ERR_CRYPTO_RECOVERY_PARAMS_REJECTED",
+   "numeric": 46,
+   "category": "crypto",
    "meaning": "A RecoveryRecord declares Argon2id work factors below the register minima. Reported separately from OPEN_FAILED on purpose: this is a property of the FILE, readable without any passphrase attempt, so naming it discloses nothing and warning the user their old backup is too weak to trust is worth more than uniformity.",
-   "user_message": "This backup was made with weaker protection than we now allow. Make a new one."},
-  {"code": "ERR_CRYPTO_REPLAY", "numeric": 43, "category": "crypto",
+   "user_message": "This backup was made with weaker protection than we now allow. Make a new one."
+  },
+  {
+   "code": "ERR_CRYPTO_REPLAY",
+   "numeric": 43,
+   "category": "crypto",
    "meaning": "message_id already seen within the dedup window.",
    "user_message": null,
-   "user_message_note": "Silent by design - a duplicate is suppressed before domain processing and must not surface to the user."},
-
-  {"code": "ERR_MESH_HOP_VIOLATION", "numeric": 60, "category": "mesh",
+   "user_message_note": "Silent by design - a duplicate is suppressed before domain processing and must not surface to the user."
+  },
+  {
+   "code": "ERR_MESH_HOP_VIOLATION",
+   "numeric": 60,
+   "category": "mesh",
    "meaning": "A relay attempted to raise hop_limit or TTL (TRS-PROTO-012).",
    "user_message": null,
-   "user_message_note": "Silent - dropped at the transport boundary."},
-  {"code": "ERR_MESH_TTL_EXPIRED", "numeric": 61, "category": "mesh",
+   "user_message_note": "Silent - dropped at the transport boundary."
+  },
+  {
+   "code": "ERR_MESH_TTL_EXPIRED",
+   "numeric": 61,
+   "category": "mesh",
    "meaning": "Frame TTL expired before delivery.",
    "user_message": null,
-   "user_message_note": "Silent - the outbox retries under its own policy."},
-  {"code": "ERR_TRANSPORT_LOCAL_ONLY_VIOLATION", "numeric": 62, "category": "mesh",
+   "user_message_note": "Silent - the outbox retries under its own policy."
+  },
+  {
+   "code": "ERR_TRANSPORT_LOCAL_ONLY_VIOLATION",
+   "numeric": 62,
+   "category": "mesh",
    "meaning": "A frame flagged local-only was offered to the internet relay (SRS-TRN-009).",
    "user_message": null,
-   "user_message_note": "Silent to the user, but this is a P0 privacy invariant: the send is refused, not downgraded."},
-
-  {"code": "ERR_MEDIA_DIGEST_MISMATCH", "numeric": 100, "category": "media",
+   "user_message_note": "Silent to the user, but this is a P0 privacy invariant: the send is refused, not downgraded."
+  },
+  {
+   "code": "ERR_MEDIA_DIGEST_MISMATCH",
+   "numeric": 100,
+   "category": "media",
    "meaning": "Reassembled object did not match the SHA-256 digest declared in OBJECT_META.",
-   "user_message": "That file didn't arrive correctly. Ask them to send it again."},
-  {"code": "ERR_MEDIA_OBJECT_KEY_UNWRAP_FAILED", "numeric": 101, "category": "media",
+   "user_message": "That file didn't arrive correctly. Ask them to send it again."
+  },
+  {
+   "code": "ERR_MEDIA_OBJECT_KEY_UNWRAP_FAILED",
+   "numeric": 101,
+   "category": "media",
    "meaning": "The object key could not be unwrapped from the active match session.",
-   "user_message": "That file couldn't be opened."},
-  {"code": "ERR_MEDIA_CHUNK_OUT_OF_RANGE", "numeric": 102, "category": "media",
+   "user_message": "That file couldn't be opened."
+  },
+  {
+   "code": "ERR_MEDIA_CHUNK_OUT_OF_RANGE",
+   "numeric": 102,
+   "category": "media",
    "meaning": "A chunk index fell outside the plan declared in OBJECT_META.",
-   "user_message": "That file didn't arrive correctly. Ask them to send it again."},
-
-  {"code": "ERR_ADV_AUTH_TAG_MISMATCH", "numeric": 110, "category": "adv",
+   "user_message": "That file didn't arrive correctly. Ask them to send it again."
+  },
+  {
+   "code": "ERR_ADV_AUTH_TAG_MISMATCH",
+   "numeric": 110,
+   "category": "adv",
    "meaning": "Advertisement authTag did not match the expected HMAC prefix for the epoch; the advertisement is discarded before connection.",
    "user_message": null,
-   "user_message_note": "Silent by design - this is cheap pre-connection noise rejection on Android (ADR-002), not a user-visible failure. The peer is simply not shown."},
-
-  {"code": "ERR_FRAG_HEADER_MALFORMED", "numeric": 120, "category": "transport",
+   "user_message_note": "Silent by design - this is cheap pre-connection noise rejection on Android (ADR-002), not a user-visible failure. The peer is simply not shown."
+  },
+  {
+   "code": "ERR_FRAG_HEADER_MALFORMED",
+   "numeric": 120,
+   "category": "transport",
    "meaning": "Fragment shorter than its header, a reserved flag bit set, a FIRST without a usable total-length prefix or a zero total, a non-zero index on a FIRST, or a fragment carrying no content byte (TRS-PROTO-010 layer rules).",
    "user_message": null,
-   "user_message_note": "Silent: transport-layer noise on a nearby link. The link retries or drops; nothing user-meaningful has been lost yet."},
-  {"code": "ERR_FRAG_TOTAL_TOO_LARGE", "numeric": 121, "category": "transport",
+   "user_message_note": "Silent: transport-layer noise on a nearby link. The link retries or drops; nothing user-meaningful has been lost yet."
+  },
+  {
+   "code": "ERR_FRAG_TOTAL_TOO_LARGE",
+   "numeric": 121,
+   "category": "transport",
    "meaning": "Declared reassembled length exceeds FRAG_REASSEMBLY_MAX_BYTES, or a split would need more than FRAG_MAX_FRAGMENTS. Rejected before any reassembly allocation (TRS Sec. 9.4).",
    "user_message": null,
-   "user_message_note": "Silent at this layer; a refused outbound transfer surfaces through the media pipeline's own failure path, not through transport jargon."},
-  {"code": "ERR_FRAG_SEQUENCE_GAP", "numeric": 122, "category": "transport",
+   "user_message_note": "Silent at this layer; a refused outbound transfer surfaces through the media pipeline's own failure path, not through transport jargon."
+  },
+  {
+   "code": "ERR_FRAG_SEQUENCE_GAP",
+   "numeric": 122,
+   "category": "transport",
    "meaning": "A continuation fragment skipped an index, or continued an assembly the receiver does not have open or remembered.",
    "user_message": null,
-   "user_message_note": "Silent: the sender's retry budget handles it."},
-  {"code": "ERR_FRAG_LENGTH_MISMATCH", "numeric": 123, "category": "transport",
+   "user_message_note": "Silent: the sender's retry budget handles it."
+  },
+  {
+   "code": "ERR_FRAG_LENGTH_MISMATCH",
+   "numeric": 123,
+   "category": "transport",
    "meaning": "Fragment content overran the declared total, or a LAST fragment completed with fewer bytes than declared.",
    "user_message": null,
-   "user_message_note": "Silent: the assembly is dropped and the sender's retry budget handles it."},
-  {"code": "ERR_FRAG_REASSEMBLY_TIMEOUT", "numeric": 124, "category": "transport",
+   "user_message_note": "Silent: the assembly is dropped and the sender's retry budget handles it."
+  },
+  {
+   "code": "ERR_FRAG_REASSEMBLY_TIMEOUT",
+   "numeric": 124,
+   "category": "transport",
    "meaning": "A continuation arrived for an assembly that already expired under REASSEMBLY_TIMEOUT_SEC (TRS-PROTO-010 reassembly timeout).",
    "user_message": null,
-   "user_message_note": "Silent: incomplete assemblies age out by design; the sender restarts from the FIRST fragment."},
-
-  {"code": "ERR_HELLO_MALFORMED", "numeric": 130, "category": "session",
+   "user_message_note": "Silent: incomplete assemblies age out by design; the sender restarts from the FIRST fragment."
+  },
+  {
+   "code": "ERR_HELLO_MALFORMED",
+   "numeric": 130,
+   "category": "session",
    "meaning": "A HELLO or HELLO_ACK payload was not a well-formed hello_v1: wrong length, or an unsupported hello_version.",
    "user_message": null,
-   "user_message_note": "Silent: a peer that cannot bootstrap is simply not shown (TRS-ENV-002), and no error distinguishes why."},
-  {"code": "ERR_HELLO_VERSION_UNSUPPORTED", "numeric": 131, "category": "session",
+   "user_message_note": "Silent: a peer that cannot bootstrap is simply not shown (TRS-ENV-002), and no error distinguishes why."
+  },
+  {
+   "code": "ERR_HELLO_VERSION_UNSUPPORTED",
+   "numeric": 131,
+   "category": "session",
    "meaning": "The in-band protocol_version's major nibble differs from this build's (TRS-PROTO-017 re-confirmation; same rule as the frame header, ADR-007).",
    "user_message": null,
-   "user_message_note": "Silent at this layer; version-mismatch UX arrives with the Nearby surfaces."},
-  {"code": "ERR_HELLO_BINDING_INVALID", "numeric": 132, "category": "session",
+   "user_message_note": "Silent at this layer; version-mismatch UX arrives with the Nearby surfaces."
+  },
+  {
+   "code": "ERR_HELLO_BINDING_INVALID",
+   "numeric": 132,
+   "category": "session",
    "meaning": "The ADR-008 binding signature inside a HELLO or HELLO_ACK did not verify: the claimed identity-DH key does not belong to the claimed Ed25519 identity.",
    "user_message": null,
-   "user_message_note": "Silent: an invalid identity claim must be indistinguishable from radio noise to its sender."},
-  {"code": "ERR_HELLO_SIGNATURE_INVALID", "numeric": 133, "category": "session",
+   "user_message_note": "Silent: an invalid identity claim must be indistinguishable from radio noise to its sender."
+  },
+  {
+   "code": "ERR_HELLO_SIGNATURE_INVALID",
+   "numeric": 133,
+   "category": "session",
    "meaning": "A HELLO_ACK auth signature did not verify over this side's HELLO transcript - a spoofed identity or a tampered exchange.",
    "user_message": null,
-   "user_message_note": "Silent: no presence card appears, and the failed claimant learns nothing (TRS-ENV-002)."},
-  {"code": "ERR_HELLO_NONCE_MISMATCH", "numeric": 134, "category": "session",
+   "user_message_note": "Silent: no presence card appears, and the failed claimant learns nothing (TRS-ENV-002)."
+  },
+  {
+   "code": "ERR_HELLO_NONCE_MISMATCH",
+   "numeric": 134,
+   "category": "session",
    "meaning": "A HELLO_ACK answered a nonce this side did not issue, or did not issue recently - the replay shape (TRS-ENV-002).",
    "user_message": null,
-   "user_message_note": "Silent: a replayed exchange grants nothing and reports nothing."},
-
-  {"code": "ERR_CONFIG_SIGNATURE_INVALID", "numeric": 80, "category": "config",
+   "user_message_note": "Silent: a replayed exchange grants nothing and reports nothing."
+  },
+  {
+   "code": "ERR_CONFIG_SIGNATURE_INVALID",
+   "numeric": 80,
+   "category": "config",
    "meaning": "Signed configuration or voucher failed signature verification.",
-   "user_message": "Couldn't load venue information."},
-  {"code": "ERR_CONFIG_SCHEMA_INVALID", "numeric": 81, "category": "config",
+   "user_message": "Couldn't load venue information."
+  },
+  {
+   "code": "ERR_CONFIG_SCHEMA_INVALID",
+   "numeric": 81,
+   "category": "config",
    "meaning": "Configuration failed schema validation, including an out-of-bounds override (TRS-CONST-002).",
-   "user_message": "Couldn't load venue information."},
-  {"code": "ERR_CONFIG_ROLLBACK", "numeric": 82, "category": "config",
+   "user_message": "Couldn't load venue information."
+  },
+  {
+   "code": "ERR_CONFIG_ROLLBACK",
+   "numeric": 82,
+   "category": "config",
    "meaning": "Configuration version was older than the active one.",
-   "user_message": "Couldn't load venue information."},
-  {"code": "ERR_CONFIG_EXPIRED", "numeric": 83, "category": "config",
+   "user_message": "Couldn't load venue information."
+  },
+  {
+   "code": "ERR_CONFIG_EXPIRED",
+   "numeric": 83,
+   "category": "config",
    "meaning": "Configuration or voucher validity window has passed.",
-   "user_message": "This offer has expired."},
-  {"code": "ERR_CONFIG_WRONG_ENVIRONMENT", "numeric": 84, "category": "config",
+   "user_message": "This offer has expired."
+  },
+  {
+   "code": "ERR_CONFIG_WRONG_ENVIRONMENT",
+   "numeric": 84,
+   "category": "config",
    "meaning": "Package environment did not match this build's.",
-   "user_message": "Couldn't load venue information."},
-  {"code": "ERR_CONFIG_CONSTANTS_HASH_MISMATCH", "numeric": 85, "category": "config",
+   "user_message": "Couldn't load venue information."
+  },
+  {
+   "code": "ERR_CONFIG_CONSTANTS_HASH_MISMATCH",
+   "numeric": 85,
+   "category": "config",
    "meaning": "Package constants_hash did not match this build's register (TRS-CONST-005).",
-   "user_message": "Couldn't load venue information."},
-  {"code": "ERR_VOUCHER_NONCE_REPLAY", "numeric": 86, "category": "config",
+   "user_message": "Couldn't load venue information."
+  },
+  {
+   "code": "ERR_VOUCHER_NONCE_REPLAY",
+   "numeric": 86,
+   "category": "config",
    "meaning": "Voucher nonce was already redeemed within VOUCHER_NONCE_CACHE.",
-   "user_message": "This offer has already been used."},
-  {"code": "ERR_VOUCHER_REVOKED", "numeric": 87, "category": "config",
+   "user_message": "This offer has already been used."
+  },
+  {
+   "code": "ERR_VOUCHER_REVOKED",
+   "numeric": 87,
+   "category": "config",
    "meaning": "Voucher appears in the revocation set.",
-   "user_message": "This offer is no longer available."}
+   "user_message": "This offer is no longer available."
+  },
+  {
+   "code": "ERR_MATCH_RATE_LIMITED",
+   "numeric": 140,
+   "category": "match",
+   "meaning": "The rolling-hour interest budget (INTEREST_RATE_LIMIT_PER_HOUR) is spent; retry after INTEREST_COOLDOWN_SEC (SRS-MAT-011).",
+   "user_message": "You have sent a lot of requests. Take a breather - you can send more in a little while."
+  },
+  {
+   "code": "ERR_MATCH_UNKNOWN_PEER",
+   "numeric": 141,
+   "category": "match",
+   "meaning": "An interest event referenced a peer with no authenticated presence or match history on this device (SRS-MAT-001).",
+   "user_message": "That person is no longer nearby."
+  },
+  {
+   "code": "ERR_MATCH_NOT_MATCHED",
+   "numeric": 142,
+   "category": "match",
+   "meaning": "A chat or media action was attempted outside the MATCHED state; mutual acceptance is the only gate that opens those paths (SRS-MAT-005, SRS-MAT-006).",
+   "user_message": "You can chat once you have both said yes."
+  }
  ]
 }

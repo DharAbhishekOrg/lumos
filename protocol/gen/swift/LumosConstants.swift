@@ -6,7 +6,7 @@
 /// GENERATED - DO NOT EDIT. Generator: tools/constantsgen
 /// Source register: protocol/constants/lumos_constants.json
 /// Baseline: TRS v1.1 Sec. 23 / EDP v1.0 Sec. 4 (ADR-004)
-/// constants_hash: sha256:cd16dcdf2cd4e16b4c90259fc5ee16f0e4890c9c00de72a7bd317b63475873fe
+/// constants_hash: sha256:2825a45f23c9533252baf7e6699dff84d80ea1c2af29880a7f6cad911c967151
 
 public enum LumosConstants {
 
@@ -14,7 +14,7 @@ public enum LumosConstants {
     public static let serviceUUID = "E853EB6A-775C-4A49-A6BF-320E6A5CC609"
 
     /// Binds generated code to the register that produced it (TRS-CONST-005).
-    public static let constantsHash = "sha256:cd16dcdf2cd4e16b4c90259fc5ee16f0e4890c9c00de72a7bd317b63475873fe"
+    public static let constantsHash = "sha256:2825a45f23c9533252baf7e6699dff84d80ea1c2af29880a7f6cad911c967151"
 
     /// Register schema version.
     public static let schemaVersion = 1
@@ -160,6 +160,18 @@ public enum LumosConstants {
 
     /// crypto_protocol.HELLO_V1_LAYOUT.x_public_len
     public static let helloV1LayoutXPublicLen = 32
+
+    /// crypto_protocol.MATCH_ID_KDF_INFO.overridable
+    public static let matchIDKdfInfoOverridable = false
+
+    /// crypto_protocol.MATCH_ID_KDF_INFO.value
+    public static let matchIDKdfInfoValue = "lumos/match-id/v1"
+
+    /// crypto_protocol.MATCH_ID_LEN.default
+    public static let matchIDLenDefault = 16
+
+    /// crypto_protocol.MATCH_ID_LEN.overridable
+    public static let matchIDLenOverridable = false
 
     /// crypto_protocol.MEDIA_OBJECT_KEY_INFO.overridable
     public static let mediaObjectKeyInfoOverridable = false
@@ -354,6 +366,18 @@ public enum LumosConstants {
 
     /// identity_discovery.EID_ROTATION_SEC.overridable
     public static let eidRotationSecOverridable = true
+
+    /// identity_discovery.INTEREST_COOLDOWN_SEC.default
+    public static let interestCooldownSecDefault = 900
+
+    /// identity_discovery.INTEREST_COOLDOWN_SEC.max
+    public static let interestCooldownSecMax = 3600
+
+    /// identity_discovery.INTEREST_COOLDOWN_SEC.min
+    public static let interestCooldownSecMin = 60
+
+    /// identity_discovery.INTEREST_COOLDOWN_SEC.overridable
+    public static let interestCooldownSecOverridable = true
 
     /// identity_discovery.INTEREST_RATE_LIMIT_PER_HOUR.default
     public static let interestRateLimitPerHourDefault = 20

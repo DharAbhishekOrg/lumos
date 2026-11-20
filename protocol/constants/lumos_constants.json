@@ -5,7 +5,7 @@
  "$generator": "tools/constantsgen",
  "service_uuid": "E853EB6A-775C-4A49-A6BF-320E6A5CC609",
  "$service_uuid_provenance": "One fixed 128-bit GATT service UUID per ADR-002 / TRS Sec. 9.3, generated once from a CSPRNG as an RFC 4122 version-4 UUID in WP-01 slice S2 and frozen here. Advertised by both platforms and used for scan filtering. No 16-bit alias is registered for flagship. Regenerating this value is a breaking protocol change.",
- "constants_hash": "sha256:cd16dcdf2cd4e16b4c90259fc5ee16f0e4890c9c00de72a7bd317b63475873fe",
+ "constants_hash": "sha256:2825a45f23c9533252baf7e6699dff84d80ea1c2af29880a7f6cad911c967151",
  "constants_hash_algorithm": {
   "digest": "SHA-256",
   "encoding": "lowercase hex, prefixed 'sha256:'",
@@ -73,6 +73,11 @@
    "default": 20, "min": 5, "max": 60, "overridable": true,
    "notes": "Rolling hour.",
    "anchors": ["SRS-MAT-011", "SRS-SAF-006"], "source": "TRS 23.1"
+  },
+  "INTEREST_COOLDOWN_SEC": {
+   "default": 900, "min": 60, "max": 3600, "overridable": true,
+   "notes": "How long the respectful cooldown message holds after the rolling-hour budget is spent (SRS-MAT-011). A venue config may shorten or lengthen it within bounds; it never disables the budget itself. Added in WP-04 S2 - the TRS states the limit and the messaging but not the hold, so the hold is frozen here per TRS Sec. 19.",
+   "anchors": ["SRS-MAT-011"], "source": "TRS 23.1 derivation"
   },
   "NEARBY_SYNTHETIC_LOAD_TARGET": {
    "default": 100, "overridable": false, "test_only": true,
@@ -481,6 +486,16 @@
    "default": 16, "overridable": false,
    "notes": "Bytes of the derived peer identifier.",
    "anchors": ["SRS-IDN-002"], "source": "SRS-IDN-002 derivation"
+  },
+  "MATCH_ID_KDF_INFO": {
+   "value": "lumos/match-id/v1", "overridable": false,
+   "notes": "Domain prefix of the stable match identifier: MATCH_ID_LEN bytes of SHA-256(info | lower_peer_id | higher_peer_id), the two PEER_ID_KDF_INFO identifiers in lexicographic byte order. Symmetric by construction, so BOTH sides of an accept-accept race derive the SAME identifier without a message (SRS-MAT-007, SRS-MAT-014); independent of every rotating EID by construction, because its inputs are. The lower identifier is also the race tiebreak: when both sides requested before either accepted, the peer with the lexicographically lower identifier acts as session initiator.",
+   "anchors": ["SRS-MAT-007", "SRS-MAT-014"], "adr": ["ADR-008"], "source": "SRS-MAT-007 derivation"
+  },
+  "MATCH_ID_LEN": {
+   "default": 16, "overridable": false,
+   "notes": "Bytes of the derived match identifier.",
+   "anchors": ["SRS-MAT-007"], "source": "SRS-MAT-007 derivation"
   },
   "ADV_KEY_KDF_INFO": {
    "value": "lumos/adv/k-adv/v1", "overridable": false,

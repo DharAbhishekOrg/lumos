@@ -57,6 +57,10 @@ var expectedRegister = map[string][]string{
 		// delivery rule (WP-03 S4), the same footing as the framing flag bits
 		// and the FRAG_* layout.
 		"HELLO_ACK_V1_LAYOUT", "HELLO_AUTH_INFO", "HELLO_V1_LAYOUT",
+		// MATCH_ID_* fix the SRS-MAT-007 stable-match-identifier derivation
+		// and the accept-accept race tiebreak under the TRS Sec. 19 AI
+		// delivery rule (WP-04 S2) - the PEER_ID_* precedent one layer up.
+		"MATCH_ID_KDF_INFO", "MATCH_ID_LEN",
 		"MEDIA_OBJECT_KEY_INFO", "MEDIA_OBJECT_KEY_WRAP_INFO",
 		"PEER_ID_KDF_INFO", "PEER_ID_LEN",
 		"RATCHET_HEADER_LAYOUT", "RATCHET_MESSAGE_KDF_INFO",
@@ -77,7 +81,10 @@ var expectedRegister = map[string][]string{
 	},
 	"identity_discovery": {
 		"ADV_AUTH_TAG_LEN", "ADV_V1_LAYOUT", "ADV_V1_SCAN_RESPONSE_LAYOUT",
-		"EID_ROTATION_SEC", "INTEREST_RATE_LIMIT_PER_HOUR",
+		// INTEREST_COOLDOWN_SEC: the TRS states the SRS-MAT-011 limit and its
+		// messaging but not how long the cooldown holds, so the hold is
+		// frozen in the register (WP-04 S2, TRS Sec. 19).
+		"EID_ROTATION_SEC", "INTEREST_COOLDOWN_SEC", "INTEREST_RATE_LIMIT_PER_HOUR",
 		"MAX_CONCURRENT_GATT_LINKS", "NEARBY_SYNTHETIC_LOAD_TARGET",
 		"PRESENCE_AGEOUT_SEC", "RESCAN_LADDER", "RSSI_BANDS_DBM",
 		"SCAN_WINDOW_FG_MS", "SCAN_WINDOW_VENUE_MS",
