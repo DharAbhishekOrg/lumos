@@ -1,0 +1,2340 @@
+{
+ "work_package": "WP-04",
+ "baseline": "SRS v1.1 / TRS v1.1 / EDP v1.0",
+ "generated_for_commit": "242e222",
+ "pipeline": {
+  "run_id": "44754667606",
+  "executed_tests_total": 1768,
+  "executed_tests_by_language": {
+   "go": 316,
+   "java": 1269,
+   "swift": 179,
+   "ts": 4
+  },
+  "languages_reporting": [
+   "go",
+   "java",
+   "swift",
+   "ts"
+  ]
+ },
+ "totals": {
+  "matrix_entries": 648,
+  "matrix_by_status": {
+   "implemented": 49,
+   "not_started": 507,
+   "tested": 92
+  },
+  "in_scope_count": 21,
+  "in_scope_by_status": {
+   "implemented": 5,
+   "not_started": 4,
+   "tested": 12
+  },
+  "out_of_scope_but_moved_count": 124
+ },
+ "in_scope": [
+  {
+   "req_id": "SRS-IDN-005",
+   "status": "tested",
+   "tests": [
+    "go:protocol/crypto/safety:TestAlphabetMeetsADR009MechanicalCriteria",
+    "go:protocol/crypto/safety:TestDistinctIdentitiesDiverge",
+    "go:protocol/crypto/safety:TestSafetyNumberDependsOnlyOnEd25519",
+    "go:protocol/crypto/safety:TestShapeAndSymmetry",
+    "go:protocol/crypto:TestConformanceSafetyNumber"
+   ],
+   "code_paths": 2,
+   "test_count": 5,
+   "tests_executed_this_run": 5
+  },
+  {
+   "req_id": "SRS-IDN-006",
+   "status": "not_started",
+   "tests": [],
+   "code_paths": 0,
+   "test_count": 0
+  },
+  {
+   "req_id": "SRS-MAT-001",
+   "status": "implemented",
+   "tests": [
+    "java:app-dev:MutualConsentFlowTest.aDeclineTransmitsNothingAndNoConversationCrossesBeforeAMatch"
+   ],
+   "code_paths": 1,
+   "test_count": 1,
+   "tests_executed_this_run": 1
+  },
+  {
+   "req_id": "SRS-MAT-002",
+   "status": "tested",
+   "tests": [
+    "go:protocol/match:TestCommittedWireCasesReproduceByteForByte",
+    "go:protocol/match:TestRequestRoundTripsAndRefusesStructurally",
+    "java:app-dev:MutualConsentFlowTest.aDeclineTransmitsNothingAndNoConversationCrossesBeforeAMatch",
+    "java:protocol-conformance:MatchConformanceTest.committedWireCasesReproduceByteForByte",
+    "swift:LumosProtocolConformance:MatchConformanceTests.testCommittedWireCasesReproduceByteForByte"
+   ],
+   "code_paths": 5,
+   "test_count": 5,
+   "tests_executed_this_run": 5
+  },
+  {
+   "req_id": "SRS-MAT-003",
+   "status": "implemented",
+   "tests": [
+    "go:protocol/match:TestEveryPairIsEitherATransitionOrADeliberateAbsorption",
+    "java:app-dev:InterestLedgerTest.stateSurvivesARestartAndOnePeerKeepsOneRow",
+    "java:protocol-conformance:MatchConformanceTest.committedTimelinesReplayStepForStep",
+    "swift:LumosAppShell:InterestLedgerTests.testStateSurvivesARestartAndOnePeerKeepsOneRow",
+    "swift:LumosProtocolConformance:MatchConformanceTests.testCommittedTimelinesReplayStepForStep"
+   ],
+   "code_paths": 6,
+   "test_count": 5,
+   "tests_executed_this_run": 5
+  },
+  {
+   "req_id": "SRS-MAT-004",
+   "status": "tested",
+   "tests": [
+    "go:protocol/match:TestDecliningAndIgnoringNeverTransmitAnything",
+    "go:protocol/match:TestTheFamilyItselfKeepsTheSilenceAndTheSingleDoor",
+    "go:protocol/match:TestTheResponseAlphabetHoldsExactlyTwoWords",
+    "java:app-dev:MutualConsentFlowTest.aDeclineTransmitsNothingAndNoConversationCrossesBeforeAMatch",
+    "java:protocol-conformance:MatchConformanceTest.theFamilyKeepsTheSilenceAndTheSingleDoorOnThisPlatformToo",
+    "swift:LumosProtocolConformance:MatchConformanceTests.testTheFamilyKeepsTheSilenceAndTheSingleDoorOnThisPlatformToo"
+   ],
+   "code_paths": 8,
+   "test_count": 6,
+   "tests_executed_this_run": 6
+  },
+  {
+   "req_id": "SRS-MAT-005",
+   "status": "tested",
+   "tests": [
+    "go:protocol/match:TestTheOnlyDoorIsMutualAcceptance",
+    "java:app-dev:InterestLedgerTest.bothSidesOfTheRaceDeriveTheSameMatchIdentifier",
+    "java:app-dev:MutualConsentFlowTest.mutualAcceptanceOpensTheDoorWithOneIdentifierAndOneToken",
+    "java:protocol-conformance:MatchConformanceTest.committedTimelinesReplayStepForStep",
+    "swift:LumosAppShell:InterestLedgerTests.testBothSidesOfTheRaceDeriveTheSameMatchIdentifier",
+    "swift:LumosProtocolConformance:MatchConformanceTests.testCommittedTimelinesReplayStepForStep"
+   ],
+   "code_paths": 8,
+   "test_count": 6,
+   "tests_executed_this_run": 6
+  },
+  {
+   "req_id": "SRS-MAT-006",
+   "status": "tested",
+   "tests": [
+    "java:app-dev:MutualConsentFlowTest.aDeclineTransmitsNothingAndNoConversationCrossesBeforeAMatch",
+    "java:protocol-conformance:ConsentGateTest.conversationNeverFlowsBeforeAMatchAndConsentNeverAfterABlock",
+    "java:protocol-conformance:ConsentGateTest.everyClassIsDecidedExactlyOnce",
+    "swift:LumosProtocolConformance:MatchConformanceTests.testTheConsentGateDecidesEveryClassOnceAndHoldsTheDoor"
+   ],
+   "code_paths": 3,
+   "test_count": 4,
+   "tests_executed_this_run": 4
+  },
+  {
+   "req_id": "SRS-MAT-007",
+   "status": "tested",
+   "tests": [
+    "go:protocol/match:TestCommittedDerivationsReproduceByteForByte",
+    "go:protocol/match:TestTheIdentifierIsSymmetricAndTheRightLength",
+    "java:app-dev:InterestLedgerTest.bothSidesOfTheRaceDeriveTheSameMatchIdentifier",
+    "java:protocol-conformance:MatchConformanceTest.committedDerivationsReproduceByteForByte",
+    "swift:LumosAppShell:InterestLedgerTests.testBothSidesOfTheRaceDeriveTheSameMatchIdentifier",
+    "swift:LumosProtocolConformance:MatchConformanceTests.testCommittedDerivationsReproduceByteForByte"
+   ],
+   "code_paths": 8,
+   "test_count": 6,
+   "tests_executed_this_run": 6
+  },
+  {
+   "req_id": "SRS-MAT-008",
+   "status": "tested",
+   "tests": [
+    "go:protocol/match:TestCommittedTokensReproduceExactly",
+    "go:protocol/match:TestTheTokenIsAPureFunctionOfTheMatchIdentifier",
+    "java:protocol-conformance:MatchConformanceTest.committedTokensReproduceExactly",
+    "swift:LumosProtocolConformance:MatchConformanceTests.testCommittedTokensReproduceExactly"
+   ],
+   "code_paths": 4,
+   "test_count": 4,
+   "tests_executed_this_run": 4
+  },
+  {
+   "req_id": "SRS-MAT-009",
+   "status": "tested",
+   "tests": [
+    "go:protocol/match:TestTheResponseAlphabetHoldsExactlyTwoWords",
+    "java:app-dev:MutualConsentFlowTest.mutualAcceptanceOpensTheDoorWithOneIdentifierAndOneToken",
+    "java:protocol-conformance:MatchConformanceTest.committedWireCasesReproduceByteForByte",
+    "swift:LumosProtocolConformance:MatchConformanceTests.testCommittedWireCasesReproduceByteForByte"
+   ],
+   "code_paths": 5,
+   "test_count": 4,
+   "tests_executed_this_run": 4
+  },
+  {
+   "req_id": "SRS-MAT-010",
+   "status": "implemented",
+   "tests": [
+    "java:app-dev:InterestLedgerTest.unmatchingFlipsTheMatchRecordWithoutDeletingIt",
+    "swift:LumosAppShell:InterestLedgerTests.testUnmatchingFlipsTheMatchRecordWithoutDeletingIt"
+   ],
+   "code_paths": 2,
+   "test_count": 2,
+   "tests_executed_this_run": 2
+  },
+  {
+   "req_id": "SRS-MAT-011",
+   "status": "tested",
+   "tests": [
+    "go:protocol/match:TestTheBudgetIsARollingHour",
+    "go:protocol/match:TestTheCooldownHoldsItsFloorAndItsTruth",
+    "java:app-dev:InterestLedgerTest.aRateLimitedRequestNeverReachesTheMachineAndTheBudgetSurvivesRestart",
+    "java:app-dev:PersistedBudgetTest.theBudgetIsARollingHourOverTheSealedRow",
+    "java:app-dev:PersistedBudgetTest.theCooldownHoldsItsFloorAndItsTruth",
+    "swift:LumosAppShell:InterestLedgerTests.testARateLimitedRequestNeverReachesTheMachineAndSurvivesRestart"
+   ],
+   "code_paths": 4,
+   "test_count": 6,
+   "tests_executed_this_run": 6
+  },
+  {
+   "req_id": "SRS-MAT-012",
+   "status": "not_started",
+   "tests": [],
+   "code_paths": 0,
+   "test_count": 0
+  },
+  {
+   "req_id": "SRS-MAT-013",
+   "status": "not_started",
+   "tests": [],
+   "code_paths": 0,
+   "test_count": 0
+  },
+  {
+   "req_id": "SRS-MAT-014",
+   "status": "tested",
+   "tests": [
+    "go:protocol/match:TestCommittedTimelinesReplayExactly",
+    "go:protocol/match:TestDuplicatesReordersAndDeadEchoesAllAbsorb",
+    "go:protocol/match:TestTheAcceptAcceptRaceYieldsOneMatchAndOneIdentifier",
+    "java:app-dev:InterestLedgerTest.absorbedReplaysWriteNothing",
+    "java:app-dev:MutualConsentFlowTest.mutualAcceptanceOpensTheDoorWithOneIdentifierAndOneToken",
+    "java:app-dev:MutualConsentFlowTest.theAcceptAcceptRaceOverTheWireYieldsOneMatch",
+    "java:protocol-conformance:MatchConformanceTest.committedTimelinesReplayStepForStep",
+    "swift:LumosAppShell:InterestLedgerTests.testAbsorbedReplaysWriteNothing",
+    "swift:LumosProtocolConformance:MatchConformanceTests.testCommittedTimelinesReplayStepForStep"
+   ],
+   "code_paths": 7,
+   "test_count": 9,
+   "tests_executed_this_run": 9
+  },
+  {
+   "req_id": "SRS-MED-003",
+   "status": "tested",
+   "tests": [
+    "java:app-dev:MutualConsentFlowTest.aDeclineTransmitsNothingAndNoConversationCrossesBeforeAMatch",
+    "java:protocol-conformance:ConsentGateTest.conversationNeverFlowsBeforeAMatchAndConsentNeverAfterABlock",
+    "swift:LumosProtocolConformance:MatchConformanceTests.testTheConsentGateDecidesEveryClassOnceAndHoldsTheDoor"
+   ],
+   "code_paths": 3,
+   "test_count": 3,
+   "tests_executed_this_run": 3
+  },
+  {
+   "req_id": "SRS-NFR-REL-004",
+   "status": "tested",
+   "tests": [
+    "go:protocol/match:TestCommittedTimelinesReplayExactly",
+    "go:protocol/match:TestDuplicatesReordersAndDeadEchoesAllAbsorb",
+    "go:protocol/match:TestEveryPairIsEitherATransitionOrADeliberateAbsorption",
+    "java:protocol-conformance:MatchConformanceTest.committedTimelinesReplayStepForStep",
+    "swift:LumosProtocolConformance:MatchConformanceTests.testCommittedTimelinesReplayStepForStep"
+   ],
+   "code_paths": 4,
+   "test_count": 5,
+   "tests_executed_this_run": 5
+  },
+  {
+   "req_id": "SRS-SAF-001",
+   "status": "not_started",
+   "tests": [],
+   "code_paths": 0,
+   "test_count": 0
+  },
+  {
+   "req_id": "SRS-SAF-002",
+   "status": "implemented",
+   "tests": [
+    "java:app-dev:NearbyFeedControllerTest.aBlockedIdentityNeverReappearsUnderRotation",
+    "java:protocol-conformance:ConsentGateTest.conversationNeverFlowsBeforeAMatchAndConsentNeverAfterABlock"
+   ],
+   "code_paths": 3,
+   "test_count": 2,
+   "tests_executed_this_run": 2
+  },
+  {
+   "req_id": "TRS-ARCH-009",
+   "status": "implemented",
+   "tests": [
+    "java:app-dev:MutualConsentFlowTest.aGarbledFrameIsRefusedWithItsCodeAndChangesNothing"
+   ],
+   "code_paths": 1,
+   "test_count": 1,
+   "tests_executed_this_run": 1
+  }
+ ],
+ "out_of_scope_but_moved": [
+  {
+   "req_id": "SRS-DAT-002",
+   "status": "tested",
+   "tests": [
+    "java:app-dev:StorageEncryptionTest.noSensitiveValueAppearsInTheDatabaseFile",
+    "java:app-dev:StorageEncryptionTest.aDifferentDatabaseKeyCannotOpenTheRecords",
+    "java:app-dev:StorageEncryptionTest.aRowMovedToAnotherIdCannotBeOpened",
+    "java:app-dev:StorageEncryptionTest.aRowMovedToAnotherTableCannotBeOpened",
+    "swift:LumosAppShell:LocalStoreTests.testNoSensitiveValueAppearsInTheDatabaseFile",
+    "swift:LumosAppShell:LocalStoreTests.testADifferentKeyCannotOpenTheRecords",
+    "swift:LumosAppShell:LocalStoreTests.testRelocatedRowCannotBeOpened"
+   ],
+   "code_paths": 5,
+   "test_count": 7,
+   "tests_executed_this_run": 7
+  },
+  {
+   "req_id": "SRS-DAT-004",
+   "status": "tested",
+   "tests": [
+    "go:protocol/crypto/recovery:TestADowngradedHeaderCannotProduceACheaperKey",
+    "go:protocol/crypto/recovery:TestAbsurdParamsAreRefusedBeforeAnyDerivation",
+    "go:protocol/crypto/recovery:TestExportOpenRoundTrips",
+    "go:protocol/crypto/recovery:TestOnlyASingleLaneIsAccepted",
+    "go:protocol/crypto/recovery:TestTheRecordCarriesNoKeyMaterial",
+    "go:protocol/crypto/recovery:TestTheRegisterAgreesWithTheSingleLaneRule",
+    "go:protocol/crypto:TestConformanceRecoveryDerivation",
+    "go:protocol/crypto:TestConformanceRecoveryFailuresAreIndistinguishable",
+    "go:protocol/crypto:TestConformanceRecoveryFormatAndLimits",
+    "go:protocol/crypto:TestConformanceRecoveryNegatives",
+    "go:protocol/crypto:TestConformanceRecoveryPositives",
+    "java:app-dev:OnboardingCopyTest.theRecoveryCopySaysTheKeysAreNotInTheFileAndTheDestinationIsTheirs",
+    "java:app-dev:RecoveryFlowTest.aBundleFromANewerBuildIsRefusedRatherThanPartlyRestored",
+    "java:app-dev:RecoveryFlowTest.aWrongPassphraseRestoresNothingAndChangesNoIdentity",
+    "java:app-dev:RecoveryFlowTest.assembleCarriesTheContentSectionsAndNamesTheOnesItCannot",
+    "java:app-dev:RecoveryFlowTest.restoreOntoAnEmptyDeviceBringsTheContentBack",
+    "java:app-dev:RecoveryFlowTest.restoreTellsTheUserWhatCouldNotBeInTheFile",
+    "java:app-dev:RecoveryFlowTest.restoreYieldsAFreshIdentity",
+    "java:app-dev:RecoveryFlowTest.theExportCarriesNoKeyMaterial",
+    "java:app-dev:RecoveryFlowTest.theExportZeroesThePassphraseItWasGiven",
+    "java:app-dev:RecoveryFlowTest.theExportedContentIsActuallyInThere",
+    "java:app-dev:RecoveryFlowTest.twoExportsOfTheSameContentDifferButBothOpen",
+    "java:app-instrumented:RecoveryFlowInstrumentedTest.aLibsodiumSealedExportCarriesNoIdentityMaterial",
+    "java:app-instrumented:RecoveryFlowInstrumentedTest.aWrongPassphraseIsRefusedIndistinguishablyByTheRealBinding",
+    "java:app-instrumented:RecoveryFlowInstrumentedTest.anExportSealedByLibsodiumOpensBackToTheSameContent",
+    "java:app-instrumented:RecoveryFlowInstrumentedTest.twoExportsOfTheSameContentDifferAndBothOpen",
+    "java:app-instrumented:RecoveryRecordInstrumentedTest.anExportedRecordLeaksNeitherPassphraseNorContent",
+    "java:app-instrumented:RecoveryRecordInstrumentedTest.argon2idAgreesWithTheReferenceDerivation",
+    "java:app-instrumented:RecoveryRecordInstrumentedTest.everyCommittedRecordOpensAndReSeals",
+    "java:app-instrumented:RecoveryRecordInstrumentedTest.everyNegativeVectorIsRefusedWithTheRightCode",
+    "java:app-instrumented:RecoveryRecordInstrumentedTest.openingFailuresAreIndistinguishable",
+    "java:app-instrumented:RecoveryRecordInstrumentedTest.theAcceptedBoundsMatchTheVectorFile",
+    "java:app-instrumented:RecoveryRecordInstrumentedTest.theFormatConstantsMatchTheVectorFile",
+    "java:app-instrumented:RecoveryRecordInstrumentedTest.twoExportsOfTheSameContentDiffer",
+    "swift:LumosAppShell:OnboardingTests.testABundleFromANewerBuildIsRefusedRatherThanPartlyRestored",
+    "swift:LumosAppShell:OnboardingTests.testAWrongPassphraseRestoresNothingAndChangesNoIdentity",
+    "swift:LumosAppShell:OnboardingTests.testAnExportCarriesTheContentSectionsAndNamesTheOnesItCannot",
+    "swift:LumosAppShell:OnboardingTests.testAnExportRestoresOntoAFreshIdentityAndCarriesNoKeyMaterial",
+    "swift:LumosAppShell:OnboardingTests.testTheBundleFormatIsTheOneAndroidWrites",
+    "swift:LumosAppShell:RecoveryRecordTests.testAcceptedBoundsMatchTheVectorFile",
+    "swift:LumosAppShell:RecoveryRecordTests.testAnExportedRecordLeaksNeitherPassphraseNorContent",
+    "swift:LumosAppShell:RecoveryRecordTests.testArgon2idAgreesWithTheReferenceDerivation",
+    "swift:LumosAppShell:RecoveryRecordTests.testDescribeReadsTheHeaderWithoutThePassphrase",
+    "swift:LumosAppShell:RecoveryRecordTests.testEveryCommittedRecordOpensAndReSeals",
+    "swift:LumosAppShell:RecoveryRecordTests.testEveryNegativeVectorIsRefusedWithTheRightCode",
+    "swift:LumosAppShell:RecoveryRecordTests.testFormatConstantsMatchTheVectorFile",
+    "swift:LumosAppShell:RecoveryRecordTests.testOpeningFailuresCarryNoDistinguishingDetail",
+    "swift:LumosAppShell:RecoveryRecordTests.testTwoExportsOfTheSameContentDiffer"
+   ],
+   "code_paths": 20,
+   "test_count": 48,
+   "tests_executed_this_run": 48
+  },
+  {
+   "req_id": "SRS-IDN-001",
+   "status": "implemented",
+   "tests": [
+    "java:app-dev:IdentityBindingVectorsTest.theJcaBackendReproducesEveryCommittedSignature",
+    "java:app-dev:IdentityKeyGeneratorTest.bindingSignatureVerifies",
+    "java:app-dev:IdentityKeyGeneratorTest.destroyingTheKekErasesTheIdentity",
+    "java:app-dev:IdentityKeyGeneratorTest.twoIdentitiesAreDistinct",
+    "java:app-dev:IdentityKeyGeneratorTest.verificationFailsClosedOnEveryTamperedInput",
+    "java:app-instrumented:IdentityGenerationInstrumentedTest.generationRunsOnThisRuntimeUnderTheRealKeystore",
+    "java:app-instrumented:IdentityGenerationInstrumentedTest.theLibsodiumBackendReproducesEveryCommittedVector",
+    "java:app-instrumented:IdentityGenerationInstrumentedTest.whereThisRuntimeHasJcaEd25519ItAgreesWithLibsodium",
+    "swift:LumosAppShell:IdentityKeyTests.testBindingMessageIsInfoThenRawKey",
+    "swift:LumosAppShell:IdentityKeyTests.testBindingSignatureVerifies",
+    "swift:LumosAppShell:IdentityKeyTests.testDestroyingTheKekErasesTheIdentity",
+    "swift:LumosAppShell:IdentityKeyTests.testVerificationFailsClosedOnEveryTamperedInput",
+    "swift:LumosProtocolConformance:IdentityBindingConformanceTests.testPositivesDeriveVerifyAndRoundTrip"
+   ],
+   "code_paths": 11,
+   "test_count": 13,
+   "tests_executed_this_run": 13
+  },
+  {
+   "req_id": "SRS-IDN-002",
+   "status": "tested",
+   "tests": [
+    "go:protocol/hello:TestPeerIDIsStableAcrossEIDRotation",
+    "java:protocol-conformance:HelloConformanceTest.thePeerIdDerivationIsIdentityMaterialAlone",
+    "swift:LumosAppShell:PresenceTableTests.testOneIdentityStaysOneCardAcrossEidRotations"
+   ],
+   "code_paths": 4,
+   "test_count": 3,
+   "tests_executed_this_run": 3
+  },
+  {
+   "req_id": "SRS-IDN-003",
+   "status": "tested",
+   "tests": [
+    "java:app-dev:DeviceAuthPolicyTest.everyPurposeRequiresThePrompt",
+    "java:app-dev:DeviceAuthPolicyTest.thePurposeListIsTheFourMomentsTheOwnerRulingNames",
+    "java:app-dev:IdentityResetTest.aResetWithoutAConfirmationIsRefused",
+    "java:app-dev:IdentityResetTest.aWipeConfirmationCannotBeSpentOnAReset",
+    "java:app-dev:IdentityResetTest.contentSurvivesAResetBecauseAResetIsNotAWipe",
+    "java:app-dev:IdentityResetTest.theIdentityIsReplacedAndTheOldPublicKeyIsGone",
+    "java:app-dev:IdentityResetTest.theNewIdentityIsAProperlyBoundOne",
+    "java:app-dev:IdentityResetTest.theWarningIsHonestOnADeviceWithNoIdentityYet",
+    "java:app-dev:IdentityResetTest.theWarningNamesMatchesConversationsAndWhatSurvives",
+    "java:app-dev:IdentityResetTest.thereIsExactlyOneStoredIdentityAfterwards",
+    "java:app-dev:OnboardingCopyTest.theConfirmationPhrasesAreTheOnesTheCodeCompares",
+    "java:app-dev:OnboardingCopyTest.theResetCopySaysWhatIsLostAndWhatIsKept",
+    "java:app-instrumented:IdentityGenerationInstrumentedTest.generationRunsOnThisRuntimeUnderTheRealKeystore",
+    "swift:LumosAppShell:OnboardingTests.testAResetReplacesBothHalvesOfTheIdentityAndKeepsTheContent",
+    "swift:LumosAppShell:OnboardingTests.testTheResetWarningNamesMatchesConversationsAndWhatSurvives"
+   ],
+   "code_paths": 7,
+   "test_count": 15,
+   "tests_executed_this_run": 15
+  },
+  {
+   "req_id": "SRS-IDN-004",
+   "status": "implemented",
+   "tests": [
+    "go:protocol/adv:TestConformanceAdvSchedule",
+    "go:protocol/adv:TestEIDIsUnlinkableAcrossEpochs",
+    "go:protocol/adv:TestEpochUsesRegisterCadence",
+    "java:protocol-conformance:CryptoConformanceTest.advertisement",
+    "swift:LumosProtocolConformance:CryptoConformanceTests.testAdvertisementScheduleAndNegatives",
+    "java:app-dev:AdvertisingControllerTest.rotationReAdvertisesWithAnUnlinkablePayload"
+   ],
+   "code_paths": 5,
+   "test_count": 6,
+   "tests_executed_this_run": 6
+  },
+  {
+   "req_id": "SRS-NBY-001",
+   "status": "tested",
+   "tests": [
+    "java:app-dev:VisibleNearbyDurationTest.theDefaultSessionEndsExactlyOnTheRegisterDefault",
+    "java:app-dev:VisibleNearbyDurationTest.aCustomDurationIsHeldToTheRegisterBounds",
+    "java:app-dev:VisibleNearbyDurationTest.untilVenueExitEndsOnTheVenueEventAndOnlyThen"
+   ],
+   "code_paths": 2,
+   "test_count": 3,
+   "tests_executed_this_run": 3
+  },
+  {
+   "req_id": "SRS-NBY-002",
+   "status": "tested",
+   "tests": [
+    "java:app-dev:VisibleNearbyDurationTest.theDefaultSessionEndsExactlyOnTheRegisterDefault",
+    "java:app-dev:OnboardingCopyTest.theVisibilityCopyPromisesSelfExpiryAndNeverSelfStart"
+   ],
+   "code_paths": 1,
+   "test_count": 2,
+   "tests_executed_this_run": 2
+  },
+  {
+   "req_id": "SRS-NBY-003",
+   "status": "implemented",
+   "tests": [
+    "java:app-dev:VisibleNearbyDurationTest.theIndicatorReportsTheModeAndTheEnd",
+    "java:app-instrumented:NearbyStatesInstrumentedTest.theIndicatorShowsOnlyWhileAdvertisingAndStopIsOneAction"
+   ],
+   "code_paths": 4,
+   "test_count": 2,
+   "tests_executed_this_run": 2
+  },
+  {
+   "req_id": "SRS-NBY-004",
+   "status": "tested",
+   "tests": [
+    "go:protocol/adv:TestLayoutMatchesADR002",
+    "go:protocol/adv:TestNoProhibitedContentCapacity",
+    "java:protocol-conformance:CryptoConformanceTest.advertisement",
+    "swift:LumosProtocolConformance:CryptoConformanceTests.testAdvertisementScheduleAndNegatives"
+   ],
+   "code_paths": 3,
+   "test_count": 4,
+   "tests_executed_this_run": 4
+  },
+  {
+   "req_id": "SRS-NBY-005",
+   "status": "implemented",
+   "tests": [
+    "java:app-dev:RescanLadderTest.outsideTheGateNothingEscalates",
+    "java:app-dev:ScanDutyCycleTest.aScanFailureStopsTheCycleAndSurfacesTheTypedState",
+    "java:app-dev:ScanDutyCycleTest.bothProfilesSitInsideTheirOwnDutyBounds",
+    "java:app-dev:ScanDutyCycleTest.stopIsIdempotentAndCancelsTheNextPhase",
+    "java:app-dev:ScanDutyCycleTest.sustainedCyclingMakesExactlyTheBudgetedWindows",
+    "java:app-dev:ScanDutyCycleTest.theCycleAlternatesOnTheRegisterWindows"
+   ],
+   "code_paths": 4,
+   "test_count": 6,
+   "tests_executed_this_run": 6
+  },
+  {
+   "req_id": "SRS-NBY-006",
+   "status": "tested",
+   "tests": [
+    "java:app-dev:PresenceTableTest.oneIdentityStaysOneCardAcrossEidRotations",
+    "java:app-dev:VenueFeedPathTest.aFullVenueFlowsSightingToTriageToHelloToPresenceUnderTheBudget",
+    "swift:LumosAppShell:PresenceTableTests.testOneIdentityStaysOneCardAcrossEidRotations",
+    "swift:LumosAppShell:VenueFeedPathTests.testAFullVenueFlowsSightingToTriageToHelloToPresenceUnderTheBudget"
+   ],
+   "code_paths": 3,
+   "test_count": 4,
+   "tests_executed_this_run": 4
+  },
+  {
+   "req_id": "SRS-NBY-007",
+   "status": "tested",
+   "tests": [
+    "java:app-dev:PresenceTableTest.staleCardsAgeOutOnTheRegisterBound",
+    "java:app-dev:VenueFeedPathTest.aFullVenueFlowsSightingToTriageToHelloToPresenceUnderTheBudget",
+    "swift:LumosAppShell:PresenceTableTests.testStaleCardsAgeOutOnTheRegisterBound",
+    "swift:LumosAppShell:VenueFeedPathTests.testAFullVenueFlowsSightingToTriageToHelloToPresenceUnderTheBudget"
+   ],
+   "code_paths": 2,
+   "test_count": 4,
+   "tests_executed_this_run": 4
+  },
+  {
+   "req_id": "SRS-NBY-008",
+   "status": "implemented",
+   "tests": [
+    "java:app-dev:NearbyCopyTest.noPlumbingVocabularyReachesAUser"
+   ],
+   "code_paths": 3,
+   "test_count": 1,
+   "tests_executed_this_run": 1
+  },
+  {
+   "req_id": "SRS-NBY-010",
+   "status": "tested",
+   "tests": [
+    "java:app-dev:NearbyFeedControllerTest.everyTypedScanFailureFoldsToAStateTheUserCanActOn",
+    "java:app-instrumented:NearbyStatesInstrumentedTest.everyRadioSituationShowsItsOwnSentenceAndEmptyIsASentenceNotASpinner",
+    "swift:LumosAppShell:NearbyFeedTests.testEveryTypedScanFailureFoldsToAStateTheUserCanActOn"
+   ],
+   "code_paths": 6,
+   "test_count": 3,
+   "tests_executed_this_run": 3
+  },
+  {
+   "req_id": "SRS-NBY-011",
+   "status": "implemented",
+   "tests": [
+    "java:app-dev:NearbyFeedControllerTest.theInterestFilterIsLocalAndOptIn",
+    "swift:LumosAppShell:NearbyFeedTests.testTheInterestFilterIsLocalAndOptInAndCardsArriveNewestFirst"
+   ],
+   "code_paths": 2,
+   "test_count": 2,
+   "tests_executed_this_run": 2
+  },
+  {
+   "req_id": "SRS-NBY-012",
+   "status": "implemented",
+   "tests": [
+    "java:app-dev:NearbyFeedControllerTest.aHiddenCardStaysGoneForAFreshControllerOverTheSameStore",
+    "swift:LumosAppShell:NearbyFeedTests.testHiddenStaysGoneAndBlockedNeverReappearsUnderRotation"
+   ],
+   "code_paths": 5,
+   "test_count": 2,
+   "tests_executed_this_run": 2
+  },
+  {
+   "req_id": "SRS-NBY-013",
+   "status": "tested",
+   "tests": [
+    "java:app-dev:NearbyFeedControllerTest.aBlockedIdentityNeverReappearsUnderRotation",
+    "swift:LumosAppShell:NearbyFeedTests.testHiddenStaysGoneAndBlockedNeverReappearsUnderRotation"
+   ],
+   "code_paths": 6,
+   "test_count": 2,
+   "tests_executed_this_run": 2
+  },
+  {
+   "req_id": "SRS-NBY-014",
+   "status": "implemented",
+   "tests": [
+    "java:app-dev:NearbyFeedControllerTest.emptyIsAFirstClassStateAndCardsArriveNewestConfirmedFirst",
+    "java:app-instrumented:NearbyStatesInstrumentedTest.everyRadioSituationShowsItsOwnSentenceAndEmptyIsASentenceNotASpinner",
+    "swift:LumosAppShell:NearbyFeedTests.testTheInterestFilterIsLocalAndOptInAndCardsArriveNewestFirst"
+   ],
+   "code_paths": 6,
+   "test_count": 3,
+   "tests_executed_this_run": 3
+  },
+  {
+   "req_id": "SRS-NBY-015",
+   "status": "implemented",
+   "tests": [
+    "java:app-dev:FeedResponsivenessTest.aHundredRefreshesOverAHundredPlusPeersFitInsideTheStallBudget",
+    "swift:LumosAppShell:NearbyFeedTests.testAHundredRefreshesOverAHundredPlusPeersFitTheStallBudget"
+   ],
+   "code_paths": 2,
+   "test_count": 2,
+   "tests_executed_this_run": 2
+  },
+  {
+   "req_id": "SRS-NBY-016",
+   "status": "tested",
+   "tests": [
+    "java:app-dev:NearbyCopyTest.noStringClaimsADistance",
+    "java:app-dev:OnboardingCopyTest.proximityIsWordsAndNeverADistance"
+   ],
+   "code_paths": 2,
+   "test_count": 2,
+   "tests_executed_this_run": 2
+  },
+  {
+   "req_id": "SRS-NBY-017",
+   "status": "implemented",
+   "tests": [
+    "java:app-instrumented:NearbyStatesInstrumentedTest.theIndicatorShowsOnlyWhileAdvertisingAndStopIsOneAction"
+   ],
+   "code_paths": 4,
+   "test_count": 1,
+   "tests_executed_this_run": 1
+  },
+  {
+   "req_id": "SRS-NFR-BAT-001",
+   "status": "implemented",
+   "tests": [
+    "java:app-dev:RescanLadderTest.outsideTheGateNothingEscalates",
+    "java:app-dev:ScanDutyCycleTest.bothProfilesSitInsideTheirOwnDutyBounds",
+    "swift:LumosAppShell:RescanLadderTests.testOutsideTheGateNothingEscalates"
+   ],
+   "code_paths": 3,
+   "test_count": 3,
+   "tests_executed_this_run": 3
+  },
+  {
+   "req_id": "SRS-NFR-CMP-004",
+   "status": "tested",
+   "tests": [
+    "java:protocol-conformance:FramingConformanceTest.frameRoundtrip",
+    "java:protocol-conformance:CryptoConformanceTest.aeadKat",
+    "java:protocol-conformance:CryptoConformanceTest.mediaPipeline",
+    "swift:LumosProtocolConformance:FramingConformanceTests.testFrameRoundtripReproducesCommittedBytes",
+    "swift:LumosProtocolConformance:CryptoConformanceTests.testMediaObjectPipeline"
+   ],
+   "code_paths": 4,
+   "test_count": 5,
+   "tests_executed_this_run": 5
+  },
+  {
+   "req_id": "SRS-NFR-LEG-007",
+   "status": "implemented",
+   "tests": [
+    "go:tools/constantsgen:TestGoldenValues",
+    "go:tools/constantsgen:TestRegisterCoversTRSSection23",
+    "java:app-dev:AgeGateTest.theMinimumComesFromTheRegisterAndIsEighteen",
+    "swift:LumosAppShell:OnboardingTests.testTheMinimumComesFromTheRegisterAndIsEighteen"
+   ],
+   "code_paths": 3,
+   "test_count": 4,
+   "tests_executed_this_run": 4
+  },
+  {
+   "req_id": "SRS-NFR-PERF-009",
+   "status": "implemented",
+   "tests": [
+    "java:app-dev:FeedResponsivenessTest.aHundredRefreshesOverAHundredPlusPeersFitInsideTheStallBudget",
+    "swift:LumosAppShell:NearbyFeedTests.testAHundredRefreshesOverAHundredPlusPeersFitTheStallBudget"
+   ],
+   "code_paths": 2,
+   "test_count": 2,
+   "tests_executed_this_run": 2
+  },
+  {
+   "req_id": "SRS-NFR-PRI-012",
+   "status": "tested",
+   "tests": [
+    "java:app-dev:PostWipeRemnantScanTest.aCompletedWipeLeavesNoPlaintextRemnantOfAnyStoredValue",
+    "java:app-instrumented:EmergencyWipeInstrumentedTest.at019TheWipeRunsEndToEndOnDeviceAndLeavesNoPlaintextRemnant"
+   ],
+   "code_paths": 4,
+   "test_count": 2,
+   "tests_executed_this_run": 2
+  },
+  {
+   "req_id": "SRS-NFR-SEC-002",
+   "status": "tested",
+   "tests": [
+    "go:protocol/crypto/x3dh:TestIdentityBindingVectorsReproduceThroughTheRealPath",
+    "java:app-dev:IdentityBindingVectorsTest.theJcaBackendReproducesEveryCommittedSignature",
+    "java:app-instrumented:IdentityGenerationInstrumentedTest.generationRunsOnThisRuntimeUnderTheRealKeystore",
+    "java:app-instrumented:IdentityGenerationInstrumentedTest.theLibsodiumBackendReproducesEveryCommittedVector"
+   ],
+   "code_paths": 6,
+   "test_count": 4,
+   "tests_executed_this_run": 4
+  },
+  {
+   "req_id": "SRS-NFR-SEC-003",
+   "status": "implemented",
+   "tests": [
+    "java:app-dev:AppLockTest.enabledLockShutsOnBackgroundAndOpensOnlyOnConfirmed",
+    "java:app-dev:DeviceAuthPolicyTest.everyPurposeRequiresThePrompt",
+    "java:app-dev:IdentityKeyGeneratorTest.privateKeysExistOnlyInsideTheWrappedEnvelope",
+    "java:app-dev:KekStoreContractTest.interfaceCarriesExactlyTheNarrowOperationSet",
+    "java:app-dev:KekStoreContractTest.noMethodReturnsKeyMaterialTypes",
+    "java:app-dev:SoftwareKekStoreTest.destroyedStoreRefusesEverything",
+    "swift:LumosAppShell:IdentityKeyTests.testPrivateKeysExistOnlyInsideTheWrappedEnvelope",
+    "swift:LumosAppShell:KekStoreTests.testDestroyedStoreRefusesEverything"
+   ],
+   "code_paths": 7,
+   "test_count": 8,
+   "tests_executed_this_run": 8
+  },
+  {
+   "req_id": "SRS-NFR-SEC-013",
+   "status": "implemented",
+   "tests": [
+    "java:app-dev:AppLockTest.absentRecordMeansNotEnabledAndBackgroundingChangesNothing",
+    "java:app-dev:AppLockTest.anUnknownPayloadVersionReadsAsNotEnabled",
+    "java:app-dev:AppLockTest.disablingTheProtectionDemandsTheSameProofAsPassingIt",
+    "java:app-dev:AppLockTest.enabledLockShutsOnBackgroundAndOpensOnlyOnConfirmed",
+    "java:app-dev:AppLockTest.theChoiceSurvivesANewProcessOverTheSameStore",
+    "java:app-dev:AppLockTest.theStoredRecordCarriesTheChoiceAndNothingThatCouldUnlockIt",
+    "java:app-dev:DeviceAuthPolicyTest.everyPurposeRequiresThePrompt",
+    "java:app-dev:DeviceAuthPolicyTest.thePurposeListIsTheFourMomentsTheOwnerRulingNames",
+    "java:app-dev:DiscoverySuccessMetricTest.theWholePayloadMatchesTheClosedGrammar",
+    "java:app-dev:MigrationTest.emptyDatabaseMigratesToCurrentVersion",
+    "java:app-dev:ScreenPrivacyPolicyTest.captureIsNeverBlockedBecauseEvidenceCaptureIsASafetyFeature",
+    "java:app-dev:ScreenPrivacyPolicyTest.screenshotWarningsApplyToConversationsAndNowhereElse",
+    "java:app-dev:ScreenPrivacyPolicyTest.theRecentsSnapshotIsRedactedOnEverySurface",
+    "swift:LumosAppShell:DiscoverySuccessMetricTests.testTheWholePayloadMatchesTheClosedGrammar"
+   ],
+   "code_paths": 11,
+   "test_count": 14,
+   "tests_executed_this_run": 14
+  },
+  {
+   "req_id": "SRS-ONB-001",
+   "status": "tested",
+   "tests": [
+    "java:app-dev:AgeGateTest.aDateInTheFutureIsNotAnAdult",
+    "java:app-dev:AgeGateTest.aLeapDayBirthIsResolvedByTheCalendarAndFallsOnTheLaterSide",
+    "java:app-dev:AgeGateTest.aMissingDateIsNotAnAdult",
+    "java:app-dev:AgeGateTest.anEighteenthBirthdayItselfIsAccepted",
+    "java:app-dev:AgeGateTest.theDayBeforeAnEighteenthBirthdayIsRefused",
+    "java:app-dev:AgeGateTest.theDecisionCarriesNoWayToRecoverTheDateOfBirth",
+    "java:app-dev:AgeGateTest.theDecisionRecordsWhatItWasJudgedAgainst",
+    "java:app-dev:AgeGateTest.theMinimumComesFromTheRegisterAndIsEighteen",
+    "java:app-dev:OnboardingCopyTest.theAgeGateCopySaysTheDateIsNotKept",
+    "java:app-dev:OnboardingGateTest.aBlockedUserReachesNothingAtAllIncludingTheOnboardingSteps",
+    "java:app-dev:OnboardingGateTest.aFreshDeviceCanReachTheAgeGateAndNothingElse",
+    "java:app-dev:OnboardingGateTest.aNullSurfaceIsNotReachable",
+    "java:app-dev:OnboardingGateTest.aUserCannotSkipAheadToTheConsentScreen",
+    "java:app-dev:OnboardingGateTest.everyApplicationSurfaceIsClosedUntilOnboardingCompletes",
+    "java:app-dev:OnboardingGateTest.everythingOpensOnlyWhenOnboardingIsComplete",
+    "java:app-dev:OnboardingMachineTest.anUnderAgeAnswerIsATerminalStateNotAReturnedValue",
+    "java:app-dev:OnboardingServiceTest.aRefusedUserGetsNoIdentityAndNoConsentRecord",
+    "java:app-instrumented:NearbyStatesInstrumentedTest.aGateThatSaysNoMeansTheScreenNeverInflates",
+    "java:app-instrumented:NearbyStatesInstrumentedTest.noHostAtAllIsTheFreshInstallShapeAndAlsoRefuses",
+    "java:app-instrumented:ProductEntryInstrumentedTest.at001AFreshInstallBlocksEveryProductSurfaceUntilConsent",
+    "swift:LumosAppShell:OnboardingTests.testABlockedUserReachesNothingAtAll",
+    "swift:LumosAppShell:OnboardingTests.testADateInTheFutureIsNotAnAdult",
+    "swift:LumosAppShell:OnboardingTests.testAFreshDeviceCanReachTheAgeGateAndNothingElse",
+    "swift:LumosAppShell:OnboardingTests.testAnEighteenthBirthdayItselfIsAccepted",
+    "swift:LumosAppShell:OnboardingTests.testEverythingOpensOnlyWhenOnboardingIsComplete",
+    "swift:LumosAppShell:OnboardingTests.testTheDayBeforeAnEighteenthBirthdayIsRefused",
+    "swift:LumosAppShell:OnboardingTests.testTheDecisionRecordsWhatItWasJudgedAgainst",
+    "swift:LumosAppShell:OnboardingTests.testTheMinimumComesFromTheRegisterAndIsEighteen"
+   ],
+   "code_paths": 11,
+   "test_count": 28,
+   "tests_executed_this_run": 28
+  },
+  {
+   "req_id": "SRS-ONB-002",
+   "status": "tested",
+   "tests": [
+    "java:app-dev:ConsentTest.aDocumentNeverAcceptedCountsAsOutdated",
+    "java:app-dev:ConsentTest.aNewerDocumentVersionMeansConsentMustBeTakenAgain",
+    "java:app-dev:ConsentTest.aRecordIsStoredAndReadBack",
+    "java:app-dev:ConsentTest.aRecordRoundTripsThroughTheCodec",
+    "java:app-dev:ConsentTest.acceptingAgainReplacesRatherThanAppends",
+    "java:app-dev:ConsentTest.anUnknownLineTagIsRefusedRatherThanSkipped",
+    "java:app-dev:ConsentTest.anUnknownPayloadVersionFailsClosed",
+    "java:app-dev:ConsentTest.dateOfBirthNeverReachesTheStore",
+    "java:app-dev:LegalDocumentsTest.aDocumentWithNoVersionLineIsARefusalNotADefault",
+    "java:app-dev:LegalDocumentsTest.aMissingDocumentIsARefusalRatherThanAThreeDocumentSet",
+    "java:app-dev:LegalDocumentsTest.everyDocumentDeclaresAVersionAndTheyLoadTogether",
+    "java:app-dev:LegalDocumentsTest.everyNamedDocumentIsActuallyShipped",
+    "java:app-dev:LegalDocumentsTest.noShippedDocumentIsMissingFromTheEnum",
+    "java:app-dev:LegalDocumentsTest.srsOnb002NamesFourDocumentsAndThereAreFour",
+    "java:app-dev:LegalDocumentsTest.theVersionIsReadFromTheDeclarationRatherThanFromProse",
+    "java:app-dev:OnboardingCopyTest.everyKeyTheFlowsNeedIsPresent",
+    "java:app-dev:OnboardingCopyTest.noJargonReachesTheUser",
+    "java:app-dev:OnboardingCopyTest.sentencesStayShortEnoughToRead",
+    "java:app-dev:OnboardingCopyTest.theCopyAddressesThePersonReadingIt",
+    "java:app-dev:OnboardingServiceTest.theAcceptedVersionsRecordedAreTheOnesActuallyShipped",
+    "swift:LumosAppShell:OnboardingTests.testAConsentRecordRoundTripsThroughTheSharedFormat",
+    "swift:LumosAppShell:OnboardingTests.testADocumentNeverAcceptedCountsAsOutdated",
+    "swift:LumosAppShell:OnboardingTests.testADocumentWithNoVersionLineIsARefusalNotADefault",
+    "swift:LumosAppShell:OnboardingTests.testAnUnknownLineTagIsRefusedRatherThanSkipped",
+    "swift:LumosAppShell:OnboardingTests.testAnUnknownPayloadVersionFailsClosed",
+    "swift:LumosAppShell:OnboardingTests.testConsentIsStoredAndReAskedForWhenAVersionMoves",
+    "swift:LumosAppShell:OnboardingTests.testTheEncodingIsTheOneAndroidWrites",
+    "swift:LumosAppShell:OnboardingTests.testTheVersionIsReadFromTheDeclarationRatherThanFromProse"
+   ],
+   "code_paths": 14,
+   "test_count": 28,
+   "tests_executed_this_run": 28
+  },
+  {
+   "req_id": "SRS-ONB-003",
+   "status": "tested",
+   "tests": [
+    "java:app-dev:OnboardingCopyTest.theConnectivityCopyNamesBothDependencies"
+   ],
+   "code_paths": 1,
+   "test_count": 1,
+   "tests_executed_this_run": 1
+  },
+  {
+   "req_id": "SRS-ONB-004",
+   "status": "implemented",
+   "tests": [
+    "java:app-dev:FeaturePermissionsTest.theTableIsExactlyTheDeclaredNeeds",
+    "java:app-dev:FeaturePermissionsTest.thereIsNoRequestEverythingEntryPoint"
+   ],
+   "code_paths": 2,
+   "test_count": 2,
+   "tests_executed_this_run": 2
+  },
+  {
+   "req_id": "SRS-ONB-005",
+   "status": "implemented",
+   "tests": [
+    "java:app-dev:FeaturePermissionsTest.everyFeatureHasItsRationaleAndItsDeniedCapabilityCopy",
+    "java:app-dev:FeaturePermissionsTest.deniedCopyNamesWhatContinuesNotJustWhatStops"
+   ],
+   "code_paths": 2,
+   "test_count": 2,
+   "tests_executed_this_run": 2
+  },
+  {
+   "req_id": "SRS-ONB-006",
+   "status": "tested",
+   "tests": [
+    "java:app-dev:OnboardingCopyTest.theOnboardingCopySaysThereIsNoAccount",
+    "java:app-dev:OnboardingServiceTest.aRefusedUserGetsNoIdentityAndNoConsentRecord",
+    "java:app-dev:OnboardingServiceTest.anAdultOnboardsWithNoAccountAndEndsWithAnIdentity",
+    "java:app-dev:OnboardingServiceTest.identityCreationRefusesToRunBeforeTheGate",
+    "java:app-dev:OnboardingServiceTest.theOnboardingPathTouchesNoNetworkOrAccountApi",
+    "java:app-instrumented:OnboardingInstrumentedTest.at002OnboardingCompletesOfflineAndCreatesALocalIdentity",
+    "java:app-instrumented:PlatformKeyAlgorithmInstrumentedTest.ed25519SignatureSupportTracksTheApiLevelWhileGenerationNeverArrives",
+    "java:app-instrumented:PlatformKeyAlgorithmInstrumentedTest.thePlatformStillCannotGenerateEd25519Keys",
+    "java:app-instrumented:PlatformKeyAlgorithmInstrumentedTest.x25519GenerationTracksTheApiLevelExactlyAsSliceS1Said"
+   ],
+   "code_paths": 8,
+   "test_count": 9,
+   "tests_executed_this_run": 9
+  },
+  {
+   "req_id": "SRS-ONB-007",
+   "status": "tested",
+   "tests": [
+    "go:protocol/crypto/recovery:TestADowngradedHeaderCannotProduceACheaperKey",
+    "go:protocol/crypto/recovery:TestAbsurdParamsAreRefusedBeforeAnyDerivation",
+    "go:protocol/crypto/recovery:TestExportOpenRoundTrips",
+    "go:protocol/crypto/recovery:TestOnlyASingleLaneIsAccepted",
+    "go:protocol/crypto/recovery:TestTheRecordCarriesNoKeyMaterial",
+    "go:protocol/crypto/recovery:TestTheRegisterAgreesWithTheSingleLaneRule",
+    "go:protocol/crypto:TestConformanceRecoveryDerivation",
+    "go:protocol/crypto:TestConformanceRecoveryFailuresAreIndistinguishable",
+    "go:protocol/crypto:TestConformanceRecoveryFormatAndLimits",
+    "go:protocol/crypto:TestConformanceRecoveryNegatives",
+    "go:protocol/crypto:TestConformanceRecoveryPositives",
+    "java:app-dev:DeviceAuthPolicyTest.everyPurposeRequiresThePrompt",
+    "java:app-dev:DeviceAuthPolicyTest.thePurposeListIsTheFourMomentsTheOwnerRulingNames",
+    "java:app-dev:OnboardingCopyTest.theRecoveryCopySaysTheKeysAreNotInTheFileAndTheDestinationIsTheirs",
+    "java:app-dev:RecoveryFlowTest.aBundleFromANewerBuildIsRefusedRatherThanPartlyRestored",
+    "java:app-dev:RecoveryFlowTest.aWrongPassphraseRestoresNothingAndChangesNoIdentity",
+    "java:app-dev:RecoveryFlowTest.assembleCarriesTheContentSectionsAndNamesTheOnesItCannot",
+    "java:app-dev:RecoveryFlowTest.restoreOntoAnEmptyDeviceBringsTheContentBack",
+    "java:app-dev:RecoveryFlowTest.restoreTellsTheUserWhatCouldNotBeInTheFile",
+    "java:app-dev:RecoveryFlowTest.restoreYieldsAFreshIdentity",
+    "java:app-dev:RecoveryFlowTest.theExportCarriesNoKeyMaterial",
+    "java:app-dev:RecoveryFlowTest.theExportZeroesThePassphraseItWasGiven",
+    "java:app-dev:RecoveryFlowTest.theExportedContentIsActuallyInThere",
+    "java:app-dev:RecoveryFlowTest.twoExportsOfTheSameContentDifferButBothOpen",
+    "java:app-instrumented:RecoveryFlowInstrumentedTest.aLibsodiumSealedExportCarriesNoIdentityMaterial",
+    "java:app-instrumented:RecoveryFlowInstrumentedTest.aWrongPassphraseIsRefusedIndistinguishablyByTheRealBinding",
+    "java:app-instrumented:RecoveryFlowInstrumentedTest.anExportSealedByLibsodiumOpensBackToTheSameContent",
+    "java:app-instrumented:RecoveryFlowInstrumentedTest.twoExportsOfTheSameContentDifferAndBothOpen",
+    "java:app-instrumented:RecoveryRecordInstrumentedTest.anExportedRecordLeaksNeitherPassphraseNorContent",
+    "java:app-instrumented:RecoveryRecordInstrumentedTest.argon2idAgreesWithTheReferenceDerivation",
+    "java:app-instrumented:RecoveryRecordInstrumentedTest.everyCommittedRecordOpensAndReSeals",
+    "java:app-instrumented:RecoveryRecordInstrumentedTest.everyNegativeVectorIsRefusedWithTheRightCode",
+    "java:app-instrumented:RecoveryRecordInstrumentedTest.openingFailuresAreIndistinguishable",
+    "java:app-instrumented:RecoveryRecordInstrumentedTest.theAcceptedBoundsMatchTheVectorFile",
+    "java:app-instrumented:RecoveryRecordInstrumentedTest.theFormatConstantsMatchTheVectorFile",
+    "java:app-instrumented:RecoveryRecordInstrumentedTest.twoExportsOfTheSameContentDiffer",
+    "swift:LumosAppShell:OnboardingTests.testABundleFromANewerBuildIsRefusedRatherThanPartlyRestored",
+    "swift:LumosAppShell:OnboardingTests.testAWrongPassphraseRestoresNothingAndChangesNoIdentity",
+    "swift:LumosAppShell:OnboardingTests.testAnExportCarriesTheContentSectionsAndNamesTheOnesItCannot",
+    "swift:LumosAppShell:OnboardingTests.testAnExportRestoresOntoAFreshIdentityAndCarriesNoKeyMaterial",
+    "swift:LumosAppShell:OnboardingTests.testTheBundleFormatIsTheOneAndroidWrites",
+    "swift:LumosAppShell:RecoveryRecordTests.testAcceptedBoundsMatchTheVectorFile",
+    "swift:LumosAppShell:RecoveryRecordTests.testAnExportedRecordLeaksNeitherPassphraseNorContent",
+    "swift:LumosAppShell:RecoveryRecordTests.testArgon2idAgreesWithTheReferenceDerivation",
+    "swift:LumosAppShell:RecoveryRecordTests.testDescribeReadsTheHeaderWithoutThePassphrase",
+    "swift:LumosAppShell:RecoveryRecordTests.testEveryCommittedRecordOpensAndReSeals",
+    "swift:LumosAppShell:RecoveryRecordTests.testEveryNegativeVectorIsRefusedWithTheRightCode",
+    "swift:LumosAppShell:RecoveryRecordTests.testFormatConstantsMatchTheVectorFile",
+    "swift:LumosAppShell:RecoveryRecordTests.testOpeningFailuresCarryNoDistinguishingDetail",
+    "swift:LumosAppShell:RecoveryRecordTests.testTwoExportsOfTheSameContentDiffer"
+   ],
+   "code_paths": 21,
+   "test_count": 50,
+   "tests_executed_this_run": 50
+  },
+  {
+   "req_id": "SRS-ONB-008",
+   "status": "tested",
+   "tests": [
+    "java:app-dev:NoAutoVisibilityTest.aPreviousFormatVersionReadsAsOffBecauseAnUpdateIsATrigger",
+    "java:app-dev:NoAutoVisibilityTest.afterARebootTheStoredAnswerIsWhatTheUserLastChose",
+    "java:app-dev:NoAutoVisibilityTest.afterAnUpdateThatAddsTheTableItIsStillOff",
+    "java:app-dev:NoAutoVisibilityTest.afterInstallationNothingIsBroadcast",
+    "java:app-dev:NoAutoVisibilityTest.anUnreadableRecordReadsAsOff",
+    "java:app-dev:NoAutoVisibilityTest.grantingAPermissionCannotReachThisStateAtAll",
+    "java:app-dev:NoAutoVisibilityTest.turningItOffTakesEffectImmediately",
+    "java:app-dev:OnboardingCopyTest.theVisibilityCopyNamesAllFourTriggers",
+    "java:app-dev:OnboardingServiceTest.completingOnboardingLeavesTheUserInvisible",
+    "java:app-instrumented:ProductEntryInstrumentedTest.at001AFreshInstallBlocksEveryProductSurfaceUntilConsent",
+    "swift:LumosAppShell:OnboardingTests.testAnUnreadableVisibilityRecordReadsAsOff",
+    "swift:LumosAppShell:OnboardingTests.testOnlyAnExplicitRequestTurnsVisibleNearbyOn",
+    "swift:LumosAppShell:OnboardingTests.testVisibleNearbyIsOffOnAFreshDevice"
+   ],
+   "code_paths": 8,
+   "test_count": 13,
+   "tests_executed_this_run": 13
+  },
+  {
+   "req_id": "SRS-PRO-001",
+   "status": "tested",
+   "tests": [
+    "java:app-dev:ProfileRepositoryTest.aProfileRoundTripsThroughTheSealedStore",
+    "java:app-dev:ProfileRepositoryTest.mediaOrderIsPreservedAndTheFirstEntryIsPrimary",
+    "swift:LumosAppShell:ProfileTests.testMediaOrderIsPreservedAndTheFirstEntryIsPrimary",
+    "java:app-instrumented:RoomStoreInstrumentedTest.theGeneratedDaoRoundTripsASealedRow"
+   ],
+   "code_paths": 4,
+   "test_count": 4,
+   "tests_executed_this_run": 4
+  },
+  {
+   "req_id": "SRS-PRO-002",
+   "status": "tested",
+   "tests": [
+    "java:app-dev:ProfileRepositoryTest.theThreeAnswerStatesStayDistinct",
+    "java:app-dev:ProfileRepositoryTest.selfDescriptionIsFreeTextNotAFixedOption",
+    "swift:LumosAppShell:ProfileTests.testTheThreeAnswerStatesAreDistinct",
+    "swift:LumosAppShell:ProfileTests.testSelfDescriptionIsFreeTextNotAFixedOption"
+   ],
+   "code_paths": 3,
+   "test_count": 4,
+   "tests_executed_this_run": 4
+  },
+  {
+   "req_id": "SRS-PRO-003",
+   "status": "tested",
+   "tests": [
+    "java:app-dev:ProfilePreviewTest.everyAudienceSeesExactlyWhatThePolicyAdmits",
+    "java:app-dev:ProfilePreviewTest.noPreviewEverExposesAFieldThePolicyHides",
+    "java:app-dev:ProfileRepositoryTest.policyRoundTripsAndDefaultsPrivateWhenAbsent",
+    "swift:LumosAppShell:ProfileTests.testEveryAudienceSeesExactlyWhatThePolicyAdmits",
+    "swift:LumosAppShell:ProfileTests.testNoPreviewEverExposesAFieldThePolicyHides"
+   ],
+   "code_paths": 2,
+   "test_count": 5,
+   "tests_executed_this_run": 5
+  },
+  {
+   "req_id": "SRS-PRO-004",
+   "status": "tested",
+   "tests": [
+    "java:app-dev:MediaObjectStoreTest.anObjectRoundTripsAndItsFileHoldsNoPlaintext",
+    "java:app-dev:MediaObjectStoreTest.aRelocatedObjectFailsLikeATamperedOne",
+    "java:app-dev:MediaObjectStoreTest.aDifferentDomainKeyOpensNothing"
+   ],
+   "code_paths": 2,
+   "test_count": 3,
+   "tests_executed_this_run": 3
+  },
+  {
+   "req_id": "SRS-PRO-005",
+   "status": "tested",
+   "tests": [
+    "java:app-dev:MediaSanitizerTest.jpegStripRemovesEverySecret",
+    "java:app-dev:MediaSanitizerTest.pngStripRemovesEverySecret",
+    "java:app-dev:MediaSanitizerTest.theFixtureActuallyContainsTheMetadata",
+    "swift:LumosAppShell:MediaSanitizerTests.testJpegStripRemovesEverySecret",
+    "swift:LumosAppShell:MediaSanitizerTests.testPngStripRemovesEverySecret",
+    "swift:LumosAppShell:MediaSanitizerTests.testReencodeProducesADecodableImageWithNoMetadata"
+   ],
+   "code_paths": 2,
+   "test_count": 6,
+   "tests_executed_this_run": 6
+  },
+  {
+   "req_id": "SRS-PRO-006",
+   "status": "tested",
+   "tests": [
+    "java:app-dev:MediaSanitizerTest.typeComesFromMagicBytesNotFromAClaim",
+    "java:app-dev:MediaSanitizerTest.aDecompressionBombIsRejectedOnDimensions",
+    "java:app-dev:MediaSanitizerTest.aTruncatedSegmentIsRejectedRatherThanReadPastTheEnd",
+    "swift:LumosAppShell:MediaSanitizerTests.testTypeComesFromMagicBytesNotFromAClaim",
+    "swift:LumosAppShell:MediaSanitizerTests.testADecompressionBombIsRejectedOnDimensions"
+   ],
+   "code_paths": 2,
+   "test_count": 5,
+   "tests_executed_this_run": 5
+  },
+  {
+   "req_id": "SRS-PRO-007",
+   "status": "tested",
+   "tests": [
+    "java:app-dev:ProfilePreviewTest.thePreviewCarriesAnObjectIdentifierAndNeverImageBytes",
+    "swift:LumosAppShell:ProfileTests.testThePreviewCarriesAnObjectIdentifierAndNeverImageBytes"
+   ],
+   "code_paths": 2,
+   "test_count": 2,
+   "tests_executed_this_run": 2
+  },
+  {
+   "req_id": "SRS-PRO-008",
+   "status": "tested",
+   "tests": [
+    "java:app-dev:ProfileRepositoryTest.theStoredPreviewPathAgreesWithDirectDerivation",
+    "java:app-dev:ProfilePreviewTest.tighteningThePolicyChangesTheNextPreviewImmediately",
+    "swift:LumosAppShell:ProfileTests.testTighteningThePolicyChangesTheNextPreviewImmediately"
+   ],
+   "code_paths": 2,
+   "test_count": 3,
+   "tests_executed_this_run": 3
+  },
+  {
+   "req_id": "SRS-PRO-009",
+   "status": "tested",
+   "tests": [
+    "java:app-dev:ProfileRepositoryTest.mediaOrderIsPreservedAndTheFirstEntryIsPrimary",
+    "swift:LumosAppShell:ProfileTests.testMediaOrderIsPreservedAndTheFirstEntryIsPrimary"
+   ],
+   "code_paths": 2,
+   "test_count": 2,
+   "tests_executed_this_run": 2
+  },
+  {
+   "req_id": "SRS-PRO-010",
+   "status": "tested",
+   "tests": [
+    "java:app-dev:ProfileRepositoryTest.anEmptyProfileIsNotShowable",
+    "java:app-dev:ProfileRepositoryTest.decliningSensitiveFieldsNeverMakesAProfileIncomplete",
+    "swift:LumosAppShell:ProfileTests.testAnEmptyProfileIsNotShowable"
+   ],
+   "code_paths": 2,
+   "test_count": 3,
+   "tests_executed_this_run": 3
+  },
+  {
+   "req_id": "SRS-PRO-011",
+   "status": "tested",
+   "tests": [
+    "java:app-dev:ProfileRepositoryTest.pausingAndHidingSuppressVisibilityWithoutLosingData",
+    "java:app-dev:ProfileRepositoryTest.permanentDeletionLeavesNoRow",
+    "swift:LumosAppShell:ProfileTests.testPausingAndHidingSuppressVisibilityWithoutLosingData"
+   ],
+   "code_paths": 2,
+   "test_count": 3,
+   "tests_executed_this_run": 3
+  },
+  {
+   "req_id": "SRS-PRO-012",
+   "status": "tested",
+   "tests": [
+    "java:app-dev:OnboardingCopyTest.profileCopyStaysRespectful"
+   ],
+   "code_paths": 1,
+   "test_count": 1,
+   "tests_executed_this_run": 1
+  },
+  {
+   "req_id": "SRS-PRO-013",
+   "status": "tested",
+   "tests": [
+    "java:app-dev:OnboardingCopyTest.proximityIsWordsAndNeverADistance"
+   ],
+   "code_paths": 2,
+   "test_count": 1,
+   "tests_executed_this_run": 1
+  },
+  {
+   "req_id": "SRS-SAF-009",
+   "status": "tested",
+   "tests": [
+    "java:app-dev:DeliberateConfirmationTest.aChallengeIsSingleUse",
+    "java:app-dev:DeliberateConfirmationTest.aChallengeNeedsAnActionAndAPhrase",
+    "java:app-dev:DeliberateConfirmationTest.aClockThatWentBackwardsIsRefusedRatherThanTrusted",
+    "java:app-dev:DeliberateConfirmationTest.aConfirmationCannotBeManufactured",
+    "java:app-dev:DeliberateConfirmationTest.anAbandonedChallengeExpires",
+    "java:app-dev:DeliberateConfirmationTest.caseAndSurroundingSpaceAreForgiven",
+    "java:app-dev:DeliberateConfirmationTest.nothingTypedAtAllIsRefused",
+    "java:app-dev:DeliberateConfirmationTest.theLastMillisecondOfTheWindowStillWorks",
+    "java:app-dev:DeliberateConfirmationTest.theRightPhraseInTimeConfirms",
+    "java:app-dev:DeliberateConfirmationTest.theWrongWordsAreRefused",
+    "java:app-dev:DeviceAuthPolicyTest.everyPurposeRequiresThePrompt",
+    "java:app-dev:DeviceAuthPolicyTest.thePurposeListIsTheFourMomentsTheOwnerRulingNames",
+    "java:app-dev:EmergencyWipeTest.aResetConfirmationCannotBeSpentOnAWipe",
+    "java:app-dev:EmergencyWipeTest.aWipeWithoutAConfirmationIsRefused",
+    "java:app-dev:EmergencyWipeTest.theCoverageStatementNamesEverySrsSaf010ItemHonestly",
+    "java:app-dev:OnboardingCopyTest.theConfirmationPhrasesAreTheOnesTheCodeCompares",
+    "java:app-dev:OnboardingCopyTest.theWipeCopyDescribesIrreversibleConsequences",
+    "java:app-instrumented:EmergencyWipeInstrumentedTest.at019TheWipeRunsEndToEndOnDeviceAndLeavesNoPlaintextRemnant",
+    "swift:LumosAppShell:OnboardingTests.testAChallengeExpiresAndIsSingleUse",
+    "swift:LumosAppShell:OnboardingTests.testAResetConfirmationCannotBeSpentOnAWipe",
+    "swift:LumosAppShell:OnboardingTests.testTheCoverageStatementNamesEverySrsSaf010ItemHonestly",
+    "swift:LumosAppShell:OnboardingTests.testTheRightPhraseInTimeConfirmsAndTheWrongOneDoesNot"
+   ],
+   "code_paths": 10,
+   "test_count": 22,
+   "tests_executed_this_run": 22
+  },
+  {
+   "req_id": "SRS-SAF-010",
+   "status": "implemented",
+   "tests": [
+    "java:app-dev:EmergencyWipeTest.anInterruptionAfterTheKeyPhaseStillLeavesCryptoErasure",
+    "java:app-dev:EmergencyWipeTest.everyRecordKindThatExistsIsClearedByTheWipe",
+    "java:app-dev:EmergencyWipeTest.theCoverageStatementNamesEverySrsSaf010ItemHonestly",
+    "java:app-dev:EmergencyWipeTest.theKekIsGoneAndCannotUnwrapAnythingAfterwards",
+    "java:app-dev:EmergencyWipeTest.theKeysGoBeforeTheContent",
+    "java:app-dev:KeysFirstWipeTest.aFailingKeyStageDoesNotStopTheOtherKeyStages",
+    "java:app-dev:KeysFirstWipeTest.aWipeExecutesExactlyOnce",
+    "java:app-dev:KeysFirstWipeTest.contentFailureAfterKeyPhaseStillLeavesCryptoErasure",
+    "java:app-dev:KeysFirstWipeTest.keyStagesRunBeforeContentRegardlessOfRegistrationOrder",
+    "java:app-dev:KeysFirstWipeTest.reportRecordsPhaseNameAndOutcomePerStage",
+    "java:app-dev:PostWipeRemnantScanTest.aCompletedWipeLeavesNoPlaintextRemnantOfAnyStoredValue",
+    "java:app-dev:StoreWipeTest.everyRecordKindIsClearedByTheContentStage",
+    "java:app-dev:StoreWipeTest.rowsSurvivingAnInterruptedWipeAreUnreadable",
+    "java:app-dev:StoreWipeTest.wipeDestroysStoreKeysBeforeClearingRows",
+    "java:app-instrumented:EmergencyWipeInstrumentedTest.at019TheWipeRunsEndToEndOnDeviceAndLeavesNoPlaintextRemnant",
+    "swift:LumosAppShell:OnboardingTests.testEveryRecordKindThatExistsIsClearedKeysFirst",
+    "swift:LumosAppShell:OnboardingTests.testTheCoverageStatementNamesEverySrsSaf010ItemHonestly",
+    "swift:LumosAppShell:StoreWipeTests.testRowsSurvivingAnInterruptedWipeAreUnreadable",
+    "swift:LumosAppShell:StoreWipeTests.testWipeDestroysStoreKeysBeforeClearingRows"
+   ],
+   "code_paths": 9,
+   "test_count": 19,
+   "tests_executed_this_run": 19
+  },
+  {
+   "req_id": "TRS-AI-003",
+   "status": "tested",
+   "tests": [
+    "go:tools/tracecheck:TestLiveMatrixPassesEveryStructuralRule",
+    "go:tools/tracecheck:TestLiveMatrixIsExactlyTheCatalogue",
+    "go:tools/tracecheck:TestCompletenessDetectsMissingOrphanAndDuplicate",
+    "go:tools/tracecheck:TestFreshnessDetectsStaleEntries",
+    "go:tools/tracecheck:TestHonestyStructuralRules",
+    "go:tools/tracecheck:TestHonestyOwnerGateRules",
+    "go:tools/tracecheck:TestHonestyRequiresATestThatActuallyRan",
+    "go:tools/tracecheck:TestMatrixStructCoversEveryTopLevelField",
+    "go:tools/tracecheck:TestGateRegisterMatchesEDPSection8",
+    "go:tools/tracecheck:TestModuleMapHasNoExclusion"
+   ],
+   "code_paths": 6,
+   "test_count": 10,
+   "tests_executed_this_run": 10
+  },
+  {
+   "req_id": "TRS-AI-005",
+   "status": "implemented",
+   "tests": null,
+   "code_paths": 2,
+   "test_count": 0
+  },
+  {
+   "req_id": "TRS-AND-004",
+   "status": "tested",
+   "tests": [
+    "java:app-instrumented:RoomStoreInstrumentedTest.roomCreatesEveryCanonicalTableWithTheCanonicalColumns",
+    "java:app-instrumented:RoomStoreInstrumentedTest.theGeneratedDaoRoundTripsASealedRow",
+    "java:app-instrumented:RoomStoreInstrumentedTest.theGenericStoreWorksOverRoomForEveryKind",
+    "java:app-instrumented:RoomStoreInstrumentedTest.aFailedTransactionOverRoomLeavesNothing",
+    "java:app-dev:RoomSchemaParityTest.everyRoomTableCarriesTheCanonicalColumnsInOrder",
+    "java:app-dev:RoomSchemaParityTest.roomAgreesWithTheCanonicalCreateStatement"
+   ],
+   "code_paths": 4,
+   "test_count": 6,
+   "tests_executed_this_run": 6
+  },
+  {
+   "req_id": "TRS-AND-005",
+   "status": "implemented",
+   "tests": [
+    "java:app-dev:BlePermissionsTest.modernDevicesGetTheScopedTrioAndNeverLocation",
+    "java:app-dev:BlePermissionsTest.legacyDevicesGetFineLocationBecauseScanResultsNeedIt",
+    "java:app-dev:BlePermissionsTest.everyDocumentedScanFailureMapsTyped",
+    "java:app-dev:BlePermissionsTest.theOemLongTailLandsTypedInsteadOfCrashing"
+   ],
+   "code_paths": 4,
+   "test_count": 4,
+   "tests_executed_this_run": 4
+  },
+  {
+   "req_id": "TRS-AND-006",
+   "status": "implemented",
+   "tests": [
+    "java:app-instrumented:BleDeclarationsInstrumentedTest.theDeclaredServiceIsTheConnectedDeviceForegroundType",
+    "java:app-instrumented:BleDeclarationsInstrumentedTest.theServiceReachesTheForegroundWithItsNotification"
+   ],
+   "code_paths": 3,
+   "test_count": 2,
+   "tests_executed_this_run": 2
+  },
+  {
+   "req_id": "TRS-ARCH-006",
+   "status": "implemented",
+   "tests": [
+    "ts:admin-console:AdminShell.executableShapedConfigurationFieldsAreRejected",
+    "ts:admin-console:AdminShell.ordinaryConfigurationFieldsAreAccepted"
+   ],
+   "code_paths": 1,
+   "test_count": 2,
+   "tests_executed_this_run": 2
+  },
+  {
+   "req_id": "TRS-CFG-001",
+   "status": "tested",
+   "tests": [
+    "go:protocol/config:TestConformanceConfigInvalid",
+    "go:protocol/config:TestConformanceConfigValid",
+    "go:protocol/config:TestNegativeGates",
+    "go:protocol/config:TestValidPackageAccepted",
+    "go:protocol/config:TestValidationOrderIsDeterministic",
+    "java:protocol-conformance:CryptoConformanceTest.configPackages",
+    "swift:LumosProtocolConformance:CryptoConformanceTests.testConfigPackagesAndVouchers"
+   ],
+   "code_paths": 5,
+   "test_count": 7,
+   "tests_executed_this_run": 7
+  },
+  {
+   "req_id": "TRS-CFG-009",
+   "status": "tested",
+   "tests": [
+    "go:protocol/config:TestConformanceVoucherTokens",
+    "go:protocol/config:TestVoucherLifecycle",
+    "java:protocol-conformance:CryptoConformanceTest.voucherTokens",
+    "swift:LumosProtocolConformance:CryptoConformanceTests.testConfigPackagesAndVouchers"
+   ],
+   "code_paths": 5,
+   "test_count": 4,
+   "tests_executed_this_run": 4
+  },
+  {
+   "req_id": "TRS-CICD-001",
+   "status": "implemented",
+   "tests": [
+    "ci:conformance#31528127667",
+    "go:tools/cicheck:TestDifferencesDetectsEveryKindOfDrift",
+    "go:tools/cicheck:TestEveryRequiredCheckIsRegistered",
+    "go:tools/cicheck:TestExtractionActuallyFoundSomething",
+    "go:tools/cicheck:TestNoRequiredCheckCanSkipForTheWrongReason",
+    "go:tools/cicheck:TestNoWorkflowFiltersItselfOut",
+    "go:tools/cicheck:TestRequiredCheckNamesAreTypeable",
+    "go:tools/cicheck:TestTheRegisterDescribesTheWorkflows",
+    "go:tools/cicheck:TestTheSkipRuleDetectsEveryKindOfViolation"
+   ],
+   "code_paths": 5,
+   "test_count": 9,
+   "tests_executed_this_run": 8
+  },
+  {
+   "req_id": "TRS-CICD-005",
+   "status": "implemented",
+   "tests": [
+    "go:protocol/schema:TestGeneratedConfigOverridesAreRegisterDriven",
+    "go:tools/constantsgen:TestCommittedFilesMatchRegister"
+   ],
+   "code_paths": 5,
+   "test_count": 2,
+   "tests_executed_this_run": 2
+  },
+  {
+   "req_id": "TRS-CICD-007",
+   "status": "implemented",
+   "tests": [
+    "go:tools/cicheck:TestDifferencesDetectsEveryKindOfDrift",
+    "go:tools/cicheck:TestEveryRequiredCheckIsRegistered",
+    "go:tools/cicheck:TestExtractionActuallyFoundSomething",
+    "go:tools/cicheck:TestNoRequiredCheckCanSkipForTheWrongReason",
+    "go:tools/cicheck:TestNoWorkflowFiltersItselfOut",
+    "go:tools/cicheck:TestRequiredCheckNamesAreTypeable",
+    "go:tools/cicheck:TestTheRegisterDescribesTheWorkflows",
+    "go:tools/cicheck:TestTheSkipRuleDetectsEveryKindOfViolation",
+    "go:tools/tracecheck:TestGateRegisterRejectsDishonestRows",
+    "go:tools/tracecheck:TestReleaseCandidateGate"
+   ],
+   "code_paths": 5,
+   "test_count": 10,
+   "tests_executed_this_run": 10
+  },
+  {
+   "req_id": "TRS-CICD-008",
+   "status": "implemented",
+   "tests": [
+    "go:tools/bootstrap:TestBootstrapIsDocumented"
+   ],
+   "code_paths": 4,
+   "test_count": 1,
+   "tests_executed_this_run": 1
+  },
+  {
+   "req_id": "TRS-CODE-001",
+   "status": "tested",
+   "tests": [
+    "go:tools/lumoslint:TestRepositoryPassesEveryLint",
+    "go:tools/lumoslint:TestHeaderRuleFiresAndStaysSilent",
+    "go:tools/lumoslint:TestGeneratedMarkerNeedsAGenerator"
+   ],
+   "code_paths": 2,
+   "test_count": 3,
+   "tests_executed_this_run": 3
+  },
+  {
+   "req_id": "TRS-CODE-003",
+   "status": "implemented",
+   "tests": [
+    "go:tools/lumoslint:TestArchitectureRuleFiresOnForbiddenImports",
+    "go:tools/lumoslint:TestPendingArchitectureRulesAreDeclared"
+   ],
+   "code_paths": 2,
+   "test_count": 2,
+   "tests_executed_this_run": 2
+  },
+  {
+   "req_id": "TRS-CODE-004",
+   "status": "tested",
+   "tests": [
+    "go:tools/lumoslint:TestAWellFormedExceptionLiftsTheBudget",
+    "go:tools/lumoslint:TestAnUnwritableExceptionIsRefused",
+    "go:tools/lumoslint:TestGeneratedFilesAreExempt",
+    "go:tools/lumoslint:TestKnownADRsFindsTheRealSet",
+    "go:tools/lumoslint:TestRepositoryPassesEveryLint",
+    "go:tools/lumoslint:TestTheClassBudgetFiresInEveryLanguage",
+    "go:tools/lumoslint:TestTheFileBudgetFires",
+    "go:tools/lumoslint:TestTheMeasurementIsNotVacuous",
+    "go:tools/lumoslint:TestTheRepositoryIsWithinBudget",
+    "go:tools/staticanalysis:TestCheckstyleCarriesTheSpecifiedBudgets",
+    "go:tools/staticanalysis:TestGolangciEnforcesTheComplexityBudgetAndReportsEverything",
+    "go:tools/staticanalysis:TestSwiftLintCarriesTheSpecifiedBudgets"
+   ],
+   "code_paths": 6,
+   "test_count": 12,
+   "tests_executed_this_run": 12
+  },
+  {
+   "req_id": "TRS-CODE-005",
+   "status": "implemented",
+   "tests": [
+    "go:tools/lumoslint:TestConstantsRuleFiresOnProductionCode",
+    "go:tools/lumoslint:TestConstantsRuleExemptsTheKnownFalsePositives",
+    "go:tools/lumoslint:TestRegisterValuesAreDistinctiveOnly"
+   ],
+   "code_paths": 2,
+   "test_count": 3,
+   "tests_executed_this_run": 3
+  },
+  {
+   "req_id": "TRS-CODE-006",
+   "status": "tested",
+   "tests": [
+    "go:tools/staticanalysis:TestEveryAnalyserIsConfiguredAndInvoked",
+    "go:tools/staticanalysis:TestEveryPinnedAnalyserIsDeclaredInTheManifest",
+    "go:tools/staticanalysis:TestStackCoversEveryLanguageTheRepositoryOwns",
+    "go:tools/staticanalysis:TestGolangciEnforcesTheComplexityBudgetAndReportsEverything",
+    "go:tools/staticanalysis:TestGosecExclusionsAreScopedToBuildTooling",
+    "go:tools/staticanalysis:TestCheckstyleCarriesTheSpecifiedBudgets",
+    "go:tools/staticanalysis:TestSwiftLintCarriesTheSpecifiedBudgets",
+    "go:tools/staticanalysis:TestSwiftTargetsAreAllInSwift6LanguageMode",
+    "go:tools/staticanalysis:TestAppModuleWiresSpotbugsOnceItHasProductionCode"
+   ],
+   "code_paths": 10,
+   "test_count": 9,
+   "tests_executed_this_run": 9
+  },
+  {
+   "req_id": "TRS-CONST-001",
+   "status": "tested",
+   "tests": [
+    "go:tools/constantsgen:TestGeneratedFilesCarryTheGeneratedBanner",
+    "go:tools/constantsgen:TestGeneratedGoValuesMatchRegister",
+    "go:tools/constantsgen:TestGeneratedJavaCompilesAndMatchesRegister",
+    "go:tools/constantsgen:TestGeneratedSwiftIsStructurallyComplete",
+    "go:tools/constantsgen:TestGoldenValues",
+    "go:tools/constantsgen:TestRegisterCoversTRSSection23",
+    "go:tools/constantsgen:TestSafetyNumberFormatMatchesADR005",
+    "java:protocol-conformance:CryptoConformanceTest.safetyNumber",
+    "swift:LumosProtocolConformance:CryptoConformanceTests.testSafetyNumberReproducesDigitsAndEmoji"
+   ],
+   "code_paths": 11,
+   "test_count": 9,
+   "tests_executed_this_run": 9
+  },
+  {
+   "req_id": "TRS-CONST-002",
+   "status": "implemented",
+   "tests": [
+    "go:protocol/schema:TestGeneratedConfigOverridesAreRegisterDriven",
+    "go:tools/constantsgen:TestEveryOverridableEntryDeclaresBoundsOrTheGap",
+    "go:tools/constantsgen:TestADR006BoundsWereAppliedExactly",
+    "go:tools/constantsgen:TestEveryBoundTripleIsCoherent"
+   ],
+   "code_paths": 5,
+   "test_count": 4,
+   "tests_executed_this_run": 4
+  },
+  {
+   "req_id": "TRS-CONST-003",
+   "status": "implemented",
+   "tests": [
+    "go:tools/constantsgen:TestDeclaredHashMatchesContent",
+    "go:tools/constantsgen:TestHashIsSensitiveToValueChanges",
+    "go:tools/constantsgen:TestCanonicalFormExcludesDocumentation",
+    "go:tools/constantsgen:TestEmissionIsDeterministic",
+    "go:tools/constantsgen:TestCommittedFilesMatchRegister"
+   ],
+   "code_paths": 2,
+   "test_count": 5,
+   "tests_executed_this_run": 5
+  },
+  {
+   "req_id": "TRS-CONST-005",
+   "status": "tested",
+   "tests": [
+    "go:protocol/schema:TestGeneratedConfigOverridesAreRegisterDriven",
+    "go:protocol/wire:TestConformanceFrameRoundtripVectors",
+    "go:tools/vectorgen:TestEveryVectorFileEmbedsTheRegisterHash",
+    "java:protocol-conformance:FramingConformanceTest.frameRoundtrip",
+    "swift:LumosProtocolConformance:FramingConformanceTests.testFrameRoundtripReproducesCommittedBytes"
+   ],
+   "code_paths": 7,
+   "test_count": 5,
+   "tests_executed_this_run": 5
+  },
+  {
+   "req_id": "TRS-CRY-001",
+   "status": "tested",
+   "tests": [
+    "go:protocol/crypto/recovery:TestADowngradedHeaderCannotProduceACheaperKey",
+    "go:protocol/crypto/recovery:TestAbsurdParamsAreRefusedBeforeAnyDerivation",
+    "go:protocol/crypto/recovery:TestExportOpenRoundTrips",
+    "go:protocol/crypto/recovery:TestOnlyASingleLaneIsAccepted",
+    "go:protocol/crypto/recovery:TestTheRecordCarriesNoKeyMaterial",
+    "go:protocol/crypto/recovery:TestTheRegisterAgreesWithTheSingleLaneRule",
+    "go:protocol/crypto/x3dh:TestBothSidesDeriveTheSameSessionWithOPK",
+    "go:protocol/crypto/x3dh:TestBothSidesDeriveTheSameSessionWithoutOPK",
+    "go:protocol/crypto/x3dh:TestIdentityBindingNegativesAllFailVerification",
+    "go:protocol/crypto/x3dh:TestIdentityBindingVectorsReproduceThroughTheRealPath",
+    "go:protocol/crypto/x3dh:TestTamperedSignaturesAreRejected",
+    "go:protocol/crypto:TestConformanceRecoveryDerivation",
+    "go:protocol/crypto:TestConformanceRecoveryFailuresAreIndistinguishable",
+    "go:protocol/crypto:TestConformanceRecoveryFormatAndLimits",
+    "go:protocol/crypto:TestConformanceRecoveryNegatives",
+    "go:protocol/crypto:TestConformanceRecoveryPositives",
+    "go:protocol/crypto:TestConformanceX3DHKAT",
+    "java:app-dev:IdentityBindingVectorsTest.everyNegativeFailsVerification",
+    "java:app-dev:IdentityBindingVectorsTest.theJcaBackendReproducesEveryCommittedSignature",
+    "java:app-dev:IdentityBindingVectorsTest.thePkcs8PrefixesAreTheOnesTheJdkItselfParses",
+    "java:app-instrumented:IdentityGenerationInstrumentedTest.theLibsodiumBackendReproducesEveryCommittedVector",
+    "java:app-instrumented:RecoveryRecordInstrumentedTest.anExportedRecordLeaksNeitherPassphraseNorContent",
+    "java:app-instrumented:RecoveryRecordInstrumentedTest.argon2idAgreesWithTheReferenceDerivation",
+    "java:app-instrumented:RecoveryRecordInstrumentedTest.everyCommittedRecordOpensAndReSeals",
+    "java:app-instrumented:RecoveryRecordInstrumentedTest.everyNegativeVectorIsRefusedWithTheRightCode",
+    "java:app-instrumented:RecoveryRecordInstrumentedTest.openingFailuresAreIndistinguishable",
+    "java:app-instrumented:RecoveryRecordInstrumentedTest.theAcceptedBoundsMatchTheVectorFile",
+    "java:app-instrumented:RecoveryRecordInstrumentedTest.theFormatConstantsMatchTheVectorFile",
+    "java:app-instrumented:RecoveryRecordInstrumentedTest.twoExportsOfTheSameContentDiffer",
+    "swift:LumosAppShell:RecoveryRecordTests.testAcceptedBoundsMatchTheVectorFile",
+    "swift:LumosAppShell:RecoveryRecordTests.testAnExportedRecordLeaksNeitherPassphraseNorContent",
+    "swift:LumosAppShell:RecoveryRecordTests.testArgon2idAgreesWithTheReferenceDerivation",
+    "swift:LumosAppShell:RecoveryRecordTests.testDescribeReadsTheHeaderWithoutThePassphrase",
+    "swift:LumosAppShell:RecoveryRecordTests.testEveryCommittedRecordOpensAndReSeals",
+    "swift:LumosAppShell:RecoveryRecordTests.testEveryNegativeVectorIsRefusedWithTheRightCode",
+    "swift:LumosAppShell:RecoveryRecordTests.testFormatConstantsMatchTheVectorFile",
+    "swift:LumosAppShell:RecoveryRecordTests.testOpeningFailuresCarryNoDistinguishingDetail",
+    "swift:LumosAppShell:RecoveryRecordTests.testTwoExportsOfTheSameContentDiffer",
+    "swift:LumosProtocolConformance:IdentityBindingConformanceTests.testEveryNegativeIsRejected",
+    "swift:LumosProtocolConformance:IdentityBindingConformanceTests.testPositivesDeriveVerifyAndRoundTrip"
+   ],
+   "code_paths": 21,
+   "test_count": 40,
+   "tests_executed_this_run": 40
+  },
+  {
+   "req_id": "TRS-CRY-002",
+   "status": "tested",
+   "tests": [
+    "go:protocol/crypto/ratchet:TestConversationWithDHTurns",
+    "go:protocol/crypto/ratchet:TestHeaderRoundtrip",
+    "go:protocol/crypto/ratchet:TestOutOfOrderWithinChain",
+    "go:protocol/crypto/ratchet:TestSkippedAcrossDHTurn",
+    "go:protocol/crypto:TestConformanceRatchetSequences"
+   ],
+   "code_paths": 6,
+   "test_count": 5,
+   "tests_executed_this_run": 5
+  },
+  {
+   "req_id": "TRS-CRY-003",
+   "status": "tested",
+   "tests": [
+    "go:protocol/crypto/aead:TestEveryTamperFailsIdentically",
+    "go:protocol/crypto/aead:TestRFC8439KnownAnswer",
+    "go:protocol/crypto:TestConformanceAEADKAT"
+   ],
+   "code_paths": 2,
+   "test_count": 3,
+   "tests_executed_this_run": 3
+  },
+  {
+   "req_id": "TRS-CRY-004",
+   "status": "implemented",
+   "tests": [
+    "go:protocol/crypto/safety:TestSafetyNumberDependsOnlyOnEd25519",
+    "go:protocol/crypto/x3dh:TestSafetyIdentityIsEd25519Only"
+   ],
+   "code_paths": 2,
+   "test_count": 2,
+   "tests_executed_this_run": 2
+  },
+  {
+   "req_id": "TRS-CRY-006",
+   "status": "tested",
+   "tests": [
+    "go:protocol/crypto/ratchet:TestMessageKeyDeletionByReplay",
+    "go:protocol/crypto/ratchet:TestOutOfOrderWithinChain",
+    "go:protocol/crypto/ratchet:TestSkippedAcrossDHTurn"
+   ],
+   "code_paths": 2,
+   "test_count": 3,
+   "tests_executed_this_run": 3
+  },
+  {
+   "req_id": "TRS-CRY-007",
+   "status": "tested",
+   "tests": [
+    "go:protocol/crypto/ratchet:TestMaxSkipBreach",
+    "go:protocol/crypto/ratchet:TestSkippedKeyTTLExpiry",
+    "go:protocol/crypto/ratchet:TestSkippedSessionCapFromRegister",
+    "go:protocol/crypto:TestConformanceRatchetSequences"
+   ],
+   "code_paths": 6,
+   "test_count": 4,
+   "tests_executed_this_run": 4
+  },
+  {
+   "req_id": "TRS-CRY-008",
+   "status": "tested",
+   "tests": [
+    "go:protocol/media:TestConformanceMediaPipeline",
+    "go:protocol/media:TestObjectKeyIsBoundToItsSession",
+    "go:protocol/media:TestSealChunkReassembleOpen",
+    "go:protocol/media:TestWholeObjectEncryptionPrecedesChunking"
+   ],
+   "code_paths": 3,
+   "test_count": 4,
+   "tests_executed_this_run": 4
+  },
+  {
+   "req_id": "TRS-CRY-009",
+   "status": "tested",
+   "tests": [
+    "go:protocol/config:TestCanonicalBytesAreDeterministicAndSorted",
+    "go:protocol/config:TestConformanceConfigValid",
+    "go:protocol/config:TestConformanceVoucherTokens",
+    "go:protocol/config:TestEveryFieldIsSigned",
+    "go:protocol/config:TestVoucherAndConfigSignaturesAreNotInterchangeable"
+   ],
+   "code_paths": 5,
+   "test_count": 5,
+   "tests_executed_this_run": 5
+  },
+  {
+   "req_id": "TRS-CRY-011",
+   "status": "tested",
+   "tests": [
+    "go:protocol/crypto/aead:TestDerivationIsDeterministicAndKeySeparated",
+    "go:protocol/crypto/aead:TestRFC8439KnownAnswer",
+    "java:app-instrumented:RecoveryRecordInstrumentedTest.argon2idAgreesWithTheReferenceDerivation",
+    "java:app-instrumented:RecoveryRecordInstrumentedTest.everyCommittedRecordOpensAndReSeals",
+    "swift:LumosAppShell:RecoveryRecordTests.testArgon2idAgreesWithTheReferenceDerivation",
+    "swift:LumosAppShell:RecoveryRecordTests.testEveryCommittedRecordOpensAndReSeals"
+   ],
+   "code_paths": 4,
+   "test_count": 6,
+   "tests_executed_this_run": 6
+  },
+  {
+   "req_id": "TRS-CRY-013",
+   "status": "tested",
+   "tests": [
+    "go:protocol/crypto/aead:TestEveryTamperFailsIdentically",
+    "go:protocol/crypto/ratchet:TestMessageKeyDeletionByReplay",
+    "go:protocol/crypto/recovery:TestAWrongPassphraseFailsWithTheSameCodeAsTampering",
+    "go:protocol/crypto:TestConformanceRecoveryFailuresAreIndistinguishable",
+    "java:app-instrumented:RecoveryRecordInstrumentedTest.everyNegativeVectorIsRefusedWithTheRightCode",
+    "java:app-instrumented:RecoveryRecordInstrumentedTest.openingFailuresAreIndistinguishable",
+    "swift:LumosAppShell:RecoveryRecordTests.testEveryNegativeVectorIsRefusedWithTheRightCode",
+    "swift:LumosAppShell:RecoveryRecordTests.testOpeningFailuresCarryNoDistinguishingDetail"
+   ],
+   "code_paths": 11,
+   "test_count": 8,
+   "tests_executed_this_run": 8
+  },
+  {
+   "req_id": "TRS-CRY-014",
+   "status": "tested",
+   "tests": [
+    "go:protocol/crypto/safety:TestShapeAndSymmetry",
+    "go:protocol/crypto/x3dh:TestTranscriptBindsEveryMandatedInput",
+    "go:protocol/crypto/x3dh:TestVerificationPrecedesDH",
+    "go:protocol/crypto:TestConformanceX3DHKAT"
+   ],
+   "code_paths": 2,
+   "test_count": 4,
+   "tests_executed_this_run": 4
+  },
+  {
+   "req_id": "TRS-CRY-015",
+   "status": "tested",
+   "tests": [
+    "go:protocol/crypto:TestConformanceAEADKAT",
+    "go:protocol/crypto:TestConformanceRatchetSequences",
+    "go:protocol/crypto:TestConformanceRecoveryDerivation",
+    "go:protocol/crypto:TestConformanceRecoveryFailuresAreIndistinguishable",
+    "go:protocol/crypto:TestConformanceRecoveryFormatAndLimits",
+    "go:protocol/crypto:TestConformanceRecoveryNegatives",
+    "go:protocol/crypto:TestConformanceRecoveryPositives",
+    "go:protocol/crypto:TestConformanceSafetyNumber",
+    "go:protocol/crypto:TestConformanceX3DHKAT",
+    "java:app-instrumented:RecoveryRecordInstrumentedTest.anExportedRecordLeaksNeitherPassphraseNorContent",
+    "java:app-instrumented:RecoveryRecordInstrumentedTest.argon2idAgreesWithTheReferenceDerivation",
+    "java:app-instrumented:RecoveryRecordInstrumentedTest.everyCommittedRecordOpensAndReSeals",
+    "java:app-instrumented:RecoveryRecordInstrumentedTest.everyNegativeVectorIsRefusedWithTheRightCode",
+    "java:app-instrumented:RecoveryRecordInstrumentedTest.openingFailuresAreIndistinguishable",
+    "java:app-instrumented:RecoveryRecordInstrumentedTest.theAcceptedBoundsMatchTheVectorFile",
+    "java:app-instrumented:RecoveryRecordInstrumentedTest.theFormatConstantsMatchTheVectorFile",
+    "java:app-instrumented:RecoveryRecordInstrumentedTest.twoExportsOfTheSameContentDiffer",
+    "java:protocol-conformance:CryptoConformanceTest.aeadKat",
+    "java:protocol-conformance:CryptoConformanceTest.safetyNumber",
+    "java:protocol-conformance:CryptoConformanceTest.x3dhKat",
+    "swift:LumosAppShell:RecoveryRecordTests.testAcceptedBoundsMatchTheVectorFile",
+    "swift:LumosAppShell:RecoveryRecordTests.testAnExportedRecordLeaksNeitherPassphraseNorContent",
+    "swift:LumosAppShell:RecoveryRecordTests.testArgon2idAgreesWithTheReferenceDerivation",
+    "swift:LumosAppShell:RecoveryRecordTests.testDescribeReadsTheHeaderWithoutThePassphrase",
+    "swift:LumosAppShell:RecoveryRecordTests.testEveryCommittedRecordOpensAndReSeals",
+    "swift:LumosAppShell:RecoveryRecordTests.testEveryNegativeVectorIsRefusedWithTheRightCode",
+    "swift:LumosAppShell:RecoveryRecordTests.testFormatConstantsMatchTheVectorFile",
+    "swift:LumosAppShell:RecoveryRecordTests.testOpeningFailuresCarryNoDistinguishingDetail",
+    "swift:LumosAppShell:RecoveryRecordTests.testTwoExportsOfTheSameContentDiffer",
+    "swift:LumosProtocolConformance:CryptoConformanceTests.testAEADKnownAnswersAndTampers",
+    "swift:LumosProtocolConformance:CryptoConformanceTests.testSafetyNumberReproducesDigitsAndEmoji",
+    "swift:LumosProtocolConformance:CryptoConformanceTests.testX3DHSharedSecretsAndTranscripts"
+   ],
+   "code_paths": 11,
+   "test_count": 32,
+   "tests_executed_this_run": 32
+  },
+  {
+   "req_id": "TRS-ENV-001",
+   "status": "implemented",
+   "tests": [
+    "java:app-dev:DiscoveryTriageTest.aHundredPlusAdvertisersTriageBoundedAndSorted",
+    "java:app-dev:VenueFeedPathTest.aFullVenueFlowsSightingToTriageToHelloToPresenceUnderTheBudget",
+    "swift:LumosAppShell:DiscoveryTriageTests.testAHundredPlusAdvertisersTriageBoundedAndSorted",
+    "swift:LumosAppShell:VenueFeedPathTests.testAFullVenueFlowsSightingToTriageToHelloToPresenceUnderTheBudget"
+   ],
+   "code_paths": 4,
+   "test_count": 4,
+   "tests_executed_this_run": 4
+  },
+  {
+   "req_id": "TRS-ENV-002",
+   "status": "implemented",
+   "tests": [
+    "go:protocol/hello:TestAReplayedAckGrantsNothing",
+    "java:app-dev:PresenceTableTest.aReplayedAckThrowsBeforeAnyCardCanExist",
+    "java:app-dev:VenueFeedPathTest.aFullVenueFlowsSightingToTriageToHelloToPresenceUnderTheBudget",
+    "swift:LumosAppShell:PresenceTableTests.testAReplayedAckThrowsBeforeAnyCardCanExist",
+    "swift:LumosAppShell:VenueFeedPathTests.testAFullVenueFlowsSightingToTriageToHelloToPresenceUnderTheBudget"
+   ],
+   "code_paths": 4,
+   "test_count": 5,
+   "tests_executed_this_run": 5
+  },
+  {
+   "req_id": "TRS-ENV-003",
+   "status": "tested",
+   "tests": [
+    "java:app-dev:DiscoverySuccessMetricTest.successIsPresenceNotEffort",
+    "java:app-dev:DiscoverySuccessMetricTest.theBucketsDestroyTheExactCount",
+    "java:app-dev:DiscoverySuccessMetricTest.theWholePayloadMatchesTheClosedGrammar",
+    "java:app-dev:NearbyFeedControllerTest.closingTheViewWritesExactlyOneMetricRecordWithTheRealCount",
+    "java:app-dev:RescanLadderTest.aSightingDropsTheLadderStraightToBase",
+    "java:app-dev:RescanLadderTest.leavingNearbyOrGoingInvisibleResetsTheStep",
+    "java:app-dev:RescanLadderTest.outsideTheGateNothingEscalates",
+    "java:app-dev:RescanLadderTest.sessionCountersRestartWithTheView",
+    "java:app-dev:RescanLadderTest.theConfiguredRunOfEmptyCyclesClimbsExactlyOneStep",
+    "java:app-dev:RescanLadderTest.theLadderIsCappedAtMaxSteps",
+    "java:app-dev:RescanLadderTest.theOnWindowGrowsLinearlyAndTheOffWindowNever",
+    "swift:LumosAppShell:DiscoverySuccessMetricTests.testSuccessIsPresenceNotEffort",
+    "swift:LumosAppShell:DiscoverySuccessMetricTests.testTheBucketsDestroyTheExactCount",
+    "swift:LumosAppShell:DiscoverySuccessMetricTests.testTheWholePayloadMatchesTheClosedGrammar",
+    "swift:LumosAppShell:NearbyFeedTests.testClosingTheViewWritesExactlyOneMetricRecord",
+    "swift:LumosAppShell:RescanLadderTests.testLeavingNearbyOrGoingInvisibleResetsTheStep",
+    "swift:LumosAppShell:RescanLadderTests.testOutsideTheGateNothingEscalates",
+    "swift:LumosAppShell:RescanLadderTests.testSessionCountersRestartWithTheView",
+    "swift:LumosAppShell:RescanLadderTests.testTheConfiguredRunOfEmptyCyclesClimbsExactlyOneStep",
+    "swift:LumosAppShell:RescanLadderTests.testTheLadderIsCappedAndASightingDropsItToBase",
+    "swift:LumosAppShell:RescanLadderTests.testTheOnWindowGrowsLinearlyFromTheBase"
+   ],
+   "code_paths": 6,
+   "test_count": 21,
+   "tests_executed_this_run": 21
+  },
+  {
+   "req_id": "TRS-IOS-003",
+   "status": "implemented",
+   "tests": [
+    "swift:LumosAppShell:PacedWriteQueueTests.testWritesFlowWhileTheGateSaysYes",
+    "swift:LumosAppShell:PacedWriteQueueTests.testWritesPauseTheInstantTheGateSaysNo",
+    "swift:LumosAppShell:PacedWriteQueueTests.testReconnectDiscardsTheOldConnectionsWrites"
+   ],
+   "code_paths": 3,
+   "test_count": 3,
+   "tests_executed_this_run": 3
+  },
+  {
+   "req_id": "TRS-IOS-007",
+   "status": "implemented",
+   "tests": [
+    "swift:LumosAppShell:KekStoreTests.testWrapUnwrapRoundtrips",
+    "swift:LumosAppShell:KekStoreTests.testProtectionTierIsHonest",
+    "swift:LumosAppShell:KekStoreTests.testTamperingAnywhereIsRejected",
+    "swift:LumosAppShell:KekStoreTests.testDestroyedStoreRefusesEverything"
+   ],
+   "code_paths": 3,
+   "test_count": 4,
+   "tests_executed_this_run": 4
+  },
+  {
+   "req_id": "TRS-LOC-002",
+   "status": "tested",
+   "tests": [
+    "java:app-dev:StorageEncryptionTest.noSensitiveValueAppearsInTheDatabaseFile",
+    "java:app-dev:StorageEncryptionTest.aDifferentDatabaseKeyCannotOpenTheRecords",
+    "java:app-dev:LocalStoreTest.blockEntriesAreFoundByBlindIndexWithoutStoringThePeerIdentifier",
+    "swift:LumosAppShell:LocalStoreTests.testNoSensitiveValueAppearsInTheDatabaseFile",
+    "swift:LumosAppShell:LocalStoreTests.testBlockEntriesAreFoundByBlindIndexWithoutStoringThePeerIdentifier",
+    "go:tools/schemacheck:TestBothPlatformsDeclareTheSameSchema"
+   ],
+   "code_paths": 4,
+   "test_count": 6,
+   "tests_executed_this_run": 6
+  },
+  {
+   "req_id": "TRS-LOC-003",
+   "status": "tested",
+   "tests": [
+    "java:app-dev:MigrationTest.emptyDatabaseMigratesToCurrentVersion",
+    "java:app-dev:MigrationTest.aFailingStepLeavesThePreviousVersionIntact",
+    "java:app-dev:MigrationTest.aDatabaseFromTheFutureIsRefusedNotDowngraded",
+    "java:app-dev:MigrationTest.theLadderIsContiguousAndForwardOnly",
+    "java:app-dev:MigrationTest.everyRecordTableCarriesTheCanonicalColumns",
+    "java:app-dev:LocalStoreTest.aFailedTransactionLeavesNoPartialWrite",
+    "swift:LumosAppShell:LocalStoreTests.testEmptyDatabaseMigratesToCurrentVersion",
+    "swift:LumosAppShell:LocalStoreTests.testFailingStepRollsBackWholeAndLeavesTheVersion",
+    "swift:LumosAppShell:LocalStoreTests.testDatabaseFromTheFutureIsRefusedNotDowngraded",
+    "swift:LumosAppShell:LocalStoreTests.testFailedTransactionLeavesNoPartialWrite",
+    "go:tools/schemacheck:TestBothPlatformsDeclareTheSameSchema"
+   ],
+   "code_paths": 5,
+   "test_count": 11,
+   "tests_executed_this_run": 11
+  },
+  {
+   "req_id": "TRS-LOC-009",
+   "status": "tested",
+   "tests": [
+    "java:app-dev:BackupExclusionTest.dataExtractionRulesExcludeEveryDomainInBothSections",
+    "java:app-dev:BackupExclusionTest.legacyBackupRulesExcludeEveryDomain",
+    "java:app-dev:BackupExclusionTest.theManifestKeepsBackupOff",
+    "java:app-dev:BackupExclusionTest.theDatabaseLivesUnderAnExcludedDomain",
+    "swift:LumosAppShell:BackupExclusionTests.testMarkingAFileExcludesItFromBackup",
+    "swift:LumosAppShell:BackupExclusionTests.testSqliteSidecarsAreExcludedAlongsideTheDatabase",
+    "swift:LumosAppShell:BackupExclusionTests.testARealStoreDatabaseCanBeExcluded"
+   ],
+   "code_paths": 5,
+   "test_count": 7,
+   "tests_executed_this_run": 7
+  },
+  {
+   "req_id": "TRS-LOC-010",
+   "status": "tested",
+   "tests": [
+    "java:app-dev:LocalStoreTest.mintedIdentifiersAreUuids",
+    "java:app-dev:LocalStoreTest.timestampsAreUtcMillisFromTheInjectedClock",
+    "swift:LumosAppShell:LocalStoreTests.testMintedIdentifiersAreUuidsAndTimestampsAreFromTheClock"
+   ],
+   "code_paths": 4,
+   "test_count": 3,
+   "tests_executed_this_run": 3
+  },
+  {
+   "req_id": "TRS-MED-002",
+   "status": "tested",
+   "tests": [
+    "go:protocol/media:TestConformanceMediaNegatives",
+    "go:protocol/media:TestDigestMismatchOnCleanDecrypt",
+    "go:protocol/media:TestTruncatedReassemblyRejected",
+    "java:protocol-conformance:CryptoConformanceTest.mediaPipeline",
+    "swift:LumosProtocolConformance:CryptoConformanceTests.testMediaObjectPipeline"
+   ],
+   "code_paths": 3,
+   "test_count": 5,
+   "tests_executed_this_run": 5
+  },
+  {
+   "req_id": "TRS-PAT-002",
+   "status": "implemented",
+   "tests": [
+    "go:protocol/match:TestEveryPairIsEitherATransitionOrADeliberateAbsorption"
+   ],
+   "code_paths": 3,
+   "test_count": 1,
+   "tests_executed_this_run": 1
+  },
+  {
+   "req_id": "TRS-PROTO-001",
+   "status": "tested",
+   "tests": [
+    "go:protocol/wire:TestConformanceFrameInvalidVectors",
+    "go:protocol/wire:TestConformanceFrameRoundtripVectors",
+    "go:protocol/wire:TestEncodeMatchesHandComputedBytes",
+    "go:protocol/wire:TestRoundtripEveryKnownClass",
+    "java:protocol-conformance:FramingConformanceTest.frameInvalid",
+    "java:protocol-conformance:FramingConformanceTest.frameRoundtrip",
+    "swift:LumosProtocolConformance:FramingConformanceTests.testFrameInvalidFailsWithExactCode",
+    "swift:LumosProtocolConformance:FramingConformanceTests.testFrameRoundtripReproducesCommittedBytes"
+   ],
+   "code_paths": 17,
+   "test_count": 8,
+   "tests_executed_this_run": 8
+  },
+  {
+   "req_id": "TRS-PROTO-002",
+   "status": "tested",
+   "tests": [
+    "go:protocol/wire:TestConformanceFrameRoundtripVectors",
+    "go:protocol/wire:TestEncodeMatchesHandComputedBytes",
+    "java:protocol-conformance:FramingConformanceTest.frameInvalid",
+    "java:protocol-conformance:FramingConformanceTest.frameRoundtrip",
+    "swift:LumosProtocolConformance:FramingConformanceTests.testFrameInvalidFailsWithExactCode",
+    "swift:LumosProtocolConformance:FramingConformanceTests.testFrameRoundtripReproducesCommittedBytes"
+   ],
+   "code_paths": 17,
+   "test_count": 6,
+   "tests_executed_this_run": 6
+  },
+  {
+   "req_id": "TRS-PROTO-003",
+   "status": "tested",
+   "tests": [
+    "go:protocol/schema:TestFrameHeaderWidthMatchesRegister",
+    "java:protocol-conformance:FramingConformanceTest.headerBytesIsTheAad",
+    "swift:LumosProtocolConformance:FramingConformanceTests.testAuthenticatedHeaderIsTheLeadingBytes"
+   ],
+   "code_paths": 8,
+   "test_count": 3,
+   "tests_executed_this_run": 3
+  },
+  {
+   "req_id": "TRS-PROTO-004",
+   "status": "tested",
+   "tests": [
+    "go:protocol/wire:TestConformanceFrameRoundtripVectors",
+    "go:protocol/wire:TestEncodeMatchesHandComputedBytes",
+    "java:protocol-conformance:FramingConformanceTest.frameInvalid",
+    "java:protocol-conformance:FramingConformanceTest.frameRoundtrip",
+    "swift:LumosProtocolConformance:FramingConformanceTests.testFrameInvalidFailsWithExactCode",
+    "swift:LumosProtocolConformance:FramingConformanceTests.testFrameRoundtripReproducesCommittedBytes"
+   ],
+   "code_paths": 11,
+   "test_count": 6,
+   "tests_executed_this_run": 6
+  },
+  {
+   "req_id": "TRS-PROTO-005",
+   "status": "tested",
+   "tests": [
+    "go:protocol/schema:TestMessagePayloadsCoverEveryRegisteredClass",
+    "go:protocol/schema:TestTextEventEnvelopeMatchesAMD005",
+    "go:tools/constantsgen:TestMessageClassesMatchTRS92",
+    "java:protocol-conformance:FramingConformanceTest.frameRoundtrip",
+    "swift:LumosProtocolConformance:FramingConformanceTests.testFrameRoundtripReproducesCommittedBytes"
+   ],
+   "code_paths": 8,
+   "test_count": 5,
+   "tests_executed_this_run": 5
+  },
+  {
+   "req_id": "TRS-PROTO-006",
+   "status": "tested",
+   "tests": [
+    "go:protocol/wire:TestConformanceFrameInvalidVectors",
+    "go:protocol/wire:TestDecodeErrorPaths",
+    "go:protocol/wire:TestSkippableConditionsDecode",
+    "java:protocol-conformance:FramingConformanceTest.frameInvalid",
+    "java:protocol-conformance:FramingConformanceTest.frameRoundtrip",
+    "swift:LumosProtocolConformance:FramingConformanceTests.testFrameInvalidFailsWithExactCode",
+    "swift:LumosProtocolConformance:FramingConformanceTests.testFrameRoundtripReproducesCommittedBytes"
+   ],
+   "code_paths": 17,
+   "test_count": 7,
+   "tests_executed_this_run": 7
+  },
+  {
+   "req_id": "TRS-PROTO-007",
+   "status": "tested",
+   "tests": [
+    "go:protocol/wire:TestDecodeErrorPaths",
+    "go:protocol/wire:TestEncodeRejectsOversizedAndUnknown",
+    "go:tools/constantsgen:TestClassLimitsResolveUnitsCorrectly",
+    "go:tools/constantsgen:TestEveryClassHasAPositiveLimit",
+    "java:protocol-conformance:FramingConformanceTest.frameInvalid",
+    "java:protocol-conformance:FramingConformanceTest.frameRoundtrip",
+    "swift:LumosProtocolConformance:FramingConformanceTests.testFrameInvalidFailsWithExactCode",
+    "swift:LumosProtocolConformance:FramingConformanceTests.testFrameRoundtripReproducesCommittedBytes"
+   ],
+   "code_paths": 17,
+   "test_count": 8,
+   "tests_executed_this_run": 8
+  },
+  {
+   "req_id": "TRS-PROTO-009",
+   "status": "implemented",
+   "tests": [
+    "go:protocol/adv:TestConformanceAdvNegatives",
+    "go:protocol/adv:TestConformanceAdvSchedule",
+    "go:protocol/adv:TestLayoutMatchesADR002",
+    "go:protocol/adv:TestNoProhibitedContentCapacity",
+    "go:protocol/adv:TestRoundtripVerify",
+    "go:protocol/adv:TestVerifyRejectsWrongEpochAndTamper",
+    "java:protocol-conformance:CryptoConformanceTest.advertisement",
+    "swift:LumosProtocolConformance:CryptoConformanceTests.testAdvertisementScheduleAndNegatives",
+    "java:protocol-conformance:AdvConformanceTest.scheduleReproducesThroughTheSharedClass",
+    "swift:LumosProtocolConformance:AdvConformanceTests.testScheduleReproducesThroughTheSharedType"
+   ],
+   "code_paths": 7,
+   "test_count": 10,
+   "tests_executed_this_run": 10
+  },
+  {
+   "req_id": "TRS-PROTO-010",
+   "status": "tested",
+   "tests": [
+    "go:protocol/wire:TestSplitAndReassembleRoundTrip",
+    "go:protocol/wire:TestDuplicateFragmentsAreSuppressed",
+    "go:protocol/wire:TestReassemblyTimeoutExpiresTheAssembly",
+    "go:protocol/wire:TestConformanceFragmentationSplitVectors",
+    "go:protocol/wire:TestConformanceFragmentationScripts",
+    "java:protocol-conformance:FragmentationConformanceTest.splitVectorsReproduceByteForByte",
+    "java:protocol-conformance:FragmentationConformanceTest.scriptedTimelinesPlayOutExactly",
+    "swift:LumosProtocolConformance:FragmentationConformanceTests.testSplitVectorsReproduceByteForByte",
+    "swift:LumosProtocolConformance:FragmentationConformanceTests.testScriptedTimelinesPlayOutExactly"
+   ],
+   "code_paths": 6,
+   "test_count": 9,
+   "tests_executed_this_run": 9
+  },
+  {
+   "req_id": "TRS-PROTO-011",
+   "status": "tested",
+   "tests": [
+    "go:protocol/media:TestConformanceMediaAckCases",
+    "go:protocol/media:TestSelectiveAckBitmapAndRanges"
+   ],
+   "code_paths": 3,
+   "test_count": 2,
+   "tests_executed_this_run": 2
+  },
+  {
+   "req_id": "TRS-PROTO-013",
+   "status": "tested",
+   "tests": [
+    "go:protocol/schema:TestErrorCodesAreStableAndUnique",
+    "go:protocol/wire:TestDecodeErrorPaths",
+    "go:tools/constantsgen:TestGeneratedErrorCodesCoverRegistry",
+    "go:tools/vectorgen:TestNegativeVectorsUseRegisteredCodesOnly",
+    "java:protocol-conformance:FramingConformanceTest.errorRegistry",
+    "swift:LumosProtocolConformance:FramingConformanceTests.testErrorRegistryMatchesGenerated"
+   ],
+   "code_paths": 6,
+   "test_count": 6,
+   "tests_executed_this_run": 6
+  },
+  {
+   "req_id": "TRS-PROTO-014",
+   "status": "tested",
+   "tests": [
+    "go:protocol/wire:TestConformanceFrameRoundtripVectors",
+    "go:tools/vectorgen:TestRoundtripCoversEveryRegisterClass"
+   ],
+   "code_paths": 6,
+   "test_count": 2,
+   "tests_executed_this_run": 2
+  },
+  {
+   "req_id": "TRS-PROTO-015",
+   "status": "tested",
+   "tests": [
+    "go:tools/vectorgen:TestEveryPrescribedFileIsCommitted",
+    "go:tools/vectorgen:TestExtensionsAreNotSmuggledIntoTheTranscription",
+    "go:tools/vectorgen:TestGateFailsOnMissingFile",
+    "go:tools/vectorgen:TestGateFailsOnUnexpectedFile",
+    "go:tools/vectorgen:TestManifestListsTheWholeSuite",
+    "go:tools/vectorgen:TestSuiteFilesMatchTRS184",
+    "java:protocol-conformance:CryptoConformanceTest.x3dhKat",
+    "java:protocol-conformance:FramingConformanceTest.frameRoundtrip",
+    "swift:LumosProtocolConformance:CryptoConformanceTests.testX3DHSharedSecretsAndTranscripts",
+    "swift:LumosProtocolConformance:FramingConformanceTests.testFrameRoundtripReproducesCommittedBytes"
+   ],
+   "code_paths": 6,
+   "test_count": 10,
+   "tests_executed_this_run": 10
+  },
+  {
+   "req_id": "TRS-PROTO-017",
+   "status": "tested",
+   "tests": [
+    "go:protocol/hello:TestConformanceHelloExchangeReplaysByteForByte",
+    "go:protocol/hello:TestConformanceHelloNegativesFailWithTheirCodes",
+    "go:protocol/hello:TestTheDualExchangeAuthenticatesBothSides",
+    "java:protocol-conformance:HelloConformanceTest.theDualExchangeReplaysByteForByte",
+    "java:protocol-conformance:HelloConformanceTest.everyNegativeFailsWithItsStableCode",
+    "swift:LumosProtocolConformance:HelloConformanceTests.testHellosByteMatchAndCommittedAcksVerify",
+    "swift:LumosProtocolConformance:HelloConformanceTests.testTheDualExchangeRoundTripsWithCryptoKitSigners",
+    "swift:LumosProtocolConformance:HelloConformanceTests.testEveryNegativeFailsWithItsStableCode"
+   ],
+   "code_paths": 6,
+   "test_count": 8,
+   "tests_executed_this_run": 8
+  },
+  {
+   "req_id": "TRS-PROTO-018",
+   "status": "tested",
+   "tests": [
+    "go:protocol/hello:TestAHintlessPeerWalksTheSamePath",
+    "java:protocol-conformance:HelloConformanceTest.theDualExchangeReplaysByteForByte",
+    "java:app-dev:DiscoveryTriageTest.hintlessPeersAreFirstClassCandidates",
+    "swift:LumosProtocolConformance:HelloConformanceTests.testHellosByteMatchAndCommittedAcksVerify"
+   ],
+   "code_paths": 4,
+   "test_count": 4,
+   "tests_executed_this_run": 4
+  },
+  {
+   "req_id": "TRS-REP-001",
+   "status": "tested",
+   "tests": [
+    "go:tools/repolint:TestRepositoryLayoutConforms",
+    "go:tools/repolint:TestRequiredRootsMatchTRS41",
+    "go:tools/repolint:TestCheckDetectsMissingRoot",
+    "go:tools/repolint:TestCheckDetectsRequiredRootThatIsAFile",
+    "go:tools/repolint:TestCheckDetectsUnexpectedRootDirectory",
+    "go:tools/repolint:TestCheckDetectsUnexpectedRootFile",
+    "go:tools/repolint:TestCheckDetectsMissingRelocatedArtifact",
+    "go:tools/repolint:TestCheckDetectsStaleArchiveAtRoot"
+   ],
+   "code_paths": 1,
+   "test_count": 8,
+   "tests_executed_this_run": 8
+  },
+  {
+   "req_id": "TRS-REP-002",
+   "status": "tested",
+   "tests": [
+    "go:tools/constantsgen:TestGeneratedGoValuesMatchRegister",
+    "go:tools/constantsgen:TestGeneratedJavaCompilesAndMatchesRegister",
+    "go:tools/constantsgen:TestIdentifiersAreValidAndDistinct",
+    "java:protocol-conformance:CryptoConformanceTest.safetyNumber",
+    "swift:LumosProtocolConformance:CryptoConformanceTests.testSafetyNumberReproducesDigitsAndEmoji"
+   ],
+   "code_paths": 11,
+   "test_count": 5,
+   "tests_executed_this_run": 5
+  },
+  {
+   "req_id": "TRS-REP-003",
+   "status": "tested",
+   "tests": [
+    "go:tools/deplock:TestBuildPluginsAreDeclaredAndCatalogued",
+    "go:tools/deplock:TestEveryGoModuleIsChecksummed",
+    "go:tools/deplock:TestEveryShippedDependencyIsInTheNotices",
+    "go:tools/deplock:TestGoManifestMirrorsGoMod",
+    "go:tools/deplock:TestGradleWrapperIsChecksumPinned",
+    "go:tools/deplock:TestJVMDependenciesAreCataloguedAndDeclared",
+    "go:tools/deplock:TestManifestNoLongerCallsPinnedItemsPending",
+    "go:tools/deplock:TestNPMLockfilePinsEveryPackageWithIntegrity",
+    "go:tools/deplock:TestNPMManifestMirrorsPackageJSON",
+    "go:tools/deplock:TestOnlyTheApprovedCryptoDependencyIsPresent",
+    "go:tools/deplock:TestRuntimeDependenciesAreCataloguedAndDeclared",
+    "go:tools/deplock:TestSwiftPMManifestMirrorsPackageResolved"
+   ],
+   "code_paths": 10,
+   "test_count": 12,
+   "tests_executed_this_run": 12
+  },
+  {
+   "req_id": "TRS-REP-004",
+   "status": "tested",
+   "tests": [
+    "ts:admin-console:AdminShell.fourBuildEnvironmentsAreSeparated",
+    "swift:LumosAppShell:LumosAppShellTests.testFourEnvironmentsAreSeparated",
+    "go:tools/bootstrap:TestSampleEnvironmentSeparatesTheFourVariants",
+    "go:tools/staticanalysis:TestAndroidVariantTestsCoverAllFourEnvironments",
+    "java:app-dev:BuildVariantTest.environmentMatchesTheFlavourUnderTest",
+    "java:app-dev:BuildVariantTest.applicationIdSeparatesThisEnvironmentFromTheOthers",
+    "java:app-qa:BuildVariantTest.environmentMatchesTheFlavourUnderTest",
+    "java:app-qa:BuildVariantTest.applicationIdSeparatesThisEnvironmentFromTheOthers",
+    "java:app-staging:BuildVariantTest.environmentMatchesTheFlavourUnderTest",
+    "java:app-staging:BuildVariantTest.applicationIdSeparatesThisEnvironmentFromTheOthers",
+    "java:app-prod:BuildVariantTest.environmentMatchesTheFlavourUnderTest",
+    "java:app-prod:BuildVariantTest.applicationIdSeparatesThisEnvironmentFromTheOthers"
+   ],
+   "code_paths": 6,
+   "test_count": 12,
+   "tests_executed_this_run": 12
+  },
+  {
+   "req_id": "TRS-REP-005",
+   "status": "implemented",
+   "tests": [
+    "go:tools/bootstrap:TestSampleEnvironmentCarriesNothingSecretShaped",
+    "go:tools/bootstrap:TestSecretShapeScannerRejectsACredentialShapedValue"
+   ],
+   "code_paths": 4,
+   "test_count": 2,
+   "tests_executed_this_run": 2
+  },
+  {
+   "req_id": "TRS-REP-006",
+   "status": "implemented",
+   "tests": [
+    "go:tools/bootstrap:TestScriptsCarryNoVersionLiterals",
+    "go:tools/bootstrap:TestBothScriptsReadTheManifest",
+    "go:tools/bootstrap:TestEveryPinnedToolchainIsChecked",
+    "go:tools/bootstrap:TestBothScriptsApplyTheSameVersionPolicy",
+    "go:tools/bootstrap:TestScriptsCoverTheKnownGaps",
+    "go:tools/bootstrap:TestPosixScriptIsExecutableShellWithUnixEndings",
+    "go:tools/bootstrap:TestVersionLiteralScannerRejectsAHardcodedVersion",
+    "go:tools/bootstrap:TestBootstrapIsDocumented"
+   ],
+   "code_paths": 4,
+   "test_count": 8,
+   "tests_executed_this_run": 8
+  },
+  {
+   "req_id": "TRS-REP-007",
+   "status": "implemented",
+   "tests": [
+    "go:backend/cmd/lumosd:TestReleaseProvenanceFieldsExist",
+    "ts:admin-console:AdminShell.buildProvenanceIsRendered",
+    "swift:LumosAppShell:LumosAppShellTests.testBuildProvenanceIsReported"
+   ],
+   "code_paths": 4,
+   "test_count": 3,
+   "tests_executed_this_run": 3
+  },
+  {
+   "req_id": "TRS-REP-008",
+   "status": "implemented",
+   "tests": [],
+   "code_paths": 4,
+   "test_count": 0
+  },
+  {
+   "req_id": "TRS-TRN-002",
+   "status": "implemented",
+   "tests": [
+    "java:app-dev:FrameLinkTest.aBlobCrossesTheLinkWholeOneWriteAtATime",
+    "java:app-dev:FrameLinkTest.sequentialSendsDoNotInterleaveFragments",
+    "java:protocol-conformance:FragmentationConformanceTest.splitVectorsReproduceByteForByte",
+    "swift:LumosAppShell:FrameChannelTests.testABlobCrossesTheChannelWholeAndPaced"
+   ],
+   "code_paths": 5,
+   "test_count": 4,
+   "tests_executed_this_run": 4
+  },
+  {
+   "req_id": "TRS-TRN-003",
+   "status": "implemented",
+   "tests": [
+    "java:app-dev:GattOperationQueueTest.operationsRunStrictlyOneAtATime",
+    "java:app-dev:GattOperationQueueTest.aStaleEpochCompletionIsDiscarded",
+    "java:app-dev:GattOperationQueueTest.reconnectFailsEverythingPending",
+    "java:app-dev:GattOperationQueueTest.transientFailuresRetryOnTheRegisterBackoffWithinTheBudget"
+   ],
+   "code_paths": 2,
+   "test_count": 4,
+   "tests_executed_this_run": 4
+  },
+  {
+   "req_id": "TRS-TRN-004",
+   "status": "implemented",
+   "tests": [
+    "swift:LumosAppShell:PacedWriteQueueTests.testWritesPauseTheInstantTheGateSaysNo",
+    "swift:LumosAppShell:FrameChannelTests.testABlobCrossesTheChannelWholeAndPaced"
+   ],
+   "code_paths": 2,
+   "test_count": 2,
+   "tests_executed_this_run": 2
+  },
+  {
+   "req_id": "TRS-TST-001",
+   "status": "tested",
+   "tests": [
+    "go:protocol/crypto/x3dh:TestIdentityBindingVectorsReproduceThroughTheRealPath",
+    "go:protocol/crypto:TestConformanceRecoveryDerivation",
+    "go:protocol/crypto:TestConformanceRecoveryFailuresAreIndistinguishable",
+    "go:protocol/crypto:TestConformanceRecoveryFormatAndLimits",
+    "go:protocol/crypto:TestConformanceRecoveryNegatives",
+    "go:protocol/crypto:TestConformanceRecoveryPositives",
+    "go:protocol/crypto:TestConformanceX3DHKAT",
+    "go:protocol/wire:TestConformanceFrameRoundtripVectors",
+    "java:app-dev:IdentityBindingVectorsTest.theJcaBackendReproducesEveryCommittedSignature",
+    "java:app-instrumented:IdentityGenerationInstrumentedTest.theLibsodiumBackendReproducesEveryCommittedVector",
+    "java:app-instrumented:RecoveryRecordInstrumentedTest.anExportedRecordLeaksNeitherPassphraseNorContent",
+    "java:app-instrumented:RecoveryRecordInstrumentedTest.argon2idAgreesWithTheReferenceDerivation",
+    "java:app-instrumented:RecoveryRecordInstrumentedTest.everyCommittedRecordOpensAndReSeals",
+    "java:app-instrumented:RecoveryRecordInstrumentedTest.everyNegativeVectorIsRefusedWithTheRightCode",
+    "java:app-instrumented:RecoveryRecordInstrumentedTest.openingFailuresAreIndistinguishable",
+    "java:app-instrumented:RecoveryRecordInstrumentedTest.theAcceptedBoundsMatchTheVectorFile",
+    "java:app-instrumented:RecoveryRecordInstrumentedTest.theFormatConstantsMatchTheVectorFile",
+    "java:app-instrumented:RecoveryRecordInstrumentedTest.twoExportsOfTheSameContentDiffer",
+    "java:protocol-conformance:CryptoConformanceTest.aeadKat",
+    "java:protocol-conformance:CryptoConformanceTest.x3dhKat",
+    "java:protocol-conformance:FramingConformanceTest.frameInvalid",
+    "java:protocol-conformance:FramingConformanceTest.frameRoundtrip",
+    "swift:LumosAppShell:RecoveryRecordTests.testAcceptedBoundsMatchTheVectorFile",
+    "swift:LumosAppShell:RecoveryRecordTests.testAnExportedRecordLeaksNeitherPassphraseNorContent",
+    "swift:LumosAppShell:RecoveryRecordTests.testArgon2idAgreesWithTheReferenceDerivation",
+    "swift:LumosAppShell:RecoveryRecordTests.testDescribeReadsTheHeaderWithoutThePassphrase",
+    "swift:LumosAppShell:RecoveryRecordTests.testEveryCommittedRecordOpensAndReSeals",
+    "swift:LumosAppShell:RecoveryRecordTests.testEveryNegativeVectorIsRefusedWithTheRightCode",
+    "swift:LumosAppShell:RecoveryRecordTests.testFormatConstantsMatchTheVectorFile",
+    "swift:LumosAppShell:RecoveryRecordTests.testOpeningFailuresCarryNoDistinguishingDetail",
+    "swift:LumosAppShell:RecoveryRecordTests.testTwoExportsOfTheSameContentDiffer",
+    "swift:LumosProtocolConformance:CryptoConformanceTests.testAEADKnownAnswersAndTampers",
+    "swift:LumosProtocolConformance:FramingConformanceTests.testFrameRoundtripReproducesCommittedBytes",
+    "swift:LumosProtocolConformance:IdentityBindingConformanceTests.testPositivesDeriveVerifyAndRoundTrip"
+   ],
+   "code_paths": 12,
+   "test_count": 34,
+   "tests_executed_this_run": 34
+  }
+ ],
+ "owner_gates": [
+  {
+   "gate": "G-01",
+   "status": "unproven_owner",
+   "evidence": [],
+   "owner_signoff": null
+  },
+  {
+   "gate": "G-02",
+   "status": "unproven_owner",
+   "evidence": [],
+   "owner_signoff": null
+  },
+  {
+   "gate": "G-03",
+   "status": "unproven_owner",
+   "evidence": [],
+   "owner_signoff": null
+  },
+  {
+   "gate": "G-04",
+   "status": "unproven_owner",
+   "evidence": [],
+   "owner_signoff": null
+  },
+  {
+   "gate": "G-05",
+   "status": "unproven_owner",
+   "evidence": [],
+   "owner_signoff": null
+  },
+  {
+   "gate": "G-06",
+   "status": "unproven_owner",
+   "evidence": [],
+   "owner_signoff": null
+  },
+  {
+   "gate": "G-07",
+   "status": "unproven_owner",
+   "evidence": [],
+   "owner_signoff": null
+  },
+  {
+   "gate": "G-08",
+   "status": "unproven_owner",
+   "evidence": [],
+   "owner_signoff": null
+  },
+  {
+   "gate": "G-09",
+   "status": "unproven_owner",
+   "evidence": [],
+   "owner_signoff": null
+  }
+ ],
+ "unproven_or_deferred_req_ids": null
+}
