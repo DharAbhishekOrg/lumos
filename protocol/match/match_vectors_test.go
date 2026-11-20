@@ -16,6 +16,7 @@ package match
 import (
 	"encoding/hex"
 	"encoding/json"
+	"errors"
 	"os"
 	"path/filepath"
 	"strings"
@@ -42,6 +43,18 @@ type matchVectorFile struct {
 		ColorName    string    `json:"color_name"`
 		ColorHex     string    `json:"color_hex"`
 	} `json:"tokens"`
+	Wire []struct {
+		Name       string `json:"name"`
+		PreviewHex string `json:"preview_hex"`
+		Verdict    string `json:"verdict"`
+		PayloadHex string `json:"payload_hex"`
+	} `json:"wire"`
+	WireNegatives []struct {
+		Name       string `json:"name"`
+		Kind       string `json:"kind"`
+		PayloadHex string `json:"payload_hex"`
+		Error      string `json:"error"`
+	} `json:"wire_negatives"`
 	Scripts []struct {
 		Name  string `json:"name"`
 		Steps []struct {
@@ -145,6 +158,69 @@ func TestCommittedTokensReproduceExactly(t *testing.T) {
 		if token.Emoji() != c.Emoji || token.ColorName() != c.ColorName ||
 			token.ColorHex() != c.ColorHex {
 			t.Errorf("%s: rendered channels mismatch", c.Name)
+		}
+	}
+}
+
+func TestCommittedWireCasesReproduceByteForByte(t *testing.T) {
+	file := loadMatchVectors(t)
+	if len(file.Wire) == 0 || len(file.WireNegatives) == 0 {
+		t.Fatal("an empty wire section proves nothing")
+	}
+	for _, c := range file.Wire {
+		committed, err := hex.DecodeString(c.PayloadHex)
+		if err != nil {
+			t.Fatal(err)
+		}
+		switch c.Verdict {
+		case "":
+			preview, err := hex.DecodeString(c.PreviewHex)
+			if err != nil {
+				t.Fatal(err)
+			}
+			built, err := EncodeRequest(preview)
+			if err != nil {
+				t.Fatalf("%s: %v", c.Name, err)
+			}
+			if hex.EncodeToString(built) != c.PayloadHex {
+				t.Errorf("%s: encode mismatch", c.Name)
+			}
+			opened, err := DecodeRequest(committed)
+			if err != nil || hex.EncodeToString(opened) != c.PreviewHex {
+				t.Errorf("%s: decode mismatch (%v)", c.Name, err)
+			}
+		default:
+			want := VerdictAccept
+			if c.Verdict == "unmatch" {
+				want = VerdictUnmatch
+			}
+			built, err := EncodeResponse(want)
+			if err != nil {
+				t.Fatalf("%s: %v", c.Name, err)
+			}
+			if hex.EncodeToString(built) != c.PayloadHex {
+				t.Errorf("%s: encode mismatch", c.Name)
+			}
+			got, err := DecodeResponse(committed)
+			if err != nil || got != want {
+				t.Errorf("%s: decode mismatch (%v)", c.Name, err)
+			}
+		}
+	}
+	for _, c := range file.WireNegatives {
+		raw, err := hex.DecodeString(c.PayloadHex)
+		if err != nil {
+			t.Fatal(err)
+		}
+		var decodeErr error
+		if c.Kind == "request" {
+			_, decodeErr = DecodeRequest(raw)
+		} else {
+			_, decodeErr = DecodeResponse(raw)
+		}
+		var we *WireError
+		if decodeErr == nil || !errors.As(decodeErr, &we) || we.Code != c.Error {
+			t.Errorf("%s: wanted %s, got %v", c.Name, c.Error, decodeErr)
 		}
 	}
 }

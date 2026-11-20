@@ -5,7 +5,7 @@
  "$generator": "tools/constantsgen",
  "service_uuid": "E853EB6A-775C-4A49-A6BF-320E6A5CC609",
  "$service_uuid_provenance": "One fixed 128-bit GATT service UUID per ADR-002 / TRS Sec. 9.3, generated once from a CSPRNG as an RFC 4122 version-4 UUID in WP-01 slice S2 and frozen here. Advertised by both platforms and used for scan filtering. No 16-bit alias is registered for flagship. Regenerating this value is a breaking protocol change.",
- "constants_hash": "sha256:4fb89c6c38259e018245239b69a55a6eb61c015ce5f49709774bd2618f384cb4",
+ "constants_hash": "sha256:f635578ebfba1e3a65a3c711db5f629abed552b81731e1c25b4e307ee45f1c22",
  "constants_hash_algorithm": {
   "digest": "SHA-256",
   "encoding": "lowercase hex, prefixed 'sha256:'",
@@ -496,6 +496,17 @@
    "default": 16, "overridable": false,
    "notes": "Bytes of the derived match identifier.",
    "anchors": ["SRS-MAT-007"], "source": "SRS-MAT-007 derivation"
+  },
+  "INTEREST_REQUEST_V1_LAYOUT": {
+   "version": 1, "version_len": 1, "preview_len_len": 2, "overridable": false,
+   "notes": "The class-3 consent-stage request payload: version byte, u16 big-endian preview length, then the sender's request-stage preview blob exactly as the app's profile codec emits it for the REQUESTER audience (SRS-MAT-002) - the envelope is content-opaque and the class budget bounds it. The requester's identity rides the authenticated session, never the payload. Added in WP-04 S5 under the TRS Sec. 19 AI delivery rule.",
+   "anchors": ["SRS-MAT-001", "SRS-MAT-002"], "adr": ["ADR-002"], "source": "TRS 9.2 derivation"
+  },
+  "INTEREST_RESPONSE_V1_LAYOUT": {
+   "version": 1, "version_len": 1, "verdict_len": 1,
+   "verdict_accept": 1, "verdict_unmatch": 2, "overridable": false,
+   "notes": "The class-4 response payload: version byte, verdict byte - and the verdict alphabet is ACCEPT and UNMATCH, nothing else. A decline or ignore is UNENCODABLE in this format by design: SRS-MAT-004's silence is enforced at the codec, so no implementation can transmit a rejection even by mistake, and the sender's view after one is byte-identical to no answer. UNMATCH is the one deliberately visible ending (SRS-MAT-009). Added in WP-04 S5 under the TRS Sec. 19 AI delivery rule.",
+   "anchors": ["SRS-MAT-003", "SRS-MAT-004", "SRS-MAT-009"], "adr": ["ADR-002"], "source": "TRS 9.2 derivation"
   },
   "MATCH_TOKEN_KDF_INFO": {
    "value": "lumos/match-token/v1", "overridable": false,

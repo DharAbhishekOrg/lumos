@@ -6,7 +6,7 @@
 /// GENERATED - DO NOT EDIT. Generator: tools/constantsgen
 /// Source register: protocol/constants/lumos_constants.json
 /// Baseline: TRS v1.1 Sec. 23 / EDP v1.0 Sec. 4 (ADR-004)
-/// constants_hash: sha256:4fb89c6c38259e018245239b69a55a6eb61c015ce5f49709774bd2618f384cb4
+/// constants_hash: sha256:f635578ebfba1e3a65a3c711db5f629abed552b81731e1c25b4e307ee45f1c22
 
 /// Stable machine-readable error codes of TRS-PROTO-013. Append-only.
 public enum LumosErrors {
@@ -152,6 +152,12 @@ public enum LumosErrors {
     /// ERR_MATCH_NOT_MATCHED (142, match): A chat or media action was attempted outside the MATCHED state; mutual acceptance is the only gate that opens those paths (SRS-MAT-005, SRS-MAT-006).
     public static let errMatchNotMatched = "ERR_MATCH_NOT_MATCHED"
 
+    /// ERR_MATCH_BAD_PAYLOAD (143, match): A class-3/4 consent-stage payload failed structural decode: wrong version, truncated, or length prefix disagreeing with the bytes (INTEREST_*_V1_LAYOUT).
+    public static let errMatchBadPayload = "ERR_MATCH_BAD_PAYLOAD"
+
+    /// ERR_MATCH_BAD_VERDICT (144, match): A class-4 verdict byte was outside the encodable alphabet (accept, unmatch). Declines are unencodable by design (SRS-MAT-004).
+    public static let errMatchBadVerdict = "ERR_MATCH_BAD_VERDICT"
+
     /// Maps each stable code to its registry number.
     public static let numeric: [String: Int] = [
         "ERR_FRAME_BAD_MAGIC": 1,
@@ -201,6 +207,8 @@ public enum LumosErrors {
         "ERR_MATCH_RATE_LIMITED": 140,
         "ERR_MATCH_UNKNOWN_PEER": 141,
         "ERR_MATCH_NOT_MATCHED": 142,
+        "ERR_MATCH_BAD_PAYLOAD": 143,
+        "ERR_MATCH_BAD_VERDICT": 144,
     ]
 
     /// Reports whether a code is in the stable registry.

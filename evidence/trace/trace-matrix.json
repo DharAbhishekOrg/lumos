@@ -630,13 +630,25 @@
   },
   {
    "req_id": "SRS-MAT-002",
-   "status": "not_started",
-   "code": [],
-   "tests": [],
+   "status": "implemented",
+   "code": [
+    "android-app/protocol-java/src/main/java/com/lumos/protocol/match/InterestWire.java",
+    "ios-app/protocol-conformance/Sources/LumosProtocol/Match.swift",
+    "protocol/match/wire.go",
+    "test-vectors/matches/match_timelines.json"
+   ],
+   "tests": [
+    "go:protocol/match:TestCommittedWireCasesReproduceByteForByte",
+    "go:protocol/match:TestRequestRoundTripsAndRefusesStructurally",
+    "java:protocol-conformance:MatchConformanceTest.committedWireCasesReproduceByteForByte",
+    "swift:LumosProtocolConformance:MatchConformanceTests.testCommittedWireCasesReproduceByteForByte"
+   ],
    "evidence": [],
-   "adr": [],
-   "last_commit": null,
-   "updated": null
+   "adr": [
+    "ADR-002"
+   ],
+   "last_commit": "17d5f88",
+   "updated": "2026-11-20"
   },
   {
    "req_id": "SRS-MAT-003",
@@ -667,15 +679,18 @@
    "req_id": "SRS-MAT-004",
    "status": "implemented",
    "code": [
+    "android-app/protocol-java/src/main/java/com/lumos/protocol/match/InterestWire.java",
     "android-app/protocol-java/src/main/java/com/lumos/protocol/match/MatchMachine.java",
     "ios-app/protocol-conformance/Sources/LumosProtocol/Match.swift",
     "protocol/match/machine.go",
+    "protocol/match/wire.go",
     "test-vectors/matches/match_timelines.json",
     "tools/vectorgen/match.go"
    ],
    "tests": [
     "go:protocol/match:TestDecliningAndIgnoringNeverTransmitAnything",
     "go:protocol/match:TestTheFamilyItselfKeepsTheSilenceAndTheSingleDoor",
+    "go:protocol/match:TestTheResponseAlphabetHoldsExactlyTwoWords",
     "java:protocol-conformance:MatchConformanceTest.theFamilyKeepsTheSilenceAndTheSingleDoorOnThisPlatformToo",
     "swift:LumosProtocolConformance:MatchConformanceTests.testTheFamilyKeepsTheSilenceAndTheSingleDoorOnThisPlatformToo"
    ],
@@ -774,13 +789,24 @@
   },
   {
    "req_id": "SRS-MAT-009",
-   "status": "not_started",
-   "code": [],
-   "tests": [],
+   "status": "implemented",
+   "code": [
+    "android-app/protocol-java/src/main/java/com/lumos/protocol/match/InterestWire.java",
+    "ios-app/protocol-conformance/Sources/LumosProtocol/Match.swift",
+    "protocol/match/wire.go",
+    "test-vectors/matches/match_timelines.json"
+   ],
+   "tests": [
+    "go:protocol/match:TestTheResponseAlphabetHoldsExactlyTwoWords",
+    "java:protocol-conformance:MatchConformanceTest.committedWireCasesReproduceByteForByte",
+    "swift:LumosProtocolConformance:MatchConformanceTests.testCommittedWireCasesReproduceByteForByte"
+   ],
    "evidence": [],
-   "adr": [],
-   "last_commit": null,
-   "updated": null
+   "adr": [
+    "ADR-002"
+   ],
+   "last_commit": "17d5f88",
+   "updated": "2026-11-20"
   },
   {
    "req_id": "SRS-MAT-010",
@@ -1888,7 +1914,7 @@
     "ci:conformance#31528127667"
    ],
    "adr": [],
-   "last_commit": "fbb2425",
+   "last_commit": "17d5f88",
    "updated": "2026-11-20"
   },
   {
@@ -5115,7 +5141,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "fbb2425",
+   "last_commit": "17d5f88",
    "updated": "2026-11-20"
   },
   {
@@ -5125,7 +5151,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "fbb2425",
+   "last_commit": "17d5f88",
    "updated": "2026-11-20"
   },
   {
@@ -5135,7 +5161,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "fbb2425",
+   "last_commit": "17d5f88",
    "updated": "2026-11-20"
   },
   {
@@ -5159,7 +5185,7 @@
    "adr": [
     "ADR-003"
    ],
-   "last_commit": "fbb2425",
+   "last_commit": "17d5f88",
    "updated": "2026-11-20"
   },
   {
@@ -5181,7 +5207,7 @@
    "adr": [
     "ADR-002"
    ],
-   "last_commit": "fbb2425",
+   "last_commit": "17d5f88",
    "updated": "2026-11-20"
   },
   {
@@ -5200,7 +5226,7 @@
    "adr": [
     "ADR-002"
    ],
-   "last_commit": "fbb2425",
+   "last_commit": "17d5f88",
    "updated": "2026-11-20"
   },
   {
@@ -5210,7 +5236,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "fbb2425",
+   "last_commit": "17d5f88",
    "updated": "2026-11-20"
   },
   {
@@ -5220,7 +5246,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "fbb2425",
+   "last_commit": "17d5f88",
    "updated": "2026-11-20"
   },
   {
@@ -5230,7 +5256,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "fbb2425",
+   "last_commit": "17d5f88",
    "updated": "2026-11-20"
   },
   {
@@ -5240,7 +5266,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "fbb2425",
+   "last_commit": "17d5f88",
    "updated": "2026-11-20"
   },
   {
@@ -5250,7 +5276,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "fbb2425",
+   "last_commit": "17d5f88",
    "updated": "2026-11-20"
   },
   {
@@ -5260,7 +5286,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "fbb2425",
+   "last_commit": "17d5f88",
    "updated": "2026-11-20"
   },
   {
@@ -5633,7 +5659,7 @@
    "adr": [
     "ADR-004"
    ],
-   "last_commit": "fbb2425",
+   "last_commit": "17d5f88",
    "updated": "2026-11-20"
   },
   {
@@ -5643,7 +5669,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "fbb2425",
+   "last_commit": "17d5f88",
    "updated": "2026-11-20"
   },
   {
@@ -5653,7 +5679,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "fbb2425",
+   "last_commit": "17d5f88",
    "updated": "2026-11-20"
   },
   {
@@ -5663,7 +5689,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "fbb2425",
+   "last_commit": "17d5f88",
    "updated": "2026-11-20"
   },
   {
@@ -5673,7 +5699,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "fbb2425",
+   "last_commit": "17d5f88",
    "updated": "2026-11-20"
   },
   {
@@ -5683,7 +5709,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "fbb2425",
+   "last_commit": "17d5f88",
    "updated": "2026-11-20"
   },
   {
@@ -5693,7 +5719,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "fbb2425",
+   "last_commit": "17d5f88",
    "updated": "2026-11-20"
   },
   {
@@ -5703,7 +5729,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "fbb2425",
+   "last_commit": "17d5f88",
    "updated": "2026-11-20"
   },
   {
@@ -5726,7 +5752,7 @@
     "ci:conformance#31528127667"
    ],
    "adr": [],
-   "last_commit": "fbb2425",
+   "last_commit": "17d5f88",
    "updated": "2026-11-20"
   },
   {
@@ -5736,7 +5762,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "fbb2425",
+   "last_commit": "17d5f88",
    "updated": "2026-11-20"
   },
   {
@@ -5746,7 +5772,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "fbb2425",
+   "last_commit": "17d5f88",
    "updated": "2026-11-20"
   },
   {
@@ -5756,7 +5782,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "fbb2425",
+   "last_commit": "17d5f88",
    "updated": "2026-11-20"
   },
   {
@@ -5766,7 +5792,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "fbb2425",
+   "last_commit": "17d5f88",
    "updated": "2026-11-20"
   },
   {
@@ -5776,7 +5802,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "fbb2425",
+   "last_commit": "17d5f88",
    "updated": "2026-11-20"
   },
   {
@@ -5855,7 +5881,7 @@
    "adr": [
     "ADR-004"
    ],
-   "last_commit": "fbb2425",
+   "last_commit": "17d5f88",
    "updated": "2026-11-20"
   },
   {
@@ -6151,7 +6177,7 @@
     "ADR-005",
     "ADR-006"
    ],
-   "last_commit": "fbb2425",
+   "last_commit": "17d5f88",
    "updated": "2026-11-20"
   },
   {
@@ -6175,7 +6201,7 @@
     "ADR-004",
     "ADR-006"
    ],
-   "last_commit": "fbb2425",
+   "last_commit": "17d5f88",
    "updated": "2026-11-20"
   },
   {
@@ -6196,7 +6222,7 @@
    "adr": [
     "ADR-004"
    ],
-   "last_commit": "fbb2425",
+   "last_commit": "17d5f88",
    "updated": "2026-11-20"
   },
   {
@@ -6206,7 +6232,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "fbb2425",
+   "last_commit": "17d5f88",
    "updated": "2026-11-20"
   },
   {
@@ -6234,7 +6260,7 @@
    "adr": [
     "ADR-004"
    ],
-   "last_commit": "fbb2425",
+   "last_commit": "17d5f88",
    "updated": "2026-11-20"
   },
   {
@@ -6244,7 +6270,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "fbb2425",
+   "last_commit": "17d5f88",
    "updated": "2026-11-20"
   },
   {
@@ -6639,7 +6665,7 @@
    "adr": [
     "ADR-001"
    ],
-   "last_commit": "fbb2425",
+   "last_commit": "17d5f88",
    "updated": "2026-11-20"
   },
   {
@@ -6856,7 +6882,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "fbb2425",
+   "last_commit": "17d5f88",
    "updated": "2026-11-20"
   },
   {
@@ -6866,7 +6892,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "fbb2425",
+   "last_commit": "17d5f88",
    "updated": "2026-11-20"
   },
   {
@@ -6886,7 +6912,7 @@
    "adr": [
     "ADR-002"
    ],
-   "last_commit": "fbb2425",
+   "last_commit": "17d5f88",
    "updated": "2026-11-20"
   },
   {
@@ -6896,7 +6922,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "fbb2425",
+   "last_commit": "17d5f88",
    "updated": "2026-11-20"
   },
   {
@@ -6906,7 +6932,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "fbb2425",
+   "last_commit": "17d5f88",
    "updated": "2026-11-20"
   },
   {
@@ -6916,7 +6942,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "fbb2425",
+   "last_commit": "17d5f88",
    "updated": "2026-11-20"
   },
   {
@@ -6938,7 +6964,7 @@
     "ADR-003",
     "ADR-010"
    ],
-   "last_commit": "fbb2425",
+   "last_commit": "17d5f88",
    "updated": "2026-11-20"
   },
   {
@@ -6948,7 +6974,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "fbb2425",
+   "last_commit": "17d5f88",
    "updated": "2026-11-20"
   },
   {
@@ -6958,7 +6984,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "fbb2425",
+   "last_commit": "17d5f88",
    "updated": "2026-11-20"
   },
   {
@@ -6968,7 +6994,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "fbb2425",
+   "last_commit": "17d5f88",
    "updated": "2026-11-20"
   },
   {
@@ -6978,7 +7004,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "fbb2425",
+   "last_commit": "17d5f88",
    "updated": "2026-11-20"
   },
   {
@@ -6988,7 +7014,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "fbb2425",
+   "last_commit": "17d5f88",
    "updated": "2026-11-20"
   },
   {
@@ -7504,7 +7530,7 @@
    "adr": [
     "ADR-007"
    ],
-   "last_commit": "fbb2425",
+   "last_commit": "17d5f88",
    "updated": "2026-11-20"
   },
   {
@@ -7543,7 +7569,7 @@
    "adr": [
     "ADR-007"
    ],
-   "last_commit": "fbb2425",
+   "last_commit": "17d5f88",
    "updated": "2026-11-20"
   },
   {
@@ -7568,7 +7594,7 @@
     "ci:conformance#31528127667"
    ],
    "adr": [],
-   "last_commit": "fbb2425",
+   "last_commit": "17d5f88",
    "updated": "2026-11-20"
   },
   {
@@ -7599,7 +7625,7 @@
     "ci:conformance#31528127667"
    ],
    "adr": [],
-   "last_commit": "fbb2425",
+   "last_commit": "17d5f88",
    "updated": "2026-11-20"
   },
   {
@@ -7626,7 +7652,7 @@
     "ci:conformance#31528127667"
    ],
    "adr": [],
-   "last_commit": "fbb2425",
+   "last_commit": "17d5f88",
    "updated": "2026-11-20"
   },
   {
@@ -7666,7 +7692,7 @@
    "adr": [
     "ADR-007"
    ],
-   "last_commit": "fbb2425",
+   "last_commit": "17d5f88",
    "updated": "2026-11-20"
   },
   {
@@ -7705,7 +7731,7 @@
     "ci:conformance#31528127667"
    ],
    "adr": [],
-   "last_commit": "fbb2425",
+   "last_commit": "17d5f88",
    "updated": "2026-11-20"
   },
   {
@@ -7715,7 +7741,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "fbb2425",
+   "last_commit": "17d5f88",
    "updated": "2026-11-20"
   },
   {
@@ -7748,7 +7774,7 @@
    "adr": [
     "ADR-002"
    ],
-   "last_commit": "fbb2425",
+   "last_commit": "17d5f88",
    "updated": "2026-11-20"
   },
   {
@@ -7777,7 +7803,7 @@
    "adr": [
     "ADR-004"
    ],
-   "last_commit": "fbb2425",
+   "last_commit": "17d5f88",
    "updated": "2026-11-20"
   },
   {
@@ -7794,7 +7820,7 @@
    ],
    "evidence": [],
    "adr": [],
-   "last_commit": "fbb2425",
+   "last_commit": "17d5f88",
    "updated": "2026-11-20"
   },
   {
@@ -7804,7 +7830,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "fbb2425",
+   "last_commit": "17d5f88",
    "updated": "2026-11-20"
   },
   {
@@ -7830,7 +7856,7 @@
     "ci:conformance#31528127667"
    ],
    "adr": [],
-   "last_commit": "fbb2425",
+   "last_commit": "17d5f88",
    "updated": "2026-11-20"
   },
   {
@@ -7850,7 +7876,7 @@
    ],
    "evidence": [],
    "adr": [],
-   "last_commit": "fbb2425",
+   "last_commit": "17d5f88",
    "updated": "2026-11-20"
   },
   {
@@ -7880,7 +7906,7 @@
     "ci:conformance#31528127667"
    ],
    "adr": [],
-   "last_commit": "fbb2425",
+   "last_commit": "17d5f88",
    "updated": "2026-11-20"
   },
   {
@@ -7890,7 +7916,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "fbb2425",
+   "last_commit": "17d5f88",
    "updated": "2026-11-20"
   },
   {
@@ -7919,7 +7945,7 @@
     "ADR-002",
     "ADR-008"
    ],
-   "last_commit": "fbb2425",
+   "last_commit": "17d5f88",
    "updated": "2026-11-20"
   },
   {
@@ -7941,7 +7967,7 @@
    "adr": [
     "ADR-002"
    ],
-   "last_commit": "fbb2425",
+   "last_commit": "17d5f88",
    "updated": "2026-11-20"
   },
   {
@@ -7994,7 +8020,7 @@
    "adr": [
     "ADR-004"
    ],
-   "last_commit": "fbb2425",
+   "last_commit": "17d5f88",
    "updated": "2026-11-20"
   },
   {
@@ -8395,7 +8421,7 @@
    "adr": [
     "ADR-004"
    ],
-   "last_commit": "fbb2425",
+   "last_commit": "17d5f88",
    "updated": "2026-11-20"
   },
   {
