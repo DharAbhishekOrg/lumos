@@ -61,6 +61,12 @@ var ExtensionFiles = []string{
 	// TRS-ENV-002's zero-false-positive rule is only as strong as their
 	// agreement on exactly which bytes verify and which are rejected.
 	"test-vectors/session/hello_exchange.json",
+	// WP-04 S2: the interest/consent state machine (TRS Sec. 4.2) and the
+	// SRS-MAT-007 identifier. The transition table and the race tiebreak are
+	// encodings the specification states in prose, frozen here as replayable
+	// timelines per TRS Sec. 19 so three implementations agree on every
+	// absorption, every silence and the single unlocking door.
+	"test-vectors/matches/match_timelines.json",
 }
 
 // SuiteFiles is everything generation must emit: the specification's tree plus

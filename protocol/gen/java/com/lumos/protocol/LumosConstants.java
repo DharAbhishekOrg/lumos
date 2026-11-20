@@ -7,7 +7,7 @@
  * GENERATED - DO NOT EDIT. Generator: tools/constantsgen
  * Source register: protocol/constants/lumos_constants.json
  * Baseline: TRS v1.1 Sec. 23 / EDP v1.0 Sec. 4 (ADR-004)
- * constants_hash: sha256:cd16dcdf2cd4e16b4c90259fc5ee16f0e4890c9c00de72a7bd317b63475873fe
+ * constants_hash: sha256:2825a45f23c9533252baf7e6699dff84d80ea1c2af29880a7f6cad911c967151
  */
 package com.lumos.protocol;
 
@@ -24,7 +24,7 @@ public final class LumosConstants {
     public static final String SERVICE_UUID = "E853EB6A-775C-4A49-A6BF-320E6A5CC609";
 
     /** Binds generated code to the register that produced it (TRS-CONST-005). */
-    public static final String CONSTANTS_HASH = "sha256:cd16dcdf2cd4e16b4c90259fc5ee16f0e4890c9c00de72a7bd317b63475873fe";
+    public static final String CONSTANTS_HASH = "sha256:2825a45f23c9533252baf7e6699dff84d80ea1c2af29880a7f6cad911c967151";
 
     /** Register schema version. */
     public static final int SCHEMA_VERSION = 1;
@@ -170,6 +170,18 @@ public final class LumosConstants {
 
     /** crypto_protocol.HELLO_V1_LAYOUT.x_public_len */
     public static final int HELLO_V1_LAYOUT_X_PUBLIC_LEN = 32;
+
+    /** crypto_protocol.MATCH_ID_KDF_INFO.overridable */
+    public static final boolean MATCH_ID_KDF_INFO_OVERRIDABLE = false;
+
+    /** crypto_protocol.MATCH_ID_KDF_INFO.value */
+    public static final String MATCH_ID_KDF_INFO_VALUE = "lumos/match-id/v1";
+
+    /** crypto_protocol.MATCH_ID_LEN.default */
+    public static final int MATCH_ID_LEN_DEFAULT = 16;
+
+    /** crypto_protocol.MATCH_ID_LEN.overridable */
+    public static final boolean MATCH_ID_LEN_OVERRIDABLE = false;
 
     /** crypto_protocol.MEDIA_OBJECT_KEY_INFO.overridable */
     public static final boolean MEDIA_OBJECT_KEY_INFO_OVERRIDABLE = false;
@@ -364,6 +376,18 @@ public final class LumosConstants {
 
     /** identity_discovery.EID_ROTATION_SEC.overridable */
     public static final boolean EID_ROTATION_SEC_OVERRIDABLE = true;
+
+    /** identity_discovery.INTEREST_COOLDOWN_SEC.default */
+    public static final int INTEREST_COOLDOWN_SEC_DEFAULT = 900;
+
+    /** identity_discovery.INTEREST_COOLDOWN_SEC.max */
+    public static final int INTEREST_COOLDOWN_SEC_MAX = 3600;
+
+    /** identity_discovery.INTEREST_COOLDOWN_SEC.min */
+    public static final int INTEREST_COOLDOWN_SEC_MIN = 60;
+
+    /** identity_discovery.INTEREST_COOLDOWN_SEC.overridable */
+    public static final boolean INTEREST_COOLDOWN_SEC_OVERRIDABLE = true;
 
     /** identity_discovery.INTEREST_RATE_LIMIT_PER_HOUR.default */
     public static final int INTEREST_RATE_LIMIT_PER_HOUR_DEFAULT = 20;

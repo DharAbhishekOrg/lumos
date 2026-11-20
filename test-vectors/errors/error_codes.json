@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "generator": "tools/vectorgen",
-  "constants_hash": "sha256:cd16dcdf2cd4e16b4c90259fc5ee16f0e4890c9c00de72a7bd317b63475873fe",
+  "constants_hash": "sha256:2825a45f23c9533252baf7e6699dff84d80ea1c2af29880a7f6cad911c967151",
   "implements": [
     "TRS-PROTO-013"
   ],
@@ -271,6 +271,24 @@
       "numeric": 87,
       "category": "config",
       "meaning": "Voucher appears in the revocation set."
+    },
+    {
+      "code": "ERR_MATCH_RATE_LIMITED",
+      "numeric": 140,
+      "category": "match",
+      "meaning": "The rolling-hour interest budget (INTEREST_RATE_LIMIT_PER_HOUR) is spent; retry after INTEREST_COOLDOWN_SEC (SRS-MAT-011)."
+    },
+    {
+      "code": "ERR_MATCH_UNKNOWN_PEER",
+      "numeric": 141,
+      "category": "match",
+      "meaning": "An interest event referenced a peer with no authenticated presence or match history on this device (SRS-MAT-001)."
+    },
+    {
+      "code": "ERR_MATCH_NOT_MATCHED",
+      "numeric": 142,
+      "category": "match",
+      "meaning": "A chat or media action was attempted outside the MATCHED state; mutual acceptance is the only gate that opens those paths (SRS-MAT-005, SRS-MAT-006)."
     }
   ]
 }
