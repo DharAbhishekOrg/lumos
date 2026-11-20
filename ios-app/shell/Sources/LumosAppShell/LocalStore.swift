@@ -299,6 +299,32 @@ public final class LocalStore {
     ///   - naturalKey: the value being looked up
     /// - Returns: every matching record's content, opened
     /// - Throws: ``StoreError`` on engine failure or an unopenable row
+    /// Writes THE record for a natural key: replaces the existing row when
+    /// one carries this key's tag, inserts a fresh one otherwise - the
+    /// upsert the per-peer kinds need, mirroring the Java store (WP-04
+    /// S3b). The row identifier stays an opaque UUID either way
+    /// (TRS-LOC-010): deriving one from the key would hand anyone with a
+    /// candidate identifier an unkeyed way to confirm the relationship the
+    /// blind index exists to prevent.
+    /// - Parameters:
+    ///   - kind: the record's table
+    ///   - plaintext: the record content
+    ///   - naturalKey: the blind-index input
+    /// - Returns: the row identifier written
+    @discardableResult
+    public func putByNaturalKey(kind: RecordKind, plaintext: Data,
+                                naturalKey: Data) throws -> String {
+        let rows = try database.query(
+            "SELECT \(LocalSchema.columnId) FROM \(kind.table) "
+                + "WHERE \(LocalSchema.columnLookupTag) = ?",
+            [.blob(codec.lookupTag(kind: kind, naturalKey: naturalKey))])
+        var existing: String?
+        if case .text(let id)? = rows.first?[LocalSchema.columnId] {
+            existing = id
+        }
+        return try put(kind: kind, id: existing, plaintext: plaintext, naturalKey: naturalKey)
+    }
+
     public func findByNaturalKey(kind: RecordKind, naturalKey: Data) throws -> [Data] {
         let rows = try database.query(
             "SELECT \(LocalSchema.columnId), \(LocalSchema.columnPayload) FROM \(kind.table) "
