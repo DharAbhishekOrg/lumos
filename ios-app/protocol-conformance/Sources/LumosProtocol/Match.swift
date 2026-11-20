@@ -99,6 +99,83 @@ public struct MatchToken: Sendable, Equatable {
     }
 }
 
+/// Class-3/4 consent-stage payload codecs: the Go reference byte for byte.
+/// The response verdict alphabet is accept and unmatch, so a decline or
+/// ignore is UNENCODABLE - SRS-MAT-004's silence enforced at the codec.
+public enum InterestWire {
+
+    /// The response alphabet. There is no decline on purpose.
+    public enum Verdict: UInt8, Sendable {
+        /// Mutual consent underway.
+        case accept = 1
+        /// The one deliberately visible ending (SRS-MAT-009).
+        case unmatch = 2
+    }
+
+    /// A stable-coded consent-stage decode failure.
+    public struct WireError: Error, Equatable {
+        /// The stable error-registry code.
+        public let code: String
+        /// What was wrong, for the log line.
+        public let why: String
+    }
+
+    private static let badPayload = "ERR_MATCH_BAD_PAYLOAD"
+    private static let badVerdict = "ERR_MATCH_BAD_VERDICT"
+    private static let requestVersion: UInt8 = 1
+    private static let responseVersion: UInt8 = 1
+
+    /// Builds a class-3 payload around the preview blob.
+    public static func encodeRequest(preview: Data) throws -> Data {
+        guard preview.count <= 0xFFFF else {
+            throw WireError(code: badPayload,
+                            why: "preview longer than the length prefix can carry")
+        }
+        var out = Data([requestVersion,
+                        UInt8((preview.count >> 8) & 0xFF),
+                        UInt8(preview.count & 0xFF)])
+        out.append(preview)
+        return out
+    }
+
+    /// Opens a class-3 payload.
+    public static func decodeRequest(_ payload: Data) throws -> Data {
+        let bytes = Array(payload)
+        guard bytes.count >= 3 else {
+            throw WireError(code: badPayload, why: "truncated request")
+        }
+        guard bytes[0] == requestVersion else {
+            throw WireError(code: badPayload, why: "unknown request version \(bytes[0])")
+        }
+        let want = Int(bytes[1]) << 8 | Int(bytes[2])
+        guard bytes.count == 3 + want else {
+            throw WireError(code: badPayload, why: "length prefix disagrees with the bytes")
+        }
+        return Data(bytes[3...])
+    }
+
+    /// Builds a class-4 payload. The enum already keeps a decline out.
+    public static func encodeResponse(_ verdict: Verdict) -> Data {
+        Data([responseVersion, verdict.rawValue])
+    }
+
+    /// Opens a class-4 payload.
+    public static func decodeResponse(_ payload: Data) throws -> Verdict {
+        let bytes = Array(payload)
+        guard bytes.count == 2 else {
+            throw WireError(code: badPayload, why: "response must be two bytes")
+        }
+        guard bytes[0] == responseVersion else {
+            throw WireError(code: badPayload, why: "unknown response version \(bytes[0])")
+        }
+        guard let verdict = Verdict(rawValue: bytes[1]) else {
+            throw WireError(code: badVerdict,
+                            why: "verdict \(bytes[1]) is outside the alphabet")
+        }
+        return verdict
+    }
+}
+
 /// The per-peer interest state machine (TRS Sec. 4.2).
 public enum MatchMachine {
 

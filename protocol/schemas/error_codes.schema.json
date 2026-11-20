@@ -360,6 +360,20 @@
    "category": "match",
    "meaning": "A chat or media action was attempted outside the MATCHED state; mutual acceptance is the only gate that opens those paths (SRS-MAT-005, SRS-MAT-006).",
    "user_message": "You can chat once you have both said yes."
+  },
+  {
+   "code": "ERR_MATCH_BAD_PAYLOAD",
+   "numeric": 143,
+   "category": "match",
+   "meaning": "A class-3/4 consent-stage payload failed structural decode: wrong version, truncated, or length prefix disagreeing with the bytes (INTEREST_*_V1_LAYOUT).",
+   "user_message": "Something arrived garbled. Nothing was shown or sent."
+  },
+  {
+   "code": "ERR_MATCH_BAD_VERDICT",
+   "numeric": 144,
+   "category": "match",
+   "meaning": "A class-4 verdict byte was outside the encodable alphabet (accept, unmatch). Declines are unencodable by design (SRS-MAT-004).",
+   "user_message": "Something arrived garbled. Nothing was shown or sent."
   }
  ]
 }

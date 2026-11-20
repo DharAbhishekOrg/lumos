@@ -7,7 +7,7 @@
  * GENERATED - DO NOT EDIT. Generator: tools/constantsgen
  * Source register: protocol/constants/lumos_constants.json
  * Baseline: TRS v1.1 Sec. 23 / EDP v1.0 Sec. 4 (ADR-004)
- * constants_hash: sha256:4fb89c6c38259e018245239b69a55a6eb61c015ce5f49709774bd2618f384cb4
+ * constants_hash: sha256:f635578ebfba1e3a65a3c711db5f629abed552b81731e1c25b4e307ee45f1c22
  */
 package com.lumos.protocol;
 
@@ -24,7 +24,7 @@ public final class LumosConstants {
     public static final String SERVICE_UUID = "E853EB6A-775C-4A49-A6BF-320E6A5CC609";
 
     /** Binds generated code to the register that produced it (TRS-CONST-005). */
-    public static final String CONSTANTS_HASH = "sha256:4fb89c6c38259e018245239b69a55a6eb61c015ce5f49709774bd2618f384cb4";
+    public static final String CONSTANTS_HASH = "sha256:f635578ebfba1e3a65a3c711db5f629abed552b81731e1c25b4e307ee45f1c22";
 
     /** Register schema version. */
     public static final int SCHEMA_VERSION = 1;
@@ -170,6 +170,36 @@ public final class LumosConstants {
 
     /** crypto_protocol.HELLO_V1_LAYOUT.x_public_len */
     public static final int HELLO_V1_LAYOUT_X_PUBLIC_LEN = 32;
+
+    /** crypto_protocol.INTEREST_REQUEST_V1_LAYOUT.overridable */
+    public static final boolean INTEREST_REQUEST_V1_LAYOUT_OVERRIDABLE = false;
+
+    /** crypto_protocol.INTEREST_REQUEST_V1_LAYOUT.preview_len_len */
+    public static final int INTEREST_REQUEST_V1_LAYOUT_PREVIEW_LEN_LEN = 2;
+
+    /** crypto_protocol.INTEREST_REQUEST_V1_LAYOUT.version */
+    public static final int INTEREST_REQUEST_V1_LAYOUT_VERSION = 1;
+
+    /** crypto_protocol.INTEREST_REQUEST_V1_LAYOUT.version_len */
+    public static final int INTEREST_REQUEST_V1_LAYOUT_VERSION_LEN = 1;
+
+    /** crypto_protocol.INTEREST_RESPONSE_V1_LAYOUT.overridable */
+    public static final boolean INTEREST_RESPONSE_V1_LAYOUT_OVERRIDABLE = false;
+
+    /** crypto_protocol.INTEREST_RESPONSE_V1_LAYOUT.verdict_accept */
+    public static final int INTEREST_RESPONSE_V1_LAYOUT_VERDICT_ACCEPT = 1;
+
+    /** crypto_protocol.INTEREST_RESPONSE_V1_LAYOUT.verdict_len */
+    public static final int INTEREST_RESPONSE_V1_LAYOUT_VERDICT_LEN = 1;
+
+    /** crypto_protocol.INTEREST_RESPONSE_V1_LAYOUT.verdict_unmatch */
+    public static final int INTEREST_RESPONSE_V1_LAYOUT_VERDICT_UNMATCH = 2;
+
+    /** crypto_protocol.INTEREST_RESPONSE_V1_LAYOUT.version */
+    public static final int INTEREST_RESPONSE_V1_LAYOUT_VERSION = 1;
+
+    /** crypto_protocol.INTEREST_RESPONSE_V1_LAYOUT.version_len */
+    public static final int INTEREST_RESPONSE_V1_LAYOUT_VERSION_LEN = 1;
 
     /** crypto_protocol.MATCH_ID_KDF_INFO.overridable */
     public static final boolean MATCH_ID_KDF_INFO_OVERRIDABLE = false;

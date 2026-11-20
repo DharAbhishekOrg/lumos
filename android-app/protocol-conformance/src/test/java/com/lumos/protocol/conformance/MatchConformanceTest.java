@@ -21,6 +21,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.lumos.protocol.match.InterestWire;
 import com.lumos.protocol.match.MatchId;
 import com.lumos.protocol.match.MatchMachine;
 import com.lumos.protocol.match.MatchToken;
@@ -98,6 +99,50 @@ public class MatchConformanceTest {
                         name + " step " + i + ": effect");
                 state = result.state();
                 i++;
+            }
+        }
+    }
+
+    @Test
+    void committedWireCasesReproduceByteForByte() throws InterestWire.WireException {
+        final JsonObject root = Vectors.load(FILE);
+        assertFalse(Vectors.arr(root, "wire").isEmpty(), "an empty wire section proves nothing");
+        for (final JsonElement e : Vectors.arr(root, "wire")) {
+            final JsonObject c = Vectors.obj(e);
+            final String name = Vectors.str(c, "name");
+            if (!c.has("verdict") || c.get("verdict").getAsString().isEmpty()) {
+                final byte[] preview = !c.has("preview_hex")
+                        || c.get("preview_hex").getAsString().isEmpty()
+                        ? new byte[0] : Vectors.hex(c, "preview_hex");
+                assertEquals(Vectors.str(c, "payload_hex"),
+                        Vectors.toHex(InterestWire.encodeRequest(preview)),
+                        name + ": encode");
+                assertEquals(Vectors.toHex(preview),
+                        Vectors.toHex(InterestWire.decodeRequest(Vectors.hex(c, "payload_hex"))),
+                        name + ": decode");
+            } else {
+                final InterestWire.Verdict verdict =
+                        "accept".equals(Vectors.str(c, "verdict"))
+                                ? InterestWire.Verdict.ACCEPT : InterestWire.Verdict.UNMATCH;
+                assertEquals(Vectors.str(c, "payload_hex"),
+                        Vectors.toHex(InterestWire.encodeResponse(verdict)), name + ": encode");
+                assertEquals(verdict,
+                        InterestWire.decodeResponse(Vectors.hex(c, "payload_hex")),
+                        name + ": decode");
+            }
+        }
+        for (final JsonElement e : Vectors.arr(root, "wire_negatives")) {
+            final JsonObject c = Vectors.obj(e);
+            final String name = Vectors.str(c, "name");
+            try {
+                if ("request".equals(Vectors.str(c, "kind"))) {
+                    InterestWire.decodeRequest(Vectors.hex(c, "payload_hex"));
+                } else {
+                    InterestWire.decodeResponse(Vectors.hex(c, "payload_hex"));
+                }
+                throw new AssertionError(name + ": decode must refuse");
+            } catch (final InterestWire.WireException ex) {
+                assertEquals(Vectors.str(c, "error"), ex.code(), name + ": stable code");
             }
         }
     }

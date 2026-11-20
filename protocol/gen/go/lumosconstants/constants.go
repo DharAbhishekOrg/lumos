@@ -6,7 +6,7 @@
 // GENERATED - DO NOT EDIT. Generator: tools/constantsgen
 // Source register: protocol/constants/lumos_constants.json
 // Baseline: TRS v1.1 Sec. 23 / EDP v1.0 Sec. 4 (ADR-004)
-// constants_hash: sha256:4fb89c6c38259e018245239b69a55a6eb61c015ce5f49709774bd2618f384cb4
+// constants_hash: sha256:f635578ebfba1e3a65a3c711db5f629abed552b81731e1c25b4e307ee45f1c22
 
 package lumosconstants
 
@@ -14,7 +14,7 @@ package lumosconstants
 const ServiceUUID = "E853EB6A-775C-4A49-A6BF-320E6A5CC609"
 
 // ConstantsHash binds generated code to the register that produced it (TRS-CONST-005).
-const ConstantsHash = "sha256:4fb89c6c38259e018245239b69a55a6eb61c015ce5f49709774bd2618f384cb4"
+const ConstantsHash = "sha256:f635578ebfba1e3a65a3c711db5f629abed552b81731e1c25b4e307ee45f1c22"
 
 // SchemaVersion is the register schema version.
 const SchemaVersion = 1
@@ -160,6 +160,36 @@ const HelloV1LayoutVenueHintLen = 4
 
 // HelloV1LayoutXPublicLen is crypto_protocol.HELLO_V1_LAYOUT.x_public_len.
 const HelloV1LayoutXPublicLen = 32
+
+// InterestRequestV1LayoutOverridable is crypto_protocol.INTEREST_REQUEST_V1_LAYOUT.overridable.
+const InterestRequestV1LayoutOverridable = false
+
+// InterestRequestV1LayoutPreviewLenLen is crypto_protocol.INTEREST_REQUEST_V1_LAYOUT.preview_len_len.
+const InterestRequestV1LayoutPreviewLenLen = 2
+
+// InterestRequestV1LayoutVersion is crypto_protocol.INTEREST_REQUEST_V1_LAYOUT.version.
+const InterestRequestV1LayoutVersion = 1
+
+// InterestRequestV1LayoutVersionLen is crypto_protocol.INTEREST_REQUEST_V1_LAYOUT.version_len.
+const InterestRequestV1LayoutVersionLen = 1
+
+// InterestResponseV1LayoutOverridable is crypto_protocol.INTEREST_RESPONSE_V1_LAYOUT.overridable.
+const InterestResponseV1LayoutOverridable = false
+
+// InterestResponseV1LayoutVerdictAccept is crypto_protocol.INTEREST_RESPONSE_V1_LAYOUT.verdict_accept.
+const InterestResponseV1LayoutVerdictAccept = 1
+
+// InterestResponseV1LayoutVerdictLen is crypto_protocol.INTEREST_RESPONSE_V1_LAYOUT.verdict_len.
+const InterestResponseV1LayoutVerdictLen = 1
+
+// InterestResponseV1LayoutVerdictUnmatch is crypto_protocol.INTEREST_RESPONSE_V1_LAYOUT.verdict_unmatch.
+const InterestResponseV1LayoutVerdictUnmatch = 2
+
+// InterestResponseV1LayoutVersion is crypto_protocol.INTEREST_RESPONSE_V1_LAYOUT.version.
+const InterestResponseV1LayoutVersion = 1
+
+// InterestResponseV1LayoutVersionLen is crypto_protocol.INTEREST_RESPONSE_V1_LAYOUT.version_len.
+const InterestResponseV1LayoutVersionLen = 1
 
 // MatchIDKdfInfoOverridable is crypto_protocol.MATCH_ID_KDF_INFO.overridable.
 const MatchIDKdfInfoOverridable = false

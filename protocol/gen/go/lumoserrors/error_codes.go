@@ -6,7 +6,7 @@
 // GENERATED - DO NOT EDIT. Generator: tools/constantsgen
 // Source register: protocol/constants/lumos_constants.json
 // Baseline: TRS v1.1 Sec. 23 / EDP v1.0 Sec. 4 (ADR-004)
-// constants_hash: sha256:4fb89c6c38259e018245239b69a55a6eb61c015ce5f49709774bd2618f384cb4
+// constants_hash: sha256:f635578ebfba1e3a65a3c711db5f629abed552b81731e1c25b4e307ee45f1c22
 // Source schema: protocol/schemas/error_codes.schema.json
 
 // Package lumoserrors holds the stable machine-readable error codes of
@@ -108,6 +108,10 @@ const (
 	ErrMatchUnknownPeer = "ERR_MATCH_UNKNOWN_PEER"
 	// ERR_MATCH_NOT_MATCHED (142, match): A chat or media action was attempted outside the MATCHED state; mutual acceptance is the only gate that opens those paths (SRS-MAT-005, SRS-MAT-006).
 	ErrMatchNotMatched = "ERR_MATCH_NOT_MATCHED"
+	// ERR_MATCH_BAD_PAYLOAD (143, match): A class-3/4 consent-stage payload failed structural decode: wrong version, truncated, or length prefix disagreeing with the bytes (INTEREST_*_V1_LAYOUT).
+	ErrMatchBadPayload = "ERR_MATCH_BAD_PAYLOAD"
+	// ERR_MATCH_BAD_VERDICT (144, match): A class-4 verdict byte was outside the encodable alphabet (accept, unmatch). Declines are unencodable by design (SRS-MAT-004).
+	ErrMatchBadVerdict = "ERR_MATCH_BAD_VERDICT"
 )
 
 // Numeric maps each stable code to its registry number.
@@ -159,6 +163,8 @@ var Numeric = map[string]int{
 	ErrMatchRateLimited:             140,
 	ErrMatchUnknownPeer:             141,
 	ErrMatchNotMatched:              142,
+	ErrMatchBadPayload:              143,
+	ErrMatchBadVerdict:              144,
 }
 
 // Known reports whether code is in the stable registry.

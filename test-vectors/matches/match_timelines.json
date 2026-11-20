@@ -1,17 +1,19 @@
 {
   "schema_version": 1,
   "generator": "tools/vectorgen",
-  "constants_hash": "sha256:4fb89c6c38259e018245239b69a55a6eb61c015ce5f49709774bd2618f384cb4",
+  "constants_hash": "sha256:f635578ebfba1e3a65a3c711db5f629abed552b81731e1c25b4e307ee45f1c22",
   "implements": [
+    "SRS-MAT-002",
     "SRS-MAT-004",
     "SRS-MAT-005",
     "SRS-MAT-007",
     "SRS-MAT-008",
+    "SRS-MAT-009",
     "SRS-MAT-014",
     "TRS-PAT-002"
   ],
   "key_provenance": "TESTONLY-lumos-vectors-v1",
-  "notes": "The interest/consent state machine and the SRS-MAT-007 identifier. derivations: match_id = SHA-256(MATCH_ID_KDF_INFO | lower | higher)[:MATCH_ID_LEN] over the two peer ids in lexicographic byte order - symmetric, so both sides of an accept-accept race derive the same id with no message; initiator_on_race is the lower id. tokens: the SRS-MAT-008 venue token - SHA-256(MATCH_TOKEN_KDF_INFO | match_id), 6+6 bits into the ADR-009 emoji alphabet, 3 bits into the named colour palette. scripts: event timelines starting at state none; consumers replay each and compare state and effect after every step. Effects accept_and_establish and match_established are the ONLY unlocking effects (SRS-MAT-005); no decline or ignore step anywhere carries a transmitting effect (SRS-MAT-004); absorbed duplicates and reorders appear as steps whose state and effect repeat unchanged (SRS-MAT-014).",
+  "notes": "The interest/consent state machine and the SRS-MAT-007 identifier. derivations: match_id = SHA-256(MATCH_ID_KDF_INFO | lower | higher)[:MATCH_ID_LEN] over the two peer ids in lexicographic byte order - symmetric, so both sides of an accept-accept race derive the same id with no message; initiator_on_race is the lower id. tokens: the SRS-MAT-008 venue token - SHA-256(MATCH_TOKEN_KDF_INFO | match_id), 6+6 bits into the ADR-009 emoji alphabet, 3 bits into the named colour palette. wire: the class-3/4 consent envelopes, exact bytes both ways; the response verdict alphabet is accept|unmatch and NOTHING ELSE - a decline is unencodable, which is SRS-MAT-004 enforced at the codec. wire_negatives: refusals with their stable codes. scripts: event timelines starting at state none; consumers replay each and compare state and effect after every step. Effects accept_and_establish and match_established are the ONLY unlocking effects (SRS-MAT-005); no decline or ignore step anywhere carries a transmitting effect (SRS-MAT-004); absorbed duplicates and reorders appear as steps whose state and effect repeat unchanged (SRS-MAT-014).",
   "derivations": [
     {
       "name": "pair_0",
@@ -102,6 +104,71 @@
       ],
       "color_name": "coral",
       "color_hex": "#FF6F61"
+    }
+  ],
+  "wire": [
+    {
+      "name": "request_with_preview",
+      "preview_hex": "e4525e3764d8c59235829cd151a7441049e984cea65a250e0a7322a03ac8f09b0069751043d31357b3",
+      "payload_hex": "010029e4525e3764d8c59235829cd151a7441049e984cea65a250e0a7322a03ac8f09b0069751043d31357b3"
+    },
+    {
+      "name": "request_empty_preview",
+      "payload_hex": "010000"
+    },
+    {
+      "name": "response_accept",
+      "verdict": "accept",
+      "payload_hex": "0101"
+    },
+    {
+      "name": "response_unmatch",
+      "verdict": "unmatch",
+      "payload_hex": "0102"
+    }
+  ],
+  "wire_negatives": [
+    {
+      "name": "request_truncated",
+      "kind": "request",
+      "payload_hex": "0100",
+      "error": "ERR_MATCH_BAD_PAYLOAD"
+    },
+    {
+      "name": "request_unknown_version",
+      "kind": "request",
+      "payload_hex": "090000",
+      "error": "ERR_MATCH_BAD_PAYLOAD"
+    },
+    {
+      "name": "request_length_disagrees",
+      "kind": "request",
+      "payload_hex": "01000578",
+      "error": "ERR_MATCH_BAD_PAYLOAD"
+    },
+    {
+      "name": "response_truncated",
+      "kind": "response",
+      "payload_hex": "01",
+      "error": "ERR_MATCH_BAD_PAYLOAD"
+    },
+    {
+      "name": "response_unknown_version",
+      "kind": "response",
+      "payload_hex": "0701",
+      "error": "ERR_MATCH_BAD_PAYLOAD"
+    },
+    {
+      "name": "response_verdict_outside_alphabet",
+      "kind": "response",
+      "payload_hex": "0103",
+      "error": "ERR_MATCH_BAD_VERDICT"
+    },
+    {
+      "name": "response_verdict_zero",
+      "kind": "response",
+      "payload_hex": "0100",
+      "error": "ERR_MATCH_BAD_VERDICT"
     }
   ],
   "scripts": [

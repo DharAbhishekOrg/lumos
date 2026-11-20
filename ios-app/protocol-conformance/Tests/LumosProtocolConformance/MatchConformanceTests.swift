@@ -80,6 +80,50 @@ final class MatchConformanceTests: XCTestCase {
         }
     }
 
+    func testCommittedWireCasesReproduceByteForByte() throws {
+        let file = try Vectors.load(path, root: root)
+        let cases = try Vectors.array(file, "wire")
+        XCTAssertFalse(cases.isEmpty, "an empty wire section proves nothing")
+        for c in cases {
+            let name = try Vectors.string(c, "name")
+            let payloadHex = try Vectors.string(c, "payload_hex")
+            let verdictName = (c["verdict"] as? String) ?? ""
+            if verdictName.isEmpty {
+                let previewHex = (c["preview_hex"] as? String) ?? ""
+                let preview = Hex.decode(previewHex) ?? Data()
+                XCTAssertEqual(payloadHex,
+                               Hex.encode(try InterestWire.encodeRequest(preview: preview)),
+                               "\(name): encode")
+                let committed = try XCTUnwrap(Hex.decode(payloadHex))
+                XCTAssertEqual(previewHex,
+                               Hex.encode(try InterestWire.decodeRequest(committed)),
+                               "\(name): decode")
+            } else {
+                let verdict: InterestWire.Verdict = verdictName == "accept" ? .accept : .unmatch
+                XCTAssertEqual(payloadHex, Hex.encode(InterestWire.encodeResponse(verdict)),
+                               "\(name): encode")
+                let committed = try XCTUnwrap(Hex.decode(payloadHex))
+                XCTAssertEqual(verdict, try InterestWire.decodeResponse(committed),
+                               "\(name): decode")
+            }
+        }
+        for c in try Vectors.array(file, "wire_negatives") {
+            let name = try Vectors.string(c, "name")
+            let committed = try XCTUnwrap(Hex.decode(try Vectors.string(c, "payload_hex")))
+            let wantCode = try Vectors.string(c, "error")
+            do {
+                if try Vectors.string(c, "kind") == "request" {
+                    _ = try InterestWire.decodeRequest(committed)
+                } else {
+                    _ = try InterestWire.decodeResponse(committed)
+                }
+                XCTFail("\(name): decode must refuse")
+            } catch let error as InterestWire.WireError {
+                XCTAssertEqual(wantCode, error.code, "\(name): stable code")
+            }
+        }
+    }
+
     func testTheFamilyKeepsTheSilenceAndTheSingleDoorOnThisPlatformToo() throws {
         let file = try Vectors.load(path, root: root)
         for script in try Vectors.array(file, "scripts") {

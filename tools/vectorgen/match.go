@@ -17,6 +17,7 @@ package main
 
 import (
 	"encoding/hex"
+	"errors"
 	"fmt"
 
 	"github.com/dharabhishekorg/lumos/protocol/match"
@@ -56,12 +57,30 @@ type matchToken struct {
 	ColorHex     string    `json:"color_hex"`
 }
 
+// matchWireCase pins one consent-envelope encoding.
+type matchWireCase struct {
+	Name       string `json:"name"`
+	PreviewHex string `json:"preview_hex,omitempty"`
+	Verdict    string `json:"verdict,omitempty"`
+	PayloadHex string `json:"payload_hex"`
+}
+
+// matchWireNegative pins one refused payload and its stable code.
+type matchWireNegative struct {
+	Name       string `json:"name"`
+	Kind       string `json:"kind"`
+	PayloadHex string `json:"payload_hex"`
+	Error      string `json:"error"`
+}
+
 // matchVectorsFile is the emitted matches/match_timelines.json.
 type matchVectorsFile struct {
 	fileMeta
-	Derivations []matchDerivation `json:"derivations"`
-	Tokens      []matchToken      `json:"tokens"`
-	Scripts     []matchScript     `json:"scripts"`
+	Derivations   []matchDerivation   `json:"derivations"`
+	Tokens        []matchToken        `json:"tokens"`
+	WireCases     []matchWireCase     `json:"wire"`
+	WireNegatives []matchWireNegative `json:"wire_negatives"`
+	Scripts       []matchScript       `json:"scripts"`
 }
 
 // implementsIDs echoes fileMeta for the vectorDoc registration.
@@ -120,13 +139,13 @@ func buildMatchVectors(constantsHash string) (*matchVectorsFile, error) {
 	file := &matchVectorsFile{
 		fileMeta: fileMeta{
 			SchemaVersion: 1, Generator: GeneratorName, ConstantsHash: constantsHash,
-			Implements:    []string{"SRS-MAT-004", "SRS-MAT-005", "SRS-MAT-007", "SRS-MAT-008", "SRS-MAT-014", "TRS-PAT-002"},
+			Implements:    []string{"SRS-MAT-002", "SRS-MAT-004", "SRS-MAT-005", "SRS-MAT-007", "SRS-MAT-008", "SRS-MAT-009", "SRS-MAT-014", "TRS-PAT-002"},
 			KeyProvenance: KeyProvenance,
 			Notes: "The interest/consent state machine and the SRS-MAT-007 identifier. " +
 				"derivations: match_id = SHA-256(MATCH_ID_KDF_INFO | lower | higher)" +
 				"[:MATCH_ID_LEN] over the two peer ids in lexicographic byte order - " +
 				"symmetric, so both sides of an accept-accept race derive the same id " +
-				"with no message; initiator_on_race is the lower id. tokens: the SRS-MAT-008 venue token - SHA-256(MATCH_TOKEN_KDF_INFO | match_id), 6+6 bits into the ADR-009 emoji alphabet, 3 bits into the named colour palette. scripts: event " +
+				"with no message; initiator_on_race is the lower id. tokens: the SRS-MAT-008 venue token - SHA-256(MATCH_TOKEN_KDF_INFO | match_id), 6+6 bits into the ADR-009 emoji alphabet, 3 bits into the named colour palette. wire: the class-3/4 consent envelopes, exact bytes both ways; the response verdict alphabet is accept|unmatch and NOTHING ELSE - a decline is unencodable, which is SRS-MAT-004 enforced at the codec. wire_negatives: refusals with their stable codes. scripts: event " +
 				"timelines starting at state none; consumers replay each and compare " +
 				"state and effect after every step. Effects accept_and_establish and " +
 				"match_established are the ONLY unlocking effects (SRS-MAT-005); no " +
@@ -279,5 +298,75 @@ func buildMatchVectors(constantsHash string) (*matchVectorsFile, error) {
 			return nil, err
 		}
 	}
+
+	if err := buildMatchWire(file); err != nil {
+		return nil, err
+	}
 	return file, nil
+}
+
+// buildMatchWire fills the consent-envelope sections (WP-04 S5): exact bytes
+// both ways, and the refusals with their stable codes. The preview blob is
+// opaque derived bytes - the envelope never knows.
+func buildMatchWire(file *matchVectorsFile) error {
+	preview := testonlyBytes("match/preview", 41)
+	requestPayload, err := match.EncodeRequest(preview)
+	if err != nil {
+		return err
+	}
+	acceptPayload, err := match.EncodeResponse(match.VerdictAccept)
+	if err != nil {
+		return err
+	}
+	unmatchPayload, err := match.EncodeResponse(match.VerdictUnmatch)
+	if err != nil {
+		return err
+	}
+	emptyRequest, err := match.EncodeRequest(nil)
+	if err != nil {
+		return err
+	}
+	file.WireCases = []matchWireCase{
+		{Name: "request_with_preview", PreviewHex: hex.EncodeToString(preview),
+			PayloadHex: hex.EncodeToString(requestPayload)},
+		{Name: "request_empty_preview", PreviewHex: "",
+			PayloadHex: hex.EncodeToString(emptyRequest)},
+		{Name: "response_accept", Verdict: "accept",
+			PayloadHex: hex.EncodeToString(acceptPayload)},
+		{Name: "response_unmatch", Verdict: "unmatch",
+			PayloadHex: hex.EncodeToString(unmatchPayload)},
+	}
+	file.WireNegatives = []matchWireNegative{
+		{Name: "request_truncated", Kind: "request", PayloadHex: "0100",
+			Error: "ERR_MATCH_BAD_PAYLOAD"},
+		{Name: "request_unknown_version", Kind: "request", PayloadHex: "090000",
+			Error: "ERR_MATCH_BAD_PAYLOAD"},
+		{Name: "request_length_disagrees", Kind: "request", PayloadHex: "01000578",
+			Error: "ERR_MATCH_BAD_PAYLOAD"},
+		{Name: "response_truncated", Kind: "response", PayloadHex: "01",
+			Error: "ERR_MATCH_BAD_PAYLOAD"},
+		{Name: "response_unknown_version", Kind: "response", PayloadHex: "0701",
+			Error: "ERR_MATCH_BAD_PAYLOAD"},
+		{Name: "response_verdict_outside_alphabet", Kind: "response", PayloadHex: "0103",
+			Error: "ERR_MATCH_BAD_VERDICT"},
+		{Name: "response_verdict_zero", Kind: "response", PayloadHex: "0100",
+			Error: "ERR_MATCH_BAD_VERDICT"},
+	}
+	for _, c := range file.WireNegatives {
+		raw, err := hex.DecodeString(c.PayloadHex)
+		if err != nil {
+			return err
+		}
+		var decodeErr error
+		if c.Kind == "request" {
+			_, decodeErr = match.DecodeRequest(raw)
+		} else {
+			_, decodeErr = match.DecodeResponse(raw)
+		}
+		var we *match.WireError
+		if decodeErr == nil || !errors.As(decodeErr, &we) || we.Code != c.Error {
+			return fmt.Errorf("wire negative %s: reference disagreed: %w", c.Name, decodeErr)
+		}
+	}
+	return nil
 }

@@ -60,6 +60,10 @@ var expectedRegister = map[string][]string{
 		// MATCH_ID_* fix the SRS-MAT-007 stable-match-identifier derivation
 		// and the accept-accept race tiebreak under the TRS Sec. 19 AI
 		// delivery rule (WP-04 S2) - the PEER_ID_* precedent one layer up.
+		// INTEREST_*_V1_LAYOUT fix the class-3/4 consent-stage payloads
+		// (WP-04 S5, TRS Sec. 19); the response layout's verdict alphabet is
+		// deliberately accept|unmatch only - a decline is unencodable.
+		"INTEREST_REQUEST_V1_LAYOUT", "INTEREST_RESPONSE_V1_LAYOUT",
 		"MATCH_ID_KDF_INFO", "MATCH_ID_LEN",
 		// MATCH_TOKEN_* fix the SRS-MAT-008 in-venue verification token
 		// (WP-04 S4, TRS Sec. 19): the derivation prefix and the named,

@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "generator": "tools/vectorgen",
-  "constants_hash": "sha256:4fb89c6c38259e018245239b69a55a6eb61c015ce5f49709774bd2618f384cb4",
+  "constants_hash": "sha256:f635578ebfba1e3a65a3c711db5f629abed552b81731e1c25b4e307ee45f1c22",
   "implements": [
     "TRS-PROTO-013"
   ],
@@ -289,6 +289,18 @@
       "numeric": 142,
       "category": "match",
       "meaning": "A chat or media action was attempted outside the MATCHED state; mutual acceptance is the only gate that opens those paths (SRS-MAT-005, SRS-MAT-006)."
+    },
+    {
+      "code": "ERR_MATCH_BAD_PAYLOAD",
+      "numeric": 143,
+      "category": "match",
+      "meaning": "A class-3/4 consent-stage payload failed structural decode: wrong version, truncated, or length prefix disagreeing with the bytes (INTEREST_*_V1_LAYOUT)."
+    },
+    {
+      "code": "ERR_MATCH_BAD_VERDICT",
+      "numeric": 144,
+      "category": "match",
+      "meaning": "A class-4 verdict byte was outside the encodable alphabet (accept, unmatch). Declines are unencodable by design (SRS-MAT-004)."
     }
   ]
 }

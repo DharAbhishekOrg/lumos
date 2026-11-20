@@ -6,7 +6,7 @@
 /// GENERATED - DO NOT EDIT. Generator: tools/constantsgen
 /// Source register: protocol/constants/lumos_constants.json
 /// Baseline: TRS v1.1 Sec. 23 / EDP v1.0 Sec. 4 (ADR-004)
-/// constants_hash: sha256:4fb89c6c38259e018245239b69a55a6eb61c015ce5f49709774bd2618f384cb4
+/// constants_hash: sha256:f635578ebfba1e3a65a3c711db5f629abed552b81731e1c25b4e307ee45f1c22
 
 public enum LumosConstants {
 
@@ -14,7 +14,7 @@ public enum LumosConstants {
     public static let serviceUUID = "E853EB6A-775C-4A49-A6BF-320E6A5CC609"
 
     /// Binds generated code to the register that produced it (TRS-CONST-005).
-    public static let constantsHash = "sha256:4fb89c6c38259e018245239b69a55a6eb61c015ce5f49709774bd2618f384cb4"
+    public static let constantsHash = "sha256:f635578ebfba1e3a65a3c711db5f629abed552b81731e1c25b4e307ee45f1c22"
 
     /// Register schema version.
     public static let schemaVersion = 1
@@ -160,6 +160,36 @@ public enum LumosConstants {
 
     /// crypto_protocol.HELLO_V1_LAYOUT.x_public_len
     public static let helloV1LayoutXPublicLen = 32
+
+    /// crypto_protocol.INTEREST_REQUEST_V1_LAYOUT.overridable
+    public static let interestRequestV1LayoutOverridable = false
+
+    /// crypto_protocol.INTEREST_REQUEST_V1_LAYOUT.preview_len_len
+    public static let interestRequestV1LayoutPreviewLenLen = 2
+
+    /// crypto_protocol.INTEREST_REQUEST_V1_LAYOUT.version
+    public static let interestRequestV1LayoutVersion = 1
+
+    /// crypto_protocol.INTEREST_REQUEST_V1_LAYOUT.version_len
+    public static let interestRequestV1LayoutVersionLen = 1
+
+    /// crypto_protocol.INTEREST_RESPONSE_V1_LAYOUT.overridable
+    public static let interestResponseV1LayoutOverridable = false
+
+    /// crypto_protocol.INTEREST_RESPONSE_V1_LAYOUT.verdict_accept
+    public static let interestResponseV1LayoutVerdictAccept = 1
+
+    /// crypto_protocol.INTEREST_RESPONSE_V1_LAYOUT.verdict_len
+    public static let interestResponseV1LayoutVerdictLen = 1
+
+    /// crypto_protocol.INTEREST_RESPONSE_V1_LAYOUT.verdict_unmatch
+    public static let interestResponseV1LayoutVerdictUnmatch = 2
+
+    /// crypto_protocol.INTEREST_RESPONSE_V1_LAYOUT.version
+    public static let interestResponseV1LayoutVersion = 1
+
+    /// crypto_protocol.INTEREST_RESPONSE_V1_LAYOUT.version_len
+    public static let interestResponseV1LayoutVersionLen = 1
 
     /// crypto_protocol.MATCH_ID_KDF_INFO.overridable
     public static let matchIDKdfInfoOverridable = false
