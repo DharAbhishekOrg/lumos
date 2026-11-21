@@ -67,6 +67,11 @@ var ExtensionFiles = []string{
 	// timelines per TRS Sec. 19 so three implementations agree on every
 	// absorption, every silence and the single unlocking door.
 	"test-vectors/matches/match_timelines.json",
+	// WP-05 S1: the SRS-RMT-005 delivery machine and the owner's WhatsApp-
+	// style ticks (ruling 2026-11-21). Frozen as timelines so both apps draw
+	// the same tick for the same truth, and so "delivered" provably comes
+	// only from the recipient on every platform.
+	"test-vectors/chat/delivery_states.json",
 }
 
 // SuiteFiles is everything generation must emit: the specification's tree plus

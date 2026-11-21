@@ -533,6 +533,10 @@ func buildCryptoVectors(_ string, _ *schema.Register, constantsHash string) ([]V
 	if err != nil {
 		return nil, err
 	}
+	deliveryStates, err := buildDeliveryVectors(constantsHash)
+	if err != nil {
+		return nil, err
+	}
 	return collectVectorFiles(
 		vectorDoc{"test-vectors/crypto/x3dh_kat.json", x3dh.Implements, x3dh},
 		vectorDoc{"test-vectors/crypto/ratchet_sequences.json", ratchet.Implements, ratchet},
@@ -542,6 +546,7 @@ func buildCryptoVectors(_ string, _ *schema.Register, constantsHash string) ([]V
 		vectorDoc{"test-vectors/crypto/identity_binding.json", identityBinding.implementsIDs(), identityBinding},
 		vectorDoc{"test-vectors/session/hello_exchange.json", helloExchange.implementsIDs(), helloExchange},
 		vectorDoc{"test-vectors/matches/match_timelines.json", matchTimelines.implementsIDs(), matchTimelines},
+		vectorDoc{"test-vectors/chat/delivery_states.json", deliveryStates.implementsIDs(), deliveryStates},
 	)
 }
 

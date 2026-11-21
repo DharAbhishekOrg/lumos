@@ -1,0 +1,247 @@
+{
+  "schema_version": 1,
+  "generator": "tools/vectorgen",
+  "constants_hash": "sha256:f635578ebfba1e3a65a3c711db5f629abed552b81731e1c25b4e307ee45f1c22",
+  "implements": [
+    "SRS-RMT-005",
+    "SRS-RMT-014",
+    "TRS-PAT-002"
+  ],
+  "key_provenance": "TESTONLY-lumos-vectors-v1",
+  "notes": "The SRS-RMT-005 outgoing-message delivery machine. ticks: the WhatsApp-style glyph per state (owner ruling 2026-11-21): clock while queued or sending, single grey tick when sent, double grey ticks when delivered, double blue ticks when read, a red failed mark, and a nearby mark for content waiting for a nearby path. scripts: event timelines from state queued; consumers compare state and tick after every step. Only delivery_receipt and read_receipt ever reach delivered or read (the EDP guardrail: never derive delivered from a transport); receipts never move a message backward; a recipient receipt overrides a local failure. receipt_policy: SRS-RMT-014 - delivery receipts always go back, read receipts only when enabled and opened.",
+  "ticks": [
+    {
+      "state": "queued",
+      "tick": "clock"
+    },
+    {
+      "state": "sending",
+      "tick": "clock"
+    },
+    {
+      "state": "sent",
+      "tick": "single"
+    },
+    {
+      "state": "delivered",
+      "tick": "double"
+    },
+    {
+      "state": "read",
+      "tick": "double_read"
+    },
+    {
+      "state": "failed",
+      "tick": "failed"
+    },
+    {
+      "state": "local_only_waiting",
+      "tick": "nearby"
+    }
+  ],
+  "scripts": [
+    {
+      "name": "happy_path_to_blue_ticks",
+      "description": "Queued, sending, one tick on transport acceptance, two on the recipient's delivery receipt, blue on read.",
+      "steps": [
+        {
+          "event": "send_started",
+          "expect_state": "sending",
+          "expect_tick": "clock"
+        },
+        {
+          "event": "transport_accepted",
+          "expect_state": "sent",
+          "expect_tick": "single"
+        },
+        {
+          "event": "delivery_receipt",
+          "expect_state": "delivered",
+          "expect_tick": "double"
+        },
+        {
+          "event": "read_receipt",
+          "expect_state": "read",
+          "expect_tick": "double_read"
+        }
+      ]
+    },
+    {
+      "name": "transport_success_never_shows_two_ticks",
+      "description": "The relay accepting the upload is one tick; repeating it changes nothing. Only the recipient makes two.",
+      "steps": [
+        {
+          "event": "send_started",
+          "expect_state": "sending",
+          "expect_tick": "clock"
+        },
+        {
+          "event": "transport_accepted",
+          "expect_state": "sent",
+          "expect_tick": "single"
+        },
+        {
+          "event": "transport_accepted",
+          "expect_state": "sent",
+          "expect_tick": "single"
+        }
+      ]
+    },
+    {
+      "name": "receipts_never_move_backward",
+      "description": "A read receipt that overtakes the delivery receipt leaves the message read.",
+      "steps": [
+        {
+          "event": "send_started",
+          "expect_state": "sending",
+          "expect_tick": "clock"
+        },
+        {
+          "event": "transport_accepted",
+          "expect_state": "sent",
+          "expect_tick": "single"
+        },
+        {
+          "event": "read_receipt",
+          "expect_state": "read",
+          "expect_tick": "double_read"
+        },
+        {
+          "event": "delivery_receipt",
+          "expect_state": "read",
+          "expect_tick": "double_read"
+        }
+      ]
+    },
+    {
+      "name": "retry_then_fail_then_user_retry",
+      "description": "A retryable failure requeues, an exhausted budget fails with the red mark, and the user's retry requeues.",
+      "steps": [
+        {
+          "event": "send_started",
+          "expect_state": "sending",
+          "expect_tick": "clock"
+        },
+        {
+          "event": "transport_retryable",
+          "expect_state": "queued",
+          "expect_tick": "clock"
+        },
+        {
+          "event": "send_started",
+          "expect_state": "sending",
+          "expect_tick": "clock"
+        },
+        {
+          "event": "attempts_exhausted",
+          "expect_state": "failed",
+          "expect_tick": "failed"
+        },
+        {
+          "event": "user_retry",
+          "expect_state": "queued",
+          "expect_tick": "clock"
+        }
+      ]
+    },
+    {
+      "name": "recipient_receipt_beats_local_failure",
+      "description": "The first attempt actually landed; the recipient's receipt overrides the local failed state.",
+      "steps": [
+        {
+          "event": "send_started",
+          "expect_state": "sending",
+          "expect_tick": "clock"
+        },
+        {
+          "event": "attempts_exhausted",
+          "expect_state": "failed",
+          "expect_tick": "failed"
+        },
+        {
+          "event": "delivery_receipt",
+          "expect_state": "delivered",
+          "expect_tick": "double"
+        }
+      ]
+    },
+    {
+      "name": "receipt_overtakes_upload_response",
+      "description": "The recipient acknowledged before our upload call returned; the late transport acceptance changes nothing.",
+      "steps": [
+        {
+          "event": "send_started",
+          "expect_state": "sending",
+          "expect_tick": "clock"
+        },
+        {
+          "event": "delivery_receipt",
+          "expect_state": "delivered",
+          "expect_tick": "double"
+        },
+        {
+          "event": "transport_accepted",
+          "expect_state": "delivered",
+          "expect_tick": "double"
+        }
+      ]
+    },
+    {
+      "name": "nearby_only_content_waits",
+      "description": "Nearby-only content with no nearby path shows the nearby mark, then sends when a path appears.",
+      "steps": [
+        {
+          "event": "local_path_unavailable",
+          "expect_state": "local_only_waiting",
+          "expect_tick": "nearby"
+        },
+        {
+          "event": "send_started",
+          "expect_state": "local_only_waiting",
+          "expect_tick": "nearby"
+        },
+        {
+          "event": "local_path_available",
+          "expect_state": "queued",
+          "expect_tick": "clock"
+        },
+        {
+          "event": "send_started",
+          "expect_state": "sending",
+          "expect_tick": "clock"
+        },
+        {
+          "event": "transport_accepted",
+          "expect_state": "sent",
+          "expect_tick": "single"
+        }
+      ]
+    }
+  ],
+  "receipt_policy": [
+    {
+      "read_receipts_enabled": true,
+      "opened": true,
+      "send_delivery": true,
+      "send_read": true
+    },
+    {
+      "read_receipts_enabled": true,
+      "opened": false,
+      "send_delivery": true,
+      "send_read": false
+    },
+    {
+      "read_receipts_enabled": false,
+      "opened": true,
+      "send_delivery": true,
+      "send_read": false
+    },
+    {
+      "read_receipts_enabled": false,
+      "opened": false,
+      "send_delivery": true,
+      "send_read": false
+    }
+  ]
+}

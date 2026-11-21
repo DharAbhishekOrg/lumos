@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Lumos - android-app/app / Nearby-only: waits for a nearby path.
+  Author: dhar.abhishek.email@gmail.com
+  Implements: SRS-RMT-005, SRS-RMT-013, SRS-TRN-009
+  ADRs: -
+  Threading: n/a
+  Notes: Radio waves around a dot - a generic "nearby" mark, deliberately not
+  any radio vendor's logo. Shown on media and voice notes that wait for a
+  Bluetooth/Wi-Fi path, because they never travel over the internet relay.
+-->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="16dp"
+    android:height="16dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+    <path
+        android:fillColor="#FFFFFFFF"
+        android:pathData="M12,10a2,2 0,1 0,0 4a2,2 0,1 0,0 -4zM7.76,16.24l1.42,-1.42A3.99,3.99 0,0 1,8 12c0,-1.1 0.45,-2.1 1.18,-2.82L7.76,7.76A5.98,5.98 0,0 0,6 12c0,1.66 0.67,3.16 1.76,4.24zM16.24,16.24A5.98,5.98 0,0 0,18 12c0,-1.66 -0.67,-3.16 -1.76,-4.24l-1.42,1.42C15.55,9.9 16,10.9 16,12s-0.45,2.1 -1.18,2.82l1.42,1.42zM4.93,19.07l1.41,-1.41A7.96,7.96 0,0 1,4 12c0,-2.21 0.9,-4.21 2.34,-5.66L4.93,4.93A9.96,9.96 0,0 0,2 12c0,2.76 1.12,5.26 2.93,7.07zM19.07,19.07A9.96,9.96 0,0 0,22 12c0,-2.76 -1.12,-5.26 -2.93,-7.07l-1.41,1.41A7.96,7.96 0,0 1,20 12c0,2.21 -0.9,4.21 -2.34,5.66l1.41,1.41z" />
+</vector>
