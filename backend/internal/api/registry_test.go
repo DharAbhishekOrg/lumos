@@ -37,7 +37,7 @@ type client struct {
 	credential string
 }
 
-func (c *client) do(method, path string, body any) (*http.Response, []byte) {
+func (c *client) do(method, path string, body any) (int, []byte) {
 	c.t.Helper()
 	var rd *bytes.Reader
 	if body != nil {
@@ -65,7 +65,7 @@ func (c *client) do(method, path string, body any) (*http.Response, []byte) {
 	if _, err := buf.ReadFrom(resp.Body); err != nil {
 		c.t.Fatal(err)
 	}
-	return resp, buf.Bytes()
+	return resp.StatusCode, buf.Bytes()
 }
 
 func newServer(t *testing.T) *httptest.Server {
@@ -83,9 +83,9 @@ func enrol(t *testing.T, srv *httptest.Server) *client {
 	t.Helper()
 	c := &client{t: t, srv: srv}
 	pub, priv, _ := ed25519.GenerateKey(rand.Reader)
-	resp, body := c.do("POST", "/v1/auth/challenge", nil)
-	if resp.StatusCode != http.StatusOK {
-		t.Fatalf("challenge: %d %s", resp.StatusCode, body)
+	status, body := c.do("POST", "/v1/auth/challenge", nil)
+	if status != http.StatusOK {
+		t.Fatalf("challenge: %d %s", status, body)
 	}
 	var ch struct{ Challenge string }
 	_ = json.Unmarshal(body, &ch)
@@ -93,13 +93,13 @@ func enrol(t *testing.T, srv *httptest.Server) *client {
 	var c32, p32 [32]byte
 	copy(c32[:], chal)
 	copy(p32[:], pub)
-	resp, body = c.do("POST", "/v1/devices", map[string]string{
+	status, body = c.do("POST", "/v1/devices", map[string]string{
 		"challenge":  ch.Challenge,
 		"device_key": hex.EncodeToString(pub),
 		"signature":  hex.EncodeToString(ed25519.Sign(priv, registry.AuthMessage(c32, p32))),
 	})
-	if resp.StatusCode != http.StatusCreated {
-		t.Fatalf("register: %d %s", resp.StatusCode, body)
+	if status != http.StatusCreated {
+		t.Fatalf("register: %d %s", status, body)
 	}
 	var reg struct {
 		RoutingID  string `json:"routing_id"`
@@ -137,22 +137,22 @@ func publishBob(t *testing.T, bob *client, nOPK int) bobKeys {
 		k.opks[id] = priv
 		req.OneTime = append(req.OneTime, OneTimeJSON{KeyID: id, PublicKey: hex.EncodeToString(priv.PublicKey().Bytes())})
 	}
-	if resp, body := bob.do("PUT", "/v1/prekeys", req); resp.StatusCode != http.StatusNoContent {
-		t.Fatalf("publish: %d %s", resp.StatusCode, body)
+	if status, body := bob.do("PUT", "/v1/prekeys", req); status != http.StatusNoContent {
+		t.Fatalf("publish: %d %s", status, body)
 	}
 	return k
 }
 
 func claim(t *testing.T, as *client, routingID string) (claimResponse, int, []byte) {
 	t.Helper()
-	resp, body := as.do("POST", "/v1/prekeys/"+routingID+"/claim", nil)
+	status, body := as.do("POST", "/v1/prekeys/"+routingID+"/claim", nil)
 	var cr claimResponse
-	if resp.StatusCode == http.StatusOK {
+	if status == http.StatusOK {
 		if err := json.Unmarshal(body, &cr); err != nil {
 			t.Fatal(err)
 		}
 	}
-	return cr, resp.StatusCode, body
+	return cr, status, body
 }
 
 func TestTwoDevicesAgreeOnASecretThroughTheRegistry(t *testing.T) {
@@ -215,9 +215,9 @@ func TestAuthFailuresAreOneCodeAndUnknownTargetsLookRevoked(t *testing.T) {
 		"missing": "", "not hex": "zz", "invented": strings.Repeat("ab", 32),
 	} {
 		c := &client{t: t, srv: srv, credential: cred}
-		resp, body := c.do("GET", "/v1/prekeys/status", nil)
-		if resp.StatusCode != http.StatusUnauthorized || !strings.Contains(string(body), lumoserrors.ErrAuthRejected) {
-			t.Fatalf("%s credential: %d %s", name, resp.StatusCode, body)
+		status, body := c.do("GET", "/v1/prekeys/status", nil)
+		if status != http.StatusUnauthorized || !strings.Contains(string(body), lumoserrors.ErrAuthRejected) {
+			t.Fatalf("%s credential: %d %s", name, status, body)
 		}
 	}
 
@@ -257,12 +257,12 @@ func TestNoResponseCarriesPrivateOrStoredSecrets(t *testing.T) {
 func TestOversizedAndUnknownFieldsAreRefusedBeforeTheService(t *testing.T) {
 	srv := newServer(t)
 	bob := enrol(t, srv)
-	resp, body := bob.do("PUT", "/v1/prekeys", map[string]string{"private_key": "00"})
-	if resp.StatusCode != http.StatusBadRequest || !strings.Contains(string(body), lumoserrors.ErrPayloadMalformed) {
-		t.Fatalf("an unknown field (a private key, say) must be refused: %d %s", resp.StatusCode, body)
+	status, body := bob.do("PUT", "/v1/prekeys", map[string]string{"private_key": "00"})
+	if status != http.StatusBadRequest || !strings.Contains(string(body), lumoserrors.ErrPayloadMalformed) {
+		t.Fatalf("an unknown field (a private key, say) must be refused: %d %s", status, body)
 	}
 	huge := map[string]string{"pad": strings.Repeat("a", maxBody+1)}
-	if resp, _ := bob.do("PUT", "/v1/prekeys", huge); resp.StatusCode != http.StatusBadRequest {
-		t.Fatalf("a body above the cap must be refused, got %d", resp.StatusCode)
+	if status, _ := bob.do("PUT", "/v1/prekeys", huge); status != http.StatusBadRequest {
+		t.Fatalf("a body above the cap must be refused, got %d", status)
 	}
 }
