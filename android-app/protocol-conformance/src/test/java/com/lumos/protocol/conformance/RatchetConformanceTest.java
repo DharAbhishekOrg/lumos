@@ -24,6 +24,7 @@ import com.lumos.protocol.LumosErrors;
 import com.lumos.protocol.ratchet.DoubleRatchet;
 import com.lumos.protocol.wire.Frame;
 import java.nio.charset.StandardCharsets;
+import java.security.GeneralSecurityException;
 import java.util.ArrayDeque;
 import java.util.Deque;
 import org.junit.jupiter.api.Test;
@@ -42,7 +43,7 @@ public class RatchetConformanceTest {
         }
         return () -> {
             if (keys.isEmpty()) {
-                throw new java.security.GeneralSecurityException("recorded turn-key list exhausted");
+                throw new GeneralSecurityException("recorded turn-key list exhausted");
             }
             return keys.poll();
         };
@@ -52,7 +53,7 @@ public class RatchetConformanceTest {
         private final DoubleRatchet alice;
         private final DoubleRatchet bob;
 
-        Pair(final JsonObject root) throws Exception {
+        Pair(final JsonObject root) throws GeneralSecurityException, Frame.WireException {
             final byte[] sk = Vectors.hex(root, "shared_secret_hex");
             final byte[] ad = Vectors.hex(root, "associated_data_hex");
             final byte[] respPriv = Vectors.hex(root, "testonly_responder_ratchet_priv_hex");
