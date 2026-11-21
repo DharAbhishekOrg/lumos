@@ -6,7 +6,7 @@
 // GENERATED - DO NOT EDIT. Generator: tools/constantsgen
 // Source register: protocol/constants/lumos_constants.json
 // Baseline: TRS v1.1 Sec. 23 / EDP v1.0 Sec. 4 (ADR-004)
-// constants_hash: sha256:f635578ebfba1e3a65a3c711db5f629abed552b81731e1c25b4e307ee45f1c22
+// constants_hash: sha256:755935dc90f6ab1ae325b5d27b1d655f7b56898714a824e9e785d107e37fa1d4
 
 package lumosconstants
 
@@ -14,7 +14,7 @@ package lumosconstants
 const ServiceUUID = "E853EB6A-775C-4A49-A6BF-320E6A5CC609"
 
 // ConstantsHash binds generated code to the register that produced it (TRS-CONST-005).
-const ConstantsHash = "sha256:f635578ebfba1e3a65a3c711db5f629abed552b81731e1c25b4e307ee45f1c22"
+const ConstantsHash = "sha256:755935dc90f6ab1ae325b5d27b1d655f7b56898714a824e9e785d107e37fa1d4"
 
 // SchemaVersion is the register schema version.
 const SchemaVersion = 1
@@ -112,6 +112,12 @@ const ConfigSigningInfoOverridable = false
 
 // ConfigSigningInfoValue is crypto_protocol.CONFIG_SIGNING_INFO.value.
 const ConfigSigningInfoValue = "lumos/config/signed-package/v1"
+
+// DeviceAuthSigningInfoOverridable is crypto_protocol.DEVICE_AUTH_SIGNING_INFO.overridable.
+const DeviceAuthSigningInfoOverridable = false
+
+// DeviceAuthSigningInfoValue is crypto_protocol.DEVICE_AUTH_SIGNING_INFO.value.
+const DeviceAuthSigningInfoValue = "lumos/device-auth/challenge/v1"
 
 // HelloAckV1LayoutAuthSigLen is crypto_protocol.HELLO_ACK_V1_LAYOUT.auth_sig_len.
 const HelloAckV1LayoutAuthSigLen = 64
@@ -578,6 +584,12 @@ const DedupCacheIDSMin = 5000
 
 // DedupCacheOverridable is sessions_remote_text.DEDUP_CACHE.overridable.
 const DedupCacheOverridable = true
+
+// DeviceAuthChallengeTTLSecDefault is sessions_remote_text.DEVICE_AUTH_CHALLENGE_TTL_SEC.default.
+const DeviceAuthChallengeTTLSecDefault = 120
+
+// DeviceAuthChallengeTTLSecOverridable is sessions_remote_text.DEVICE_AUTH_CHALLENGE_TTL_SEC.overridable.
+const DeviceAuthChallengeTTLSecOverridable = false
 
 // MaxSkipPerChainDefault is sessions_remote_text.MAX_SKIP_PER_CHAIN.default.
 const MaxSkipPerChainDefault = 512

@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "generator": "tools/vectorgen",
-  "constants_hash": "sha256:f635578ebfba1e3a65a3c711db5f629abed552b81731e1c25b4e307ee45f1c22",
+  "constants_hash": "sha256:755935dc90f6ab1ae325b5d27b1d655f7b56898714a824e9e785d107e37fa1d4",
   "implements": [
     "TRS-PROTO-013"
   ],
@@ -301,6 +301,18 @@
       "numeric": 144,
       "category": "match",
       "meaning": "A class-4 verdict byte was outside the encodable alphabet (accept, unmatch). Declines are unencodable by design (SRS-MAT-004)."
+    },
+    {
+      "code": "ERR_AUTH_REJECTED",
+      "numeric": 160,
+      "category": "backend",
+      "meaning": "Backend authentication failed. ONE code for every cause - unknown or expired challenge, bad device signature, unknown or revoked credential - because distinguishing them tells a prober which credentials exist (TRS-BCK-007, TRS-CRY-013)."
+    },
+    {
+      "code": "ERR_PREKEY_UPLOAD_INVALID",
+      "numeric": 161,
+      "category": "backend",
+      "meaning": "A prekey upload was structurally refused: malformed key, duplicate one-time prekey id, a batch that would exceed ONE_TIME_PREKEYS_UPLOADED.max, or an identity key different from the one pinned at first upload. Signature failures use ERR_CRYPTO_PREKEY_SIGNATURE_INVALID (TRS-BCK-005)."
     }
   ]
 }

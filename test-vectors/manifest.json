@@ -2,7 +2,7 @@
   "schema_version": 1,
   "generator": "tools/vectorgen",
   "generator_commit": "f2db631",
-  "constants_hash": "sha256:f635578ebfba1e3a65a3c711db5f629abed552b81731e1c25b4e307ee45f1c22",
+  "constants_hash": "sha256:755935dc90f6ab1ae325b5d27b1d655f7b56898714a824e9e785d107e37fa1d4",
   "key_provenance": "TESTONLY-lumos-vectors-v1",
   "notes": "Golden-vector manifest (TRS Sec. 18.4). generator_commit is the HEAD at generation time, same convention as the trace matrix. The suite is COMPLETE: assertSuiteComplete enforces that the emitted set is exactly the Sec. 18.4 tree, so a missing file fails generation rather than producing a quietly smaller suite.",
   "files": [

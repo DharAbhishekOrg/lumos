@@ -6,9 +6,12 @@ Go; part of the repository-root Go module `github.com/dharabhishekorg/lumos`.
 
 ## Status
 
-Created in WP-01 slice S1. **No services exist yet.** WP-01 scope is limited to
-an empty shell that compiles clean plus a health check (slice S7); every other
-endpoint is explicitly out of scope for WP-01 per EDP Sec. 7.
+- WP-01: `cmd/lumosd`, an empty shell with a health check.
+- WP-05 S4a: `internal/registry` (device registration by key proof, revocable
+  hashed credentials, prekey directory with atomic one-time prekey claims)
+  and `internal/api` (its HTTP routes). Storage is behind `registry.Repository`;
+  only the in-memory implementation exists, so `lumosd` does not serve these
+  routes yet. The PostgreSQL adapter (TRS-BCK-008) and the wiring are S4b.
 
 ## Rules
 

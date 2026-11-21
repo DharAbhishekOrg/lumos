@@ -6,7 +6,7 @@
 /// GENERATED - DO NOT EDIT. Generator: tools/constantsgen
 /// Source register: protocol/constants/lumos_constants.json
 /// Baseline: TRS v1.1 Sec. 23 / EDP v1.0 Sec. 4 (ADR-004)
-/// constants_hash: sha256:f635578ebfba1e3a65a3c711db5f629abed552b81731e1c25b4e307ee45f1c22
+/// constants_hash: sha256:755935dc90f6ab1ae325b5d27b1d655f7b56898714a824e9e785d107e37fa1d4
 
 public enum LumosConstants {
 
@@ -14,7 +14,7 @@ public enum LumosConstants {
     public static let serviceUUID = "E853EB6A-775C-4A49-A6BF-320E6A5CC609"
 
     /// Binds generated code to the register that produced it (TRS-CONST-005).
-    public static let constantsHash = "sha256:f635578ebfba1e3a65a3c711db5f629abed552b81731e1c25b4e307ee45f1c22"
+    public static let constantsHash = "sha256:755935dc90f6ab1ae325b5d27b1d655f7b56898714a824e9e785d107e37fa1d4"
 
     /// Register schema version.
     public static let schemaVersion = 1
@@ -112,6 +112,12 @@ public enum LumosConstants {
 
     /// crypto_protocol.CONFIG_SIGNING_INFO.value
     public static let configSigningInfoValue = "lumos/config/signed-package/v1"
+
+    /// crypto_protocol.DEVICE_AUTH_SIGNING_INFO.overridable
+    public static let deviceAuthSigningInfoOverridable = false
+
+    /// crypto_protocol.DEVICE_AUTH_SIGNING_INFO.value
+    public static let deviceAuthSigningInfoValue = "lumos/device-auth/challenge/v1"
 
     /// crypto_protocol.HELLO_ACK_V1_LAYOUT.auth_sig_len
     public static let helloAckV1LayoutAuthSigLen = 64
@@ -587,6 +593,12 @@ public enum LumosConstants {
 
     /// sessions_remote_text.DEDUP_CACHE.overridable
     public static let dedupCacheOverridable = true
+
+    /// sessions_remote_text.DEVICE_AUTH_CHALLENGE_TTL_SEC.default
+    public static let deviceAuthChallengeTTLSecDefault = 120
+
+    /// sessions_remote_text.DEVICE_AUTH_CHALLENGE_TTL_SEC.overridable
+    public static let deviceAuthChallengeTTLSecOverridable = false
 
     /// sessions_remote_text.MAX_SKIP_PER_CHAIN.default
     public static let maxSkipPerChainDefault = 512
