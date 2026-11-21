@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Lumos - android-app/app / Delivery-tick colours.
+  Author: dhar.abhishek.email@gmail.com
+  Implements: SRS-RMT-005
+  ADRs: -
+  Threading: n/a
+  Notes: The owner's WhatsApp-style ruling (2026-11-21): grey for pending,
+  sent and delivered, blue for read, red for failed. The nearby colour marks
+  content that waits for a Bluetooth/Wi-Fi path. Brand palette work is
+  WP-10's; these are functional colours.
+-->
+<resources>
+    <color name="tick_pending">#FF8696A0</color>
+    <color name="tick_sent">#FF8696A0</color>
+    <color name="tick_read">#FF1E88E5</color>
+    <color name="tick_failed">#FFD32F2F</color>
+    <color name="tick_nearby">#FF00897B</color>
+</resources>

@@ -214,4 +214,16 @@
     <string name="nearby_card_hide">Hide</string>
     <string name="nearby_stop_everything">Stop Nearby</string>
 
+    <!-- Delivery states, spoken (SRS-RMT-005; owner ruling 2026-11-21:
+         WhatsApp-style ticks). Every tick has one of these as its content
+         description, so delivered and read differ in words, not only in
+         colour. No plumbing vocabulary: no relay, server, upload or ACK. -->
+    <string name="delivery_queued">Waiting to send</string>
+    <string name="delivery_sending">Sending</string>
+    <string name="delivery_sent">Sent</string>
+    <string name="delivery_delivered">Delivered</string>
+    <string name="delivery_read">Read</string>
+    <string name="delivery_failed">Not sent. Tap to retry.</string>
+    <string name="delivery_local_only_waiting">Sends when you\'re near each other</string>
+
 </resources>

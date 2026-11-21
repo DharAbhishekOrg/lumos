@@ -119,6 +119,14 @@
       ]
     },
     {
+      "path": "test-vectors/chat/delivery_states.json",
+      "implements": [
+        "SRS-RMT-005",
+        "SRS-RMT-014",
+        "TRS-PAT-002"
+      ]
+    },
+    {
       "path": "test-vectors/adv/ble_advertisement.json",
       "implements": [
         "TRS-PROTO-009",
