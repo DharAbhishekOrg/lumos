@@ -8,7 +8,10 @@
 /// mapping, the tint (grey, blue for read, red for failed), and the spoken
 /// label from the STATE. Delivered and read share the double tick and differ
 /// in tint and in words, so colour is never the only signal. The style is a
-/// plain value, tested on any host; the SwiftUI view is a thin renderer of it.
+/// plain value, tested on any host. The shell never imports SwiftUI (its
+/// iPhone-triple CI pass has no UIKit), so the view that renders this value -
+/// the symbols overlapped, tinted, one accessibility element - lands with the
+/// app target.
 
 import Foundation
 import LumosProtocol
@@ -76,39 +79,3 @@ public struct DeliveryTickStyle: Equatable, Sendable {
         }
     }
 }
-
-#if canImport(SwiftUI)
-import SwiftUI
-
-/// Renders a message's delivery ticks, WhatsApp-style.
-@available(iOS 17.0, macOS 13.0, *)
-public struct DeliveryTicksView: View {
-
-    private let style: DeliveryTickStyle
-
-    /// Draws the ticks for a state.
-    public init(state: DeliveryMachine.State) {
-        self.style = DeliveryTickStyle.of(state)
-    }
-
-    public var body: some View {
-        HStack(spacing: -6) {
-            ForEach(Array(style.symbols.enumerated()), id: \.offset) { _, name in
-                Image(systemName: name).font(.caption2.weight(.semibold))
-            }
-        }
-        .foregroundStyle(color)
-        .accessibilityElement(children: .ignore)
-        .accessibilityLabel(style.accessibilityLabel)
-    }
-
-    private var color: Color {
-        switch style.tint {
-        case .pending, .grey: return .secondary
-        case .read: return .blue
-        case .failed: return .red
-        case .nearby: return .teal
-        }
-    }
-}
-#endif
