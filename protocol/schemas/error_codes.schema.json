@@ -374,6 +374,20 @@
    "category": "match",
    "meaning": "A class-4 verdict byte was outside the encodable alphabet (accept, unmatch). Declines are unencodable by design (SRS-MAT-004).",
    "user_message": "Something arrived garbled. Nothing was shown or sent."
+  },
+  {
+   "code": "ERR_AUTH_REJECTED",
+   "numeric": 160,
+   "category": "backend",
+   "meaning": "Backend authentication failed. ONE code for every cause - unknown or expired challenge, bad device signature, unknown or revoked credential - because distinguishing them tells a prober which credentials exist (TRS-BCK-007, TRS-CRY-013).",
+   "user_message": "Couldn't connect securely. Please try again."
+  },
+  {
+   "code": "ERR_PREKEY_UPLOAD_INVALID",
+   "numeric": 161,
+   "category": "backend",
+   "meaning": "A prekey upload was structurally refused: malformed key, duplicate one-time prekey id, a batch that would exceed ONE_TIME_PREKEYS_UPLOADED.max, or an identity key different from the one pinned at first upload. Signature failures use ERR_CRYPTO_PREKEY_SIGNATURE_INVALID (TRS-BCK-005).",
+   "user_message": "Couldn't finish setting up secure messaging. Please try again."
   }
  ]
 }

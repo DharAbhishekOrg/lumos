@@ -7,7 +7,7 @@
  * GENERATED - DO NOT EDIT. Generator: tools/constantsgen
  * Source register: protocol/constants/lumos_constants.json
  * Baseline: TRS v1.1 Sec. 23 / EDP v1.0 Sec. 4 (ADR-004)
- * constants_hash: sha256:f635578ebfba1e3a65a3c711db5f629abed552b81731e1c25b4e307ee45f1c22
+ * constants_hash: sha256:755935dc90f6ab1ae325b5d27b1d655f7b56898714a824e9e785d107e37fa1d4
  */
 package com.lumos.protocol;
 
@@ -167,6 +167,12 @@ public final class LumosErrors {
     /** ERR_MATCH_BAD_VERDICT (144, match): A class-4 verdict byte was outside the encodable alphabet (accept, unmatch). Declines are unencodable by design (SRS-MAT-004). */
     public static final String ERR_MATCH_BAD_VERDICT = "ERR_MATCH_BAD_VERDICT";
 
+    /** ERR_AUTH_REJECTED (160, backend): Backend authentication failed. ONE code for every cause - unknown or expired challenge, bad device signature, unknown or revoked credential - because distinguishing them tells a prober which credentials exist (TRS-BCK-007, TRS-CRY-013). */
+    public static final String ERR_AUTH_REJECTED = "ERR_AUTH_REJECTED";
+
+    /** ERR_PREKEY_UPLOAD_INVALID (161, backend): A prekey upload was structurally refused: malformed key, duplicate one-time prekey id, a batch that would exceed ONE_TIME_PREKEYS_UPLOADED.max, or an identity key different from the one pinned at first upload. Signature failures use ERR_CRYPTO_PREKEY_SIGNATURE_INVALID (TRS-BCK-005). */
+    public static final String ERR_PREKEY_UPLOAD_INVALID = "ERR_PREKEY_UPLOAD_INVALID";
+
     /** Maps each stable code to its registry number. */
     public static final Map<String, Integer> NUMERIC = Map.ofEntries(
         Map.entry(ERR_FRAME_BAD_MAGIC, 1),
@@ -217,7 +223,9 @@ public final class LumosErrors {
         Map.entry(ERR_MATCH_UNKNOWN_PEER, 141),
         Map.entry(ERR_MATCH_NOT_MATCHED, 142),
         Map.entry(ERR_MATCH_BAD_PAYLOAD, 143),
-        Map.entry(ERR_MATCH_BAD_VERDICT, 144)
+        Map.entry(ERR_MATCH_BAD_VERDICT, 144),
+        Map.entry(ERR_AUTH_REJECTED, 160),
+        Map.entry(ERR_PREKEY_UPLOAD_INVALID, 161)
     );
 
     /**

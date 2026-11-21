@@ -7,7 +7,7 @@
  * GENERATED - DO NOT EDIT. Generator: tools/constantsgen
  * Source register: protocol/constants/lumos_constants.json
  * Baseline: TRS v1.1 Sec. 23 / EDP v1.0 Sec. 4 (ADR-004)
- * constants_hash: sha256:f635578ebfba1e3a65a3c711db5f629abed552b81731e1c25b4e307ee45f1c22
+ * constants_hash: sha256:755935dc90f6ab1ae325b5d27b1d655f7b56898714a824e9e785d107e37fa1d4
  */
 package com.lumos.protocol;
 
@@ -24,7 +24,7 @@ public final class LumosConstants {
     public static final String SERVICE_UUID = "E853EB6A-775C-4A49-A6BF-320E6A5CC609";
 
     /** Binds generated code to the register that produced it (TRS-CONST-005). */
-    public static final String CONSTANTS_HASH = "sha256:f635578ebfba1e3a65a3c711db5f629abed552b81731e1c25b4e307ee45f1c22";
+    public static final String CONSTANTS_HASH = "sha256:755935dc90f6ab1ae325b5d27b1d655f7b56898714a824e9e785d107e37fa1d4";
 
     /** Register schema version. */
     public static final int SCHEMA_VERSION = 1;
@@ -122,6 +122,12 @@ public final class LumosConstants {
 
     /** crypto_protocol.CONFIG_SIGNING_INFO.value */
     public static final String CONFIG_SIGNING_INFO_VALUE = "lumos/config/signed-package/v1";
+
+    /** crypto_protocol.DEVICE_AUTH_SIGNING_INFO.overridable */
+    public static final boolean DEVICE_AUTH_SIGNING_INFO_OVERRIDABLE = false;
+
+    /** crypto_protocol.DEVICE_AUTH_SIGNING_INFO.value */
+    public static final String DEVICE_AUTH_SIGNING_INFO_VALUE = "lumos/device-auth/challenge/v1";
 
     /** crypto_protocol.HELLO_ACK_V1_LAYOUT.auth_sig_len */
     public static final int HELLO_ACK_V1_LAYOUT_AUTH_SIG_LEN = 64;
@@ -597,6 +603,12 @@ public final class LumosConstants {
 
     /** sessions_remote_text.DEDUP_CACHE.overridable */
     public static final boolean DEDUP_CACHE_OVERRIDABLE = true;
+
+    /** sessions_remote_text.DEVICE_AUTH_CHALLENGE_TTL_SEC.default */
+    public static final int DEVICE_AUTH_CHALLENGE_TTL_SEC_DEFAULT = 120;
+
+    /** sessions_remote_text.DEVICE_AUTH_CHALLENGE_TTL_SEC.overridable */
+    public static final boolean DEVICE_AUTH_CHALLENGE_TTL_SEC_OVERRIDABLE = false;
 
     /** sessions_remote_text.MAX_SKIP_PER_CHAIN.default */
     public static final int MAX_SKIP_PER_CHAIN_DEFAULT = 512;
