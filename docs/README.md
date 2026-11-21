@@ -31,6 +31,7 @@ Same content, easier to query:
 | `handover/` | Original handover pack archive, retained for provenance |
 | `adrs/` | ADR-005..011, all **Accepted**. ADR-001..004 remain in the EDP; back-porting them as standalone records is not a WP-01 deliverable |
 | [`security/threat-model.md`](security/threat-model.md) | **Seeded** in WP-02 slice S0 (TRS-REP-008 phase 1). Covers the Zone-A device-compromise surface, key storage and the WP-02 constraints that follow from them |
+| [`ops/environments.md`](ops/environments.md) | Cloud, Firebase and push **identifiers** per environment (staging created 2026-11-21). No secrets |
 | [`privacy/data-map.md`](privacy/data-map.md) | **Seeded** in WP-02 slice S0 (TRS-REP-008 phase 1). Classifies locally held personal data and maps it to purpose, lawful basis, retention and data-subject rights |
 
 Both documents are **design inputs, written before WP-02 feature code**: the
