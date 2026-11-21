@@ -1953,7 +1953,7 @@
     "ci:conformance#31528127667"
    ],
    "adr": [],
-   "last_commit": "5bcb119",
+   "last_commit": "5161dce",
    "updated": "2026-11-21"
   },
   {
@@ -5234,7 +5234,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "5bcb119",
+   "last_commit": "5161dce",
    "updated": "2026-11-21"
   },
   {
@@ -5244,7 +5244,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "5bcb119",
+   "last_commit": "5161dce",
    "updated": "2026-11-21"
   },
   {
@@ -5254,7 +5254,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "5bcb119",
+   "last_commit": "5161dce",
    "updated": "2026-11-21"
   },
   {
@@ -5278,7 +5278,7 @@
    "adr": [
     "ADR-003"
    ],
-   "last_commit": "5bcb119",
+   "last_commit": "5161dce",
    "updated": "2026-11-21"
   },
   {
@@ -5300,7 +5300,7 @@
    "adr": [
     "ADR-002"
    ],
-   "last_commit": "5bcb119",
+   "last_commit": "5161dce",
    "updated": "2026-11-21"
   },
   {
@@ -5319,7 +5319,7 @@
    "adr": [
     "ADR-002"
    ],
-   "last_commit": "5bcb119",
+   "last_commit": "5161dce",
    "updated": "2026-11-21"
   },
   {
@@ -5329,7 +5329,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "5bcb119",
+   "last_commit": "5161dce",
    "updated": "2026-11-21"
   },
   {
@@ -5339,7 +5339,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "5bcb119",
+   "last_commit": "5161dce",
    "updated": "2026-11-21"
   },
   {
@@ -5349,7 +5349,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "5bcb119",
+   "last_commit": "5161dce",
    "updated": "2026-11-21"
   },
   {
@@ -5359,7 +5359,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "5bcb119",
+   "last_commit": "5161dce",
    "updated": "2026-11-21"
   },
   {
@@ -5369,7 +5369,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "5bcb119",
+   "last_commit": "5161dce",
    "updated": "2026-11-21"
   },
   {
@@ -5379,7 +5379,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "5bcb119",
+   "last_commit": "5161dce",
    "updated": "2026-11-21"
   },
   {
@@ -6452,6 +6452,8 @@
    "req_id": "TRS-CRY-002",
    "status": "tested",
    "code": [
+    "android-app/protocol-java/src/main/java/com/lumos/protocol/ratchet/DoubleRatchet.java",
+    "ios-app/protocol-conformance/Sources/LumosProtocol/Ratchet.swift",
     "protocol/crypto/ratchet/ratchet.go",
     "test-vectors/crypto/aead_kat.json",
     "test-vectors/crypto/ratchet_sequences.json",
@@ -6464,7 +6466,9 @@
     "go:protocol/crypto/ratchet:TestHeaderRoundtrip",
     "go:protocol/crypto/ratchet:TestOutOfOrderWithinChain",
     "go:protocol/crypto/ratchet:TestSkippedAcrossDHTurn",
-    "go:protocol/crypto:TestConformanceRatchetSequences"
+    "go:protocol/crypto:TestConformanceRatchetSequences",
+    "java:protocol-conformance:RatchetConformanceTest.committedSequencesDecryptByteForByte",
+    "swift:LumosProtocolConformance:RatchetConformanceTests.testCommittedSequencesDecryptByteForByte"
    ],
    "evidence": [],
    "adr": [
@@ -6525,13 +6529,19 @@
    "req_id": "TRS-CRY-006",
    "status": "tested",
    "code": [
+    "android-app/protocol-java/src/main/java/com/lumos/protocol/ratchet/DoubleRatchet.java",
+    "ios-app/protocol-conformance/Sources/LumosProtocol/Ratchet.swift",
     "protocol/crypto/aead/aead.go",
     "protocol/crypto/ratchet/ratchet.go"
    ],
    "tests": [
     "go:protocol/crypto/ratchet:TestMessageKeyDeletionByReplay",
     "go:protocol/crypto/ratchet:TestOutOfOrderWithinChain",
-    "go:protocol/crypto/ratchet:TestSkippedAcrossDHTurn"
+    "go:protocol/crypto/ratchet:TestSkippedAcrossDHTurn",
+    "java:protocol-conformance:RatchetConformanceTest.aUsedKeyIsGoneAndATamperedHeaderFails",
+    "java:protocol-conformance:RatchetConformanceTest.skippedKeysAreConsumedOnceAndExpire",
+    "swift:LumosProtocolConformance:RatchetConformanceTests.testAUsedKeyIsGoneAndATamperedHeaderFails",
+    "swift:LumosProtocolConformance:RatchetConformanceTests.testSkippedKeysAreConsumedOnceAndExpire"
    ],
    "evidence": [],
    "adr": [
@@ -6544,6 +6554,8 @@
    "req_id": "TRS-CRY-007",
    "status": "tested",
    "code": [
+    "android-app/protocol-java/src/main/java/com/lumos/protocol/ratchet/DoubleRatchet.java",
+    "ios-app/protocol-conformance/Sources/LumosProtocol/Ratchet.swift",
     "protocol/crypto/ratchet/ratchet.go",
     "test-vectors/crypto/aead_kat.json",
     "test-vectors/crypto/ratchet_sequences.json",
@@ -6555,7 +6567,11 @@
     "go:protocol/crypto/ratchet:TestMaxSkipBreach",
     "go:protocol/crypto/ratchet:TestSkippedKeyTTLExpiry",
     "go:protocol/crypto/ratchet:TestSkippedSessionCapFromRegister",
-    "go:protocol/crypto:TestConformanceRatchetSequences"
+    "go:protocol/crypto:TestConformanceRatchetSequences",
+    "java:protocol-conformance:RatchetConformanceTest.skippedKeysAreConsumedOnceAndExpire",
+    "java:protocol-conformance:RatchetConformanceTest.theMaxSkipNegativeFailsWithItsExactCode",
+    "swift:LumosProtocolConformance:RatchetConformanceTests.testSkippedKeysAreConsumedOnceAndExpire",
+    "swift:LumosProtocolConformance:RatchetConformanceTests.testTheMaxSkipNegativeFailsWithItsExactCode"
    ],
    "evidence": [],
    "adr": [
@@ -6624,6 +6640,8 @@
    "status": "tested",
    "code": [
     "android-app/app/src/main/java/com/lumos/app/recovery/LibsodiumRecoveryCrypto.java",
+    "android-app/protocol-java/src/main/java/com/lumos/protocol/ratchet/DoubleRatchet.java",
+    "ios-app/protocol-conformance/Sources/LumosProtocol/Ratchet.swift",
     "ios-app/shell/Sources/LumosAppShell/RecoveryRecord.swift",
     "protocol/crypto/aead/aead.go",
     "protocol/crypto/ratchet/ratchet.go"
@@ -6662,6 +6680,8 @@
     "android-app/app/src/main/java/com/lumos/app/recovery/RecoveryException.java",
     "android-app/app/src/main/java/com/lumos/app/recovery/RecoveryParams.java",
     "android-app/app/src/main/java/com/lumos/app/recovery/RecoveryRecord.java",
+    "android-app/protocol-java/src/main/java/com/lumos/protocol/ratchet/DoubleRatchet.java",
+    "ios-app/protocol-conformance/Sources/LumosProtocol/Ratchet.swift",
     "ios-app/shell/Sources/LumosAppShell/RecoveryRecord.swift",
     "protocol/crypto/aead/aead.go",
     "protocol/crypto/ratchet/ratchet.go",
@@ -6676,8 +6696,10 @@
     "go:protocol/crypto:TestConformanceRecoveryFailuresAreIndistinguishable",
     "java:app-instrumented:RecoveryRecordInstrumentedTest.everyNegativeVectorIsRefusedWithTheRightCode",
     "java:app-instrumented:RecoveryRecordInstrumentedTest.openingFailuresAreIndistinguishable",
+    "java:protocol-conformance:RatchetConformanceTest.theMaxSkipNegativeFailsWithItsExactCode",
     "swift:LumosAppShell:RecoveryRecordTests.testEveryNegativeVectorIsRefusedWithTheRightCode",
-    "swift:LumosAppShell:RecoveryRecordTests.testOpeningFailuresCarryNoDistinguishingDetail"
+    "swift:LumosAppShell:RecoveryRecordTests.testOpeningFailuresCarryNoDistinguishingDetail",
+    "swift:LumosProtocolConformance:RatchetConformanceTests.testTheMaxSkipNegativeFailsWithItsExactCode"
    ],
    "evidence": [],
    "adr": [
@@ -6981,7 +7003,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "5bcb119",
+   "last_commit": "5161dce",
    "updated": "2026-11-21"
   },
   {
@@ -6991,7 +7013,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "5bcb119",
+   "last_commit": "5161dce",
    "updated": "2026-11-21"
   },
   {
@@ -7011,7 +7033,7 @@
    "adr": [
     "ADR-002"
    ],
-   "last_commit": "5bcb119",
+   "last_commit": "5161dce",
    "updated": "2026-11-21"
   },
   {
@@ -7021,7 +7043,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "5bcb119",
+   "last_commit": "5161dce",
    "updated": "2026-11-21"
   },
   {
@@ -7031,7 +7053,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "5bcb119",
+   "last_commit": "5161dce",
    "updated": "2026-11-21"
   },
   {
@@ -7041,7 +7063,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "5bcb119",
+   "last_commit": "5161dce",
    "updated": "2026-11-21"
   },
   {
@@ -7063,7 +7085,7 @@
     "ADR-003",
     "ADR-010"
    ],
-   "last_commit": "5bcb119",
+   "last_commit": "5161dce",
    "updated": "2026-11-21"
   },
   {
@@ -7073,7 +7095,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "5bcb119",
+   "last_commit": "5161dce",
    "updated": "2026-11-21"
   },
   {
@@ -7083,7 +7105,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "5bcb119",
+   "last_commit": "5161dce",
    "updated": "2026-11-21"
   },
   {
@@ -7093,7 +7115,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "5bcb119",
+   "last_commit": "5161dce",
    "updated": "2026-11-21"
   },
   {
@@ -7103,7 +7125,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "5bcb119",
+   "last_commit": "5161dce",
    "updated": "2026-11-21"
   },
   {
@@ -7113,7 +7135,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "5bcb119",
+   "last_commit": "5161dce",
    "updated": "2026-11-21"
   },
   {
@@ -7906,7 +7928,7 @@
    "adr": [
     "ADR-004"
    ],
-   "last_commit": "5bcb119",
+   "last_commit": "5161dce",
    "updated": "2026-11-21"
   },
   {
@@ -8009,7 +8031,7 @@
     "ci:conformance#31528127667"
    ],
    "adr": [],
-   "last_commit": "5bcb119",
+   "last_commit": "5161dce",
    "updated": "2026-11-21"
   },
   {
@@ -8524,7 +8546,7 @@
    "adr": [
     "ADR-004"
    ],
-   "last_commit": "5bcb119",
+   "last_commit": "5161dce",
    "updated": "2026-11-21"
   },
   {
