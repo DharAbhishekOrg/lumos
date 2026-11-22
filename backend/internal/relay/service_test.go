@@ -3,9 +3,10 @@
 // Implements: TRS-BCK-003, TRS-BCK-004, SRS-RMT-009, SRS-RMT-015, SRS-RMT-016, SRS-DAT-003, SRS-TRN-009, TRS-TST-001
 // ADRs: -
 // Threading: test-only
-// Notes: Driven through the Service over the reference MemoryStore with an
-// injected clock, so TTL is tested by moving time, not by waiting. The Redis
-// store TRS-BCK-008 calls for will be run through these same tests.
+// Notes: Driven through the Service with an injected clock, so TTL is tested
+// by moving time, not by waiting. Every test runs twice (eachStore): over the
+// reference MemoryStore, and over PostgreSQL capabilities plus Redis
+// mailboxes, the pair TRS-BCK-008 deploys, so the two cannot drift.
 package relay
 
 import (
@@ -18,6 +19,7 @@ import (
 	"testing"
 
 	"github.com/dharabhishekorg/lumos/backend/internal/registry"
+	"github.com/dharabhishekorg/lumos/backend/internal/testdb"
 	"github.com/dharabhishekorg/lumos/protocol/gen/go/lumosconstants"
 	"github.com/dharabhishekorg/lumos/protocol/gen/go/lumoserrors"
 	"github.com/dharabhishekorg/lumos/protocol/wire"
@@ -33,11 +35,46 @@ type fixture struct {
 	nextIDSeq byte
 }
 
-func newFixture(t *testing.T) *fixture {
+// storePair builds the two storage halves for one test.
+type storePair func(t *testing.T, owner registry.DeviceID) (Capabilities, Mailboxes)
+
+func memoryPair(*testing.T, registry.DeviceID) (Capabilities, Mailboxes) {
+	m := NewMemoryStore()
+	return m, m
+}
+
+// serverPair is PostgreSQL capabilities and Redis mailboxes, each isolated to
+// this test. The owner gets a device row because capabilities reference it.
+func serverPair(t *testing.T, owner registry.DeviceID) (Capabilities, Mailboxes) {
+	t.Helper()
+	pool := testdb.Postgres(t)
+	ctx := context.Background()
+	if err := registry.Migrate(ctx, pool); err != nil {
+		t.Fatal(err)
+	}
+	var key, cred [32]byte
+	cred[0] = owner[0]
+	if _, err := pool.Exec(ctx, `INSERT INTO devices (id, device_key, credential_hash, created_at) VALUES ($1, $2, $3, 0)`,
+		owner[:], key[:], cred[:]); err != nil {
+		t.Fatal(err)
+	}
+	rdb, ns := testdb.Redis(t)
+	return NewPostgresCapabilities(pool), NewRedisMailboxes(rdb, ns)
+}
+
+// eachStore runs one contract against every storage implementation.
+func eachStore(t *testing.T, run func(t *testing.T, f *fixture)) {
+	t.Helper()
+	t.Run("memory", func(t *testing.T) { run(t, newFixture(t, memoryPair)) })
+	t.Run("postgres+redis", func(t *testing.T) { run(t, newFixture(t, serverPair)) })
+}
+
+func newFixture(t *testing.T, pair storePair) *fixture {
 	t.Helper()
 	f := &fixture{now: 1_700_000_000, ctx: context.Background()}
-	f.svc = NewService(NewMemoryStore(), func() int64 { return f.now })
 	f.owner.ID[0], f.sender.ID[0] = 1, 2
+	caps, mail := pair(t, f.owner.ID)
+	f.svc = NewService(caps, mail, func() int64 { return f.now })
 	if _, err := rand.Read(f.allowed[:]); err != nil {
 		t.Fatal(err)
 	}
@@ -82,181 +119,188 @@ func code(err error) string {
 }
 
 func TestOnlyRelayEligibleClassesCrossTheInternet(t *testing.T) {
-	f := newFixture(t)
-	for _, c := range []lumosconstants.MessageClass{
-		lumosconstants.MessageClassTextMessage, lumosconstants.MessageClassDeliveryReceipt,
-		lumosconstants.MessageClassReadReceipt,
-	} {
-		err := f.svc.Submit(f.ctx, f.sender, Send{Recipient: f.owner.ID, ID: f.id(), Class: c, Capability: f.allowed, Payload: []byte{1}})
-		if err != nil {
-			t.Fatalf("%v must be relay-eligible: %v", c, err)
+	eachStore(t, func(t *testing.T, f *fixture) {
+		for _, c := range []lumosconstants.MessageClass{
+			lumosconstants.MessageClassTextMessage, lumosconstants.MessageClassDeliveryReceipt,
+			lumosconstants.MessageClassReadReceipt,
+		} {
+			err := f.svc.Submit(f.ctx, f.sender, Send{Recipient: f.owner.ID, ID: f.id(), Class: c, Capability: f.allowed, Payload: []byte{1}})
+			if err != nil {
+				t.Fatalf("%v must be relay-eligible: %v", c, err)
+			}
 		}
-	}
-	for _, c := range []lumosconstants.MessageClass{
-		lumosconstants.MessageClassObjectChunk, lumosconstants.MessageClassObjectMeta,
-		lumosconstants.MessageClassVoiceMeta, lumosconstants.MessageClassProfileFull,
-	} {
-		err := f.svc.Submit(f.ctx, f.sender, Send{Recipient: f.owner.ID, ID: f.id(), Class: c, Capability: f.allowed, Payload: []byte{1}})
-		if code(err) != lumoserrors.ErrTransportLocalOnlyViolation {
-			t.Fatalf("%v is local-only (SRS-TRN-009); got %v", c, err)
+		for _, c := range []lumosconstants.MessageClass{
+			lumosconstants.MessageClassObjectChunk, lumosconstants.MessageClassObjectMeta,
+			lumosconstants.MessageClassVoiceMeta, lumosconstants.MessageClassProfileFull,
+		} {
+			err := f.svc.Submit(f.ctx, f.sender, Send{Recipient: f.owner.ID, ID: f.id(), Class: c, Capability: f.allowed, Payload: []byte{1}})
+			if code(err) != lumoserrors.ErrTransportLocalOnlyViolation {
+				t.Fatalf("%v is local-only (SRS-TRN-009); got %v", c, err)
+			}
 		}
-	}
-	err := f.svc.Submit(f.ctx, f.sender, Send{Recipient: f.owner.ID, ID: f.id(), Class: 0xEE, Capability: f.allowed, Payload: []byte{1}})
-	if code(err) != lumoserrors.ErrPayloadMalformed {
-		t.Fatalf("an unknown class is malformed, got %v", err)
-	}
-	if n := len(f.mailbox(t)); n != 3 {
-		t.Fatalf("only the three eligible envelopes may be stored, found %d", n)
-	}
+		err := f.svc.Submit(f.ctx, f.sender, Send{Recipient: f.owner.ID, ID: f.id(), Class: 0xEE, Capability: f.allowed, Payload: []byte{1}})
+		if code(err) != lumoserrors.ErrPayloadMalformed {
+			t.Fatalf("an unknown class is malformed, got %v", err)
+		}
+		if n := len(f.mailbox(t)); n != 3 {
+			t.Fatalf("only the three eligible envelopes may be stored, found %d", n)
+		}
+	})
 }
 
 func TestSizeLimitsComeFromTheRegister(t *testing.T) {
-	f := newFixture(t)
-	text, _ := lumosconstants.MaxPayloadBytes(lumosconstants.MessageClassTextMessage)
-	if err := f.send(f.id(), make([]byte, text)); err != nil {
-		t.Fatalf("exactly the text limit must pass: %v", err)
-	}
-	if got := code(f.send(f.id(), make([]byte, text+1))); got != lumoserrors.ErrFramePayloadTooLarge {
-		t.Fatalf("one byte over the text limit: want %s, got %s", lumoserrors.ErrFramePayloadTooLarge, got)
-	}
-	receipt, _ := lumosconstants.MaxPayloadBytes(lumosconstants.MessageClassDeliveryReceipt)
-	err := f.svc.Submit(f.ctx, f.sender, Send{Recipient: f.owner.ID, ID: f.id(),
-		Class: lumosconstants.MessageClassDeliveryReceipt, Capability: f.allowed, Payload: make([]byte, receipt+1)})
-	if code(err) != lumoserrors.ErrFramePayloadTooLarge {
-		t.Fatalf("a receipt has its own, smaller limit: got %v", err)
-	}
-	if got := code(f.send(f.id(), nil)); got != lumoserrors.ErrPayloadMalformed {
-		t.Fatalf("an empty payload is malformed, got %s", got)
-	}
+	eachStore(t, func(t *testing.T, f *fixture) {
+		text, _ := lumosconstants.MaxPayloadBytes(lumosconstants.MessageClassTextMessage)
+		if err := f.send(f.id(), make([]byte, text)); err != nil {
+			t.Fatalf("exactly the text limit must pass: %v", err)
+		}
+		if got := code(f.send(f.id(), make([]byte, text+1))); got != lumoserrors.ErrFramePayloadTooLarge {
+			t.Fatalf("one byte over the text limit: want %s, got %s", lumoserrors.ErrFramePayloadTooLarge, got)
+		}
+		receipt, _ := lumosconstants.MaxPayloadBytes(lumosconstants.MessageClassDeliveryReceipt)
+		err := f.svc.Submit(f.ctx, f.sender, Send{Recipient: f.owner.ID, ID: f.id(),
+			Class: lumosconstants.MessageClassDeliveryReceipt, Capability: f.allowed, Payload: make([]byte, receipt+1)})
+		if code(err) != lumoserrors.ErrFramePayloadTooLarge {
+			t.Fatalf("a receipt has its own, smaller limit: got %v", err)
+		}
+		if got := code(f.send(f.id(), nil)); got != lumoserrors.ErrPayloadMalformed {
+			t.Fatalf("an empty payload is malformed, got %s", got)
+		}
+	})
 }
 
 func TestABlockedSenderIsToldNothingAndDeliversNothing(t *testing.T) {
-	f := newFixture(t)
-	if err := f.send(f.id(), []byte("before")); err != nil {
-		t.Fatal(err)
-	}
-	if err := f.svc.Revoke(f.ctx, f.owner, ProofOf(f.allowed)); err != nil {
-		t.Fatal(err)
-	}
-	if err := f.send(f.id(), []byte("after block")); err != nil {
-		t.Fatalf("a blocked sender must get the same success as anyone else (SRS-MAT-003), got %v", err)
-	}
-	var invented [32]byte
-	err := f.svc.Submit(f.ctx, f.sender, Send{Recipient: f.owner.ID, ID: f.id(),
-		Class: lumosconstants.MessageClassTextMessage, Capability: invented, Payload: []byte("probe")})
-	if err != nil {
-		t.Fatalf("a never-issued capability is indistinguishable from a revoked one, got %v", err)
-	}
-	got := f.mailbox(t)
-	if len(got) != 1 || !bytes.Equal(got[0].Payload, []byte("before")) {
-		t.Fatalf("only the pre-block message may be delivered (SRS-RMT-016), got %d envelopes", len(got))
-	}
+	eachStore(t, func(t *testing.T, f *fixture) {
+		if err := f.send(f.id(), []byte("before")); err != nil {
+			t.Fatal(err)
+		}
+		if err := f.svc.Revoke(f.ctx, f.owner, ProofOf(f.allowed)); err != nil {
+			t.Fatal(err)
+		}
+		if err := f.send(f.id(), []byte("after block")); err != nil {
+			t.Fatalf("a blocked sender must get the same success as anyone else (SRS-MAT-003), got %v", err)
+		}
+		var invented [32]byte
+		err := f.svc.Submit(f.ctx, f.sender, Send{Recipient: f.owner.ID, ID: f.id(),
+			Class: lumosconstants.MessageClassTextMessage, Capability: invented, Payload: []byte("probe")})
+		if err != nil {
+			t.Fatalf("a never-issued capability is indistinguishable from a revoked one, got %v", err)
+		}
+		got := f.mailbox(t)
+		if len(got) != 1 || !bytes.Equal(got[0].Payload, []byte("before")) {
+			t.Fatalf("only the pre-block message may be delivered (SRS-RMT-016), got %d envelopes", len(got))
+		}
+	})
 }
 
 func TestRetriesAreIdempotentAndAReusedIDIsAReplay(t *testing.T) {
-	f := newFixture(t)
-	id := f.id()
-	for range 3 {
-		if err := f.send(id, []byte("hello")); err != nil {
-			t.Fatalf("a retry of the same envelope must succeed: %v", err)
+	eachStore(t, func(t *testing.T, f *fixture) {
+		id := f.id()
+		for range 3 {
+			if err := f.send(id, []byte("hello")); err != nil {
+				t.Fatalf("a retry of the same envelope must succeed: %v", err)
+			}
 		}
-	}
-	if n := len(f.mailbox(t)); n != 1 {
-		t.Fatalf("three retries must store one envelope, found %d", n)
-	}
-	if got := code(f.send(id, []byte("forged"))); got != lumoserrors.ErrCryptoReplay {
-		t.Fatalf("the same id with other bytes is a replay: got %s", got)
-	}
-	if _, err := f.svc.Ack(f.ctx, f.owner, []MessageID{id}); err != nil {
-		t.Fatal(err)
-	}
-	if err := f.send(id, []byte("hello")); err != nil {
-		t.Fatalf("a late retry after acknowledgement must still succeed: %v", err)
-	}
-	if n := len(f.mailbox(t)); n != 0 {
-		t.Fatalf("a late retry must not redeliver an acknowledged message, found %d", n)
-	}
-	if got := code(f.send(id, []byte("forged"))); got != lumoserrors.ErrCryptoReplay {
-		t.Fatalf("the tombstone must still catch a replay after acknowledgement: got %s", got)
-	}
+		if n := len(f.mailbox(t)); n != 1 {
+			t.Fatalf("three retries must store one envelope, found %d", n)
+		}
+		if got := code(f.send(id, []byte("forged"))); got != lumoserrors.ErrCryptoReplay {
+			t.Fatalf("the same id with other bytes is a replay: got %s", got)
+		}
+		if _, err := f.svc.Ack(f.ctx, f.owner, []MessageID{id}); err != nil {
+			t.Fatal(err)
+		}
+		if err := f.send(id, []byte("hello")); err != nil {
+			t.Fatalf("a late retry after acknowledgement must still succeed: %v", err)
+		}
+		if n := len(f.mailbox(t)); n != 0 {
+			t.Fatalf("a late retry must not redeliver an acknowledged message, found %d", n)
+		}
+		if got := code(f.send(id, []byte("forged"))); got != lumoserrors.ErrCryptoReplay {
+			t.Fatalf("the tombstone must still catch a replay after acknowledgement: got %s", got)
+		}
+	})
 }
 
 func TestAcknowledgedOrExpiredEnvelopesAreGone(t *testing.T) {
-	f := newFixture(t)
-	acked, kept := f.id(), f.id()
-	_ = f.send(acked, []byte("a"))
-	_ = f.send(kept, []byte("b"))
-	n, err := f.svc.Ack(f.ctx, f.owner, []MessageID{acked})
-	if err != nil || n != 1 {
-		t.Fatalf("ack: n=%d err=%v", n, err)
-	}
-	got := f.mailbox(t)
-	if len(got) != 1 || got[0].ID != kept {
-		t.Fatal("an acknowledged envelope is deleted at once (SRS-RMT-015)")
-	}
-	ttl := int64(lumosconstants.RelayEnvelopeTTLDaysDefault) * secondsPerDay
-	f.now += ttl
-	if len(f.mailbox(t)) != 1 {
-		t.Fatal("an envelope lives exactly RELAY_ENVELOPE_TTL_DAYS")
-	}
-	f.now++
-	if len(f.mailbox(t)) != 0 {
-		t.Fatal("one second past its TTL an envelope is never served")
-	}
-	purged, err := f.svc.Purge(f.ctx)
-	if err != nil || purged != 1 {
-		t.Fatalf("purge must delete the expired envelope: n=%d err=%v", purged, err)
-	}
+	eachStore(t, func(t *testing.T, f *fixture) {
+		acked, kept := f.id(), f.id()
+		_ = f.send(acked, []byte("a"))
+		_ = f.send(kept, []byte("b"))
+		n, err := f.svc.Ack(f.ctx, f.owner, []MessageID{acked})
+		if err != nil || n != 1 {
+			t.Fatalf("ack: n=%d err=%v", n, err)
+		}
+		got := f.mailbox(t)
+		if len(got) != 1 || got[0].ID != kept {
+			t.Fatal("an acknowledged envelope is deleted at once (SRS-RMT-015)")
+		}
+		ttl := int64(lumosconstants.RelayEnvelopeTTLDaysDefault) * secondsPerDay
+		f.now += ttl
+		if len(f.mailbox(t)) != 1 {
+			t.Fatal("an envelope lives exactly RELAY_ENVELOPE_TTL_DAYS")
+		}
+		f.now++
+		if len(f.mailbox(t)) != 0 {
+			t.Fatal("one second past its TTL an envelope is never served")
+		}
+		purged, err := f.svc.Purge(f.ctx)
+		if err != nil || purged != 1 {
+			t.Fatalf("purge must delete the expired envelope: n=%d err=%v", purged, err)
+		}
+	})
 }
 
 func TestTheEnvelopeQuotaIsAtomicUnderConcurrentSenders(t *testing.T) {
-	f := newFixture(t)
-	limit := lumosconstants.RelayMailboxQuotaEnvelopes
-	extra := 100
-	ids := make([]MessageID, limit+extra)
-	for i := range ids {
-		var id MessageID
-		id[0], id[1] = byte(i>>8), byte(i) // #nosec G115 -- i < 2^16 here
-		id[2] = 0xAA
-		ids[i] = id
-	}
-	var mu sync.Mutex
-	full := 0
-	var wg sync.WaitGroup
-	for _, id := range ids {
-		wg.Add(1)
-		go func() {
-			defer wg.Done()
-			err := f.send(id, []byte("x"))
-			mu.Lock()
-			defer mu.Unlock()
-			switch code(err) {
-			case "":
-			case lumoserrors.ErrRelayMailboxFull:
-				full++
-			default:
-				t.Errorf("unexpected: %v", err)
-			}
-		}()
-	}
-	wg.Wait()
-	if full != extra {
-		t.Fatalf("exactly %d sends past RELAY_MAILBOX_QUOTA.envelopes must be refused, got %d", extra, full)
-	}
+	eachStore(t, func(t *testing.T, f *fixture) {
+		limit := lumosconstants.RelayMailboxQuotaEnvelopes
+		extra := 100
+		ids := make([]MessageID, limit+extra)
+		for i := range ids {
+			var id MessageID
+			id[0], id[1] = byte(i>>8), byte(i) // #nosec G115 -- i < 2^16 here
+			id[2] = 0xAA
+			ids[i] = id
+		}
+		var mu sync.Mutex
+		full := 0
+		var wg sync.WaitGroup
+		for _, id := range ids {
+			wg.Add(1)
+			go func() {
+				defer wg.Done()
+				err := f.send(id, []byte("x"))
+				mu.Lock()
+				defer mu.Unlock()
+				switch code(err) {
+				case "":
+				case lumoserrors.ErrRelayMailboxFull:
+					full++
+				default:
+					t.Errorf("unexpected: %v", err)
+				}
+			}()
+		}
+		wg.Wait()
+		if full != extra {
+			t.Fatalf("exactly %d sends past RELAY_MAILBOX_QUOTA.envelopes must be refused, got %d", extra, full)
+		}
+	})
 }
 
 func TestTheByteQuotaRefusesWhatWouldNotFit(t *testing.T) {
-	f := newFixture(t)
-	size, _ := lumosconstants.MaxPayloadBytes(lumosconstants.MessageClassTextMessage)
-	fits := lumosconstants.RelayMailboxQuotaBytes / int(size)
-	for i := range fits {
-		if err := f.send(f.idN(i), make([]byte, size)); err != nil {
-			t.Fatalf("envelope %d of %d must fit: %v", i+1, fits, err)
+	eachStore(t, func(t *testing.T, f *fixture) {
+		size, _ := lumosconstants.MaxPayloadBytes(lumosconstants.MessageClassTextMessage)
+		fits := lumosconstants.RelayMailboxQuotaBytes / int(size)
+		for i := range fits {
+			if err := f.send(f.idN(i), make([]byte, size)); err != nil {
+				t.Fatalf("envelope %d of %d must fit: %v", i+1, fits, err)
+			}
 		}
-	}
-	if got := code(f.send(f.idN(fits), make([]byte, size))); got != lumoserrors.ErrRelayMailboxFull {
-		t.Fatalf("the next full-size envelope exceeds RELAY_MAILBOX_QUOTA.bytes: got %s", got)
-	}
+		if got := code(f.send(f.idN(fits), make([]byte, size))); got != lumoserrors.ErrRelayMailboxFull {
+			t.Fatalf("the next full-size envelope exceeds RELAY_MAILBOX_QUOTA.bytes: got %s", got)
+		}
+	})
 }
 
 func (f *fixture) idN(i int) MessageID {
@@ -266,63 +310,66 @@ func (f *fixture) idN(i int) MessageID {
 }
 
 func TestFetchIsOldestFirstAndBounded(t *testing.T) {
-	f := newFixture(t)
-	for i := range FetchMax + 10 {
-		f.now++
-		if err := f.send(f.idN(i), []byte{byte(i)}); err != nil { // #nosec G115 -- small
-			t.Fatal(err)
+	eachStore(t, func(t *testing.T, f *fixture) {
+		for i := range FetchMax + 10 {
+			f.now++
+			if err := f.send(f.idN(i), []byte{byte(i)}); err != nil { // #nosec G115 -- small
+				t.Fatal(err)
+			}
 		}
-	}
-	got := f.mailbox(t)
-	if len(got) != FetchMax {
-		t.Fatalf("one fetch returns at most %d, got %d", FetchMax, len(got))
-	}
-	for i := 1; i < len(got); i++ {
-		if got[i].CreatedAt < got[i-1].CreatedAt {
-			t.Fatal("envelopes come oldest first")
+		got := f.mailbox(t)
+		if len(got) != FetchMax {
+			t.Fatalf("one fetch returns at most %d, got %d", FetchMax, len(got))
 		}
-	}
-	if got[0].Payload[0] != 0 {
-		t.Fatal("the oldest envelope comes first")
-	}
+		for i := 1; i < len(got); i++ {
+			if got[i].CreatedAt < got[i-1].CreatedAt {
+				t.Fatal("envelopes come oldest first")
+			}
+		}
+		if got[0].Payload[0] != 0 {
+			t.Fatal("the oldest envelope comes first")
+		}
+	})
 }
 
 func TestTheEnvelopeRecordIsTheTRSRecordAndHoldsNoCapability(t *testing.T) {
-	f := newFixture(t)
-	id := f.id()
-	payload := []byte("opaque ciphertext")
-	if err := f.send(id, payload); err != nil {
-		t.Fatal(err)
-	}
-	e := f.mailbox(t)[0]
-	ttl := int64(lumosconstants.RelayEnvelopeTTLDaysDefault) * secondsPerDay
-	switch {
-	case e.ID != id, e.Recipient != f.owner.ID, e.Class != lumosconstants.MessageClassTextMessage:
-		t.Fatal("message id, recipient routing id and class must be recorded")
-	case e.CreatedAt != f.now || e.ExpiresAt != f.now+ttl:
-		t.Fatal("created time and expiry (created + TTL) must be recorded")
-	case e.Size != len(payload) || !bytes.Equal(e.Payload, payload):
-		t.Fatal("size and the opaque payload must be recorded")
-	case e.AuthProof != sha256.Sum256(f.allowed[:]) || e.AuthProof == f.allowed:
-		t.Fatal("the authorisation proof is the capability's hash, never the capability")
-	}
+	eachStore(t, func(t *testing.T, f *fixture) {
+		id := f.id()
+		payload := []byte("opaque ciphertext")
+		if err := f.send(id, payload); err != nil {
+			t.Fatal(err)
+		}
+		e := f.mailbox(t)[0]
+		ttl := int64(lumosconstants.RelayEnvelopeTTLDaysDefault) * secondsPerDay
+		switch {
+		case e.ID != id, e.Recipient != f.owner.ID, e.Class != lumosconstants.MessageClassTextMessage:
+			t.Fatal("message id, recipient routing id and class must be recorded")
+		case e.CreatedAt != f.now || e.ExpiresAt != f.now+ttl:
+			t.Fatal("created time and expiry (created + TTL) must be recorded")
+		case e.Size != len(payload) || !bytes.Equal(e.Payload, payload):
+			t.Fatal("size and the opaque payload must be recorded")
+		case e.AuthProof != sha256.Sum256(f.allowed[:]) || e.AuthProof == f.allowed:
+			t.Fatal("the authorisation proof is the capability's hash, never the capability")
+		}
+	})
 }
 
 func TestACapabilityListHasACeiling(t *testing.T) {
-	f := newFixture(t)
-	for i := 1; i < capabilityCeiling; i++ {
-		var p [32]byte
-		p[0], p[1], p[2] = byte(i>>16), byte(i>>8), byte(i) // #nosec G115 -- bounded
-		if err := f.svc.Allow(f.ctx, f.owner, p); err != nil {
-			t.Fatalf("capability %d: %v", i, err)
+	eachStore(t, func(t *testing.T, f *fixture) {
+		for i := 1; i < capabilityCeiling; i++ {
+			var p [32]byte
+			p[0], p[1], p[2] = byte(i>>16), byte(i>>8), byte(i) // #nosec G115 -- bounded
+			if err := f.svc.Allow(f.ctx, f.owner, p); err != nil {
+				t.Fatalf("capability %d: %v", i, err)
+			}
 		}
-	}
-	var over [32]byte
-	over[31] = 0xFF
-	if got := code(f.svc.Allow(f.ctx, f.owner, over)); got != lumoserrors.ErrRelayMailboxFull {
-		t.Fatalf("past the ceiling: want %s, got %s", lumoserrors.ErrRelayMailboxFull, got)
-	}
-	if err := f.svc.Allow(f.ctx, f.owner, ProofOf(f.allowed)); err != nil {
-		t.Fatalf("re-allowing an existing capability stays idempotent at the ceiling: %v", err)
-	}
+		var over [32]byte
+		over[31] = 0xFF
+		if got := code(f.svc.Allow(f.ctx, f.owner, over)); got != lumoserrors.ErrRelayMailboxFull {
+			t.Fatalf("past the ceiling: want %s, got %s", lumoserrors.ErrRelayMailboxFull, got)
+		}
+		if err := f.svc.Allow(f.ctx, f.owner, ProofOf(f.allowed)); err != nil {
+			t.Fatalf("re-allowing an existing capability stays idempotent at the ceiling: %v", err)
+		}
+	})
 }

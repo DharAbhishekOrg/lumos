@@ -21,6 +21,8 @@ Google account. Changing any of it is owner-executed.
 | iOS app | Not yet: the owner's Apple Developer Program enrolment was submitted and paid on 2026-11-22 and is pending Apple's review |
 | APNs key | Not yet. When created: Sandbox, Team Scoped, stored as secret `apns-sandbox-key` in this project's Secret Manager |
 | Region | `asia-south1` (Mumbai), owner ruling 2026-11-22 |
+| Database | Not yet created (WP-05 S8). PostgreSQL; its URL reaches `lumosd` as `LUMOS_DATABASE_URL` from Secret Manager |
+| Redis | Not yet created (WP-05 S8). Must use the **`noeviction`** policy: eviction would silently drop pending messages. Its URL reaches `lumosd` as `LUMOS_REDIS_URL` from Secret Manager |
 
 The Android package carries no `.debug` suffix: `buildTypes.debug` in
 `android-app/app/build.gradle.kts` sets none, so debug and release staging

@@ -18,6 +18,22 @@
  "components": [
   {
    "type": "library",
+   "name": "github.com/cespare/xxhash/v2",
+   "version": "v2.3.0",
+   "purl": "pkg:golang/github.com/cespare/xxhash/v2@v2.3.0",
+   "scope": "optional",
+   "licenses": [
+    {
+     "license": {
+      "id": "MIT"
+     }
+    }
+   ],
+   "x-ecosystem": "go",
+   "x-locked-in": "go.mod + go.sum"
+  },
+  {
+   "type": "library",
    "name": "github.com/jackc/pgpassfile",
    "version": "v1.0.0",
    "purl": "pkg:golang/github.com/jackc/pgpassfile@v1.0.0",
@@ -82,6 +98,38 @@
   },
   {
    "type": "library",
+   "name": "github.com/redis/go-redis/v9",
+   "version": "v9.23.0",
+   "purl": "pkg:golang/github.com/redis/go-redis/v9@v9.23.0",
+   "scope": "required",
+   "licenses": [
+    {
+     "license": {
+      "id": "BSD-2-Clause"
+     }
+    }
+   ],
+   "x-ecosystem": "go",
+   "x-locked-in": "go.mod + go.sum"
+  },
+  {
+   "type": "library",
+   "name": "go.uber.org/atomic",
+   "version": "v1.12.0",
+   "purl": "pkg:golang/go.uber.org/atomic@v1.12.0",
+   "scope": "optional",
+   "licenses": [
+    {
+     "license": {
+      "id": "MIT"
+     }
+    }
+   ],
+   "x-ecosystem": "go",
+   "x-locked-in": "go.mod + go.sum"
+  },
+  {
+   "type": "library",
    "name": "golang.org/x/crypto",
    "version": "v0.54.0",
    "purl": "pkg:golang/golang.org/x/crypto@v0.54.0",
@@ -115,8 +163,8 @@
   {
    "type": "library",
    "name": "golang.org/x/sys",
-   "version": "v0.47.0",
-   "purl": "pkg:golang/golang.org/x/sys@v0.47.0",
+   "version": "v0.48.0",
+   "purl": "pkg:golang/golang.org/x/sys@v0.48.0",
    "scope": "optional",
    "licenses": [
     {

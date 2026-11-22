@@ -1,4 +1,4 @@
-// Lumos - backend/cmd/lumosd / The backend process: health check, and the registry when a database is configured.
+// Lumos - backend/cmd/lumosd / The backend process: health check, registry and relay as configured.
 // Author: dhar.abhishek.email@gmail.com
 // Implements: TRS-REP-001, TRS-REP-004, TRS-REP-007, TRS-BCK-002, TRS-BCK-001, TRS-BCK-008
 // ADRs: -
@@ -12,7 +12,11 @@
 // injected from the secret manager (TRS-BCK-012) and never appears in code,
 // flags or logs. Without it the process is the health-check shell it always
 // was, so a misconfigured deploy fails visibly instead of quietly running an
-// in-memory registry that forgets every device on restart.
+// in-memory registry that forgets every device on restart. Since WP-05 S5b the
+// relay is served too, when LUMOS_REDIS_URL is ALSO set: its envelopes live in
+// Redis and its send capabilities in the same PostgreSQL. A Redis URL without
+// a database is refused at startup, because the relay cannot authenticate
+// anyone without the registry.
 package main
 
 import (
@@ -29,9 +33,14 @@ import (
 
 	"github.com/dharabhishekorg/lumos/backend/internal/api"
 	"github.com/dharabhishekorg/lumos/backend/internal/registry"
+	"github.com/dharabhishekorg/lumos/backend/internal/relay"
 	"github.com/dharabhishekorg/lumos/protocol/gen/go/lumosconstants"
 	"github.com/jackc/pgx/v5/pgxpool"
+	"github.com/redis/go-redis/v9"
 )
+
+// redisNamespace prefixes every key the backend writes to Redis.
+const redisNamespace = "lumos:"
 
 // Build provenance, injected at link time by the release build (TRS-REP-007).
 // The defaults name the state honestly rather than pretending to be a release.
@@ -83,38 +92,82 @@ func HealthHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// NewMux wires the health check, and the registry routes when reg is non-nil.
-func NewMux(reg *api.Registry) *http.ServeMux {
+// Backend is the set of route groups this process serves beyond health.
+type Backend struct {
+	Registry *api.Registry
+	Relay    *api.Relay
+	close    []func()
+}
+
+// Close releases the connections the backend opened.
+func (b *Backend) Close() {
+	if b == nil {
+		return
+	}
+	for i := len(b.close) - 1; i >= 0; i-- {
+		b.close[i]()
+	}
+}
+
+// NewMux wires the health check and whichever route groups b holds.
+func NewMux(b *Backend) *http.ServeMux {
 	mux := http.NewServeMux()
 	mux.HandleFunc("/healthz", HealthHandler)
-	if reg != nil {
-		reg.Register(mux)
+	if b != nil && b.Registry != nil {
+		b.Registry.Register(mux)
+	}
+	if b != nil && b.Relay != nil {
+		b.Relay.Register(mux)
 	}
 	return mux
 }
 
-// openRegistry connects, migrates and builds the registry over PostgreSQL. An
-// empty DSN is not an error: it means "no registry", and the caller serves
-// health only.
-func openRegistry(ctx context.Context, dsn string) (*api.Registry, func(), error) {
+func unixNow() int64 { return time.Now().Unix() }
+
+// openBackend connects, migrates and builds what the configuration asks for.
+// No DSN means health only. A DSN alone means the registry. A DSN and a Redis
+// URL mean the registry and the relay. A Redis URL alone is a configuration
+// error. Errors name the stage that failed and never the credentials.
+func openBackend(ctx context.Context, dsn, redisURL string) (*Backend, error) {
 	if dsn == "" {
-		return nil, func() {}, nil
+		if redisURL != "" {
+			return nil, errors.New("LUMOS_REDIS_URL is set but LUMOS_DATABASE_URL is not: the relay needs the registry")
+		}
+		return nil, nil
 	}
+	b := &Backend{}
 	pool, err := pgxpool.New(ctx, dsn)
 	if err != nil {
-		return nil, nil, fmt.Errorf("database config: %w", err)
+		return nil, fmt.Errorf("database config: %w", err)
 	}
+	b.close = append(b.close, pool.Close)
 	if err := pool.Ping(ctx); err != nil {
-		pool.Close()
-		return nil, nil, fmt.Errorf("database unreachable: %w", err)
+		b.Close()
+		return nil, fmt.Errorf("database unreachable: %w", err)
 	}
 	if err := registry.Migrate(ctx, pool); err != nil {
-		pool.Close()
-		return nil, nil, err
+		b.Close()
+		return nil, err
 	}
-	svc := registry.NewService(registry.NewPostgresRepository(pool),
-		func() int64 { return time.Now().Unix() }, rand.Reader)
-	return api.NewRegistry(svc), pool.Close, nil
+	auth := registry.NewService(registry.NewPostgresRepository(pool), unixNow, rand.Reader)
+	b.Registry = api.NewRegistry(auth)
+	if redisURL == "" {
+		return b, nil
+	}
+	opts, err := redis.ParseURL(redisURL)
+	if err != nil {
+		b.Close()
+		return nil, errors.New("redis config: LUMOS_REDIS_URL is not a valid redis:// or rediss:// URL")
+	}
+	rdb := redis.NewClient(opts)
+	b.close = append(b.close, func() { _ = rdb.Close() })
+	if err := rdb.Ping(ctx).Err(); err != nil {
+		b.Close()
+		return nil, fmt.Errorf("redis unreachable: %w", err)
+	}
+	svc := relay.NewService(relay.NewPostgresCapabilities(pool), relay.NewRedisMailboxes(rdb, redisNamespace), unixNow)
+	b.Relay = api.NewRelay(svc, auth)
+	return b, nil
 }
 
 func main() {
@@ -122,26 +175,30 @@ func main() {
 	flag.Parse()
 
 	startCtx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
-	reg, closeDB, err := openRegistry(startCtx, os.Getenv("LUMOS_DATABASE_URL"))
+	backend, err := openBackend(startCtx, os.Getenv("LUMOS_DATABASE_URL"), os.Getenv("LUMOS_REDIS_URL"))
 	cancel()
 	if err != nil {
-		// The error names the stage that failed; pgx never puts the password
-		// of a DSN into its error text.
+		// The error names the stage that failed; neither pgx nor go-redis puts
+		// a password into its error text, and a bad Redis URL is reported
+		// without echoing it.
 		log.Fatalf("lumosd: %v", err)
 	}
-	defer closeDB()
+	defer backend.Close()
 
 	srv := &http.Server{
 		Addr:              *addr,
-		Handler:           NewMux(reg),
+		Handler:           NewMux(backend),
 		ReadHeaderTimeout: 5 * time.Second,
 		ReadTimeout:       15 * time.Second,
 		WriteTimeout:      15 * time.Second,
 		IdleTimeout:       60 * time.Second,
 	}
 	mode := "health only (no LUMOS_DATABASE_URL)"
-	if reg != nil {
-		mode = "health + registry"
+	switch {
+	case backend != nil && backend.Relay != nil:
+		mode = "health + registry + relay"
+	case backend != nil:
+		mode = "health + registry (no LUMOS_REDIS_URL)"
 	}
 	// The banner is diagnostic output on a stream the process does not own; a
 	// closed or full stdout must not stop the server from listening.

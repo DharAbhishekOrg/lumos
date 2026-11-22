@@ -13,7 +13,10 @@
 // gets the documented signed-prekey fallback rather than a duplicate. Ids ever
 // stocked live in their own table, so a consumed id can never be uploaded
 // again. Only PUBLIC key material and the SHA-256 of a credential are stored
-// (TRS-BCK-002). The schema is forward-only and versioned in-database.
+// (TRS-BCK-002). The schema is forward-only and versioned in-database; it is
+// the one schema of the backend's database, so version 2 also holds the
+// relay's send capabilities (durable records, TRS-BCK-008), which the relay
+// package reads and writes.
 package registry
 
 import (
@@ -27,7 +30,7 @@ import (
 )
 
 // schemaVersion is the newest step of the ladder below.
-const schemaVersion = 1
+const schemaVersion = 2
 
 // migrations is the forward-only ladder; index i moves version i to i+1.
 var migrations = []string{
@@ -58,6 +61,12 @@ var migrations = []string{
 		device_id bytea  NOT NULL REFERENCES devices(id) ON DELETE CASCADE,
 		key_id    bigint NOT NULL,
 		PRIMARY KEY (device_id, key_id)
+	);`,
+	// v2: relay send capabilities, stored only as SHA-256 proofs.
+	`CREATE TABLE relay_capabilities (
+		mailbox bytea NOT NULL REFERENCES devices(id) ON DELETE CASCADE,
+		proof   bytea NOT NULL CHECK (octet_length(proof) = 32),
+		PRIMARY KEY (mailbox, proof)
 	);`,
 }
 

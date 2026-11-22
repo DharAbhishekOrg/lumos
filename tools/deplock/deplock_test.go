@@ -113,6 +113,12 @@ func TestOnlyTheApprovedCryptoDependencyIsPresent(t *testing.T) {
 		"github.com/jackc/puddle/v2":     true,
 		"golang.org/x/sync":              true,
 		"golang.org/x/text":              true,
+		// Owner-approved 2026-11-22 for WP-05 S5b (TRS-BCK-008), answering
+		// "go-redis v9.23.0 (BSD-2-Clause) ... plus what it pulls in ...
+		// Approve this set?" with "Approve all". The rest are its dependencies.
+		"github.com/redis/go-redis/v9": true,
+		"github.com/cespare/xxhash/v2": true,
+		"go.uber.org/atomic":           true,
 	}
 	for _, m := range modules {
 		if !approved[m.Path] {

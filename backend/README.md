@@ -21,17 +21,26 @@ Go; part of the repository-root Go module `github.com/dharabhishekorg/lumos`.
   sender is told nothing) and its HTTP routes in `internal/api/relay.go`.
   Only relay-eligible message classes are accepted; local-only classes are
   refused (SRS-TRN-009). Storage is behind `relay.Store`; only the in-memory
-  store exists. **Not yet done:** the Redis store and rate limits
-  (TRS-BCK-008, TRS-BCK-004), and `lumosd` does not serve the relay routes
-  yet — both come in a later slice.
+  store exists.
+- WP-05 S5b: the relay on the deployed stores. Send capabilities live in
+  PostgreSQL (`relay.PostgresCapabilities`, schema v2) because losing them
+  would silently drop every sender; envelopes live in Redis
+  (`relay.RedisMailboxes`, one atomic Lua script per operation, payload keys
+  expired by Redis itself). Both run the same contract suite as the memory
+  store. `lumosd` serves the relay when `LUMOS_REDIS_URL` is set as well as
+  `LUMOS_DATABASE_URL`; a Redis URL without a database is refused at
+  startup. The Redis deployment must use the `noeviction` policy.
+  **Not yet done:** relay rate limits need a register value first; CR-004
+  proposes it.
 
-### Running the PostgreSQL tests locally
+### Running the PostgreSQL and Redis tests locally
 
     export LUMOS_TEST_POSTGRES_DSN="host=localhost port=5432 user=postgres dbname=postgres sslmode=disable"
+    export LUMOS_TEST_REDIS_ADDR="localhost:6379"
     go test ./backend/...
 
-Without the variable the PostgreSQL half skips; CI sets
-`LUMOS_REQUIRE_POSTGRES=1`, which turns that skip into a failure.
+Without a variable its server half skips; CI sets `LUMOS_REQUIRE_POSTGRES=1`
+and `LUMOS_REQUIRE_REDIS=1`, which turn those skips into failures.
 
 ## Rules
 

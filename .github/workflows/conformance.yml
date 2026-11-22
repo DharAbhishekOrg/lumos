@@ -110,11 +110,13 @@ jobs:
   go:
     name: go conformance
     runs-on: ubuntu-latest
-    # The backend's registry is held to one contract suite across its memory
-    # and PostgreSQL stores (TRS-BCK-008). This throwaway database exists only
-    # for this job; trust auth means no password exists to leak. The tests set
-    # their own per-test schema, and LUMOS_REQUIRE_POSTGRES turns a missing
-    # database into a failure, never a silent skip (TRS-AI-008).
+    # The backend's registry and relay are held to one contract suite across
+    # their memory and server stores: PostgreSQL and Redis (TRS-BCK-008).
+    # These throwaway servers exist only for this job; PostgreSQL uses trust
+    # auth and Redis has no password, so no secret exists to leak. The tests
+    # isolate themselves per test (schema / key namespace), and
+    # LUMOS_REQUIRE_POSTGRES / LUMOS_REQUIRE_REDIS turn a missing server into a
+    # failure, never a silent skip (TRS-AI-008).
     services:
       postgres:
         image: postgres:16
@@ -124,6 +126,15 @@ jobs:
           - 5432:5432
         options: >-
           --health-cmd "pg_isready -U postgres"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 12
+      redis:
+        image: redis:7
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
           --health-interval 5s
           --health-timeout 5s
           --health-retries 12
@@ -153,6 +164,8 @@ jobs:
         env:
           LUMOS_TEST_POSTGRES_DSN: host=localhost port=5432 user=postgres dbname=postgres sslmode=disable
           LUMOS_REQUIRE_POSTGRES: "1"
+          LUMOS_TEST_REDIS_ADDR: localhost:6379
+          LUMOS_REQUIRE_REDIS: "1"
         run: |
           set -o pipefail
           if ! go test -count=1 -json ./... > "$RUNNER_TEMP/go-test.json"; then

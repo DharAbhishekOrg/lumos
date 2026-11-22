@@ -5,7 +5,8 @@
 // Threading: test-only
 // Notes: The relay half of TRS-TST-006 at the HTTP edge: offline queue (send
 // while the recipient is away, fetch later), duplicate, replay,
-// acknowledgement and block. Push is S6 and expiry is pinned in the relay
+// acknowledgement and block, each over memory and over the deployed pairing
+// (PostgreSQL + Redis). Push is S6 and expiry is pinned in the relay
 // package with an injected clock. The log audit captures every log line the
 // whole flow produces and proves no payload, capability or credential is in it
 // (TRS-BCK-002). The fuzz target feeds arbitrary bytes to the send route: no
@@ -14,6 +15,7 @@ package api
 
 import (
 	"bytes"
+	"context"
 	"crypto/rand"
 	"encoding/base64"
 	"encoding/hex"
@@ -26,20 +28,47 @@ import (
 
 	"github.com/dharabhishekorg/lumos/backend/internal/registry"
 	"github.com/dharabhishekorg/lumos/backend/internal/relay"
+	"github.com/dharabhishekorg/lumos/backend/internal/testdb"
 	"github.com/dharabhishekorg/lumos/protocol/gen/go/lumosconstants"
 	"github.com/dharabhishekorg/lumos/protocol/gen/go/lumoserrors"
 )
 
 func newRelayServer(t *testing.T) *httptest.Server {
 	t.Helper()
+	store := relay.NewMemoryStore()
+	return relayServerOver(t, registry.NewMemoryRepository(), store, store)
+}
+
+// newServerRelayServer is the deployed pairing: registry and capabilities on
+// PostgreSQL, envelopes on Redis.
+func newServerRelayServer(t *testing.T) *httptest.Server {
+	t.Helper()
+	pool := testdb.Postgres(t)
+	if err := registry.Migrate(context.Background(), pool); err != nil {
+		t.Fatal(err)
+	}
+	rdb, ns := testdb.Redis(t)
+	return relayServerOver(t, registry.NewPostgresRepository(pool),
+		relay.NewPostgresCapabilities(pool), relay.NewRedisMailboxes(rdb, ns))
+}
+
+func relayServerOver(t *testing.T, repo registry.Repository, caps relay.Capabilities, mail relay.Mailboxes) *httptest.Server {
+	t.Helper()
 	now := func() int64 { return 1_700_000_000 }
-	auth := registry.NewService(registry.NewMemoryRepository(), now, rand.Reader)
+	auth := registry.NewService(repo, now, rand.Reader)
 	mux := http.NewServeMux()
 	NewRegistry(auth).Register(mux)
-	NewRelay(relay.NewService(relay.NewMemoryStore(), now), auth).Register(mux)
+	NewRelay(relay.NewService(caps, mail, now), auth).Register(mux)
 	srv := httptest.NewServer(mux)
 	t.Cleanup(srv.Close)
 	return srv
+}
+
+// eachRelayServer runs an end-to-end flow over memory and over the servers.
+func eachRelayServer(t *testing.T, run func(t *testing.T, srv *httptest.Server)) {
+	t.Helper()
+	t.Run("memory", func(t *testing.T) { run(t, newRelayServer(t)) })
+	t.Run("postgres+redis", func(t *testing.T) { run(t, newServerRelayServer(t)) })
 }
 
 func randHex(t *testing.T, n int) string {
@@ -86,70 +115,72 @@ func fetchAll(t *testing.T, c *client) []EnvelopeJSON {
 }
 
 func TestAMessageWaitsUntilItsRecipientFetchesAndAcknowledgesIt(t *testing.T) {
-	srv := newRelayServer(t)
-	alice, bob := enrol(t, srv), enrol(t, srv)
-	capability := issue(t, bob)
-	id := randHex(t, 16)
-	ciphertext := []byte("opaque ratchet output")
+	eachRelayServer(t, func(t *testing.T, srv *httptest.Server) {
+		alice, bob := enrol(t, srv), enrol(t, srv)
+		capability := issue(t, bob)
+		id := randHex(t, 16)
+		ciphertext := []byte("opaque ratchet output")
 
-	for range 2 {
-		if status, body := sendText(alice, bob, id, capability, ciphertext); status != http.StatusAccepted {
-			t.Fatalf("send (and its retry): %d %s", status, body)
+		for range 2 {
+			if status, body := sendText(alice, bob, id, capability, ciphertext); status != http.StatusAccepted {
+				t.Fatalf("send (and its retry): %d %s", status, body)
+			}
 		}
-	}
-	got := fetchAll(t, bob)
-	if len(got) != 1 || got[0].MessageID != id {
-		t.Fatalf("a send and its retry must arrive exactly once, got %d", len(got))
-	}
-	payload, _ := base64.StdEncoding.DecodeString(got[0].Payload)
-	capBytes, _ := hex.DecodeString(capability)
-	var c [32]byte
-	copy(c[:], capBytes)
-	wantProof := relay.ProofOf(c)
-	if !bytes.Equal(payload, ciphertext) || got[0].SenderProof != hex.EncodeToString(wantProof[:]) {
-		t.Fatal("the recipient must get the exact bytes and the proof of the capability it issued")
-	}
-	if len(fetchAll(t, alice)) != 0 {
-		t.Fatal("a device sees only its own mailbox")
-	}
+		got := fetchAll(t, bob)
+		if len(got) != 1 || got[0].MessageID != id {
+			t.Fatalf("a send and its retry must arrive exactly once, got %d", len(got))
+		}
+		payload, _ := base64.StdEncoding.DecodeString(got[0].Payload)
+		capBytes, _ := hex.DecodeString(capability)
+		var c [32]byte
+		copy(c[:], capBytes)
+		wantProof := relay.ProofOf(c)
+		if !bytes.Equal(payload, ciphertext) || got[0].SenderProof != hex.EncodeToString(wantProof[:]) {
+			t.Fatal("the recipient must get the exact bytes and the proof of the capability it issued")
+		}
+		if len(fetchAll(t, alice)) != 0 {
+			t.Fatal("a device sees only its own mailbox")
+		}
 
-	status, body := bob.do("POST", "/v1/envelopes/ack", map[string][]string{"message_ids": {id}})
-	if status != http.StatusOK || !strings.Contains(string(body), `"acknowledged":1`) {
-		t.Fatalf("ack: %d %s", status, body)
-	}
-	if len(fetchAll(t, bob)) != 0 {
-		t.Fatal("an acknowledged envelope is deleted (SRS-RMT-015)")
-	}
-	if status, _ := sendText(alice, bob, id, capability, ciphertext); status != http.StatusAccepted || len(fetchAll(t, bob)) != 0 {
-		t.Fatal("a late retry is accepted but never redelivered")
-	}
-	status, body = sendText(alice, bob, id, capability, []byte("different bytes"))
-	if status != http.StatusBadRequest || !strings.Contains(string(body), lumoserrors.ErrCryptoReplay) {
-		t.Fatalf("the same id with new bytes is a replay: %d %s", status, body)
-	}
+		status, body := bob.do("POST", "/v1/envelopes/ack", map[string][]string{"message_ids": {id}})
+		if status != http.StatusOK || !strings.Contains(string(body), `"acknowledged":1`) {
+			t.Fatalf("ack: %d %s", status, body)
+		}
+		if len(fetchAll(t, bob)) != 0 {
+			t.Fatal("an acknowledged envelope is deleted (SRS-RMT-015)")
+		}
+		if status, _ := sendText(alice, bob, id, capability, ciphertext); status != http.StatusAccepted || len(fetchAll(t, bob)) != 0 {
+			t.Fatal("a late retry is accepted but never redelivered")
+		}
+		status, body = sendText(alice, bob, id, capability, []byte("different bytes"))
+		if status != http.StatusBadRequest || !strings.Contains(string(body), lumoserrors.ErrCryptoReplay) {
+			t.Fatalf("the same id with new bytes is a replay: %d %s", status, body)
+		}
+	})
 }
 
 func TestABlockedSenderGetsTheSameAnswerAndNothingArrives(t *testing.T) {
-	srv := newRelayServer(t)
-	alice, bob := enrol(t, srv), enrol(t, srv)
-	capability := issue(t, bob)
-	acceptedStatus, acceptedBody := sendText(alice, bob, randHex(t, 16), capability, []byte("hi"))
+	eachRelayServer(t, func(t *testing.T, srv *httptest.Server) {
+		alice, bob := enrol(t, srv), enrol(t, srv)
+		capability := issue(t, bob)
+		acceptedStatus, acceptedBody := sendText(alice, bob, randHex(t, 16), capability, []byte("hi"))
 
-	capBytes, _ := hex.DecodeString(capability)
-	var c [32]byte
-	copy(c[:], capBytes)
-	p := relay.ProofOf(c)
-	if status, body := bob.do("DELETE", "/v1/mailbox/capabilities/"+hex.EncodeToString(p[:]), nil); status != http.StatusNoContent {
-		t.Fatalf("revoke: %d %s", status, body)
-	}
-	blockedStatus, blockedBody := sendText(alice, bob, randHex(t, 16), capability, []byte("still there?"))
-	if blockedStatus != acceptedStatus || !bytes.Equal(blockedBody, acceptedBody) {
-		t.Fatalf("a blocked send must look exactly like a delivered one: %d %q vs %d %q",
-			blockedStatus, blockedBody, acceptedStatus, acceptedBody)
-	}
-	if got := fetchAll(t, bob); len(got) != 1 {
-		t.Fatalf("only the message from before the block may arrive (SRS-RMT-016), got %d", len(got))
-	}
+		capBytes, _ := hex.DecodeString(capability)
+		var c [32]byte
+		copy(c[:], capBytes)
+		p := relay.ProofOf(c)
+		if status, body := bob.do("DELETE", "/v1/mailbox/capabilities/"+hex.EncodeToString(p[:]), nil); status != http.StatusNoContent {
+			t.Fatalf("revoke: %d %s", status, body)
+		}
+		blockedStatus, blockedBody := sendText(alice, bob, randHex(t, 16), capability, []byte("still there?"))
+		if blockedStatus != acceptedStatus || !bytes.Equal(blockedBody, acceptedBody) {
+			t.Fatalf("a blocked send must look exactly like a delivered one: %d %q vs %d %q",
+				blockedStatus, blockedBody, acceptedStatus, acceptedBody)
+		}
+		if got := fetchAll(t, bob); len(got) != 1 {
+			t.Fatalf("only the message from before the block may arrive (SRS-RMT-016), got %d", len(got))
+		}
+	})
 }
 
 func TestTheRelayRefusesWhatItMustAndSaysOnlyACode(t *testing.T) {
@@ -229,7 +260,8 @@ func FuzzTheSendRouteNeverPanicsOrFailsInternally(f *testing.F) {
 	f.Add([]byte(`{"payload":"` + strings.Repeat("A", 4096) + `"}`))
 	f.Add([]byte("\x00\xff{"))
 	auth := registry.NewService(registry.NewMemoryRepository(), func() int64 { return 1_700_000_000 }, rand.Reader)
-	h := NewRelay(relay.NewService(relay.NewMemoryStore(), func() int64 { return 1_700_000_000 }), auth)
+	store := relay.NewMemoryStore()
+	h := NewRelay(relay.NewService(store, store, func() int64 { return 1_700_000_000 }), auth)
 	f.Fuzz(func(t *testing.T, body []byte) {
 		var req SubmitJSON
 		if json.Unmarshal(body, &req) == nil {

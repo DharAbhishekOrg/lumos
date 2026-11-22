@@ -272,11 +272,14 @@
    "req_id": "SRS-DAT-003",
    "status": "tested",
    "code": [
+    "backend/internal/relay/redis.go",
     "backend/internal/relay/service.go",
     "backend/internal/relay/store.go"
    ],
    "tests": [
     "go:backend/internal/relay:TestAcknowledgedOrExpiredEnvelopesAreGone",
+    "go:backend/internal/relay:TestAnAcknowledgedEnvelopeLeavesOnlyItsDigest",
+    "go:backend/internal/relay:TestRedisDeletesThePayloadOnItsOwnClock",
     "go:backend/internal/relay:TestTheByteQuotaRefusesWhatWouldNotFit",
     "go:backend/internal/relay:TestTheEnvelopeQuotaIsAtomicUnderConcurrentSenders"
    ],
@@ -4166,6 +4169,7 @@
    "req_id": "SRS-RMT-002",
    "status": "implemented",
    "code": [
+    "backend/internal/relay/redis.go",
     "backend/internal/relay/service.go",
     "backend/internal/relay/store.go"
    ],
@@ -4341,12 +4345,14 @@
    "req_id": "SRS-RMT-015",
    "status": "tested",
    "code": [
+    "backend/internal/relay/redis.go",
     "backend/internal/relay/service.go",
     "backend/internal/relay/store.go"
    ],
    "tests": [
     "go:backend/internal/api:TestAMessageWaitsUntilItsRecipientFetchesAndAcknowledgesIt",
-    "go:backend/internal/relay:TestAcknowledgedOrExpiredEnvelopesAreGone"
+    "go:backend/internal/relay:TestAcknowledgedOrExpiredEnvelopesAreGone",
+    "go:backend/internal/relay:TestAnAcknowledgedEnvelopeLeavesOnlyItsDigest"
    ],
    "evidence": [],
    "adr": [],
@@ -4358,11 +4364,13 @@
    "status": "implemented",
    "code": [
     "backend/internal/api/relay.go",
+    "backend/internal/relay/postgres.go",
     "backend/internal/relay/service.go"
    ],
    "tests": [
     "go:backend/internal/api:TestABlockedSenderGetsTheSameAnswerAndNothingArrives",
-    "go:backend/internal/relay:TestABlockedSenderIsToldNothingAndDeliversNothing"
+    "go:backend/internal/relay:TestABlockedSenderIsToldNothingAndDeliversNothing",
+    "go:backend/internal/relay:TestConcurrentAllowsCannotOvershootTheCeiling"
    ],
    "evidence": [],
    "adr": [],
@@ -5539,7 +5547,10 @@
     "backend/internal/api/relay.go"
    ],
    "tests": [
+    "go:backend/cmd/lumosd:TestARedisURLWithoutADatabaseIsRefused",
+    "go:backend/cmd/lumosd:TestAnUnreachableRedisFailsStartup",
     "go:backend/cmd/lumosd:TestOnlyHealthIsServed",
+    "go:backend/cmd/lumosd:TestWithADatabaseAndRedisTheRelayIsServed",
     "go:backend/cmd/lumosd:TestWithADatabaseTheRegistryRoutesAreServed",
     "go:backend/internal/api:TestAMessageWaitsUntilItsRecipientFetchesAndAcknowledgesIt",
     "go:backend/internal/api:TestOversizedAndUnknownFieldsAreRefusedBeforeTheService",
@@ -5547,7 +5558,7 @@
    ],
    "evidence": [],
    "adr": [],
-   "last_commit": "99f1632",
+   "last_commit": "51cb4f1",
    "updated": "2026-11-22"
   },
   {
@@ -5557,23 +5568,27 @@
     "backend/cmd/lumosd/main.go",
     "backend/internal/api/registry.go",
     "backend/internal/api/relay.go",
+    "backend/internal/relay/postgres.go",
+    "backend/internal/relay/redis.go",
     "backend/internal/relay/service.go",
     "backend/internal/relay/store.go"
    ],
    "tests": [
     "go:backend/cmd/lumosd:TestAnUnreachableDatabaseFailsStartup",
     "go:backend/internal/api:TestNoResponseCarriesPrivateOrStoredSecrets",
-    "go:backend/internal/api:TestNothingTheRelayHandlesReachesTheLog"
+    "go:backend/internal/api:TestNothingTheRelayHandlesReachesTheLog",
+    "go:backend/internal/relay:TestAnAcknowledgedEnvelopeLeavesOnlyItsDigest"
    ],
    "evidence": [],
    "adr": [],
-   "last_commit": "99f1632",
+   "last_commit": "51cb4f1",
    "updated": "2026-11-22"
   },
   {
    "req_id": "TRS-BCK-003",
    "status": "tested",
    "code": [
+    "backend/internal/relay/redis.go",
     "backend/internal/relay/store.go"
    ],
    "tests": [
@@ -5581,18 +5596,20 @@
    ],
    "evidence": [],
    "adr": [],
-   "last_commit": "99f1632",
+   "last_commit": "51cb4f1",
    "updated": "2026-11-22"
   },
   {
    "req_id": "TRS-BCK-004",
    "status": "implemented",
    "code": [
+    "backend/internal/relay/redis.go",
     "backend/internal/relay/service.go",
     "backend/internal/relay/store.go"
    ],
    "tests": [
     "go:backend/internal/relay:TestAcknowledgedOrExpiredEnvelopesAreGone",
+    "go:backend/internal/relay:TestConcurrentAllowsCannotOvershootTheCeiling",
     "go:backend/internal/relay:TestRetriesAreIdempotentAndAReusedIDIsAReplay",
     "go:backend/internal/relay:TestSizeLimitsComeFromTheRegister",
     "go:backend/internal/relay:TestTheByteQuotaRefusesWhatWouldNotFit",
@@ -5600,7 +5617,7 @@
    ],
    "evidence": [],
    "adr": [],
-   "last_commit": "99f1632",
+   "last_commit": "51cb4f1",
    "updated": "2026-11-22"
   },
   {
@@ -5622,7 +5639,7 @@
    ],
    "evidence": [],
    "adr": [],
-   "last_commit": "99f1632",
+   "last_commit": "51cb4f1",
    "updated": "2026-11-22"
   },
   {
@@ -5632,7 +5649,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "99f1632",
+   "last_commit": "51cb4f1",
    "updated": "2026-11-22"
   },
   {
@@ -5651,7 +5668,7 @@
    ],
    "evidence": [],
    "adr": [],
-   "last_commit": "99f1632",
+   "last_commit": "51cb4f1",
    "updated": "2026-11-22"
   },
   {
@@ -5659,17 +5676,25 @@
    "status": "implemented",
    "code": [
     "backend/cmd/lumosd/main.go",
-    "backend/internal/registry/postgres.go"
+    "backend/internal/registry/postgres.go",
+    "backend/internal/relay/postgres.go",
+    "backend/internal/relay/redis.go",
+    "backend/internal/testdb/testdb.go"
    ],
    "tests": [
+    "go:backend/cmd/lumosd:TestWithADatabaseAndRedisTheRelayIsServed",
     "go:backend/cmd/lumosd:TestWithADatabaseTheRegistryRoutesAreServed",
+    "go:backend/internal/api:TestAMessageWaitsUntilItsRecipientFetchesAndAcknowledgesIt",
     "go:backend/internal/registry:TestMigrationIsIdempotentAndRefusesANewerSchema",
     "go:backend/internal/registry:TestOneTimePrekeysAreNeverIssuedTwiceUnderConcurrentClaims",
-    "go:backend/internal/registry:TestRegistrationIsAKeyProofAndTheStoreNeverHoldsTheCredential"
+    "go:backend/internal/registry:TestRegistrationIsAKeyProofAndTheStoreNeverHoldsTheCredential",
+    "go:backend/internal/relay:TestConcurrentAllowsCannotOvershootTheCeiling",
+    "go:backend/internal/relay:TestRedisDeletesThePayloadOnItsOwnClock",
+    "go:backend/internal/relay:TestTheEnvelopeQuotaIsAtomicUnderConcurrentSenders"
    ],
    "evidence": [],
    "adr": [],
-   "last_commit": "99f1632",
+   "last_commit": "51cb4f1",
    "updated": "2026-11-22"
   },
   {
@@ -5679,7 +5704,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "99f1632",
+   "last_commit": "51cb4f1",
    "updated": "2026-11-22"
   },
   {
@@ -5689,7 +5714,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "99f1632",
+   "last_commit": "51cb4f1",
    "updated": "2026-11-22"
   },
   {
@@ -5699,7 +5724,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "99f1632",
+   "last_commit": "51cb4f1",
    "updated": "2026-11-22"
   },
   {
@@ -5709,7 +5734,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "99f1632",
+   "last_commit": "51cb4f1",
    "updated": "2026-11-22"
   },
   {
@@ -5719,7 +5744,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "99f1632",
+   "last_commit": "51cb4f1",
    "updated": "2026-11-22"
   },
   {
@@ -5729,7 +5754,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "99f1632",
+   "last_commit": "51cb4f1",
    "updated": "2026-11-22"
   },
   {
@@ -6028,7 +6053,7 @@
     "ci:conformance#31528127667"
    ],
    "adr": [],
-   "last_commit": "5778d87",
+   "last_commit": "51cb4f1",
    "updated": "2026-11-22"
   },
   {
@@ -6116,7 +6141,7 @@
    ],
    "evidence": [],
    "adr": [],
-   "last_commit": "5778d87",
+   "last_commit": "51cb4f1",
    "updated": "2026-11-22"
   },
   {
@@ -8286,7 +8311,7 @@
    ],
    "evidence": [],
    "adr": [],
-   "last_commit": "5778d87",
+   "last_commit": "51cb4f1",
    "updated": "2026-11-22"
   },
   {
@@ -8316,7 +8341,7 @@
    ],
    "evidence": [],
    "adr": [],
-   "last_commit": "5778d87",
+   "last_commit": "51cb4f1",
    "updated": "2026-11-22"
   },
   {
@@ -8358,7 +8383,7 @@
    ],
    "evidence": [],
    "adr": [],
-   "last_commit": "5778d87",
+   "last_commit": "51cb4f1",
    "updated": "2026-11-22"
   },
   {
@@ -8377,7 +8402,7 @@
    ],
    "evidence": [],
    "adr": [],
-   "last_commit": "5778d87",
+   "last_commit": "51cb4f1",
    "updated": "2026-11-22"
   },
   {

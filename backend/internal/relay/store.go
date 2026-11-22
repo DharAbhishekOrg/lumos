@@ -9,11 +9,15 @@
 // deliberately NOT stored: the authorisation proof is the SHA-256 of a send
 // capability the recipient issued to one matched peer, so a dump of the store
 // shows that "some holder of capability X" wrote to a mailbox, not who.
-// TRS-BCK-008 puts these TTL queues in Redis; Store is the seam, MemoryStore is
-// the contract's reference implementation, and the Redis adapter is a later
-// slice held to the same tests. Put is atomic: the duplicate check, the quota
-// check and the insert happen under one lock, so concurrent senders can
-// neither double-store an id nor overshoot RELAY_MAILBOX_QUOTA.
+// Storage is two seams because TRS-BCK-008 splits it: send capabilities are
+// durable records (PostgreSQL, PostgresCapabilities) and envelopes are a TTL
+// queue (Redis, RedisMailboxes). MemoryStore implements both and is the
+// contract's reference; every implementation runs the same tests. Put is
+// atomic: the duplicate check, the quota check and the insert happen as one
+// step, so concurrent senders can neither double-store an id nor overshoot
+// RELAY_MAILBOX_QUOTA. RegisterCapability is atomic the same way against the
+// capability ceiling. Put also sweeps that mailbox's expired envelopes, so an
+// active mailbox never carries expired metadata; Purge sweeps everything.
 package relay
 
 import (
@@ -65,15 +69,19 @@ var (
 	ErrReplay      = errors.New("relay: message id reused with different content")
 )
 
-// Store is the relay's storage contract.
-type Store interface {
+// Capabilities is the durable half: who may write to which mailbox.
+type Capabilities interface {
 	// RegisterCapability lets holders of the capability hashing to proof
-	// write to mailbox. Idempotent.
-	RegisterCapability(ctx context.Context, mailbox registry.DeviceID, proof [32]byte) error
+	// write to mailbox. Idempotent; ErrMailboxFull if the mailbox already
+	// holds ceiling capabilities and this one is new.
+	RegisterCapability(ctx context.Context, mailbox registry.DeviceID, proof [32]byte, ceiling int) error
 	// RevokeCapability withdraws it (block or unmatch). Idempotent.
 	RevokeCapability(ctx context.Context, mailbox registry.DeviceID, proof [32]byte) error
 	CapabilityValid(ctx context.Context, mailbox registry.DeviceID, proof [32]byte) (bool, error)
-	CapabilityCount(ctx context.Context, mailbox registry.DeviceID) (int, error)
+}
+
+// Mailboxes is the TTL-queue half: the envelopes themselves.
+type Mailboxes interface {
 	// Put stores e unless its id was already accepted for that mailbox.
 	Put(ctx context.Context, e Envelope, q Quota, now int64) (PutResult, error)
 	// Fetch returns up to limit unexpired envelopes, oldest first.
@@ -112,18 +120,26 @@ func NewMemoryStore() *MemoryStore {
 	}
 }
 
-// RegisterCapability implements Store.
-func (m *MemoryStore) RegisterCapability(_ context.Context, mailbox registry.DeviceID, proof [32]byte) error {
+// RegisterCapability implements Capabilities.
+func (m *MemoryStore) RegisterCapability(_ context.Context, mailbox registry.DeviceID, proof [32]byte, ceiling int) error {
 	m.mu.Lock()
 	defer m.mu.Unlock()
-	if m.capabilities[mailbox] == nil {
-		m.capabilities[mailbox] = map[[32]byte]struct{}{}
+	set := m.capabilities[mailbox]
+	if set == nil {
+		set = map[[32]byte]struct{}{}
+		m.capabilities[mailbox] = set
 	}
-	m.capabilities[mailbox][proof] = struct{}{}
+	if _, ok := set[proof]; ok {
+		return nil
+	}
+	if len(set) >= ceiling {
+		return ErrMailboxFull
+	}
+	set[proof] = struct{}{}
 	return nil
 }
 
-// RevokeCapability implements Store.
+// RevokeCapability implements Capabilities.
 func (m *MemoryStore) RevokeCapability(_ context.Context, mailbox registry.DeviceID, proof [32]byte) error {
 	m.mu.Lock()
 	defer m.mu.Unlock()
@@ -131,7 +147,7 @@ func (m *MemoryStore) RevokeCapability(_ context.Context, mailbox registry.Devic
 	return nil
 }
 
-// CapabilityValid implements Store.
+// CapabilityValid implements Capabilities.
 func (m *MemoryStore) CapabilityValid(_ context.Context, mailbox registry.DeviceID, proof [32]byte) (bool, error) {
 	m.mu.Lock()
 	defer m.mu.Unlock()
@@ -139,14 +155,7 @@ func (m *MemoryStore) CapabilityValid(_ context.Context, mailbox registry.Device
 	return ok, nil
 }
 
-// CapabilityCount implements Store.
-func (m *MemoryStore) CapabilityCount(_ context.Context, mailbox registry.DeviceID) (int, error) {
-	m.mu.Lock()
-	defer m.mu.Unlock()
-	return len(m.capabilities[mailbox]), nil
-}
-
-// Put implements Store.
+// Put implements Mailboxes.
 func (m *MemoryStore) Put(_ context.Context, e Envelope, q Quota, now int64) (PutResult, error) {
 	m.mu.Lock()
 	defer m.mu.Unlock()
@@ -165,10 +174,15 @@ func (m *MemoryStore) Put(_ context.Context, e Envelope, q Quota, now int64) (Pu
 	}
 	count, bytes := 0, 0
 	for k2, v := range m.envelopes {
-		if k2.mailbox == e.Recipient && v.ExpiresAt >= now {
-			count++
-			bytes += v.Size
+		if k2.mailbox != e.Recipient {
+			continue
 		}
+		if v.ExpiresAt < now {
+			delete(m.envelopes, k2) // sweep this mailbox's expired envelopes
+			continue
+		}
+		count++
+		bytes += v.Size
 	}
 	if count+1 > q.Envelopes || bytes+e.Size > q.Bytes {
 		return 0, ErrMailboxFull
@@ -179,7 +193,7 @@ func (m *MemoryStore) Put(_ context.Context, e Envelope, q Quota, now int64) (Pu
 	return Stored, nil
 }
 
-// Fetch implements Store.
+// Fetch implements Mailboxes.
 func (m *MemoryStore) Fetch(_ context.Context, mailbox registry.DeviceID, now int64, limit int) ([]Envelope, error) {
 	m.mu.Lock()
 	defer m.mu.Unlock()
@@ -202,7 +216,7 @@ func (m *MemoryStore) Fetch(_ context.Context, mailbox registry.DeviceID, now in
 	return out, nil
 }
 
-// Ack implements Store.
+// Ack implements Mailboxes.
 func (m *MemoryStore) Ack(_ context.Context, mailbox registry.DeviceID, ids []MessageID) (int, error) {
 	m.mu.Lock()
 	defer m.mu.Unlock()
@@ -218,7 +232,7 @@ func (m *MemoryStore) Ack(_ context.Context, mailbox registry.DeviceID, ids []Me
 	return n, nil
 }
 
-// Purge implements Store.
+// Purge implements Mailboxes.
 func (m *MemoryStore) Purge(_ context.Context, now int64) (int, error) {
 	m.mu.Lock()
 	defer m.mu.Unlock()
