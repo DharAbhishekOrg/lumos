@@ -35,6 +35,7 @@ type client struct {
 	srv        *httptest.Server
 	routingID  string
 	credential string
+	lastHeader http.Header // response headers of the most recent do
 }
 
 func (c *client) do(method, path string, body any) (int, []byte) {
@@ -61,6 +62,7 @@ func (c *client) do(method, path string, body any) (int, []byte) {
 		c.t.Fatal(err)
 	}
 	defer resp.Body.Close()
+	c.lastHeader = resp.Header
 	var buf bytes.Buffer
 	if _, err := buf.ReadFrom(resp.Body); err != nil {
 		c.t.Fatal(err)

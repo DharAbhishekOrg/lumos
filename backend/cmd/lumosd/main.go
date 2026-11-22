@@ -165,7 +165,8 @@ func openBackend(ctx context.Context, dsn, redisURL string) (*Backend, error) {
 		b.Close()
 		return nil, fmt.Errorf("redis unreachable: %w", err)
 	}
-	svc := relay.NewService(relay.NewPostgresCapabilities(pool), relay.NewRedisMailboxes(rdb, redisNamespace), unixNow)
+	mail := relay.NewRedisMailboxes(rdb, redisNamespace)
+	svc := relay.NewService(relay.NewPostgresCapabilities(pool), mail, mail, unixNow)
 	b.Relay = api.NewRelay(svc, auth)
 	return b, nil
 }

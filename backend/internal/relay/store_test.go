@@ -19,6 +19,7 @@ import (
 	"github.com/dharabhishekorg/lumos/backend/internal/registry"
 	"github.com/dharabhishekorg/lumos/backend/internal/testdb"
 	"github.com/dharabhishekorg/lumos/protocol/gen/go/lumosconstants"
+	"github.com/dharabhishekorg/lumos/protocol/gen/go/lumoserrors"
 )
 
 func TestConcurrentAllowsCannotOvershootTheCeiling(t *testing.T) {
@@ -122,4 +123,77 @@ func TestAnAcknowledgedEnvelopeLeavesOnlyItsDigest(t *testing.T) {
 	if used, _ := m.rdb.Get(ctx, key("b")).Int(); used != 0 {
 		t.Fatalf("byte accounting must return to zero, got %d", used)
 	}
+}
+
+func TestASenderIsLimitedPerMinuteAndTheLimitSaysNothingAboutBlocks(t *testing.T) {
+	eachStore(t, func(t *testing.T, f *fixture) {
+		f.now = 1_700_000_080 // 20 seconds before the minute boundary 1_700_000_100
+		limit := lumosconstants.RelaySendRatePerMinDefault
+		for i := range limit {
+			if err := f.send(f.idN(i), []byte("x")); err != nil {
+				t.Fatalf("send %d of %d must pass: %v", i+1, limit, err)
+			}
+		}
+		err := f.send(f.idN(limit), []byte("x"))
+		var rl *RateLimitedError
+		if code(err) != lumoserrors.ErrRelayRateLimited || !errors.As(err, &rl) || rl.RetryAfter != 20 {
+			t.Fatalf("send %d in one minute: want %s retrying after 20s, got %v", limit+1, lumoserrors.ErrRelayRateLimited, err)
+		}
+		if n := len(f.drain(t)); n != limit {
+			t.Fatalf("a rate-limited send stores nothing: want %d envelopes, found %d", limit, n)
+		}
+		// A blocked sender over the limit gets the same answer as anyone else.
+		if err := f.svc.Revoke(f.ctx, f.owner, ProofOf(f.allowed)); err != nil {
+			t.Fatal(err)
+		}
+		if got := code(f.send(f.idN(limit+1), []byte("x"))); got != lumoserrors.ErrRelayRateLimited {
+			t.Fatalf("the limit must not reveal a block (SRS-MAT-003): got %s", got)
+		}
+		if err := f.svc.Allow(f.ctx, f.owner, ProofOf(f.allowed)); err != nil {
+			t.Fatal(err)
+		}
+		// Another device has its own budget.
+		other := registry.Device{}
+		other.ID[0] = 3
+		err = f.svc.Submit(f.ctx, other, Send{Recipient: f.owner.ID, ID: f.idN(limit + 2),
+			Class: lumosconstants.MessageClassTextMessage, Capability: f.allowed, Payload: []byte("x")})
+		if err != nil {
+			t.Fatalf("the limit is per sending device: %v", err)
+		}
+		// The next minute is a fresh window.
+		f.now += 20
+		if err := f.send(f.idN(limit+3), []byte("x")); err != nil {
+			t.Fatalf("a new minute restores the budget: %v", err)
+		}
+	})
+}
+
+func TestTheRateCounterExpiresWithItsWindow(t *testing.T) {
+	m, _, owner := redisFixture(t)
+	ctx := context.Background()
+	now := int64(1_700_000_090) // 10 seconds before the minute boundary 1_700_000_100
+	if ok, _, err := m.TakeSend(ctx, owner, now, 1); err != nil || !ok {
+		t.Fatalf("first send: ok=%v err=%v", ok, err)
+	}
+	keys, err := m.rdb.Keys(ctx, m.ns+"relay:rate:*").Result()
+	if err != nil || len(keys) != 1 {
+		t.Fatalf("one counter key, got %v (%v)", keys, err)
+	}
+	left, _ := m.rdb.PTTL(ctx, keys[0]).Result()
+	if left <= 0 || left > 11*time.Second {
+		t.Fatalf("the counter must expire at the end of its window: PTTL %v", left)
+	}
+	if v, _ := m.rdb.Get(ctx, keys[0]).Result(); v != "1" {
+		t.Fatalf("the counter holds a count and nothing else, got %q", v)
+	}
+}
+
+// drain lists every pending envelope, past the one-fetch bound.
+func (f *fixture) drain(t *testing.T) []Envelope {
+	t.Helper()
+	got, err := f.svc.store.Fetch(f.ctx, f.owner.ID, f.now, unlimitedRate)
+	if err != nil {
+		t.Fatal(err)
+	}
+	return got
 }

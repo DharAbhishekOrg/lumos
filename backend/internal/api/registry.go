@@ -16,9 +16,11 @@ import (
 	"encoding/json"
 	"errors"
 	"net/http"
+	"strconv"
 	"strings"
 
 	"github.com/dharabhishekorg/lumos/backend/internal/registry"
+	"github.com/dharabhishekorg/lumos/backend/internal/relay"
 	"github.com/dharabhishekorg/lumos/protocol/crypto/x3dh"
 	"github.com/dharabhishekorg/lumos/protocol/gen/go/lumoserrors"
 	"github.com/dharabhishekorg/lumos/protocol/wire"
@@ -60,7 +62,12 @@ func writeJSON(w http.ResponseWriter, status int, v any) {
 // a 500 that says nothing.
 func fail(w http.ResponseWriter, err error) {
 	var we *wire.Error
+	var rl *relay.RateLimitedError
 	switch {
+	case errors.As(err, &rl):
+		// RFC 9110 Retry-After in seconds: the end of the sender's window.
+		w.Header().Set("Retry-After", strconv.FormatInt(rl.RetryAfter, 10))
+		writeJSON(w, http.StatusTooManyRequests, errorBody{lumoserrors.ErrRelayRateLimited})
 	case errors.As(err, &we) && we.Code == lumoserrors.ErrAuthRejected:
 		writeJSON(w, http.StatusUnauthorized, errorBody{we.Code})
 	case errors.As(err, &we):
