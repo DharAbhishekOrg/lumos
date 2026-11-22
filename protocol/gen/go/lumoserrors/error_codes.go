@@ -116,6 +116,8 @@ const (
 	ErrAuthRejected = "ERR_AUTH_REJECTED"
 	// ERR_PREKEY_UPLOAD_INVALID (161, backend): A prekey upload was structurally refused: malformed key, duplicate one-time prekey id, a batch that would exceed ONE_TIME_PREKEYS_UPLOADED.max, or an identity key different from the one pinned at first upload. Signature failures use ERR_CRYPTO_PREKEY_SIGNATURE_INVALID (TRS-BCK-005).
 	ErrPrekeyUploadInvalid = "ERR_PREKEY_UPLOAD_INVALID"
+	// ERR_RELAY_MAILBOX_FULL (162, backend): The recipient's relay mailbox is at RELAY_MAILBOX_QUOTA (envelopes or bytes), or a mailbox owner's list of send capabilities is at its ceiling. The sender keeps the message queued and retries later; nothing is stored (TRS-BCK-004, SRS-DAT-003).
+	ErrRelayMailboxFull = "ERR_RELAY_MAILBOX_FULL"
 )
 
 // Numeric maps each stable code to its registry number.
@@ -171,6 +173,7 @@ var Numeric = map[string]int{
 	ErrMatchBadVerdict:              144,
 	ErrAuthRejected:                 160,
 	ErrPrekeyUploadInvalid:          161,
+	ErrRelayMailboxFull:             162,
 }
 
 // Known reports whether code is in the stable registry.

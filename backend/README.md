@@ -15,6 +15,15 @@ Go; part of the repository-root Go module `github.com/dharabhishekorg/lumos`.
   as the memory store. `lumosd` serves the registry routes **only** when
   `LUMOS_DATABASE_URL` is set (from the secret manager when deployed); without
   it, it serves the health check alone.
+- WP-05 S5: `internal/relay` (store-and-forward mailbox for ciphertext
+  envelopes: 30-day expiry, delete on acknowledgement, per-mailbox quota,
+  idempotent retries, replay refusal, per-peer send capabilities so a blocked
+  sender is told nothing) and its HTTP routes in `internal/api/relay.go`.
+  Only relay-eligible message classes are accepted; local-only classes are
+  refused (SRS-TRN-009). Storage is behind `relay.Store`; only the in-memory
+  store exists. **Not yet done:** the Redis store and rate limits
+  (TRS-BCK-008, TRS-BCK-004), and `lumosd` does not serve the relay routes
+  yet — both come in a later slice.
 
 ### Running the PostgreSQL tests locally
 

@@ -313,6 +313,12 @@
       "numeric": 161,
       "category": "backend",
       "meaning": "A prekey upload was structurally refused: malformed key, duplicate one-time prekey id, a batch that would exceed ONE_TIME_PREKEYS_UPLOADED.max, or an identity key different from the one pinned at first upload. Signature failures use ERR_CRYPTO_PREKEY_SIGNATURE_INVALID (TRS-BCK-005)."
+    },
+    {
+      "code": "ERR_RELAY_MAILBOX_FULL",
+      "numeric": 162,
+      "category": "backend",
+      "meaning": "The recipient's relay mailbox is at RELAY_MAILBOX_QUOTA (envelopes or bytes), or a mailbox owner's list of send capabilities is at its ceiling. The sender keeps the message queued and retries later; nothing is stored (TRS-BCK-004, SRS-DAT-003)."
     }
   ]
 }

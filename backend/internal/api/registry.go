@@ -77,7 +77,11 @@ func malformed(w http.ResponseWriter) {
 }
 
 func decode(w http.ResponseWriter, r *http.Request, v any) bool {
-	dec := json.NewDecoder(http.MaxBytesReader(w, r.Body, maxBody))
+	return decodeCapped(w, r, v, maxBody)
+}
+
+func decodeCapped(w http.ResponseWriter, r *http.Request, v any, limit int64) bool {
+	dec := json.NewDecoder(http.MaxBytesReader(w, r.Body, limit))
 	dec.DisallowUnknownFields()
 	if err := dec.Decode(v); err != nil {
 		malformed(w)
@@ -99,6 +103,13 @@ func hex32(s string) ([32]byte, bool) {
 type authedHandler func(http.ResponseWriter, *http.Request, registry.Device)
 
 func (h *Registry) authed(next authedHandler) http.HandlerFunc {
+	return withDevice(h.svc, next)
+}
+
+// withDevice resolves "Authorization: Bearer <credential hex>" to a live
+// device before next runs. Every route that acts as a device uses it, so the
+// registry and the relay authenticate identically and fail identically.
+func withDevice(auth *registry.Service, next authedHandler) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		token, ok := strings.CutPrefix(r.Header.Get("Authorization"), "Bearer ")
 		cred, err := hex.DecodeString(token)
@@ -106,7 +117,7 @@ func (h *Registry) authed(next authedHandler) http.HandlerFunc {
 			fail(w, &wire.Error{Code: lumoserrors.ErrAuthRejected, Detail: "authentication rejected"})
 			return
 		}
-		d, err := h.svc.Authenticate(r.Context(), cred)
+		d, err := auth.Authenticate(r.Context(), cred)
 		if err != nil {
 			fail(w, err)
 			return
