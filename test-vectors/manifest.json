@@ -127,6 +127,19 @@
       ]
     },
     {
+      "path": "test-vectors/chat/remote_text.json",
+      "implements": [
+        "SRS-RMT-001",
+        "SRS-RMT-004",
+        "SRS-RMT-008",
+        "SRS-RMT-009",
+        "SRS-RMT-011",
+        "TRS-CRY-001",
+        "TRS-CRY-002",
+        "TRS-PROTO-007"
+      ]
+    },
+    {
       "path": "test-vectors/adv/ble_advertisement.json",
       "implements": [
         "TRS-PROTO-009",

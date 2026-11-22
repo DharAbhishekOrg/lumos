@@ -1,0 +1,257 @@
+{
+  "schema_version": 1,
+  "generator": "tools/vectorgen",
+  "constants_hash": "sha256:9b33b3c547f0e2d651fa15e8748057270cc0e3de84492e45bff6d4e3f1b26919",
+  "implements": [
+    "SRS-RMT-001",
+    "SRS-RMT-004",
+    "SRS-RMT-008",
+    "SRS-RMT-009",
+    "SRS-RMT-011",
+    "TRS-CRY-001",
+    "TRS-CRY-002",
+    "TRS-PROTO-007"
+  ],
+  "key_provenance": "TESTONLY-lumos-vectors-v1",
+  "notes": "The remote-text wire (protocol/chat/remote.go): text_event is event_kind u8 | target_message_id[16] (edit, delete, reaction) | body_len u32 BE | body (text, edit, reaction); the ratchet plaintext is message_id[16] | text_event; the relay envelope is 0x01 PREKEY | identity_dh[32] | identity_dh_sig[64] | ephemeral[32] | spk_id u32 | opk_id u32 | header[40] | ciphertext, or 0x02 NORMAL | header[40] | ciphertext.",
+  "text_events": [
+    {
+      "name": "text",
+      "kind": 0,
+      "body_hex": "486921204c6f76656c79206d656574696e6720796f7520746f6e696768742e",
+      "encoded_hex": "000000001f486921204c6f76656c79206d656574696e6720796f7520746f6e696768742e"
+    },
+    {
+      "name": "text_empty_body",
+      "kind": 0,
+      "encoded_hex": "0000000000"
+    },
+    {
+      "name": "text_utf8",
+      "kind": 0,
+      "body_hex": "e0a4a8e0a4aee0a4b8e0a58de0a4a4e0a58720f09f918b",
+      "encoded_hex": "0000000017e0a4a8e0a4aee0a4b8e0a58de0a4a4e0a58720f09f918b"
+    },
+    {
+      "name": "edit",
+      "kind": 1,
+      "target_message_id_hex": "22d3375b1ca4f8ce2eca432255f8bd61",
+      "body_hex": "486921204c6f76656c79206d656574696e6720796f752e",
+      "encoded_hex": "0122d3375b1ca4f8ce2eca432255f8bd6100000017486921204c6f76656c79206d656574696e6720796f752e"
+    },
+    {
+      "name": "delete_for_everyone",
+      "kind": 2,
+      "target_message_id_hex": "22d3375b1ca4f8ce2eca432255f8bd61",
+      "encoded_hex": "0222d3375b1ca4f8ce2eca432255f8bd61"
+    },
+    {
+      "name": "reaction",
+      "kind": 3,
+      "target_message_id_hex": "22d3375b1ca4f8ce2eca432255f8bd61",
+      "body_hex": "e29da4efb88f",
+      "encoded_hex": "0322d3375b1ca4f8ce2eca432255f8bd6100000006e29da4efb88f"
+    }
+  ],
+  "text_event_negatives": [
+    {
+      "name": "empty",
+      "encoded_hex": "",
+      "expected_error": "ERR_PAYLOAD_MALFORMED"
+    },
+    {
+      "name": "unknown_kind",
+      "encoded_hex": "7f00000000",
+      "expected_error": "ERR_TEXT_UNKNOWN_EVENT_KIND"
+    },
+    {
+      "name": "edit_without_target",
+      "encoded_hex": "01010203",
+      "expected_error": "ERR_TEXT_MISSING_TARGET"
+    },
+    {
+      "name": "body_length_exceeds_bytes",
+      "encoded_hex": "000000000961",
+      "expected_error": "ERR_PAYLOAD_MALFORMED"
+    },
+    {
+      "name": "body_length_short_of_bytes",
+      "encoded_hex": "00000000016161",
+      "expected_error": "ERR_PAYLOAD_MALFORMED"
+    },
+    {
+      "name": "body_length_huge",
+      "encoded_hex": "00ffffffff",
+      "expected_error": "ERR_PAYLOAD_MALFORMED"
+    },
+    {
+      "name": "delete_with_trailing_byte",
+      "encoded_hex": "0222d3375b1ca4f8ce2eca432255f8bd6100",
+      "expected_error": "ERR_PAYLOAD_MALFORMED"
+    }
+  ],
+  "envelope_negatives": [
+    {
+      "name": "empty",
+      "encoded_hex": "",
+      "expected_error": "ERR_PAYLOAD_MALFORMED"
+    },
+    {
+      "name": "unknown_format",
+      "encoded_hex": "090000000000000000000000000000000000000000000000000000000000000000000000010000000201",
+      "expected_error": "ERR_PAYLOAD_MALFORMED"
+    },
+    {
+      "name": "prekey_fields_truncated",
+      "encoded_hex": "010000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+      "expected_error": "ERR_PAYLOAD_MALFORMED"
+    },
+    {
+      "name": "normal_header_truncated",
+      "encoded_hex": "0200000000000000000000000000000000000000",
+      "expected_error": "ERR_PAYLOAD_MALFORMED"
+    },
+    {
+      "name": "normal_without_ciphertext",
+      "encoded_hex": "0200000000000000000000000000000000000000000000000000000000000000000000000100000002",
+      "expected_error": "ERR_PAYLOAD_MALFORMED"
+    }
+  ],
+  "session": {
+    "description": "Alice starts a session from Bob's bundle (with a one-time prekey) while Bob is offline, sends two PREKEY envelopes, Bob opens them out of order and replies; the rest are NORMAL envelopes carrying a reaction, an edit and a delete-for-everyone. Replay the steps in order: a seal must reproduce envelope_hex exactly, an open must yield plaintext_hex exactly. Alice drops the PREKEY fields once she has opened any envelope from Bob.",
+    "match_id_hex": "a1a2a3a4a5a6a7a8b1b2b3b4b5b6b7b8",
+    "now": 1700000000,
+    "alice": {
+      "testonly_identity_ed_seed_hex": "ce9476f9af9df9868a545023298c723a00e5af5e31c4b976eec5e1f04b49dc4e",
+      "testonly_identity_dh_priv_hex": "2237b6109b17d639b0ca49804995b3b04de9c281fbed706a10c8c31ee1de21cc",
+      "testonly_ratchet_turn_privs_hex": [
+        "eacae060e11a5443dec88c230663172dfb1b452f05cce2086bb16d6cfbf7157c",
+        "deb1162eba24d90f3e89baf2f23fa3c8d73a92d0ac7d7a9897526fe6dca6fbe8",
+        "7c77ff85c5003c1e93ae045598b10f33fbea744797d247109351545c363990a1",
+        "98441aa5ab35256225480a73df636ff2c23fb430b24bbbb29b3ff556761cdcb9"
+      ],
+      "testonly_ephemeral_priv_hex": "84b873075d3ea2436329b8d19e8f86c1e001099aed4b98caddf9426fb8a7fd34",
+      "testonly_first_ratchet_priv_hex": "b4426a35f56053286485504e013993123afacdeffa6f973534e1ccc86b44813d"
+    },
+    "bob": {
+      "testonly_identity_ed_seed_hex": "58f839c696b3994e74e368071ef25c803b36a4fee9329de4a452df048b3a2c0a",
+      "testonly_identity_dh_priv_hex": "a45c4d5be3e2137044990b0a5db577890bfd7478ea5b8fc7acf87d9607849f57",
+      "testonly_ratchet_turn_privs_hex": [
+        "be7f258a7b43aced151919f54443995d1b4a661a8047d0872a80c443972cf545",
+        "7dc48a6d5cdf186a9a7d2ab3b83f90035efe7d65ef7acb5776d30af4311c33ba",
+        "430a0b7823fee01854707434438711e24b7dda44b8d02334be42c482f22ce99e",
+        "f7c4453316895b1dad7d42e911f6a268f968d8092f3cd5798f9196f6611f329e"
+      ],
+      "testonly_spk_priv_hex": "00d02852da3d6e0fbd74031eda45bdba8567c8881b30fffd88e2405bdb2942b3",
+      "spk_id": 7,
+      "testonly_opk_priv_hex": "a8a03a7cebe3552b1aee0d57834ddf1fc70f96df1b724d40684b1da2267e103c",
+      "opk_id": 42
+    },
+    "messages": [
+      {
+        "from": "alice",
+        "message_id_hex": "fc065e1952d8ba70d5cad57495a602fb",
+        "plaintext_hex": "fc065e1952d8ba70d5cad57495a602fb000000001f486921204c6f76656c79206d656574696e6720796f7520746f6e696768742e",
+        "prekey": true,
+        "envelope_hex": "01eabb1af86da8c5d03e7e549c447d0045c7e46ba16a43d3215d9b7948e90a992e8b90a7bd337d6d3cdc18320ddc2f91e523c389d317ae13722fa505fb17bd1c3e253981a53e3083ebc01623a7f10c124a65e16f6df71987196194b632726f560665d6cbe618dd1d193551c469506654e1cd0d1191ccb64e1a54d59f3860be4b41000000070000002a815585ac8b33f10388f084f048000e625c233fb980439a057020c9e3e7450d6600000000000000004518035cd5f60aa3e906c5914ee0ae211144046da248723cb65057060d85357ec4904dc51c723baef0df17bf03ca4d8552dede9513ec4d3c649a2df331f09ac70f470c5f"
+      },
+      {
+        "from": "alice",
+        "message_id_hex": "a135cfec60f1238e81e018a8a029426a",
+        "plaintext_hex": "a135cfec60f1238e81e018a8a029426a0000000013436f66666565206f6e2053617475726461793f",
+        "prekey": true,
+        "envelope_hex": "01eabb1af86da8c5d03e7e549c447d0045c7e46ba16a43d3215d9b7948e90a992e8b90a7bd337d6d3cdc18320ddc2f91e523c389d317ae13722fa505fb17bd1c3e253981a53e3083ebc01623a7f10c124a65e16f6df71987196194b632726f560665d6cbe618dd1d193551c469506654e1cd0d1191ccb64e1a54d59f3860be4b41000000070000002a815585ac8b33f10388f084f048000e625c233fb980439a057020c9e3e7450d6600000000000000017552860c7500e25fbf13bbdb7a409e03c003f820b3f78ced113bd2e551cf272b36ecf906ad4fda2bbe1afb204079f8401abfbbbfb040301c"
+      },
+      {
+        "from": "bob",
+        "message_id_hex": "847a9004dfb5cd8fbbd30f253b643336",
+        "plaintext_hex": "847a9004dfb5cd8fbbd30f253b64333603fc065e1952d8ba70d5cad57495a602fb00000006e29da4efb88f",
+        "prekey": false,
+        "envelope_hex": "02c27118e0f1eeccb0c8daf176b26430ff7afe2aa09ac7ad1b51764bf1d94ab022000000000000000023ee48cf4de51bd53cb9326df72d1b57353a3adc065a31de88bc5f15bdd062af40e3a036dd36f2d70fc950e6449d17cf3b305c4f9a8232e5cf2c69"
+      },
+      {
+        "from": "bob",
+        "message_id_hex": "828fa879080cbf13410327ac25cbbebe",
+        "plaintext_hex": "828fa879080cbf13410327ac25cbbebe000000000a59657321203131616d3f",
+        "prekey": false,
+        "envelope_hex": "02c27118e0f1eeccb0c8daf176b26430ff7afe2aa09ac7ad1b51764bf1d94ab02200000000000000016a1fbca51290a8a59e63204f53d756195a0b9740de7acab7c103ff82317c1f5b1438a6a8bf1946c54357a9e80e104d"
+      },
+      {
+        "from": "alice",
+        "message_id_hex": "8cb2e396ead7b73e37d693269e057e20",
+        "plaintext_hex": "8cb2e396ead7b73e37d693269e057e2001a135cfec60f1238e81e018a8a029426a00000011436f66666565206f6e2053756e6461793f",
+        "prekey": false,
+        "envelope_hex": "02c3cc053596c52ce702ca8c4c10e12c3e8e6fce020765840e723210faa178671c000000020000000032b90b2b7d6b594c63a6bbeb21d019c4a8435702ff5a8aa7636d65eb9a720320e656bc4a0cf5ea56d5542ff84451ab7c493ffd3756b5dd349068ead0c29771fe5abfd505c443"
+      },
+      {
+        "from": "alice",
+        "message_id_hex": "585e12c54b0ca3f1c2f7721e9368805b",
+        "plaintext_hex": "585e12c54b0ca3f1c2f7721e9368805b02fc065e1952d8ba70d5cad57495a602fb",
+        "prekey": false,
+        "envelope_hex": "02c3cc053596c52ce702ca8c4c10e12c3e8e6fce020765840e723210faa178671c000000020000000107d946888a559a3970ba71b2eb62911c63c0d5ba04bee54bede581157ff7cdd55a3c9c8975a7539058d7ff9133e191eed0"
+      }
+    ],
+    "steps": [
+      {
+        "actor": "alice",
+        "op": "seal",
+        "message": 0
+      },
+      {
+        "actor": "alice",
+        "op": "seal",
+        "message": 1
+      },
+      {
+        "actor": "bob",
+        "op": "open",
+        "message": 1
+      },
+      {
+        "actor": "bob",
+        "op": "open",
+        "message": 0
+      },
+      {
+        "actor": "bob",
+        "op": "seal",
+        "message": 2
+      },
+      {
+        "actor": "bob",
+        "op": "seal",
+        "message": 3
+      },
+      {
+        "actor": "alice",
+        "op": "open",
+        "message": 3
+      },
+      {
+        "actor": "alice",
+        "op": "open",
+        "message": 2
+      },
+      {
+        "actor": "alice",
+        "op": "seal",
+        "message": 4
+      },
+      {
+        "actor": "alice",
+        "op": "seal",
+        "message": 5
+      },
+      {
+        "actor": "bob",
+        "op": "open",
+        "message": 4
+      },
+      {
+        "actor": "bob",
+        "op": "open",
+        "message": 5
+      }
+    ]
+  }
+}

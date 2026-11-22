@@ -72,6 +72,11 @@ var ExtensionFiles = []string{
 	// the same tick for the same truth, and so "delivered" provably comes
 	// only from the recipient on every platform.
 	"test-vectors/chat/delivery_states.json",
+	// WP-05 S7a: the remote-text wire - AMD-005 text events, the ratchet
+	// plaintext and the relay envelope - and a scripted offline-peer session.
+	// Three implementations must agree byte for byte, so a Go-made first
+	// message opens on both apps and theirs open here.
+	"test-vectors/chat/remote_text.json",
 }
 
 // SuiteFiles is everything generation must emit: the specification's tree plus
