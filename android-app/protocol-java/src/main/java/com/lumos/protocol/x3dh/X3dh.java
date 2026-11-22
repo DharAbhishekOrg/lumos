@@ -225,7 +225,7 @@ public final class X3dh {
 
     private static byte[] dh(final byte[] priv, final byte[] pub) throws Frame.WireException {
         try {
-            return LumosCrypto.x25519(LumosCrypto.x25519Private(priv), LumosCrypto.x25519Public(pub));
+            return LumosCrypto.x25519(priv, pub);
         } catch (final GeneralSecurityException e) {
             throw dhFailed();
         }

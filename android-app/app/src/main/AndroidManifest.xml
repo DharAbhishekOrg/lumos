@@ -61,7 +61,10 @@
         android:name="android.hardware.microphone"
         android:required="false" />
 
+    <!-- LumosApplication installs the libsodium crypto backend before any
+         component starts (WP-05 S7d). -->
     <application
+        android:name="com.lumos.app.LumosApplication"
         android:allowBackup="false"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"

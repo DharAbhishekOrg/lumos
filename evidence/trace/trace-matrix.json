@@ -487,7 +487,7 @@
     "ADR-008",
     "ADR-010"
    ],
-   "last_commit": "826c3e2",
+   "last_commit": "30420a4",
    "updated": "2026-11-22"
   },
   {
@@ -1970,7 +1970,7 @@
     "ci:conformance#31528127667"
    ],
    "adr": [],
-   "last_commit": "53887e7",
+   "last_commit": "30420a4",
    "updated": "2026-11-22"
   },
   {
@@ -3154,7 +3154,7 @@
     "ADR-003",
     "ADR-010"
    ],
-   "last_commit": "826c3e2",
+   "last_commit": "30420a4",
    "updated": "2026-11-22"
   },
   {
@@ -4313,6 +4313,7 @@
    "req_id": "SRS-RMT-007",
    "status": "implemented",
    "code": [
+    "android-app/app/src/main/java/com/lumos/app/crypto/LibsodiumCryptoBackend.java",
     "android-app/protocol-java/src/main/java/com/lumos/protocol/chat/RemoteSession.java",
     "android-app/protocol-java/src/main/java/com/lumos/protocol/chat/RemoteText.java",
     "android-app/protocol-java/src/main/java/com/lumos/protocol/x3dh/X3dh.java",
@@ -4326,12 +4327,15 @@
     "go:protocol/chat:TestInitiateRefusesAnUnsignedBundle",
     "go:protocol/chat:TestRespondRefusesWhatTheMatchDidNotPin",
     "go:protocol/chat:TestTheCommittedSessionReplaysByteForByte",
+    "java:app-instrumented:ChatCryptoInstrumentedTest.everyRatchetSequenceDecryptsByteForByte",
+    "java:app-instrumented:ChatCryptoInstrumentedTest.theScriptedRemoteTextSessionReplaysByteForByte",
+    "java:app-instrumented:ChatCryptoInstrumentedTest.x3dhAgreesFromBothSidesAndRefusesBadBundles",
     "java:protocol-conformance:RemoteTextConformanceTest.theScriptedSessionReplaysByteForByte",
     "swift:LumosProtocolConformance:RemoteTextConformanceTests.testTheScriptedSessionReplaysByteForByte"
    ],
    "evidence": [],
    "adr": [],
-   "last_commit": "93730b1",
+   "last_commit": "30420a4",
    "updated": "2026-11-22"
   },
   {
@@ -4349,12 +4353,13 @@
    "tests": [
     "go:protocol/chat:TestAnOfflinePeerOpensPrekeyEnvelopesOutOfOrderAndTheSessionSettles",
     "go:protocol/chat:TestTheCommittedSessionReplaysByteForByte",
+    "java:app-instrumented:ChatCryptoInstrumentedTest.everyRatchetSequenceDecryptsByteForByte",
     "java:protocol-conformance:RemoteTextConformanceTest.theScriptedSessionReplaysByteForByte",
     "swift:LumosProtocolConformance:RemoteTextConformanceTests.testTheScriptedSessionReplaysByteForByte"
    ],
    "evidence": [],
    "adr": [],
-   "last_commit": "93730b1",
+   "last_commit": "30420a4",
    "updated": "2026-11-22"
   },
   {
@@ -5452,7 +5457,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "826c3e2",
+   "last_commit": "30420a4",
    "updated": "2026-11-22"
   },
   {
@@ -5462,7 +5467,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "826c3e2",
+   "last_commit": "30420a4",
    "updated": "2026-11-22"
   },
   {
@@ -5472,7 +5477,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "826c3e2",
+   "last_commit": "30420a4",
    "updated": "2026-11-22"
   },
   {
@@ -5496,7 +5501,7 @@
    "adr": [
     "ADR-003"
    ],
-   "last_commit": "826c3e2",
+   "last_commit": "30420a4",
    "updated": "2026-11-22"
   },
   {
@@ -5518,7 +5523,7 @@
    "adr": [
     "ADR-002"
    ],
-   "last_commit": "826c3e2",
+   "last_commit": "30420a4",
    "updated": "2026-11-22"
   },
   {
@@ -5537,7 +5542,7 @@
    "adr": [
     "ADR-002"
    ],
-   "last_commit": "826c3e2",
+   "last_commit": "30420a4",
    "updated": "2026-11-22"
   },
   {
@@ -5547,7 +5552,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "826c3e2",
+   "last_commit": "30420a4",
    "updated": "2026-11-22"
   },
   {
@@ -5557,7 +5562,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "826c3e2",
+   "last_commit": "30420a4",
    "updated": "2026-11-22"
   },
   {
@@ -5567,7 +5572,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "826c3e2",
+   "last_commit": "30420a4",
    "updated": "2026-11-22"
   },
   {
@@ -5577,7 +5582,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "826c3e2",
+   "last_commit": "30420a4",
    "updated": "2026-11-22"
   },
   {
@@ -5587,7 +5592,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "826c3e2",
+   "last_commit": "30420a4",
    "updated": "2026-11-22"
   },
   {
@@ -5597,7 +5602,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "826c3e2",
+   "last_commit": "30420a4",
    "updated": "2026-11-22"
   },
   {
@@ -6264,7 +6269,7 @@
     "ci:conformance#31528127667"
    ],
    "adr": [],
-   "last_commit": "53887e7",
+   "last_commit": "30420a4",
    "updated": "2026-11-22"
   },
   {
@@ -6426,7 +6431,7 @@
    ],
    "evidence": [],
    "adr": [],
-   "last_commit": "53887e7",
+   "last_commit": "30420a4",
    "updated": "2026-11-22"
   },
   {
@@ -6452,7 +6457,7 @@
    ],
    "evidence": [],
    "adr": [],
-   "last_commit": "53887e7",
+   "last_commit": "30420a4",
    "updated": "2026-11-22"
   },
   {
@@ -6499,7 +6504,7 @@
    ],
    "evidence": [],
    "adr": [],
-   "last_commit": "53887e7",
+   "last_commit": "30420a4",
    "updated": "2026-11-22"
   },
   {
@@ -6519,6 +6524,7 @@
     "tools/staticanalysis/stack.go"
    ],
    "tests": [
+    "go:tools/lumoslint:TestTheJcaCurvesAreAllowedOnlyInTheJvmBackend",
     "go:tools/lumoslint:TestTheMinSdkRuleFiresInTheLibraryAndNowhereElse",
     "go:tools/staticanalysis:TestAppModuleWiresSpotbugsOnceItHasProductionCode",
     "go:tools/staticanalysis:TestCheckstyleCarriesTheSpecifiedBudgets",
@@ -6535,8 +6541,8 @@
     "ci:pipeline#31737418465"
    ],
    "adr": [],
-   "last_commit": "fbb2425",
-   "updated": "2026-11-20"
+   "last_commit": "30420a4",
+   "updated": "2026-11-22"
   },
   {
    "req_id": "TRS-CODE-007",
@@ -6713,6 +6719,8 @@
    "req_id": "TRS-CRY-001",
    "status": "tested",
    "code": [
+    "android-app/app/src/main/java/com/lumos/app/LumosApplication.java",
+    "android-app/app/src/main/java/com/lumos/app/crypto/LibsodiumCryptoBackend.java",
     "android-app/app/src/main/java/com/lumos/app/identity/IdentityCrypto.java",
     "android-app/app/src/main/java/com/lumos/app/identity/IdentityKeyGenerator.java",
     "android-app/app/src/main/java/com/lumos/app/identity/JcaIdentityCrypto.java",
@@ -6723,6 +6731,8 @@
     "android-app/app/src/main/java/com/lumos/app/recovery/RecoveryException.java",
     "android-app/app/src/main/java/com/lumos/app/recovery/RecoveryParams.java",
     "android-app/app/src/main/java/com/lumos/app/recovery/RecoveryRecord.java",
+    "android-app/protocol-java/src/main/java/com/lumos/protocol/wire/CryptoBackend.java",
+    "android-app/protocol-java/src/main/java/com/lumos/protocol/wire/JcaCryptoBackend.java",
     "android-app/protocol-java/src/main/java/com/lumos/protocol/x3dh/X3dh.java",
     "ios-app/protocol-conformance/Sources/LumosProtocol/X3DH.swift",
     "ios-app/shell/Sources/LumosAppShell/RecoveryRecord.swift",
@@ -6764,6 +6774,15 @@
     "java:app-dev:IdentityBindingVectorsTest.everyNegativeFailsVerification",
     "java:app-dev:IdentityBindingVectorsTest.theJcaBackendReproducesEveryCommittedSignature",
     "java:app-dev:IdentityBindingVectorsTest.thePkcs8PrefixesAreTheOnesTheJdkItselfParses",
+    "java:app-instrumented:ChatCryptoInstrumentedTest.aLowOrderPeerKeyIsRefusedNotAgreed",
+    "java:app-instrumented:ChatCryptoInstrumentedTest.aeadKnownAnswersAndTampers",
+    "java:app-instrumented:ChatCryptoInstrumentedTest.belowApi33TheJcaPathReallyIsAbsent",
+    "java:app-instrumented:ChatCryptoInstrumentedTest.everyRatchetSequenceDecryptsByteForByte",
+    "java:app-instrumented:ChatCryptoInstrumentedTest.identityBindingsVerifyAndForgeriesDoNot",
+    "java:app-instrumented:ChatCryptoInstrumentedTest.theAppInstalledTheLibsodiumBackend",
+    "java:app-instrumented:ChatCryptoInstrumentedTest.theHelloExchangeReplaysAndItsNegativesFail",
+    "java:app-instrumented:ChatCryptoInstrumentedTest.theScriptedRemoteTextSessionReplaysByteForByte",
+    "java:app-instrumented:ChatCryptoInstrumentedTest.x3dhAgreesFromBothSidesAndRefusesBadBundles",
     "java:app-instrumented:IdentityGenerationInstrumentedTest.theLibsodiumBackendReproducesEveryCommittedVector",
     "java:app-instrumented:RecoveryRecordInstrumentedTest.anExportedRecordLeaksNeitherPassphraseNorContent",
     "java:app-instrumented:RecoveryRecordInstrumentedTest.argon2idAgreesWithTheReferenceDerivation",
@@ -6792,8 +6811,8 @@
     "ADR-001",
     "ADR-008"
    ],
-   "last_commit": "5d1f2fe",
-   "updated": "2026-11-19"
+   "last_commit": "30420a4",
+   "updated": "2026-11-22"
   },
   {
    "req_id": "TRS-CRY-002",
@@ -6821,6 +6840,7 @@
     "go:protocol/crypto/ratchet:TestOutOfOrderWithinChain",
     "go:protocol/crypto/ratchet:TestSkippedAcrossDHTurn",
     "go:protocol/crypto:TestConformanceRatchetSequences",
+    "java:app-instrumented:ChatCryptoInstrumentedTest.everyRatchetSequenceDecryptsByteForByte",
     "java:protocol-conformance:RatchetConformanceTest.committedSequencesDecryptByteForByte",
     "java:protocol-conformance:RatchetPersistenceTest.aRestoredSessionIsIndistinguishableFromOneThatNeverRestarted",
     "java:protocol-conformance:RemoteTextConformanceTest.theScriptedSessionReplaysByteForByte",
@@ -6831,27 +6851,34 @@
    "adr": [
     "ADR-001"
    ],
-   "last_commit": "5d1f2fe",
-   "updated": "2026-11-19"
+   "last_commit": "30420a4",
+   "updated": "2026-11-22"
   },
   {
    "req_id": "TRS-CRY-003",
    "status": "tested",
    "code": [
+    "android-app/app/src/main/java/com/lumos/app/LumosApplication.java",
+    "android-app/app/src/main/java/com/lumos/app/crypto/LibsodiumCryptoBackend.java",
+    "android-app/protocol-java/src/main/java/com/lumos/protocol/wire/CryptoBackend.java",
+    "android-app/protocol-java/src/main/java/com/lumos/protocol/wire/JcaCryptoBackend.java",
     "protocol/crypto/aead/aead.go",
     "protocol/crypto/x3dh/x3dh.go"
    ],
    "tests": [
     "go:protocol/crypto/aead:TestEveryTamperFailsIdentically",
     "go:protocol/crypto/aead:TestRFC8439KnownAnswer",
-    "go:protocol/crypto:TestConformanceAEADKAT"
+    "go:protocol/crypto:TestConformanceAEADKAT",
+    "java:app-instrumented:ChatCryptoInstrumentedTest.aeadKnownAnswersAndTampers",
+    "java:app-instrumented:ChatCryptoInstrumentedTest.identityBindingsVerifyAndForgeriesDoNot",
+    "java:app-instrumented:ChatCryptoInstrumentedTest.x3dhAgreesFromBothSidesAndRefusesBadBundles"
    ],
    "evidence": [],
    "adr": [
     "ADR-001"
    ],
-   "last_commit": "5d1f2fe",
-   "updated": "2026-11-19"
+   "last_commit": "30420a4",
+   "updated": "2026-11-22"
   },
   {
    "req_id": "TRS-CRY-004",
@@ -8362,7 +8389,7 @@
    "adr": [
     "ADR-004"
    ],
-   "last_commit": "53887e7",
+   "last_commit": "30420a4",
    "updated": "2026-11-22"
   },
   {
@@ -8465,7 +8492,7 @@
     "ci:conformance#31528127667"
    ],
    "adr": [],
-   "last_commit": "53887e7",
+   "last_commit": "30420a4",
    "updated": "2026-11-22"
   },
   {
@@ -8643,7 +8670,7 @@
    ],
    "evidence": [],
    "adr": [],
-   "last_commit": "826c3e2",
+   "last_commit": "30420a4",
    "updated": "2026-11-22"
   },
   {
@@ -8704,7 +8731,7 @@
    ],
    "evidence": [],
    "adr": [],
-   "last_commit": "826c3e2",
+   "last_commit": "30420a4",
    "updated": "2026-11-22"
   },
   {
@@ -8994,7 +9021,7 @@
    "adr": [
     "ADR-004"
    ],
-   "last_commit": "53887e7",
+   "last_commit": "30420a4",
    "updated": "2026-11-22"
   },
   {
