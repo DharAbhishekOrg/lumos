@@ -166,8 +166,13 @@ Split on 2026-11-22 into three sub-slices, each merged on its own:
     fractions the Android port refuses). Transports throw
     TransportUnreachable for every network failure, the Swift counterpart of
     IOException, so a defect is never mistaken for OFFLINE.
-  - **S7f2, the iOS wiring.** The Keychain key root, the boot, background
-    relay passes.
+  - **S7f2a, the iOS match session and runtime.** iOS had no
+    InterestSession (a WP-04 parity gap the route swap depends on), so this
+    slice ports it with NearbyRouteSwap, ChatIdentity, RelaySchedule and
+    ChatRuntime, all platform-free and tested with the Android scenarios.
+  - **S7f2b, the iOS platform wiring.** Reopening the Secure Enclave KEK,
+    the Keychain key root (ADR-012's iOS half), the URLSession transport,
+    the boot, and background relay passes.
 
 **Owner ruling 2026-11-23 (order):** from S7e2b on, Android and iOS alternate
 slice by slice and stay within one slice of each other: S7e2b (Android
