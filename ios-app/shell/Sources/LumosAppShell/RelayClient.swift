@@ -20,8 +20,16 @@ import LumosProtocolGenerated
 /// One HTTP exchange; the socket implementation lives in the wiring slice.
 public protocol HttpTransport: AnyObject {
     /// Sends one request and returns the status, body and Retry-After.
-    /// - Throws: any error when the network could not be reached (OFFLINE)
+    /// - Throws: ``TransportUnreachable`` when the network could not be reached
+    ///   (the client reads it as OFFLINE); anything else is a bug and propagates
     func exchange(method: String, path: String, bearer: String?, jsonBody: String?) throws -> HttpResponse
+}
+
+/// The network could not be reached, or the exchange was lost: the Android
+/// port's IOException. Transports throw exactly this for every network
+/// failure, so any other error is a defect and is not mistaken for OFFLINE.
+public struct TransportUnreachable: Error, Sendable, Equatable {
+    public init() {}
 }
 
 /// What came back.
@@ -311,7 +319,7 @@ public final class RelayClient {
     private func call(_ method: String, _ path: String, _ body: String?) throws -> HttpResponse {
         do {
             return try http.exchange(method: method, path: path, bearer: bearer, jsonBody: body)
-        } catch {
+        } catch is TransportUnreachable {
             throw RelayError.offline
         }
     }
