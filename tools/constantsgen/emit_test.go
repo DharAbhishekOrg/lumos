@@ -203,7 +203,8 @@ func TestGeneratedGoValuesMatchRegister(t *testing.T) {
 	}
 }
 
-// TestMessageClassesMatchTRS92 transcribes TRS Sec. 9.2 independently.
+// TestMessageClassesMatchTRS92 transcribes TRS Sec. 9.2 independently, plus
+// RELAY_ROUTE (0x07), added by CR-005 (owner-accepted 2026-11-23).
 func TestMessageClassesMatchTRS92(t *testing.T) {
 	_, m, _ := buildModel(t)
 	want := []struct {
@@ -212,6 +213,7 @@ func TestMessageClassesMatchTRS92(t *testing.T) {
 	}{
 		{0x01, "HELLO"}, {0x02, "HELLO_ACK"}, {0x03, "INTEREST_REQUEST"},
 		{0x04, "INTEREST_RESPONSE"}, {0x05, "PROFILE_PREVIEW"}, {0x06, "PROFILE_FULL"},
+		{0x07, "RELAY_ROUTE"},
 		{0x10, "TEXT_MESSAGE"}, {0x11, "DELIVERY_RECEIPT"}, {0x12, "READ_RECEIPT"},
 		{0x13, "TYPING"}, {0x20, "OBJECT_META"}, {0x21, "OBJECT_CHUNK"},
 		{0x22, "OBJECT_ACK"}, {0x23, "OBJECT_CANCEL"}, {0x24, "VOICE_META"},
@@ -220,12 +222,12 @@ func TestMessageClassesMatchTRS92(t *testing.T) {
 		{0x7F, "ERROR"},
 	}
 	if len(m.MessageClass) != len(want) {
-		t.Fatalf("message class count = %d, TRS Sec. 9.2 defines %d", len(m.MessageClass), len(want))
+		t.Fatalf("message class count = %d, TRS Sec. 9.2 plus CR-005 define %d", len(m.MessageClass), len(want))
 	}
 	for i, w := range want {
 		got := m.MessageClass[i]
 		if got.Code != w.code || got.Name != w.name {
-			t.Errorf("class[%d] = 0x%02X/%s, TRS Sec. 9.2 says 0x%02X/%s", i, got.Code, got.Name, w.code, w.name)
+			t.Errorf("class[%d] = 0x%02X/%s, TRS Sec. 9.2/CR-005 say 0x%02X/%s", i, got.Code, got.Name, w.code, w.name)
 		}
 	}
 
@@ -275,6 +277,28 @@ func TestGeneratedSwiftIsStructurallyComplete(t *testing.T) {
 	} {
 		if !strings.Contains(body, decl) {
 			t.Errorf("generated Swift is missing declaration %q", decl)
+		}
+	}
+}
+
+// TestReceiptKindsAreNeverTextEventKinds pins CR-005's reservation: a
+// receipt plaintext carries its class code where a text event carries its
+// kind, so a text event kind equal to DELIVERY_RECEIPT or READ_RECEIPT
+// would let a relay pass a receipt off as text.
+func TestReceiptKindsAreNeverTextEventKinds(t *testing.T) {
+	_, m, _ := buildModel(t)
+	receipt := map[int64]bool{}
+	for _, c := range m.MessageClass {
+		if c.Name == "DELIVERY_RECEIPT" || c.Name == "READ_RECEIPT" {
+			receipt[c.Code] = true
+		}
+	}
+	if len(receipt) != 2 {
+		t.Fatalf("expected both receipt classes in the register, found %d", len(receipt))
+	}
+	for _, k := range m.TextEventKind {
+		if receipt[k.Code] {
+			t.Errorf("text event kind %s takes receipt code %d, reserved by CR-005", k.Name, k.Code)
 		}
 	}
 }

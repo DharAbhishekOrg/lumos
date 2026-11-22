@@ -77,6 +77,10 @@ var ExtensionFiles = []string{
 	// Three implementations must agree byte for byte, so a Go-made first
 	// message opens on both apps and theirs open here.
 	"test-vectors/chat/remote_text.json",
+	// WP-05 S7e1 / CR-005: the RELAY_ROUTE payload and delivery and read
+	// receipts sealed in the chat's ratchet, with a relay's relabelling moves
+	// as negatives.
+	"test-vectors/chat/receipts.json",
 }
 
 // SuiteFiles is everything generation must emit: the specification's tree plus

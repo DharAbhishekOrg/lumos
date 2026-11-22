@@ -1,0 +1,301 @@
+{
+  "schema_version": 1,
+  "generator": "tools/vectorgen",
+  "constants_hash": "sha256:b7cebb50a545ddd203ddb2fdc86ccac1e0a4ecd9c3ed93355803516d7c1a7311",
+  "implements": [
+    "SRS-RMT-001",
+    "SRS-RMT-005",
+    "SRS-RMT-009",
+    "SRS-RMT-014",
+    "TRS-PROTO-007",
+    "TRS-CRY-002"
+  ],
+  "key_provenance": "TESTONLY-lumos-vectors-v1",
+  "notes": "CR-005 (protocol/chat/route.go, protocol/chat/receipt.go): RELAY_ROUTE (0x07) is version u8 = 1 | routing_id[16] | capability[32], 49 bytes, no all-zero field. A receipt plaintext is receipt_id[16] | kind u8 (0x11 delivered, 0x12 read) | count u8 (1..RECEIPT_IDS_PER_ENVELOPE.max) | message_id[16] x count, sealed in the chat's ratchet in the remote_text.json envelope; the kind must equal the delivered class and the receipt id the delivered id.",
+  "routes": [
+    {
+      "name": "alice",
+      "routing_id_hex": "db12152fb3f7e6a7219b2917ea398754",
+      "capability_hex": "2f5389c12eec94e78a60709ce66ac130bfa936148a6299ed7efa87abc6d7ace8",
+      "encoded_hex": "01db12152fb3f7e6a7219b2917ea3987542f5389c12eec94e78a60709ce66ac130bfa936148a6299ed7efa87abc6d7ace8"
+    },
+    {
+      "name": "bob",
+      "routing_id_hex": "79d51a87ae82ba291324288b72aa268f",
+      "capability_hex": "d3f5d3dbf5c42bdd165e8c6b02a3daf52f3f830f1663650824747b8015d9b351",
+      "encoded_hex": "0179d51a87ae82ba291324288b72aa268fd3f5d3dbf5c42bdd165e8c6b02a3daf52f3f830f1663650824747b8015d9b351"
+    }
+  ],
+  "route_negatives": [
+    {
+      "name": "empty",
+      "encoded_hex": "",
+      "expected_error": "ERR_PAYLOAD_MALFORMED"
+    },
+    {
+      "name": "one byte short",
+      "encoded_hex": "01db12152fb3f7e6a7219b2917ea3987542f5389c12eec94e78a60709ce66ac130bfa936148a6299ed7efa87abc6d7ac",
+      "expected_error": "ERR_PAYLOAD_MALFORMED"
+    },
+    {
+      "name": "one byte long",
+      "encoded_hex": "01db12152fb3f7e6a7219b2917ea3987542f5389c12eec94e78a60709ce66ac130bfa936148a6299ed7efa87abc6d7ace800",
+      "expected_error": "ERR_PAYLOAD_MALFORMED"
+    },
+    {
+      "name": "unknown version",
+      "encoded_hex": "02db12152fb3f7e6a7219b2917ea3987542f5389c12eec94e78a60709ce66ac130bfa936148a6299ed7efa87abc6d7ace8",
+      "expected_error": "ERR_PAYLOAD_MALFORMED"
+    },
+    {
+      "name": "all-zero routing id",
+      "encoded_hex": "01000000000000000000000000000000002f5389c12eec94e78a60709ce66ac130bfa936148a6299ed7efa87abc6d7ace8",
+      "expected_error": "ERR_PAYLOAD_MALFORMED"
+    },
+    {
+      "name": "all-zero capability",
+      "encoded_hex": "01db12152fb3f7e6a7219b2917ea3987540000000000000000000000000000000000000000000000000000000000000000",
+      "expected_error": "ERR_PAYLOAD_MALFORMED"
+    }
+  ],
+  "receipts": [
+    {
+      "name": "delivered, one id",
+      "receipt_id_hex": "d0f26d0206655923763ddc4fdaed6ecf",
+      "kind": 17,
+      "acked_hex": [
+        "2d077025e56320fcc2db53961082b245"
+      ],
+      "encoded_hex": "d0f26d0206655923763ddc4fdaed6ecf11012d077025e56320fcc2db53961082b245"
+    },
+    {
+      "name": "read, three ids",
+      "receipt_id_hex": "d0f26d0206655923763ddc4fdaed6ecf",
+      "kind": 18,
+      "acked_hex": [
+        "2d077025e56320fcc2db53961082b245",
+        "a1ca98efbb4be6b98d8066f0ab73babb",
+        "b1793dcb2fe90452252389300680bd3f"
+      ],
+      "encoded_hex": "d0f26d0206655923763ddc4fdaed6ecf12032d077025e56320fcc2db53961082b245a1ca98efbb4be6b98d8066f0ab73babbb1793dcb2fe90452252389300680bd3f"
+    },
+    {
+      "name": "delivered, the default batch",
+      "receipt_id_hex": "d0f26d0206655923763ddc4fdaed6ecf",
+      "kind": 17,
+      "acked_hex": [
+        "2d077025e56320fcc2db53961082b245",
+        "a1ca98efbb4be6b98d8066f0ab73babb",
+        "b1793dcb2fe90452252389300680bd3f",
+        "4f08a6c0ffa4185ec7dc194401c7a382",
+        "3ceea91aaefef6aab541aa77093cc79f",
+        "2a25d93f44491094c9f808ff2dcd342c",
+        "7eb919e8b1f562cb8841f387b48e6741",
+        "3664bad79f89fafb019903419c0e7496",
+        "5a3bb2bff8c60edb7580ffa832d5849a",
+        "8663a71cef99e4ef7f0de679b8cbe253",
+        "4ec673820e41a9e3e7f62bf75d2d7908",
+        "9598962004d1042c9831f702b7a6a581",
+        "06d8c3e97520e48c646ea444215ebc0a",
+        "506dba37a4270700bdf22d643b773a10",
+        "48f4d973563baebc03a5af40bac27cb9",
+        "cdda7267b82a730bed9c30f5807e027c",
+        "b47ea907005f20c862c91fe670f9fdd4",
+        "bdcd7e37e6bb73fbf987444181088e3b",
+        "4811cf82702652833633ef8ba06fe180",
+        "995e138ac9663901184c71a674454418",
+        "e97a877c4f97e766745e38116a4fad9c",
+        "537c31bce03ffa05c69bdd2f437116b6",
+        "6b273ab6891533f04f03ff3b803ebb8b",
+        "721fd1e74f3adffcd726b6077c8800ed",
+        "4374906153615305cd39d0a2a8fe7a9f",
+        "ef250b7fc5286b3862427fbf8a42bc03",
+        "8019c5fb81c8e4a9c3f8c632b20858bd",
+        "21a8f1d83a085c4eb6f5f1823efd43ad",
+        "47153d36b8bc3183a926082b7c32a460",
+        "0f81f09d1599f508d8c7ae2c717cdd82",
+        "71f4ed8c5553ea65045aebdb1503003d",
+        "438e896ebf73479378b90a1090c8905d"
+      ],
+      "encoded_hex": "d0f26d0206655923763ddc4fdaed6ecf11202d077025e56320fcc2db53961082b245a1ca98efbb4be6b98d8066f0ab73babbb1793dcb2fe90452252389300680bd3f4f08a6c0ffa4185ec7dc194401c7a3823ceea91aaefef6aab541aa77093cc79f2a25d93f44491094c9f808ff2dcd342c7eb919e8b1f562cb8841f387b48e67413664bad79f89fafb019903419c0e74965a3bb2bff8c60edb7580ffa832d5849a8663a71cef99e4ef7f0de679b8cbe2534ec673820e41a9e3e7f62bf75d2d79089598962004d1042c9831f702b7a6a58106d8c3e97520e48c646ea444215ebc0a506dba37a4270700bdf22d643b773a1048f4d973563baebc03a5af40bac27cb9cdda7267b82a730bed9c30f5807e027cb47ea907005f20c862c91fe670f9fdd4bdcd7e37e6bb73fbf987444181088e3b4811cf82702652833633ef8ba06fe180995e138ac9663901184c71a674454418e97a877c4f97e766745e38116a4fad9c537c31bce03ffa05c69bdd2f437116b66b273ab6891533f04f03ff3b803ebb8b721fd1e74f3adffcd726b6077c8800ed4374906153615305cd39d0a2a8fe7a9fef250b7fc5286b3862427fbf8a42bc038019c5fb81c8e4a9c3f8c632b20858bd21a8f1d83a085c4eb6f5f1823efd43ad47153d36b8bc3183a926082b7c32a4600f81f09d1599f508d8c7ae2c717cdd8271f4ed8c5553ea65045aebdb1503003d438e896ebf73479378b90a1090c8905d"
+    }
+  ],
+  "receipt_negatives": [
+    {
+      "name": "shorter than the header",
+      "encoded_hex": "d0f26d0206655923763ddc4fdaed6ecf",
+      "expected_error": "ERR_PAYLOAD_MALFORMED"
+    },
+    {
+      "name": "a text class as the kind",
+      "encoded_hex": "d0f26d0206655923763ddc4fdaed6ecf100100000000000000000000000000000000",
+      "expected_error": "ERR_PAYLOAD_MALFORMED"
+    },
+    {
+      "name": "zero ids",
+      "encoded_hex": "d0f26d0206655923763ddc4fdaed6ecf1200",
+      "expected_error": "ERR_PAYLOAD_MALFORMED"
+    },
+    {
+      "name": "more ids than the max",
+      "encoded_hex": "d0f26d0206655923763ddc4fdaed6ecf12410000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+      "expected_error": "ERR_PAYLOAD_MALFORMED"
+    },
+    {
+      "name": "count larger than the ids present",
+      "encoded_hex": "d0f26d0206655923763ddc4fdaed6ecf110200000000000000000000000000000000",
+      "expected_error": "ERR_PAYLOAD_MALFORMED"
+    },
+    {
+      "name": "trailing byte",
+      "encoded_hex": "d0f26d0206655923763ddc4fdaed6ecf11010000000000000000000000000000000000",
+      "expected_error": "ERR_PAYLOAD_MALFORMED"
+    }
+  ],
+  "session": {
+    "description": "On the remote_text.json keys: Alice sends two PREKEY texts while Bob is offline; Bob opens them and replies with a delivered receipt for both and a read receipt for the first (NORMAL envelopes); Alice opens both receipts under their classes. Replay the steps in order: a seal must reproduce envelope_hex, an open must yield plaintext_hex. Each relabel is a relay's move: replay on fresh state up to the step that opens that message, open it under delivered_class and delivered_id_hex instead, and expect expected_error. A text decoded from a receipt fails with ERR_TEXT_UNKNOWN_EVENT_KIND, because text event kinds 17 and 18 are reserved (CR-005).",
+    "match_id_hex": "a1a2a3a4a5a6a7a8b1b2b3b4b5b6b7b8",
+    "now": 1700000000,
+    "alice": {
+      "identity_ed_pub_hex": "f721f79f4b60355d0bb4c7d18879e5fc834eda697dcb29dd1eb43588542a3b46",
+      "identity_dh_pub_hex": "eabb1af86da8c5d03e7e549c447d0045c7e46ba16a43d3215d9b7948e90a992e",
+      "identity_dh_sig_hex": "8b90a7bd337d6d3cdc18320ddc2f91e523c389d317ae13722fa505fb17bd1c3e253981a53e3083ebc01623a7f10c124a65e16f6df71987196194b632726f5606",
+      "testonly_identity_ed_seed_hex": "ce9476f9af9df9868a545023298c723a00e5af5e31c4b976eec5e1f04b49dc4e",
+      "testonly_identity_dh_priv_hex": "2237b6109b17d639b0ca49804995b3b04de9c281fbed706a10c8c31ee1de21cc",
+      "testonly_ratchet_turn_privs_hex": [
+        "eacae060e11a5443dec88c230663172dfb1b452f05cce2086bb16d6cfbf7157c",
+        "deb1162eba24d90f3e89baf2f23fa3c8d73a92d0ac7d7a9897526fe6dca6fbe8",
+        "7c77ff85c5003c1e93ae045598b10f33fbea744797d247109351545c363990a1",
+        "98441aa5ab35256225480a73df636ff2c23fb430b24bbbb29b3ff556761cdcb9"
+      ],
+      "testonly_ephemeral_priv_hex": "84b873075d3ea2436329b8d19e8f86c1e001099aed4b98caddf9426fb8a7fd34",
+      "testonly_first_ratchet_priv_hex": "b4426a35f56053286485504e013993123afacdeffa6f973534e1ccc86b44813d"
+    },
+    "bob": {
+      "identity_ed_pub_hex": "531638e7e957c185b04c809770981a584d4cb0931fb919408cb147b3b2b77de2",
+      "identity_dh_pub_hex": "04169b43c60716fa600bdbb93eabd50ec0e5bfdc679a29677b9719d1bd96f439",
+      "identity_dh_sig_hex": "a33285a166685d05a6aec3fcdd710c7127d62a0e007894b78c73293901af5997149073056cbb9597fcc0eefcec111b01e83c8c63140e55b6c8752c893265ab0c",
+      "testonly_identity_ed_seed_hex": "58f839c696b3994e74e368071ef25c803b36a4fee9329de4a452df048b3a2c0a",
+      "testonly_identity_dh_priv_hex": "a45c4d5be3e2137044990b0a5db577890bfd7478ea5b8fc7acf87d9607849f57",
+      "testonly_ratchet_turn_privs_hex": [
+        "be7f258a7b43aced151919f54443995d1b4a661a8047d0872a80c443972cf545",
+        "7dc48a6d5cdf186a9a7d2ab3b83f90035efe7d65ef7acb5776d30af4311c33ba",
+        "430a0b7823fee01854707434438711e24b7dda44b8d02334be42c482f22ce99e",
+        "f7c4453316895b1dad7d42e911f6a268f968d8092f3cd5798f9196f6611f329e"
+      ],
+      "spk_pub_hex": "d10a579309339d90bb16b0d6068a4be4cf7be865d8891e994103ea189457cf27",
+      "spk_sig_hex": "90a736254d3b4b581cbde0fda5ffa2baaa0d392071bd5d6a3ea7adb02796cfb396a86c47d806ee41a97cecc5b2049f2b084564f2274b2c8bc03bee102d685707",
+      "testonly_spk_priv_hex": "00d02852da3d6e0fbd74031eda45bdba8567c8881b30fffd88e2405bdb2942b3",
+      "spk_id": 7,
+      "opk_pub_hex": "0c2b569ae41baf1637870a050d4f47540bd5f07b0db630ef4a2aed4f4881de1b",
+      "testonly_opk_priv_hex": "a8a03a7cebe3552b1aee0d57834ddf1fc70f96df1b724d40684b1da2267e103c",
+      "opk_id": 42
+    },
+    "messages": [
+      {
+        "from": "alice",
+        "class": 16,
+        "message_id_hex": "43a1cfa9bccd748d6925b6af50357414",
+        "plaintext_hex": "43a1cfa9bccd748d6925b6af50357414000000001644696420796f752067657420686f6d65206f6b61793f",
+        "prekey": true,
+        "envelope_hex": "01eabb1af86da8c5d03e7e549c447d0045c7e46ba16a43d3215d9b7948e90a992e8b90a7bd337d6d3cdc18320ddc2f91e523c389d317ae13722fa505fb17bd1c3e253981a53e3083ebc01623a7f10c124a65e16f6df71987196194b632726f560665d6cbe618dd1d193551c469506654e1cd0d1191ccb64e1a54d59f3860be4b41000000070000002a815585ac8b33f10388f084f048000e625c233fb980439a057020c9e3e7450d660000000000000000fabf92ec3be3c45e55e9a64a8b73d8ce1144046dab447279b6655705488e292a899d47dc103c33e5e8c95d8d2b412f046c18e2367f6740a573b137"
+      },
+      {
+        "from": "alice",
+        "class": 16,
+        "message_id_hex": "efcb82a826418f009f3f376696cf0668",
+        "plaintext_hex": "efcb82a826418f009f3f376696cf0668000000000f4c6f76656c79206576656e696e672e",
+        "prekey": true,
+        "envelope_hex": "01eabb1af86da8c5d03e7e549c447d0045c7e46ba16a43d3215d9b7948e90a992e8b90a7bd337d6d3cdc18320ddc2f91e523c389d317ae13722fa505fb17bd1c3e253981a53e3083ebc01623a7f10c124a65e16f6df71987196194b632726f560665d6cbe618dd1d193551c469506654e1cd0d1191ccb64e1a54d59f3860be4b41000000070000002a815585ac8b33f10388f084f048000e625c233fb980439a057020c9e3e7450d6600000000000000013baccb4833b04ed1a1cc94154ca6da01c003f820aff88cfd1232cee55bd762163ef6eb5a79d08086335c089f8b34334de759c51b"
+      },
+      {
+        "from": "bob",
+        "class": 17,
+        "message_id_hex": "aaa809593cbcc624e55afa95ce6852e4",
+        "plaintext_hex": "aaa809593cbcc624e55afa95ce6852e4110243a1cfa9bccd748d6925b6af50357414efcb82a826418f009f3f376696cf0668",
+        "prekey": false,
+        "envelope_hex": "02c27118e0f1eeccb0c8daf176b26430ff7afe2aa09ac7ad1b51764bf1d94ab02200000000000000000d3cd192aeec107e6230c7dd02217a8527c47f23d0a155a98ce4fce57fea9498cff74ffd597c49326f7140b3d80b4c1e17d0370537e4f24ffa8474b33c4f7c431cf9"
+      },
+      {
+        "from": "bob",
+        "class": 18,
+        "message_id_hex": "716a009ae1af319ddbe9d35bca676a26",
+        "plaintext_hex": "716a009ae1af319ddbe9d35bca676a26120143a1cfa9bccd748d6925b6af50357414",
+        "prekey": false,
+        "envelope_hex": "02c27118e0f1eeccb0c8daf176b26430ff7afe2aa09ac7ad1b51764bf1d94ab022000000000000000199fa1446fb33262b0489d4b8bc7b8281480ad4e11b8a130994aea796e6be708109a4dafaf4c23fffcf2312d8dc3e2e851d1e"
+      }
+    ],
+    "steps": [
+      {
+        "actor": "alice",
+        "op": "seal",
+        "message": 0
+      },
+      {
+        "actor": "alice",
+        "op": "seal",
+        "message": 1
+      },
+      {
+        "actor": "bob",
+        "op": "open",
+        "message": 0
+      },
+      {
+        "actor": "bob",
+        "op": "open",
+        "message": 1
+      },
+      {
+        "actor": "bob",
+        "op": "seal",
+        "message": 2
+      },
+      {
+        "actor": "bob",
+        "op": "seal",
+        "message": 3
+      },
+      {
+        "actor": "alice",
+        "op": "open",
+        "message": 2
+      },
+      {
+        "actor": "alice",
+        "op": "open",
+        "message": 3
+      }
+    ],
+    "relabels": [
+      {
+        "name": "a read receipt delivered as a delivered receipt",
+        "message": 3,
+        "delivered_class": 17,
+        "delivered_id_hex": "716a009ae1af319ddbe9d35bca676a26",
+        "expected_error": "ERR_PAYLOAD_MALFORMED"
+      },
+      {
+        "name": "a delivered receipt delivered as a read receipt",
+        "message": 2,
+        "delivered_class": 18,
+        "delivered_id_hex": "aaa809593cbcc624e55afa95ce6852e4",
+        "expected_error": "ERR_PAYLOAD_MALFORMED"
+      },
+      {
+        "name": "a read receipt delivered under another id",
+        "message": 3,
+        "delivered_class": 18,
+        "delivered_id_hex": "64ee9b5321fd7941d241df0bf3d31e0a",
+        "expected_error": "ERR_PAYLOAD_MALFORMED"
+      },
+      {
+        "name": "a read receipt delivered as a text message",
+        "message": 3,
+        "delivered_class": 16,
+        "delivered_id_hex": "716a009ae1af319ddbe9d35bca676a26",
+        "expected_error": "ERR_TEXT_UNKNOWN_EVENT_KIND"
+      }
+    ]
+  }
+}

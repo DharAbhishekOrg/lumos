@@ -107,7 +107,11 @@ var expectedRegister = map[string][]string{
 		"CLOCK_SKEW_TOLERANCE_SEC", "DEDUP_CACHE", "DEVICE_AUTH_CHALLENGE_TTL_SEC",
 		"MAX_SKIP_PER_CHAIN",
 		"MESSAGE_ID_LEN_BYTES", "ONE_TIME_PREKEYS_UPLOADED",
-		"PREKEY_REPLENISH_THRESHOLD", "RELAY_ENVELOPE_TTL_DAYS",
+		"PREKEY_REPLENISH_THRESHOLD",
+		// RECEIPT_IDS_PER_ENVELOPE: the receipt batch bound, which TRS
+		// Sec. 23 does not give; added by CR-005 (owner-accepted 2026-11-23).
+		"RECEIPT_IDS_PER_ENVELOPE",
+		"RELAY_ENVELOPE_TTL_DAYS",
 		"RELAY_MAILBOX_QUOTA", "RELAY_TEXT_ENVELOPE_MAX_BYTES",
 		// RELAY_SEND_RATE_PER_MIN: TRS-BCK-004 requires relay rate limits
 		// but Sec. 23 gives no value; added by CR-004 (owner-accepted
@@ -183,6 +187,9 @@ var goldenValues = map[string]int64{
 	"sessions_remote_text.RELAY_SEND_RATE_PER_MIN.default":     120,
 	"sessions_remote_text.RELAY_SEND_RATE_PER_MIN.min":         30,
 	"sessions_remote_text.RELAY_SEND_RATE_PER_MIN.max":         600,
+	"sessions_remote_text.RECEIPT_IDS_PER_ENVELOPE.default":    32,
+	"sessions_remote_text.RECEIPT_IDS_PER_ENVELOPE.min":        1,
+	"sessions_remote_text.RECEIPT_IDS_PER_ENVELOPE.max":        64,
 	"mesh_store_forward.MESH_HOP_DEFAULT.default":              3,
 	"mesh_store_forward.MESH_HOP_ABSOLUTE_CEILING.default":     5,
 	"transport.BLE_TARGET_ATT_MTU.default":                     251,

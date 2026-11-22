@@ -177,8 +177,9 @@ func TestMessagePayloadsCoverEveryRegisteredClass(t *testing.T) {
 			t.Errorf("payload schema defines class %s, which is not in the register", name)
 		}
 	}
-	if len(registered) != 22 {
-		t.Errorf("register holds %d message classes; TRS Sec. 9.2 defines 22", len(registered))
+	// TRS Sec. 9.2 defines 22; CR-005 (owner-accepted 2026-11-23) adds RELAY_ROUTE.
+	if len(registered) != 23 {
+		t.Errorf("register holds %d message classes; TRS Sec. 9.2 plus CR-005 define 23", len(registered))
 	}
 }
 

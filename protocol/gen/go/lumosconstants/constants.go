@@ -6,7 +6,7 @@
 // GENERATED - DO NOT EDIT. Generator: tools/constantsgen
 // Source register: protocol/constants/lumos_constants.json
 // Baseline: TRS v1.1 Sec. 23 / EDP v1.0 Sec. 4 (ADR-004)
-// constants_hash: sha256:9b33b3c547f0e2d651fa15e8748057270cc0e3de84492e45bff6d4e3f1b26919
+// constants_hash: sha256:b7cebb50a545ddd203ddb2fdc86ccac1e0a4ecd9c3ed93355803516d7c1a7311
 
 package lumosconstants
 
@@ -14,7 +14,7 @@ package lumosconstants
 const ServiceUUID = "E853EB6A-775C-4A49-A6BF-320E6A5CC609"
 
 // ConstantsHash binds generated code to the register that produced it (TRS-CONST-005).
-const ConstantsHash = "sha256:9b33b3c547f0e2d651fa15e8748057270cc0e3de84492e45bff6d4e3f1b26919"
+const ConstantsHash = "sha256:b7cebb50a545ddd203ddb2fdc86ccac1e0a4ecd9c3ed93355803516d7c1a7311"
 
 // SchemaVersion is the register schema version.
 const SchemaVersion = 1
@@ -626,6 +626,18 @@ const PrekeyReplenishThresholdMin = 10
 
 // PrekeyReplenishThresholdOverridable is sessions_remote_text.PREKEY_REPLENISH_THRESHOLD.overridable.
 const PrekeyReplenishThresholdOverridable = true
+
+// ReceiptIDSPerEnvelopeDefault is sessions_remote_text.RECEIPT_IDS_PER_ENVELOPE.default.
+const ReceiptIDSPerEnvelopeDefault = 32
+
+// ReceiptIDSPerEnvelopeMax is sessions_remote_text.RECEIPT_IDS_PER_ENVELOPE.max.
+const ReceiptIDSPerEnvelopeMax = 64
+
+// ReceiptIDSPerEnvelopeMin is sessions_remote_text.RECEIPT_IDS_PER_ENVELOPE.min.
+const ReceiptIDSPerEnvelopeMin = 1
+
+// ReceiptIDSPerEnvelopeOverridable is sessions_remote_text.RECEIPT_IDS_PER_ENVELOPE.overridable.
+const ReceiptIDSPerEnvelopeOverridable = false
 
 // RelayEnvelopeTTLDaysDefault is sessions_remote_text.RELAY_ENVELOPE_TTL_DAYS.default.
 const RelayEnvelopeTTLDaysDefault = 30

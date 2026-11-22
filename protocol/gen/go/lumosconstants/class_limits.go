@@ -6,7 +6,7 @@
 // GENERATED - DO NOT EDIT. Generator: tools/constantsgen
 // Source register: protocol/constants/lumos_constants.json
 // Baseline: TRS v1.1 Sec. 23 / EDP v1.0 Sec. 4 (ADR-004)
-// constants_hash: sha256:9b33b3c547f0e2d651fa15e8748057270cc0e3de84492e45bff6d4e3f1b26919
+// constants_hash: sha256:b7cebb50a545ddd203ddb2fdc86ccac1e0a4ecd9c3ed93355803516d7c1a7311
 // Source schema: protocol/schemas/message_payloads.schema.json
 
 package lumosconstants
@@ -20,6 +20,7 @@ var messageClassMaxPayload = map[MessageClass]int64{
 	MessageClassInterestResponse: 1228,    // transport.QR_BOOTSTRAP_MAX_BYTES
 	MessageClassProfilePreview:   65536,   // media.PREVIEW_MAX_KB
 	MessageClassProfileFull:      2097152, // media.FULL_IMAGE_MAX_MB
+	MessageClassRelayRoute:       1228,    // transport.QR_BOOTSTRAP_MAX_BYTES
 	MessageClassTextMessage:      32768,   // sessions_remote_text.RELAY_TEXT_ENVELOPE_MAX_BYTES
 	MessageClassDeliveryReceipt:  1228,    // transport.QR_BOOTSTRAP_MAX_BYTES
 	MessageClassReadReceipt:      1228,    // transport.QR_BOOTSTRAP_MAX_BYTES
