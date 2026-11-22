@@ -95,7 +95,7 @@ func TestGoManifestMirrorsGoMod(t *testing.T) {
 
 // TestOnlyTheApprovedCryptoDependencyIsPresent enforces the owner's standing
 // instruction: no crypto primitives beyond the Go standard library and the one
-// approved module.
+// approved module, and no Go module at all without a recorded owner approval.
 func TestOnlyTheApprovedCryptoDependencyIsPresent(t *testing.T) {
 	modules, err := GoModules(repoRoot(t))
 	if err != nil {
@@ -104,6 +104,15 @@ func TestOnlyTheApprovedCryptoDependencyIsPresent(t *testing.T) {
 	approved := map[string]bool{
 		"golang.org/x/crypto": true, // owner-approved 2026-08-11 for ChaCha20-Poly1305
 		"golang.org/x/sys":    true, // indirect dependency of the above
+		// Owner-approved 2026-11-22 for WP-05 S4b (TRS-BCK-008), when the owner
+		// accepted "connect the server to a real database ... the pgx v5
+		// driver (MIT licence)". The rest are pgx's own dependencies.
+		"github.com/jackc/pgx/v5":        true,
+		"github.com/jackc/pgpassfile":    true,
+		"github.com/jackc/pgservicefile": true,
+		"github.com/jackc/puddle/v2":     true,
+		"golang.org/x/sync":              true,
+		"golang.org/x/text":              true,
 	}
 	for _, m := range modules {
 		if !approved[m.Path] {

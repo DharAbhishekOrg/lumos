@@ -134,6 +134,48 @@
     "license": "BSD-3-Clause",
     "why": "Indirect dependency of golang.org/x/crypto.",
     "indirect": true
+   },
+   {
+    "path": "github.com/jackc/pgx/v5",
+    "version": "v5.13.0",
+    "license": "MIT",
+    "why": "PostgreSQL driver and connection pool for the backend registry (TRS-BCK-008: PostgreSQL stores durable registry records). The de-facto Go PostgreSQL driver; pure Go, no cgo. Added in WP-05 S4b, named and licence-stated in the pull request per AGENTS.md.",
+    "approved": "owner, 2026-11-22"
+   },
+   {
+    "path": "github.com/jackc/pgpassfile",
+    "version": "v1.0.0",
+    "license": "MIT",
+    "why": "Indirect dependency of github.com/jackc/pgx/v5.",
+    "indirect": true
+   },
+   {
+    "path": "github.com/jackc/pgservicefile",
+    "version": "v0.0.0-20240606120523-5a60cdf6a761",
+    "license": "MIT",
+    "why": "Indirect dependency of github.com/jackc/pgx/v5.",
+    "indirect": true
+   },
+   {
+    "path": "github.com/jackc/puddle/v2",
+    "version": "v2.2.3",
+    "license": "MIT",
+    "why": "Indirect dependency of github.com/jackc/pgx/v5 (its connection-pool primitive).",
+    "indirect": true
+   },
+   {
+    "path": "golang.org/x/sync",
+    "version": "v0.22.0",
+    "license": "BSD-3-Clause",
+    "why": "Indirect dependency of github.com/jackc/puddle/v2.",
+    "indirect": true
+   },
+   {
+    "path": "golang.org/x/text",
+    "version": "v0.41.0",
+    "license": "BSD-3-Clause",
+    "why": "Indirect dependency of github.com/jackc/pgx/v5.",
+    "indirect": true
    }
   ]
  },

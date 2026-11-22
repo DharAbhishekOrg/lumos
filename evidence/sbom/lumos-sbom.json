@@ -18,6 +18,70 @@
  "components": [
   {
    "type": "library",
+   "name": "github.com/jackc/pgpassfile",
+   "version": "v1.0.0",
+   "purl": "pkg:golang/github.com/jackc/pgpassfile@v1.0.0",
+   "scope": "optional",
+   "licenses": [
+    {
+     "license": {
+      "id": "MIT"
+     }
+    }
+   ],
+   "x-ecosystem": "go",
+   "x-locked-in": "go.mod + go.sum"
+  },
+  {
+   "type": "library",
+   "name": "github.com/jackc/pgservicefile",
+   "version": "v0.0.0-20240606120523-5a60cdf6a761",
+   "purl": "pkg:golang/github.com/jackc/pgservicefile@v0.0.0-20240606120523-5a60cdf6a761",
+   "scope": "optional",
+   "licenses": [
+    {
+     "license": {
+      "id": "MIT"
+     }
+    }
+   ],
+   "x-ecosystem": "go",
+   "x-locked-in": "go.mod + go.sum"
+  },
+  {
+   "type": "library",
+   "name": "github.com/jackc/pgx/v5",
+   "version": "v5.13.0",
+   "purl": "pkg:golang/github.com/jackc/pgx/v5@v5.13.0",
+   "scope": "required",
+   "licenses": [
+    {
+     "license": {
+      "id": "MIT"
+     }
+    }
+   ],
+   "x-ecosystem": "go",
+   "x-locked-in": "go.mod + go.sum"
+  },
+  {
+   "type": "library",
+   "name": "github.com/jackc/puddle/v2",
+   "version": "v2.2.3",
+   "purl": "pkg:golang/github.com/jackc/puddle/v2@v2.2.3",
+   "scope": "optional",
+   "licenses": [
+    {
+     "license": {
+      "id": "MIT"
+     }
+    }
+   ],
+   "x-ecosystem": "go",
+   "x-locked-in": "go.mod + go.sum"
+  },
+  {
+   "type": "library",
    "name": "golang.org/x/crypto",
    "version": "v0.54.0",
    "purl": "pkg:golang/golang.org/x/crypto@v0.54.0",
@@ -34,9 +98,41 @@
   },
   {
    "type": "library",
+   "name": "golang.org/x/sync",
+   "version": "v0.22.0",
+   "purl": "pkg:golang/golang.org/x/sync@v0.22.0",
+   "scope": "optional",
+   "licenses": [
+    {
+     "license": {
+      "id": "BSD-3-Clause"
+     }
+    }
+   ],
+   "x-ecosystem": "go",
+   "x-locked-in": "go.mod + go.sum"
+  },
+  {
+   "type": "library",
    "name": "golang.org/x/sys",
    "version": "v0.47.0",
    "purl": "pkg:golang/golang.org/x/sys@v0.47.0",
+   "scope": "optional",
+   "licenses": [
+    {
+     "license": {
+      "id": "BSD-3-Clause"
+     }
+    }
+   ],
+   "x-ecosystem": "go",
+   "x-locked-in": "go.mod + go.sum"
+  },
+  {
+   "type": "library",
+   "name": "golang.org/x/text",
+   "version": "v0.41.0",
+   "purl": "pkg:golang/golang.org/x/text@v0.41.0",
    "scope": "optional",
    "licenses": [
     {

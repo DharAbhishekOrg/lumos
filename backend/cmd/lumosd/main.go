@@ -1,18 +1,25 @@
-// Lumos - backend/cmd/lumosd / Empty backend shell with a health check only.
+// Lumos - backend/cmd/lumosd / The backend process: health check, and the registry when a database is configured.
 // Author: dhar.abhishek.email@gmail.com
-// Implements: TRS-REP-001, TRS-REP-004, TRS-REP-007, TRS-BCK-002
+// Implements: TRS-REP-001, TRS-REP-004, TRS-REP-007, TRS-BCK-002, TRS-BCK-001, TRS-BCK-008
 // ADRs: -
 // Threading: main-safe
-// Notes: WP-01 scope is explicitly "no backend endpoint beyond a health check".
-// There is no relay, no registry, no storage and no auth here, and adding one
-// belongs to WP-05. The health response deliberately carries build provenance
-// and NOTHING about users: TRS-BCK-002 forbids plaintext profile, chat, media or
-// key material anywhere in the backend, and a health endpoint is exactly the
-// kind of place operational convenience quietly erodes that.
+// Notes: The health response deliberately carries build provenance and NOTHING
+// about users: TRS-BCK-002 forbids plaintext profile, chat, media or key
+// material anywhere in the backend, and a health endpoint is exactly the kind
+// of place operational convenience quietly erodes that. Since WP-05 S4b the
+// registry routes are served too, but ONLY over PostgreSQL (TRS-BCK-008): the
+// DSN comes from LUMOS_DATABASE_URL, which in a deployed environment is
+// injected from the secret manager (TRS-BCK-012) and never appears in code,
+// flags or logs. Without it the process is the health-check shell it always
+// was, so a misconfigured deploy fails visibly instead of quietly running an
+// in-memory registry that forgets every device on restart.
 package main
 
 import (
+	"context"
+	"crypto/rand"
 	"encoding/json"
+	"errors"
 	"flag"
 	"fmt"
 	"log"
@@ -20,7 +27,10 @@ import (
 	"os"
 	"time"
 
+	"github.com/dharabhishekorg/lumos/backend/internal/api"
+	"github.com/dharabhishekorg/lumos/backend/internal/registry"
 	"github.com/dharabhishekorg/lumos/protocol/gen/go/lumosconstants"
+	"github.com/jackc/pgx/v5/pgxpool"
 )
 
 // Build provenance, injected at link time by the release build (TRS-REP-007).
@@ -73,26 +83,70 @@ func HealthHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// NewMux wires the only route this shell serves.
-func NewMux() *http.ServeMux {
+// NewMux wires the health check, and the registry routes when reg is non-nil.
+func NewMux(reg *api.Registry) *http.ServeMux {
 	mux := http.NewServeMux()
 	mux.HandleFunc("/healthz", HealthHandler)
+	if reg != nil {
+		reg.Register(mux)
+	}
 	return mux
+}
+
+// openRegistry connects, migrates and builds the registry over PostgreSQL. An
+// empty DSN is not an error: it means "no registry", and the caller serves
+// health only.
+func openRegistry(ctx context.Context, dsn string) (*api.Registry, func(), error) {
+	if dsn == "" {
+		return nil, func() {}, nil
+	}
+	pool, err := pgxpool.New(ctx, dsn)
+	if err != nil {
+		return nil, nil, fmt.Errorf("database config: %w", err)
+	}
+	if err := pool.Ping(ctx); err != nil {
+		pool.Close()
+		return nil, nil, fmt.Errorf("database unreachable: %w", err)
+	}
+	if err := registry.Migrate(ctx, pool); err != nil {
+		pool.Close()
+		return nil, nil, err
+	}
+	svc := registry.NewService(registry.NewPostgresRepository(pool),
+		func() int64 { return time.Now().Unix() }, rand.Reader)
+	return api.NewRegistry(svc), pool.Close, nil
 }
 
 func main() {
 	addr := flag.String("addr", "127.0.0.1:8080", "listen address")
 	flag.Parse()
 
+	startCtx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+	reg, closeDB, err := openRegistry(startCtx, os.Getenv("LUMOS_DATABASE_URL"))
+	cancel()
+	if err != nil {
+		// The error names the stage that failed; pgx never puts the password
+		// of a DSN into its error text.
+		log.Fatalf("lumosd: %v", err)
+	}
+	defer closeDB()
+
 	srv := &http.Server{
 		Addr:              *addr,
-		Handler:           NewMux(),
+		Handler:           NewMux(reg),
 		ReadHeaderTimeout: 5 * time.Second,
+		ReadTimeout:       15 * time.Second,
+		WriteTimeout:      15 * time.Second,
+		IdleTimeout:       60 * time.Second,
+	}
+	mode := "health only (no LUMOS_DATABASE_URL)"
+	if reg != nil {
+		mode = "health + registry"
 	}
 	// The banner is diagnostic output on a stream the process does not own; a
 	// closed or full stdout must not stop the server from listening.
-	_, _ = fmt.Fprintf(os.Stdout, "lumosd %s (%s) listening on %s\n", version, buildEnv, *addr)
-	if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+	_, _ = fmt.Fprintf(os.Stdout, "lumosd %s (%s) listening on %s: %s\n", version, buildEnv, *addr, mode)
+	if err := srv.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
 		log.Fatalf("lumosd: %v", err)
 	}
 }
