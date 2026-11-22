@@ -150,13 +150,16 @@ public final class JdbcSqlDatabase implements SqlDatabase {
             // failure here dooms the whole transaction even if the caller
             // catches it, which is exactly the platform's behaviour.
             depth++;
+            boolean succeeded = false;
             try {
-                return body.run();
-            } catch (StoreException | RuntimeException e) {
-                rollbackOnly = true;
-                throw e;
+                final T result = body.run();
+                succeeded = true;
+                return result;
             } finally {
                 depth--;
+                if (!succeeded) {
+                    rollbackOnly = true; // any escape, checked or not
+                }
             }
         }
         try {

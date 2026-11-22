@@ -25,9 +25,9 @@ import java.util.UUID;
 /** The chat records and their encodings. */
 public final class ChatRecords {
 
-    private static final int FORMAT = 1;
+    static final int FORMAT = 1;
     private static final int ID_LEN = 16;
-    private static final int KEY_LEN = 32;
+    static final int KEY_LEN = 32;
 
     private ChatRecords() {
         throw new AssertionError("no instances");
@@ -55,7 +55,7 @@ public final class ChatRecords {
                 .putLong(u.getLeastSignificantBits()).array();
     }
 
-    private static StoreException corrupt() {
+    static StoreException corrupt() {
         return new StoreException(StoreException.Reason.ENGINE, "chat record is malformed");
     }
 
@@ -74,13 +74,13 @@ public final class ChatRecords {
         return b;
     }
 
-    private static byte[] fixed(final ByteBuffer in, final int n) {
+    static byte[] fixed(final ByteBuffer in, final int n) {
         final byte[] b = new byte[n];
         in.get(b);
         return b;
     }
 
-    private static ByteBuffer open(final byte[] b) throws StoreException {
+    static ByteBuffer open(final byte[] b) throws StoreException {
         final ByteBuffer in = ByteBuffer.wrap(b);
         if (!in.hasRemaining() || in.get() != FORMAT) {
             throw corrupt();
@@ -420,73 +420,6 @@ public final class ChatRecords {
                 final ByteBuffer in = open(b);
                 return new OutboxItem(fixed(in, ID_LEN), readBytes(in), readBytes(in), in.getLong(), in.getLong(),
                         in.getInt());
-            } catch (final BufferUnderflowException e) {
-                throw corrupt();
-            }
-        }
-    }
-
-    /**
-     * A private prekey scalar.
-     *
-     * @param oneTime true for a one-time prekey, false for a signed prekey
-     * @param id the prekey id
-     * @param privateKey the X25519 scalar
-     */
-    public record PrekeySecret(boolean oneTime, long id, byte[] privateKey) {
-
-        /**
-         * Copies.
-         *
-         * @param oneTime see the record
-         * @param id see the record
-         * @param privateKey see the record
-         */
-        public PrekeySecret {
-            if (privateKey.length != KEY_LEN) {
-                throw new IllegalArgumentException("a prekey scalar is 32 bytes");
-            }
-            privateKey = privateKey.clone();
-        }
-
-        /** @return a copy of the scalar */
-        @Override
-        public byte[] privateKey() {
-            return privateKey.clone();
-        }
-
-        /**
-         * The blind-index input: kind and id.
-         *
-         * @param oneTime the prekey's kind
-         * @param id its id
-         * @return the natural key
-         */
-        public static byte[] naturalKey(final boolean oneTime, final long id) {
-            return ByteBuffer.allocate(1 + Integer.BYTES).put((byte) (oneTime ? 1 : 0)).putInt((int) id).array();
-        }
-
-        /** @return the record bytes */
-        public byte[] encode() {
-            final ByteArrayOutputStream out = new ByteArrayOutputStream();
-            out.write(FORMAT);
-            out.write(oneTime ? 1 : 0);
-            out.writeBytes(ByteBuffer.allocate(Integer.BYTES).putInt((int) id).array());
-            out.writeBytes(privateKey);
-            return out.toByteArray();
-        }
-
-        /**
-         * @param b the record bytes
-         * @return the secret
-         * @throws StoreException when the bytes are not one
-         */
-        public static PrekeySecret decode(final byte[] b) throws StoreException {
-            try {
-                final ByteBuffer in = open(b);
-                final boolean oneTime = in.get() == 1;
-                final long id = in.getInt() & 0xFFFFFFFFL;
-                return new PrekeySecret(oneTime, id, fixed(in, KEY_LEN));
             } catch (final BufferUnderflowException e) {
                 throw corrupt();
             }

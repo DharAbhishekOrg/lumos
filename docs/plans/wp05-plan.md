@@ -100,9 +100,12 @@ Split on 2026-11-22 into three sub-slices, each merged on its own:
   bytes) and frozen by `chat/remote_text.json`, which all three languages
   replay byte for byte.
 - **S7b, Android chat store.** Schema v6: conversation, message, outbox,
-  ratchet session, dedup and replay windows; the transactional outbox insert
+  ratchet session, dedup and prekey secret; the transactional outbox insert
   (TRS §8.3, TRS-PAT-004); ratchet state that survives process death without
-  reusing a deleted message key (SRS-RMT-017).
+  reusing a deleted message key (SRS-RMT-017). Not in S7b: the iOS chat
+  store (the Swift schema mirror is in, the store follows with the iOS chat
+  path), the dedup id cap (the TTL is in), and simultaneous initiation by
+  both peers.
 - **S7c, relay client.** Upload, fetch and acknowledge against the S5 relay,
   with a process-kill recovery test (SRS-RMT-003, SRS-RMT-017).
 

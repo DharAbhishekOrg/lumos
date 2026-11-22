@@ -133,12 +133,12 @@ public class ChatStoreTest {
             open.add(db);
             store = LocalStore.open(db, hierarchy.deriveKey(DataKeyHierarchy.DataDomain.DATABASE),
                     capacity::get, clock);
-            chat = new ChatStore(store, keys.identity(), clock, () -> random(32));
+            chat = ChatStore.over(store, keys.identity(), clock, () -> random(32));
         }
 
         void publishPrekeys() throws StoreException {
-            chat.putPrekeySecret(new ChatRecords.PrekeySecret(false, SPK_ID, keys.spkPriv));
-            chat.putPrekeySecret(new ChatRecords.PrekeySecret(true, OPK_ID, keys.opkPriv));
+            chat.putPrekeySecret(new PrekeySecret(false, SPK_ID, keys.spkPriv));
+            chat.putPrekeySecret(new PrekeySecret(true, OPK_ID, keys.opkPriv));
         }
     }
 

@@ -76,18 +76,27 @@ public final class ChatStore {
      */
     public record Received(Outcome outcome, String code) { }
 
-    /**
-     * @param store the sealed local store
-     * @param own this device's identity
-     * @param clock the UTC clock
-     * @param ratchetKeys fresh ratchet scalars from the platform CSPRNG
-     */
-    public ChatStore(final LocalStore store, final RemoteSession.Identity own, final LocalStore.Clock clock,
+    private ChatStore(final LocalStore store, final RemoteSession.Identity own, final LocalStore.Clock clock,
             final DoubleRatchet.KeyProvider ratchetKeys) {
         this.store = store;
         this.own = own;
         this.clock = clock;
         this.ratchetKeys = ratchetKeys;
+    }
+
+    /**
+     * Binds the chat state to the device's store. The store is shared on
+     * purpose: chat writes join the same transactions as everything else.
+     *
+     * @param store the sealed local store
+     * @param own this device's identity
+     * @param clock the UTC clock
+     * @param ratchetKeys fresh ratchet scalars from the platform CSPRNG
+     * @return the chat store
+     */
+    public static ChatStore over(final LocalStore store, final RemoteSession.Identity own,
+            final LocalStore.Clock clock, final DoubleRatchet.KeyProvider ratchetKeys) {
+        return new ChatStore(store, own, clock, ratchetKeys);
     }
 
     private long nowSeconds() {
@@ -102,13 +111,13 @@ public final class ChatStore {
      * @param secret the prekey
      * @throws StoreException on engine failure
      */
-    public void putPrekeySecret(final ChatRecords.PrekeySecret secret) throws StoreException {
+    public void putPrekeySecret(final PrekeySecret secret) throws StoreException {
         store.putByNaturalKey(RecordKind.PREKEY_SECRET, secret.encode(),
-                ChatRecords.PrekeySecret.naturalKey(secret.oneTime(), secret.id()));
+                PrekeySecret.naturalKey(secret.oneTime(), secret.id()));
     }
 
     private Optional<LocalStore.Entry> prekey(final boolean oneTime, final long id) throws StoreException {
-        return store.findEntriesByNaturalKey(RecordKind.PREKEY_SECRET, ChatRecords.PrekeySecret.naturalKey(oneTime, id))
+        return store.findEntriesByNaturalKey(RecordKind.PREKEY_SECRET, PrekeySecret.naturalKey(oneTime, id))
                 .stream().findFirst();
     }
 
@@ -365,11 +374,11 @@ public final class ChatStore {
         if (p.opkId() != LumosConstants.X3DH_OPK_ID_NONE_DEFAULT) {
             final Optional<LocalStore.Entry> opk = prekey(true, p.opkId());
             if (opk.isPresent()) {
-                opkPriv = ChatRecords.PrekeySecret.decode(opk.get().content()).privateKey();
+                opkPriv = PrekeySecret.decode(opk.get().content()).privateKey();
             }
         }
         final RemoteSession.ResponderKeys keys = new RemoteSession.ResponderKeys(
-                ChatRecords.PrekeySecret.decode(spk.get().content()).privateKey(), p.spkId(), opkPriv, p.opkId());
+                PrekeySecret.decode(spk.get().content()).privateKey(), p.spkId(), opkPriv, p.opkId());
         return RemoteSession.respond(own, keys, conv.peerIdentityEd(), p, conv.matchId());
     }
 
