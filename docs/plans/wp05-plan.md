@@ -152,6 +152,18 @@ Split on 2026-11-22 into three sub-slices, each merged on its own:
     scheduled on connectivity and push wake; the composition that builds
     the relay parts for the running app.
 - **S7f, iOS chat path.** The chat store and relay client on iOS.
+  - **S7f1a, the iOS chat store.** Swift DoubleRatchet exportState /
+    restoreState in the Java byte layout (proven byte-identical by a
+    cross-language desk check); nested transactions in Sqlite3Database with
+    the Android semantics; LocalStore.transaction and
+    findEntriesByNaturalKey; ChatRecords, PrekeySecret, ChatSessions and
+    ChatStore with receipts (CR-005), ported behaviour for behaviour, with
+    the Android ChatStoreTest scenarios.
+  - **S7f1b, the iOS relay client.** RelayClient, account, routes, prekey
+    publishing, sessions, the relay pass and the route exchange, with the
+    fake-relay and process-kill tests.
+  - **S7f2, the iOS wiring.** The Keychain key root, the boot, background
+    relay passes.
 
 **Owner ruling 2026-11-23 (order):** from S7e2b on, Android and iOS alternate
 slice by slice and stay within one slice of each other: S7e2b (Android

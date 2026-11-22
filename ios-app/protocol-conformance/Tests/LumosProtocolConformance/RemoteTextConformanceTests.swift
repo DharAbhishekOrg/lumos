@@ -165,6 +165,23 @@ final class RemoteTextConformanceTests: XCTestCase {
         XCTAssertEqual(kinds.count, 4, "the session exercises all four event kinds")
     }
 
+    func testStoredPrekeyFieldsAreTheEnvelopesOwnBytes() throws {
+        let s = try Vectors.object(try Vectors.load(path, root: root), "session")
+        var checked = 0
+        for m in try Vectors.array(s, "messages") {
+            let envelope = try Vectors.hex(m, "envelope_hex")
+            guard let fields = try RemoteText.decodeEnvelope(envelope).prekey else { continue }
+            XCTAssertEqual(fields.encoded, envelope.dropFirst().prefix(fields.encoded.count),
+                           "the stored fields are the PREKEY envelope's bytes after its format byte")
+            XCTAssertEqual(try RemoteText.decodePrekeyFields(fields.encoded), fields)
+            XCTAssertThrowsError(try RemoteText.decodePrekeyFields(fields.encoded.dropLast())) {
+                XCTAssertEqual(($0 as? LumosCrypto.WireError)?.code, LumosErrors.errPayloadMalformed)
+            }
+            checked += 1
+        }
+        XCTAssertGreaterThan(checked, 0, "the session vectors include a PREKEY envelope")
+    }
+
     func testARelabelledOrMisattributedFirstMessageIsRefused() throws {
         let s = try Vectors.object(try Vectors.load(path, root: root), "session")
         let a = try Vectors.object(s, "alice")

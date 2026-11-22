@@ -11,6 +11,14 @@
 /// cap and a TTL pruned against the CALLER's clock (TRS-CRY-007), so the
 /// machine stays deterministic. Every failure carries a stable code
 /// (TRS-CRY-013). A struct with mutating methods: one owner, one executor.
+///
+/// exportState/restoreState (WP-05 S7f1, the Swift side of the Java S7b pair)
+/// serialise the whole TRS-CRY-002 state, skipped keys included, in the SAME
+/// byte layout as the Java port, so a session survives process death
+/// (SRS-RMT-017). The bytes ARE key material: the caller stores them sealed
+/// (the shell's LocalStore) in the same transaction as the message they
+/// sealed or opened. A failed decrypt changes this value, so callers persist
+/// only after success and otherwise restore again.
 
 import CryptoKit
 import Foundation
@@ -254,5 +262,132 @@ public struct DoubleRatchet {
                                    info: Data(LumosConstants.ratchetMessageKdfInfoValue.utf8),
                                    length: LumosCrypto.aeadKeySize + LumosCrypto.aeadNonceSize)
         return (Data(okm.prefix(LumosCrypto.aeadKeySize)), Data(okm.suffix(LumosCrypto.aeadNonceSize)))
+    }
+
+    // MARK: - Persistence (exportState / restoreState)
+
+    private static let stateFormat: UInt8 = 1
+    private static let keyLen = 32
+
+    /// The whole session as bytes, for sealed storage.
+    /// - Returns: the state bytes; key material, to be stored sealed
+    public func exportState() -> Data {
+        var out = Data([DoubleRatchet.stateFormat])
+        out += dhsPriv
+        DoubleRatchet.writeOptional(&out, dhr)
+        out += rk
+        DoubleRatchet.writeOptional(&out, cks)
+        DoubleRatchet.writeOptional(&out, ckr)
+        out += LumosCrypto.be32(ns) + LumosCrypto.be32(nr) + LumosCrypto.be32(pn)
+        out += Data([UInt8(ad.count >> 8 & 0xFF), UInt8(ad.count & 0xFF)])
+        out += ad
+        out += LumosCrypto.be32(UInt32(skip.count))
+        // Sorted, so the same state always exports the same bytes on this
+        // platform; the Java port's order is its HashMap's, and the layout,
+        // not the order, is what the two share.
+        for (key, value) in skip.sorted(by: { DoubleRatchet.precedes($0.key, $1.key) }) {
+            out += key.dh + LumosCrypto.be32(key.n) + value.mk + DoubleRatchet.be64(value.storedAt)
+        }
+        return out
+    }
+
+    /// Rebuilds a session from ``exportState()``.
+    /// - Parameters:
+    ///   - state: the exported bytes
+    ///   - bounds: denial-of-service limits (from the register, never stored)
+    /// - Returns: the session, exactly as it was exported
+    /// - Throws: ERR_PAYLOAD_MALFORMED when the bytes are not a state
+    public static func restoreState(_ state: Data, bounds: Bounds = Bounds()) throws -> DoubleRatchet {
+        var reader = StateReader(Data(state))
+        guard try reader.byte() == stateFormat else { throw malformed("unknown ratchet state format") }
+        let dhsPriv = try reader.bytes(keyLen)
+        let dhr = try reader.present() ? try reader.bytes(keyLen) : nil
+        let rk = try reader.bytes(keyLen)
+        let cks = try reader.present() ? try reader.bytes(keyLen) : nil
+        let ckr = try reader.present() ? try reader.bytes(keyLen) : nil
+        let ns = try reader.u32()
+        let nr = try reader.u32()
+        let pn = try reader.u32()
+        let adLen = Int(try reader.byte()) << 8 | Int(try reader.byte())
+        let ad = try reader.bytes(adLen)
+        var s: DoubleRatchet
+        do {
+            s = try DoubleRatchet(sk: rk, ad: ad, ownPriv: dhsPriv, bounds: bounds)
+        } catch {
+            throw malformed("bad ratchet private key")
+        }
+        s.dhr = dhr
+        s.cks = cks
+        s.ckr = ckr
+        s.ns = ns
+        s.nr = nr
+        s.pn = pn
+        let count = try reader.u32()
+        guard count <= s.bounds.skippedCap else { throw malformed("skipped keys exceed the cap") }
+        for _ in 0..<count {
+            let dh = try reader.bytes(keyLen)
+            let n = try reader.u32()
+            let mk = try reader.bytes(keyLen)
+            let storedAt = try reader.i64()
+            s.skip[SkipKey(dh: dh, n: n)] = Skipped(mk: mk, storedAt: storedAt)
+        }
+        guard reader.atEnd else { throw malformed("trailing ratchet state bytes") }
+        return s
+    }
+
+    private static func malformed(_ why: String) -> LumosCrypto.WireError {
+        LumosCrypto.WireError(LumosErrors.errPayloadMalformed, why)
+    }
+
+    private static func writeOptional(_ out: inout Data, _ key: Data?) {
+        out.append(key == nil ? 0 : 1)
+        if let key { out += key }
+    }
+
+    private static func be64(_ v: Int64) -> Data {
+        let u = UInt64(bitPattern: v)
+        return Data((0..<8).map { UInt8(truncatingIfNeeded: u >> (56 - 8 * $0)) })
+    }
+
+    private static func precedes(_ a: SkipKey, _ b: SkipKey) -> Bool {
+        a.dh == b.dh ? a.n < b.n : a.dh.lexicographicallyPrecedes(b.dh)
+    }
+
+    /// A bounds-checked cursor; every short read is ERR_PAYLOAD_MALFORMED.
+    private struct StateReader {
+        private let data: Data
+        private var at = 0
+
+        init(_ data: Data) {
+            self.data = data
+        }
+
+        var atEnd: Bool { at == data.count }
+
+        mutating func bytes(_ n: Int) throws -> Data {
+            guard n >= 0, data.count - at >= n else { throw DoubleRatchet.malformed("short ratchet state") }
+            defer { at += n }
+            return Data(data[data.startIndex + at ..< data.startIndex + at + n])
+        }
+
+        mutating func byte() throws -> UInt8 {
+            try bytes(1)[0]
+        }
+
+        mutating func present() throws -> Bool {
+            switch try byte() {
+            case 0: return false
+            case 1: return true
+            default: throw DoubleRatchet.malformed("bad ratchet state flag")
+            }
+        }
+
+        mutating func u32() throws -> UInt32 {
+            try bytes(4).reduce(UInt32(0)) { $0 << 8 | UInt32($1) }
+        }
+
+        mutating func i64() throws -> Int64 {
+            Int64(bitPattern: try bytes(8).reduce(UInt64(0)) { $0 << 8 | UInt64($1) })
+        }
     }
 }

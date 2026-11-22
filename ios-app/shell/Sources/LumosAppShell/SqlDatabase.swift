@@ -68,6 +68,13 @@ public protocol SqlDatabase: AnyObject {
 
     /// Runs work inside a transaction, committing on return and rolling back on
     /// any thrown error.
+    ///
+    /// Transactions nest with the Android port's semantics (WP-05 S7f1): an
+    /// inner call joins the outer transaction, only the outermost one commits,
+    /// and a failure in any inner body rolls back EVERYTHING, even if the outer
+    /// body caught the error and carried on. That is what lets a message, its
+    /// outbox item and the ratchet state that sealed it be one atomic step
+    /// (TRS Sec. 8.3).
     /// - Parameter body: the unit of work
     /// - Returns: the work's result
     /// - Throws: whatever the body throws, after the rollback
@@ -81,6 +88,8 @@ public protocol SqlDatabase: AnyObject {
 public final class Sqlite3Database: SqlDatabase {
 
     private var handle: OpaquePointer?
+    private var depth = 0
+    private var rollbackOnly = false
 
     /// Opens or creates a database at a path.
     /// - Parameter path: the file path, or `":memory:"`
@@ -123,9 +132,27 @@ public final class Sqlite3Database: SqlDatabase {
     }
 
     public func inTransaction<T>(_ body: () throws -> T) throws -> T {
+        if depth > 0 {
+            // Nested: join the outer transaction. A failure here dooms the whole
+            // transaction even if the caller catches it.
+            depth += 1
+            defer { depth -= 1 }
+            do {
+                return try body()
+            } catch {
+                rollbackOnly = true
+                throw error
+            }
+        }
         try execute("BEGIN IMMEDIATE", [])
+        depth = 1
+        rollbackOnly = false
+        defer { depth = 0 }
         do {
             let result = try body()
+            if rollbackOnly {
+                throw StoreError.engine("a nested transaction failed; the whole transaction is rolled back")
+            }
             try execute("COMMIT", [])
             return result
         } catch {
