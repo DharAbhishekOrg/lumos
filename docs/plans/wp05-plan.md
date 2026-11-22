@@ -161,7 +161,11 @@ Split on 2026-11-22 into three sub-slices, each merged on its own:
     the Android ChatStoreTest scenarios.
   - **S7f1b, the iOS relay client.** RelayClient, account, routes, prekey
     publishing, sessions, the relay pass and the route exchange, with the
-    fake-relay and process-kill tests.
+    fake-relay and process-kill tests. The strict JSON subset is ported
+    rather than using JSONSerialization (which accepts duplicate keys and
+    fractions the Android port refuses). Transports throw
+    TransportUnreachable for every network failure, the Swift counterpart of
+    IOException, so a defect is never mistaken for OFFLINE.
   - **S7f2, the iOS wiring.** The Keychain key root, the boot, background
     relay passes.
 
