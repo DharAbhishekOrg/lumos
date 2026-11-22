@@ -10,18 +10,23 @@
 package main
 
 import (
+	"context"
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"net/http/httptest"
+	"os"
 	"strings"
 	"testing"
+	"time"
 
 	"github.com/dharabhishekorg/lumos/protocol/gen/go/lumosconstants"
+	"github.com/jackc/pgx/v5/pgxpool"
 )
 
 func TestHealthEndpointRespondsOK(t *testing.T) {
 	rec := httptest.NewRecorder()
-	NewMux().ServeHTTP(rec, httptest.NewRequest(http.MethodGet, "/healthz", nil))
+	NewMux(nil).ServeHTTP(rec, httptest.NewRequest(http.MethodGet, "/healthz", nil))
 
 	if rec.Code != http.StatusOK {
 		t.Fatalf("status %d, want 200", rec.Code)
@@ -49,7 +54,7 @@ func TestHealthEndpointRespondsOK(t *testing.T) {
 // exists. The field set is closed: a new field must be added here deliberately.
 func TestHealthCarriesNoUserData(t *testing.T) {
 	rec := httptest.NewRecorder()
-	NewMux().ServeHTTP(rec, httptest.NewRequest(http.MethodGet, "/healthz", nil))
+	NewMux(nil).ServeHTTP(rec, httptest.NewRequest(http.MethodGet, "/healthz", nil))
 
 	var raw map[string]any
 	if err := json.Unmarshal(rec.Body.Bytes(), &raw); err != nil {
@@ -90,20 +95,82 @@ func TestReleaseProvenanceFieldsExist(t *testing.T) {
 
 func TestNonGetIsRejected(t *testing.T) {
 	rec := httptest.NewRecorder()
-	NewMux().ServeHTTP(rec, httptest.NewRequest(http.MethodPost, "/healthz", nil))
+	NewMux(nil).ServeHTTP(rec, httptest.NewRequest(http.MethodPost, "/healthz", nil))
 	if rec.Code != http.StatusMethodNotAllowed {
 		t.Errorf("status %d, want 405", rec.Code)
 	}
 }
 
-// TestOnlyHealthIsServed pins the WP-01 scope boundary: no endpoint beyond the
-// health check exists, and adding one is a scope change, not a detail.
+// TestOnlyHealthIsServed pins the boundary that holds without a database: the
+// health check and nothing else, registry routes included.
 func TestOnlyHealthIsServed(t *testing.T) {
-	for _, path := range []string{"/", "/relay", "/api", "/config", "/billing"} {
+	for _, path := range []string{"/", "/relay", "/api", "/config", "/billing", "/v1/prekeys/status"} {
 		rec := httptest.NewRecorder()
-		NewMux().ServeHTTP(rec, httptest.NewRequest(http.MethodGet, path, nil))
+		NewMux(nil).ServeHTTP(rec, httptest.NewRequest(http.MethodGet, path, nil))
 		if rec.Code != http.StatusNotFound {
-			t.Errorf("%s returned %d; WP-01 permits no endpoint beyond the health check", path, rec.Code)
+			t.Errorf("%s returned %d; without a database only the health check exists", path, rec.Code)
 		}
+	}
+	rec := httptest.NewRecorder()
+	NewMux(nil).ServeHTTP(rec, httptest.NewRequest(http.MethodPost, "/v1/auth/challenge", nil))
+	if rec.Code != http.StatusNotFound {
+		t.Errorf("registry route served without a database: %d", rec.Code)
+	}
+}
+
+func TestNoDatabaseURLMeansNoRegistry(t *testing.T) {
+	reg, closeDB, err := openRegistry(context.Background(), "")
+	if err != nil || reg != nil {
+		t.Fatalf("an empty DSN must mean 'health only', got reg=%v err=%v", reg, err)
+	}
+	closeDB()
+}
+
+func TestAnUnreachableDatabaseFailsStartup(t *testing.T) {
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+	_, _, err := openRegistry(ctx, "postgres://lumos:not-a-real-secret@127.0.0.1:1/none?sslmode=disable&connect_timeout=2")
+	if err == nil {
+		t.Fatal("a database that cannot be reached must stop startup, not degrade silently")
+	}
+	if strings.Contains(err.Error(), "not-a-real-secret") {
+		t.Fatal("a startup error must never echo the DSN's password")
+	}
+}
+
+func TestWithADatabaseTheRegistryRoutesAreServed(t *testing.T) {
+	dsn := os.Getenv("LUMOS_TEST_POSTGRES_DSN")
+	if dsn == "" {
+		if os.Getenv("LUMOS_REQUIRE_POSTGRES") == "1" {
+			t.Fatal("LUMOS_REQUIRE_POSTGRES=1 but LUMOS_TEST_POSTGRES_DSN is empty")
+		}
+		t.Skip("no LUMOS_TEST_POSTGRES_DSN")
+	}
+	ctx := context.Background()
+	admin, err := pgxpool.New(ctx, dsn)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer admin.Close()
+	schema := fmt.Sprintf("lumosd_%d", time.Now().UnixNano())
+	if _, err := admin.Exec(ctx, "CREATE SCHEMA "+schema); err != nil {
+		t.Fatal(err)
+	}
+	defer func() { _, _ = admin.Exec(ctx, "DROP SCHEMA "+schema+" CASCADE") }()
+
+	reg, closeDB, err := openRegistry(ctx, dsn+" search_path="+schema)
+	if err != nil || reg == nil {
+		t.Fatalf("openRegistry: %v", err)
+	}
+	defer closeDB()
+	rec := httptest.NewRecorder()
+	NewMux(reg).ServeHTTP(rec, httptest.NewRequest(http.MethodPost, "/v1/auth/challenge", nil))
+	if rec.Code != http.StatusOK || !strings.Contains(rec.Body.String(), "challenge") {
+		t.Fatalf("challenge over PostgreSQL: %d %s", rec.Code, rec.Body.String())
+	}
+	rec = httptest.NewRecorder()
+	NewMux(reg).ServeHTTP(rec, httptest.NewRequest(http.MethodGet, "/healthz", nil))
+	if rec.Code != http.StatusOK {
+		t.Fatalf("health must still be served alongside the registry: %d", rec.Code)
 	}
 }

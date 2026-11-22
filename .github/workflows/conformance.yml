@@ -110,6 +110,23 @@ jobs:
   go:
     name: go conformance
     runs-on: ubuntu-latest
+    # The backend's registry is held to one contract suite across its memory
+    # and PostgreSQL stores (TRS-BCK-008). This throwaway database exists only
+    # for this job; trust auth means no password exists to leak. The tests set
+    # their own per-test schema, and LUMOS_REQUIRE_POSTGRES turns a missing
+    # database into a failure, never a silent skip (TRS-AI-008).
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_HOST_AUTH_METHOD: trust
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 12
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-go@v7
@@ -133,6 +150,9 @@ jobs:
       # would be flagged by the very run that produced it.
       - name: go test
         shell: bash
+        env:
+          LUMOS_TEST_POSTGRES_DSN: host=localhost port=5432 user=postgres dbname=postgres sslmode=disable
+          LUMOS_REQUIRE_POSTGRES: "1"
         run: |
           set -o pipefail
           if ! go test -count=1 -json ./... > "$RUNNER_TEMP/go-test.json"; then

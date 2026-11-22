@@ -5497,16 +5497,19 @@
    "req_id": "TRS-BCK-001",
    "status": "implemented",
    "code": [
+    "backend/cmd/lumosd/main.go",
     "backend/internal/api/registry.go"
    ],
    "tests": [
+    "go:backend/cmd/lumosd:TestOnlyHealthIsServed",
+    "go:backend/cmd/lumosd:TestWithADatabaseTheRegistryRoutesAreServed",
     "go:backend/internal/api:TestOversizedAndUnknownFieldsAreRefusedBeforeTheService",
     "go:backend/internal/api:TestTwoDevicesAgreeOnASecretThroughTheRegistry"
    ],
    "evidence": [],
    "adr": [],
-   "last_commit": "c3ae02d",
-   "updated": "2026-11-21"
+   "last_commit": "5778d87",
+   "updated": "2026-11-22"
   },
   {
    "req_id": "TRS-BCK-002",
@@ -5516,12 +5519,13 @@
     "backend/internal/api/registry.go"
    ],
    "tests": [
+    "go:backend/cmd/lumosd:TestAnUnreachableDatabaseFailsStartup",
     "go:backend/internal/api:TestNoResponseCarriesPrivateOrStoredSecrets"
    ],
    "evidence": [],
    "adr": [],
-   "last_commit": "c3ae02d",
-   "updated": "2026-11-21"
+   "last_commit": "5778d87",
+   "updated": "2026-11-22"
   },
   {
    "req_id": "TRS-BCK-003",
@@ -5530,8 +5534,8 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "c3ae02d",
-   "updated": "2026-11-21"
+   "last_commit": "5778d87",
+   "updated": "2026-11-22"
   },
   {
    "req_id": "TRS-BCK-004",
@@ -5540,14 +5544,15 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "c3ae02d",
-   "updated": "2026-11-21"
+   "last_commit": "5778d87",
+   "updated": "2026-11-22"
   },
   {
    "req_id": "TRS-BCK-005",
    "status": "tested",
    "code": [
     "backend/internal/api/registry.go",
+    "backend/internal/registry/postgres.go",
     "backend/internal/registry/repository.go",
     "backend/internal/registry/service.go"
    ],
@@ -5561,8 +5566,8 @@
    ],
    "evidence": [],
    "adr": [],
-   "last_commit": "c3ae02d",
-   "updated": "2026-11-21"
+   "last_commit": "5778d87",
+   "updated": "2026-11-22"
   },
   {
    "req_id": "TRS-BCK-006",
@@ -5571,14 +5576,15 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "c3ae02d",
-   "updated": "2026-11-21"
+   "last_commit": "5778d87",
+   "updated": "2026-11-22"
   },
   {
    "req_id": "TRS-BCK-007",
    "status": "tested",
    "code": [
     "backend/internal/api/registry.go",
+    "backend/internal/registry/postgres.go",
     "backend/internal/registry/repository.go",
     "backend/internal/registry/service.go"
    ],
@@ -5589,18 +5595,26 @@
    ],
    "evidence": [],
    "adr": [],
-   "last_commit": "c3ae02d",
-   "updated": "2026-11-21"
+   "last_commit": "5778d87",
+   "updated": "2026-11-22"
   },
   {
    "req_id": "TRS-BCK-008",
-   "status": "not_started",
-   "code": [],
-   "tests": [],
+   "status": "implemented",
+   "code": [
+    "backend/cmd/lumosd/main.go",
+    "backend/internal/registry/postgres.go"
+   ],
+   "tests": [
+    "go:backend/cmd/lumosd:TestWithADatabaseTheRegistryRoutesAreServed",
+    "go:backend/internal/registry:TestMigrationIsIdempotentAndRefusesANewerSchema",
+    "go:backend/internal/registry:TestOneTimePrekeysAreNeverIssuedTwiceUnderConcurrentClaims",
+    "go:backend/internal/registry:TestRegistrationIsAKeyProofAndTheStoreNeverHoldsTheCredential"
+   ],
    "evidence": [],
    "adr": [],
-   "last_commit": "c3ae02d",
-   "updated": "2026-11-21"
+   "last_commit": "5778d87",
+   "updated": "2026-11-22"
   },
   {
    "req_id": "TRS-BCK-009",
@@ -5609,8 +5623,8 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "c3ae02d",
-   "updated": "2026-11-21"
+   "last_commit": "5778d87",
+   "updated": "2026-11-22"
   },
   {
    "req_id": "TRS-BCK-010",
@@ -5619,8 +5633,8 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "c3ae02d",
-   "updated": "2026-11-21"
+   "last_commit": "5778d87",
+   "updated": "2026-11-22"
   },
   {
    "req_id": "TRS-BCK-011",
@@ -5629,8 +5643,8 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "c3ae02d",
-   "updated": "2026-11-21"
+   "last_commit": "5778d87",
+   "updated": "2026-11-22"
   },
   {
    "req_id": "TRS-BCK-012",
@@ -5639,8 +5653,8 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "c3ae02d",
-   "updated": "2026-11-21"
+   "last_commit": "5778d87",
+   "updated": "2026-11-22"
   },
   {
    "req_id": "TRS-BCK-013",
@@ -5649,8 +5663,8 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "c3ae02d",
-   "updated": "2026-11-21"
+   "last_commit": "5778d87",
+   "updated": "2026-11-22"
   },
   {
    "req_id": "TRS-BCK-014",
@@ -5659,8 +5673,8 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "c3ae02d",
-   "updated": "2026-11-21"
+   "last_commit": "5778d87",
+   "updated": "2026-11-22"
   },
   {
    "req_id": "TRS-BIL-001",
@@ -5958,8 +5972,8 @@
     "ci:conformance#31528127667"
    ],
    "adr": [],
-   "last_commit": "fbb2425",
-   "updated": "2026-11-20"
+   "last_commit": "5778d87",
+   "updated": "2026-11-22"
   },
   {
    "req_id": "TRS-CICD-002",
@@ -6046,8 +6060,8 @@
    ],
    "evidence": [],
    "adr": [],
-   "last_commit": "a01e9a9",
-   "updated": "2026-11-19"
+   "last_commit": "5778d87",
+   "updated": "2026-11-22"
   },
   {
    "req_id": "TRS-CICD-008",
@@ -6548,6 +6562,7 @@
    "req_id": "TRS-CRY-005",
    "status": "tested",
    "code": [
+    "backend/internal/registry/postgres.go",
     "backend/internal/registry/repository.go",
     "backend/internal/registry/service.go"
    ],
@@ -8215,8 +8230,8 @@
    ],
    "evidence": [],
    "adr": [],
-   "last_commit": "e782693",
-   "updated": "2026-11-20"
+   "last_commit": "5778d87",
+   "updated": "2026-11-22"
   },
   {
    "req_id": "TRS-REP-004",
@@ -8245,8 +8260,8 @@
    ],
    "evidence": [],
    "adr": [],
-   "last_commit": "5bcb119",
-   "updated": "2026-11-21"
+   "last_commit": "5778d87",
+   "updated": "2026-11-22"
   },
   {
    "req_id": "TRS-REP-005",
@@ -8287,8 +8302,8 @@
    ],
    "evidence": [],
    "adr": [],
-   "last_commit": "e782693",
-   "updated": "2026-11-20"
+   "last_commit": "5778d87",
+   "updated": "2026-11-22"
   },
   {
    "req_id": "TRS-REP-007",
@@ -8306,8 +8321,8 @@
    ],
    "evidence": [],
    "adr": [],
-   "last_commit": "5bcb119",
-   "updated": "2026-11-21"
+   "last_commit": "5778d87",
+   "updated": "2026-11-22"
   },
   {
    "req_id": "TRS-REP-008",

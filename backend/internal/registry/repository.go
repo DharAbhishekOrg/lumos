@@ -226,3 +226,15 @@ func (m *MemoryRepository) OneTimePrekeyCount(_ context.Context, id DeviceID) (i
 	}
 	return len(r.stock), nil
 }
+
+// credentialHashes returns every stored credential hash, for the contract
+// test that proves the store never holds a raw credential.
+func (m *MemoryRepository) credentialHashes(_ context.Context) ([][32]byte, error) {
+	m.mu.Lock()
+	defer m.mu.Unlock()
+	out := make([][32]byte, 0, len(m.devices))
+	for _, r := range m.devices {
+		out = append(out, r.device.CredentialHash)
+	}
+	return out, nil
+}
