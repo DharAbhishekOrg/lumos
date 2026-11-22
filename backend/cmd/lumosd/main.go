@@ -16,7 +16,11 @@
 // relay is served too, when LUMOS_REDIS_URL is ALSO set: its envelopes live in
 // Redis and its send capabilities in the same PostgreSQL. A Redis URL without
 // a database is refused at startup, because the relay cannot authenticate
-// anyone without the registry.
+// anyone without the registry. Since WP-05 S6 push providers wake the
+// recipients of relayed messages: FCM when LUMOS_FCM_PROJECT names the
+// Firebase project (authenticated by the runtime's service account, so no key
+// file exists), and APNs when LUMOS_APNS_KEY_FILE, _KEY_ID, _TEAM_ID and
+// _TOPIC are all set (the key file is mounted from Secret Manager).
 package main
 
 import (
@@ -32,6 +36,7 @@ import (
 	"time"
 
 	"github.com/dharabhishekorg/lumos/backend/internal/api"
+	"github.com/dharabhishekorg/lumos/backend/internal/push"
 	"github.com/dharabhishekorg/lumos/backend/internal/registry"
 	"github.com/dharabhishekorg/lumos/backend/internal/relay"
 	"github.com/dharabhishekorg/lumos/protocol/gen/go/lumosconstants"
@@ -96,6 +101,7 @@ func HealthHandler(w http.ResponseWriter, r *http.Request) {
 type Backend struct {
 	Registry *api.Registry
 	Relay    *api.Relay
+	Push     []string // providers that wake devices, for the banner
 	close    []func()
 }
 
@@ -124,19 +130,97 @@ func NewMux(b *Backend) *http.ServeMux {
 
 func unixNow() int64 { return time.Now().Unix() }
 
+// Config is what the environment asks this process to serve.
+type Config struct {
+	DatabaseURL string
+	RedisURL    string
+	FCMProject  string           // Firebase project id; FCM authenticates by workload identity
+	APNs        *push.APNsConfig // nil: no APNs in this environment
+}
+
+// apnsEnv are the variables that configure APNs; all or none.
+var apnsEnv = []string{"LUMOS_APNS_KEY_FILE", "LUMOS_APNS_KEY_ID", "LUMOS_APNS_TEAM_ID", "LUMOS_APNS_TOPIC"}
+
+// configFromEnv reads the configuration. The APNs key is read from the file
+// the deployment mounts from Secret Manager; its contents never appear in an
+// error.
+func configFromEnv(getenv func(string) string) (Config, error) {
+	cfg := Config{
+		DatabaseURL: getenv("LUMOS_DATABASE_URL"),
+		RedisURL:    getenv("LUMOS_REDIS_URL"),
+		FCMProject:  getenv("LUMOS_FCM_PROJECT"),
+	}
+	set := 0
+	for _, k := range apnsEnv {
+		if getenv(k) != "" {
+			set++
+		}
+	}
+	switch {
+	case set == 0:
+		return cfg, nil
+	case set < len(apnsEnv):
+		return Config{}, fmt.Errorf("APNs needs all of %v or none of them", apnsEnv)
+	}
+	key, err := os.ReadFile(getenv("LUMOS_APNS_KEY_FILE"))
+	if err != nil {
+		return Config{}, errors.New("APNs key file could not be read")
+	}
+	cfg.APNs = &push.APNsConfig{
+		KeyPEM: key, KeyID: getenv("LUMOS_APNS_KEY_ID"), TeamID: getenv("LUMOS_APNS_TEAM_ID"),
+		Topic: getenv("LUMOS_APNS_TOPIC"), Production: getenv("LUMOS_APNS_PRODUCTION") == "true",
+	}
+	return cfg, nil
+}
+
+// providerTimeout bounds one call to a push provider or the metadata server.
+const providerTimeout = 10 * time.Second
+
+// openPush builds the providers the configuration names; nil when none.
+func openPush(cfg Config) (map[registry.PushProvider]push.Sender, []string, error) {
+	senders := map[registry.PushProvider]push.Sender{}
+	var names []string
+	client := &http.Client{Timeout: providerTimeout}
+	if cfg.FCMProject != "" {
+		senders[registry.PushFCM] = push.NewFCM(cfg.FCMProject, push.NewMetadataTokenSource(client), client)
+		names = append(names, "fcm")
+	}
+	if cfg.APNs != nil {
+		a, err := push.NewAPNs(*cfg.APNs, client)
+		if err != nil {
+			return nil, nil, err
+		}
+		senders[registry.PushAPNs] = a
+		names = append(names, "apns")
+	}
+	if len(senders) == 0 {
+		return nil, nil, nil
+	}
+	return senders, names, nil
+}
+
 // openBackend connects, migrates and builds what the configuration asks for.
 // No DSN means health only. A DSN alone means the registry. A DSN and a Redis
-// URL mean the registry and the relay. A Redis URL alone is a configuration
-// error. Errors name the stage that failed and never the credentials.
-func openBackend(ctx context.Context, dsn, redisURL string) (*Backend, error) {
-	if dsn == "" {
-		if redisURL != "" {
+// URL mean the registry and the relay, and push providers, if configured,
+// wake recipients of relayed messages. A Redis URL without a DSN, or push
+// without the relay, is a configuration error. Errors name the stage that
+// failed and never the credentials.
+func openBackend(ctx context.Context, cfg Config) (*Backend, error) {
+	senders, names, err := openPush(cfg)
+	if err != nil {
+		return nil, err
+	}
+	if cfg.DatabaseURL == "" {
+		if cfg.RedisURL != "" {
 			return nil, errors.New("LUMOS_REDIS_URL is set but LUMOS_DATABASE_URL is not: the relay needs the registry")
+		}
+		if senders != nil {
+			return nil, errors.New("push is configured but the relay is not: there is nothing to wake anyone for")
 		}
 		return nil, nil
 	}
 	b := &Backend{}
-	pool, err := pgxpool.New(ctx, dsn)
+	pool, err := pgxpool.New(ctx, cfg.DatabaseURL)
 	if err != nil {
 		return nil, fmt.Errorf("database config: %w", err)
 	}
@@ -151,10 +235,14 @@ func openBackend(ctx context.Context, dsn, redisURL string) (*Backend, error) {
 	}
 	auth := registry.NewService(registry.NewPostgresRepository(pool), unixNow, rand.Reader)
 	b.Registry = api.NewRegistry(auth)
-	if redisURL == "" {
+	if cfg.RedisURL == "" {
+		if senders != nil {
+			b.Close()
+			return nil, errors.New("push is configured but LUMOS_REDIS_URL is not: there is no relay to wake anyone for")
+		}
 		return b, nil
 	}
-	opts, err := redis.ParseURL(redisURL)
+	opts, err := redis.ParseURL(cfg.RedisURL)
 	if err != nil {
 		b.Close()
 		return nil, errors.New("redis config: LUMOS_REDIS_URL is not a valid redis:// or rediss:// URL")
@@ -167,6 +255,13 @@ func openBackend(ctx context.Context, dsn, redisURL string) (*Backend, error) {
 	}
 	mail := relay.NewRedisMailboxes(rdb, redisNamespace)
 	svc := relay.NewService(relay.NewPostgresCapabilities(pool), mail, mail, unixNow)
+	if senders != nil {
+		// Push errors carry provider names and HTTP statuses only.
+		disp := push.NewDispatcher(auth, senders, func(err error) { log.Printf("lumosd: %v", err) })
+		svc.WakeWith(disp)
+		b.close = append(b.close, disp.Close)
+		b.Push = names
+	}
 	b.Relay = api.NewRelay(svc, auth)
 	return b, nil
 }
@@ -175,8 +270,12 @@ func main() {
 	addr := flag.String("addr", "127.0.0.1:8080", "listen address")
 	flag.Parse()
 
+	cfg, err := configFromEnv(os.Getenv)
+	if err != nil {
+		log.Fatalf("lumosd: %v", err)
+	}
 	startCtx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
-	backend, err := openBackend(startCtx, os.Getenv("LUMOS_DATABASE_URL"), os.Getenv("LUMOS_REDIS_URL"))
+	backend, err := openBackend(startCtx, cfg)
 	cancel()
 	if err != nil {
 		// The error names the stage that failed; neither pgx nor go-redis puts
@@ -196,8 +295,10 @@ func main() {
 	}
 	mode := "health only (no LUMOS_DATABASE_URL)"
 	switch {
+	case backend != nil && backend.Relay != nil && len(backend.Push) > 0:
+		mode = fmt.Sprintf("health + registry + relay + push %v", backend.Push)
 	case backend != nil && backend.Relay != nil:
-		mode = "health + registry + relay"
+		mode = "health + registry + relay (no push provider configured)"
 	case backend != nil:
 		mode = "health + registry (no LUMOS_REDIS_URL)"
 	}

@@ -197,3 +197,56 @@ func (f *fixture) drain(t *testing.T) []Envelope {
 	}
 	return got
 }
+
+type recordingNotifier struct {
+	mu   sync.Mutex
+	woke []registry.DeviceID
+}
+
+func (r *recordingNotifier) Notify(id registry.DeviceID) {
+	r.mu.Lock()
+	defer r.mu.Unlock()
+	r.woke = append(r.woke, id)
+}
+
+func (r *recordingNotifier) count() int {
+	r.mu.Lock()
+	defer r.mu.Unlock()
+	return len(r.woke)
+}
+
+func TestOnlyANewlyStoredEnvelopeWakesTheRecipient(t *testing.T) {
+	eachStore(t, func(t *testing.T, f *fixture) {
+		n := &recordingNotifier{}
+		f.svc.WakeWith(n)
+		id := f.id()
+		if err := f.send(id, []byte("hello")); err != nil {
+			t.Fatal(err)
+		}
+		if n.count() != 1 || n.woke[0] != f.owner.ID {
+			t.Fatalf("a stored envelope wakes its recipient once, got %d", n.count())
+		}
+		_ = f.send(id, []byte("hello"))  // duplicate
+		_ = f.send(id, []byte("forged")) // replay
+		if n.count() != 1 {
+			t.Fatalf("a duplicate or replay must not wake anyone again, got %d", n.count())
+		}
+		if err := f.svc.Revoke(f.ctx, f.owner, ProofOf(f.allowed)); err != nil {
+			t.Fatal(err)
+		}
+		_ = f.send(f.id(), []byte("after block"))
+		if n.count() != 1 {
+			t.Fatal("a blocked sender's message is dropped and must not wake the recipient")
+		}
+		if err := f.svc.Allow(f.ctx, f.owner, ProofOf(f.allowed)); err != nil {
+			t.Fatal(err)
+		}
+		f.svc.rate = 1
+		f.now += secondsPerMinute // a fresh window holding one send
+		_ = f.send(f.id(), []byte("in budget"))
+		_ = f.send(f.id(), []byte("over budget"))
+		if n.count() != 2 {
+			t.Fatalf("a rate-limited send must not wake anyone, got %d wakes", n.count())
+		}
+	})
+}

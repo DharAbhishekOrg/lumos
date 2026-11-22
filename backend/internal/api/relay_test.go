@@ -33,15 +33,24 @@ import (
 	"github.com/dharabhishekorg/lumos/protocol/gen/go/lumoserrors"
 )
 
-func newRelayServer(t *testing.T) *httptest.Server {
-	t.Helper()
-	store := relay.NewMemoryStore()
-	return relayServerOver(t, registry.NewMemoryRepository(), store, store, store)
+// relayStack is a running server and the services behind it.
+type relayStack struct {
+	srv   *httptest.Server
+	auth  *registry.Service
+	relay *relay.Service
 }
 
-// newServerRelayServer is the deployed pairing: registry and capabilities on
-// PostgreSQL, envelopes on Redis.
-func newServerRelayServer(t *testing.T) *httptest.Server {
+func newRelayServer(t *testing.T) *httptest.Server { return newMemoryStack(t).srv }
+
+func newMemoryStack(t *testing.T) relayStack {
+	t.Helper()
+	store := relay.NewMemoryStore()
+	return relayStackOver(t, registry.NewMemoryRepository(), store, store, store)
+}
+
+// newServerStack is the deployed pairing: registry and capabilities on
+// PostgreSQL, envelopes and rate counters on Redis.
+func newServerStack(t *testing.T) relayStack {
 	t.Helper()
 	pool := testdb.Postgres(t)
 	if err := registry.Migrate(context.Background(), pool); err != nil {
@@ -49,27 +58,33 @@ func newServerRelayServer(t *testing.T) *httptest.Server {
 	}
 	rdb, ns := testdb.Redis(t)
 	mail := relay.NewRedisMailboxes(rdb, ns)
-	return relayServerOver(t, registry.NewPostgresRepository(pool),
-		relay.NewPostgresCapabilities(pool), mail, mail)
+	return relayStackOver(t, registry.NewPostgresRepository(pool), relay.NewPostgresCapabilities(pool), mail, mail)
 }
 
-func relayServerOver(t *testing.T, repo registry.Repository, caps relay.Capabilities, mail relay.Mailboxes, limiter relay.RateLimiter) *httptest.Server {
+func relayStackOver(t *testing.T, repo registry.Repository, caps relay.Capabilities, mail relay.Mailboxes, limiter relay.RateLimiter) relayStack {
 	t.Helper()
 	now := func() int64 { return 1_700_000_000 }
 	auth := registry.NewService(repo, now, rand.Reader)
+	svc := relay.NewService(caps, mail, limiter, now)
 	mux := http.NewServeMux()
 	NewRegistry(auth).Register(mux)
-	NewRelay(relay.NewService(caps, mail, limiter, now), auth).Register(mux)
+	NewRelay(svc, auth).Register(mux)
 	srv := httptest.NewServer(mux)
 	t.Cleanup(srv.Close)
-	return srv
+	return relayStack{srv: srv, auth: auth, relay: svc}
 }
 
-// eachRelayServer runs an end-to-end flow over memory and over the servers.
+// eachRelayStack runs an end-to-end flow over memory and over the servers.
+func eachRelayStack(t *testing.T, run func(t *testing.T, st relayStack)) {
+	t.Helper()
+	t.Run("memory", func(t *testing.T) { run(t, newMemoryStack(t)) })
+	t.Run("postgres+redis", func(t *testing.T) { run(t, newServerStack(t)) })
+}
+
+// eachRelayServer is eachRelayStack for flows that need only the server.
 func eachRelayServer(t *testing.T, run func(t *testing.T, srv *httptest.Server)) {
 	t.Helper()
-	t.Run("memory", func(t *testing.T) { run(t, newRelayServer(t)) })
-	t.Run("postgres+redis", func(t *testing.T) { run(t, newServerRelayServer(t)) })
+	eachRelayStack(t, func(t *testing.T, st relayStack) { run(t, st.srv) })
 }
 
 func randHex(t *testing.T, n int) string {

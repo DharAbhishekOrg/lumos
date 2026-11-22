@@ -49,6 +49,12 @@ var relayEligible = map[lumosconstants.MessageClass]bool{
 	lumosconstants.MessageClassReadReceipt:     true,
 }
 
+// Notifier is told when a new envelope waits in a mailbox, so the owner's
+// phone can be woken (WP-05 S6). It must not block.
+type Notifier interface {
+	Notify(recipient registry.DeviceID)
+}
+
 // Clock returns unix seconds.
 type Clock func() int64
 
@@ -61,6 +67,7 @@ type Service struct {
 	quota   Quota
 	ttlSec  int64
 	rate    int
+	notify  Notifier
 }
 
 // NewService builds the relay with the register's defaults.
@@ -86,6 +93,11 @@ type Send struct {
 }
 
 func wireErr(code, detail string) error { return &wire.Error{Code: code, Detail: detail} }
+
+// WakeWith sets who is told about newly stored envelopes. Only a NEW
+// envelope wakes anyone: a duplicate, a send dropped for a revoked
+// capability, a full mailbox or a rate-limited send do not.
+func (s *Service) WakeWith(n Notifier) { s.notify = n }
 
 // ProofOf is the stored form of a send capability.
 func ProofOf(capability [32]byte) [32]byte { return sha256.Sum256(capability[:]) }
@@ -123,7 +135,7 @@ func (s *Service) Submit(ctx context.Context, sender registry.Device, in Send) e
 	if !ok {
 		return nil // blocked, unmatched or never issued: accepted, not delivered
 	}
-	_, err = s.store.Put(ctx, Envelope{
+	res, err := s.store.Put(ctx, Envelope{
 		ID: in.ID, Recipient: in.Recipient, AuthProof: proof, Class: in.Class,
 		CreatedAt: now, ExpiresAt: now + s.ttlSec, Size: len(in.Payload),
 		PayloadDigest: sha256.Sum256(in.Payload), Payload: in.Payload,
@@ -133,8 +145,13 @@ func (s *Service) Submit(ctx context.Context, sender registry.Device, in Send) e
 		return wireErr(lumoserrors.ErrRelayMailboxFull, "mailbox full")
 	case errors.Is(err, ErrReplay):
 		return wireErr(lumoserrors.ErrCryptoReplay, "message id already used")
+	case err != nil:
+		return err
 	}
-	return err
+	if res == Stored && s.notify != nil {
+		s.notify.Notify(in.Recipient)
+	}
+	return nil
 }
 
 // Fetch returns the owner's waiting envelopes, oldest first.
