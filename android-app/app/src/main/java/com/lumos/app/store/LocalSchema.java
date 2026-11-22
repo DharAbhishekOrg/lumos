@@ -37,7 +37,7 @@ import java.util.List;
 public final class LocalSchema {
 
     /** The schema version this build writes and expects. */
-    public static final int VERSION = 5;
+    public static final int VERSION = 6;
 
     /** The version of an absent or empty database, before any migration runs. */
     public static final int VERSION_EMPTY = 0;
@@ -140,6 +140,11 @@ public final class LocalSchema {
             RecordKind.INTEREST_RECORD, RecordKind.MATCH_RECORD,
             RecordKind.INTEREST_BUDGET);
 
+    /** The record kinds version 6 added (WP-05 S7b). */
+    private static final List<RecordKind> VERSION_6_KINDS = List.of(
+            RecordKind.CONVERSATION, RecordKind.CHAT_MESSAGE, RecordKind.OUTBOX_ITEM,
+            RecordKind.RATCHET_SESSION, RecordKind.MESSAGE_DEDUP, RecordKind.PREKEY_SECRET);
+
     /**
      * The complete statement list taking an empty database to version 1.
      *
@@ -208,6 +213,18 @@ public final class LocalSchema {
     }
 
     /**
+     * The statements taking a version-5 database to version 6.
+     *
+     * <p>Six new tables for the chat path and nothing else - the
+     * interruption-safe shape every step of this ladder keeps.
+     *
+     * @return the ordered statements of migration 5 to 6
+     */
+    public static List<String> migrationToVersion6() {
+        return Collections.unmodifiableList(createTablesFor(VERSION_6_KINDS));
+    }
+
+    /**
      * The create-table and create-index pair for each of the given kinds.
      *
      * @param kinds the kinds a migration step introduces
@@ -240,6 +257,7 @@ public final class LocalSchema {
         ladder.add(new Migration(2, 3, migrationToVersion3()));
         ladder.add(new Migration(3, 4, migrationToVersion4()));
         ladder.add(new Migration(4, 5, migrationToVersion5()));
+        ladder.add(new Migration(5, 6, migrationToVersion6()));
         return Collections.unmodifiableList(ladder);
     }
 }
