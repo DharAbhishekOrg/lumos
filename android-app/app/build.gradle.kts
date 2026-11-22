@@ -70,20 +70,32 @@ android {
             dimension = "environment"
             applicationIdSuffix = ".dev"
             buildConfigField("String", "LUMOS_ENVIRONMENT", "\"development\"")
+            // The relay origin (https). Empty: no relay in this build until the
+            // owner's staging deploy (WP-05 S8) supplies one; the chat is nearby-only.
+            buildConfigField("String", "RELAY_BASE_URL", "\"\"")
         }
         create("qa") {
             dimension = "environment"
             applicationIdSuffix = ".qa"
             buildConfigField("String", "LUMOS_ENVIRONMENT", "\"test\"")
+            // The relay origin (https). Empty: no relay in this build until the
+            // owner's staging deploy (WP-05 S8) supplies one; the chat is nearby-only.
+            buildConfigField("String", "RELAY_BASE_URL", "\"\"")
         }
         create("staging") {
             dimension = "environment"
             applicationIdSuffix = ".staging"
             buildConfigField("String", "LUMOS_ENVIRONMENT", "\"staging\"")
+            // The relay origin (https). Empty: no relay in this build until the
+            // owner's staging deploy (WP-05 S8) supplies one; the chat is nearby-only.
+            buildConfigField("String", "RELAY_BASE_URL", "\"\"")
         }
         create("prod") {
             dimension = "environment"
             buildConfigField("String", "LUMOS_ENVIRONMENT", "\"production\"")
+            // The relay origin (https). Empty: no relay in this build until the
+            // owner's staging deploy (WP-05 S8) supplies one; the chat is nearby-only.
+            buildConfigField("String", "RELAY_BASE_URL", "\"\"")
         }
     }
 

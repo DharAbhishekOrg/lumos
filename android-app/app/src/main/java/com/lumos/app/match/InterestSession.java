@@ -2,7 +2,7 @@
  * Lumos - android-app/app / One peer's consent conversation, over real frames.
  * Author: dhar.abhishek.email@gmail.com
  * Implements: SRS-MAT-001, SRS-MAT-002, SRS-MAT-004, SRS-MAT-005, SRS-MAT-006,
- *             SRS-MAT-009, SRS-MAT-014, TRS-ARCH-009
+ *             SRS-MAT-009, SRS-MAT-014, TRS-ARCH-009, SRS-RMT-001
  * ADRs: ADR-002
  * Threading: serial-executor
  * Notes: The coordinator AT-005's logic half runs through: local actions and
@@ -15,7 +15,9 @@
  * persisted state: no conversation frame leaves or lands before MATCHED
  * (SRS-MAT-006), whoever forged it. Malformed frames are refused with their
  * stable code and change no state. The link is the Outbox seam - FrameLink
- * on a device, a loopback queue in the AT-005 test.
+ * on a device, a loopback queue in the AT-005 test. Conversation frames that
+ * pass the gate go to the ConversationSink (WP-05 S7e2b), which is how the
+ * RELAY_ROUTE swap reaches the relay layer.
  */
 
 package com.lumos.app.match;
@@ -41,6 +43,19 @@ public final class InterestSession {
         void send(byte[] frame);
     }
 
+    /** Where a conversation-class frame that passed the gate goes (WP-05 S7e2b). */
+    public interface ConversationSink {
+        /**
+         * Takes one conversation frame's content.
+         *
+         * @param messageClass its class, always one ConsentGate keeps MATCH_ONLY
+         * @param payload its payload
+         * @param state the peer's state, always MATCHED
+         * @throws StoreException on store failure
+         */
+        void deliver(MessageClass messageClass, byte[] payload, MatchMachine.State state) throws StoreException;
+    }
+
     /**
      * What happened to one inbound frame.
      *
@@ -55,6 +70,7 @@ public final class InterestSession {
     private final byte[] requestStagePreview;
     private final Outbox outbox;
 
+    private ConversationSink conversation = (cls, payload, state) -> { };
     private long sequence;
     private byte[] lastReceivedPreview = new byte[0];
 
@@ -160,7 +176,31 @@ public final class InterestSession {
         } catch (final InterestWire.WireException e) {
             return new Inbound(false, e.code(), ledger.stateOf(peerKey));
         }
-        return new Inbound(true, null, ledger.stateOf(peerKey));
+        final MatchMachine.State state = ledger.stateOf(peerKey);
+        if (ConsentGate.MATCH_ONLY.contains(mc)) {
+            conversation.deliver(mc, frame.payload(), state);
+        }
+        return new Inbound(true, null, state);
+    }
+
+    /**
+     * Routes conversation-class frames - the RELAY_ROUTE swap among them -
+     * to a consumer. Only frames the consent gate let through reach it.
+     *
+     * @param sink the consumer
+     */
+    public void onConversation(final ConversationSink sink) {
+        this.conversation = sink;
+    }
+
+    /**
+     * Where the relationship with this peer stands.
+     *
+     * @return the persisted state
+     * @throws StoreException on store failure
+     */
+    public MatchMachine.State state() throws StoreException {
+        return ledger.stateOf(peerKey);
     }
 
     /** @return the last request-stage preview this peer sent (SRS-MAT-002) */

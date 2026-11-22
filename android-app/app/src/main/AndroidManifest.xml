@@ -45,6 +45,12 @@
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_CONNECTED_DEVICE" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <!-- WP-05 S7e2b: remote text over the end-to-end encrypted relay
+         (owner ruling 2026-11-21, SRS-RMT-001). The network state is only
+         read by JobScheduler's network constraint, which runs relay passes
+         when a network is there (SRS-RMT-003). -->
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
     <!-- Feature permissions, DECLARED here and REQUESTED only when the
          related feature is first invoked (SRS-ONB-004; the table is
@@ -70,6 +76,11 @@
         android:fullBackupContent="@xml/backup_rules"
         android:label="Lumos"
         android:theme="@style/Theme.Lumos">
+
+        <service
+            android:name="com.lumos.app.relay.RelaySyncJobService"
+            android:exported="false"
+            android:permission="android.permission.BIND_JOB_SERVICE" />
 
         <service
             android:name="com.lumos.app.ble.ProximityService"

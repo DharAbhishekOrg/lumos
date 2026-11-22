@@ -153,6 +153,11 @@ Split on 2026-11-22 into three sub-slices, each merged on its own:
     the relay parts for the running app.
 - **S7f, iOS chat path.** The chat store and relay client on iOS.
 
+**Owner ruling 2026-11-23 (order):** from S7e2b on, Android and iOS alternate
+slice by slice and stay within one slice of each other: S7e2b (Android
+wiring), then S7f1 (iOS chat logic: store, relay client, prekeys, receipts,
+route swap), then S7f2 (iOS wiring), and so on for later work.
+
 ### S8: docker-compose staging and integration suite
 - Offline queue, TTL expiry, replay rejection, duplicate envelope and block
   scenarios against the composed backend.
