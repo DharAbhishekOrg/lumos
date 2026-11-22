@@ -70,6 +70,13 @@ public interface SqlDatabase extends AutoCloseable {
      * Runs work inside a transaction, committing on return and rolling back on
      * any thrown exception.
      *
+     * <p>Transactions nest, with Android SQLite's semantics: an inner call
+     * joins the outer transaction, only the outermost one commits, and a
+     * failure in any inner body rolls back EVERYTHING - even if the outer
+     * body caught the exception and carried on. That is what lets several
+     * record writes (a message, its outbox item and the ratchet state that
+     * sealed it) be one atomic step (TRS Sec. 8.3).
+     *
      * @param <T> the work's result type
      * @param body the unit of work
      * @return the work's result

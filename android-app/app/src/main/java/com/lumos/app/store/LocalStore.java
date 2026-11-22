@@ -155,6 +155,20 @@ public final class LocalStore {
     }
 
     /**
+     * Runs several store operations as ONE transaction: all of them land or
+     * none does (TRS Sec. 8.3). Operations inside may call {@link #put} and
+     * {@link #delete} freely; their own transactions join this one.
+     *
+     * @param <T> the work's result type
+     * @param body the work
+     * @return the work's result
+     * @throws StoreException if any operation fails; nothing is written then
+     */
+    public <T> T transaction(final SqlDatabase.TransactionBody<T> body) throws StoreException {
+        return database.inTransaction(body);
+    }
+
+    /**
      * Writes a record, sealing its payload.
      *
      * @param kind the record's table

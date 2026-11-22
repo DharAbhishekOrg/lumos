@@ -12,6 +12,14 @@
  * cap and a TTL pruned against the CALLER's clock (TRS-CRY-007), so the
  * machine stays deterministic. Every failure carries a stable registry code
  * (TRS-CRY-013). Not safe for concurrent use: one serial executor per session.
+ *
+ * exportState/restoreState (WP-05 S7b) serialise the whole TRS-CRY-002 state,
+ * skipped keys included, so a session survives process death (SRS-RMT-017).
+ * The bytes ARE key material: the caller stores them sealed (the app's
+ * LocalStore) and writes them in the same transaction as the message they
+ * sealed or opened, so a restart can never return to a state that still
+ * holds a key already used. A failed decrypt changes this object, so callers
+ * persist only after success and otherwise discard it and restore again.
  */
 
 package com.lumos.protocol.ratchet;
@@ -20,6 +28,8 @@ import com.lumos.protocol.LumosConstants;
 import com.lumos.protocol.LumosErrors;
 import com.lumos.protocol.wire.Frame;
 import com.lumos.protocol.wire.LumosCrypto;
+import java.io.ByteArrayOutputStream;
+import java.nio.BufferUnderflowException;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
@@ -166,6 +176,11 @@ public final class DoubleRatchet {
     private final Map<String, Skipped> skip = new HashMap<>();
     private final Bounds bounds;
 
+    /** The exported state's format version. */
+    private static final int STATE_FORMAT = 1;
+    private static final int U32 = 4;
+    private static final long U32_MASK = 0xFFFFFFFFL;
+
     private DoubleRatchet(final byte[] sk, final byte[] ad, final byte[] ownPriv, final Bounds bounds)
             throws GeneralSecurityException {
         this.rk = sk.clone();
@@ -274,6 +289,104 @@ public final class DoubleRatchet {
         ckr = step[1];
         nr++;
         return open(step[0], h, ciphertext);
+    }
+
+    /**
+     * Serialises the complete session state, skipped keys included.
+     *
+     * @return the state bytes; key material, to be stored sealed
+     */
+    public byte[] exportState() {
+        final ByteArrayOutputStream out = new ByteArrayOutputStream();
+        out.write(STATE_FORMAT);
+        out.writeBytes(dhsPriv);
+        writeOptional(out, dhr);
+        out.writeBytes(rk);
+        writeOptional(out, cks);
+        writeOptional(out, ckr);
+        out.writeBytes(ByteBuffer.allocate(3 * U32).putInt((int) ns).putInt((int) nr).putInt((int) pn).array());
+        out.writeBytes(ByteBuffer.allocate(2).putShort((short) ad.length).array());
+        out.writeBytes(ad);
+        out.writeBytes(ByteBuffer.allocate(U32).putInt(skip.size()).array());
+        for (final Map.Entry<String, Skipped> e : skip.entrySet()) {
+            final int colon = e.getKey().indexOf(':');
+            out.writeBytes(HexFormat.of().parseHex(e.getKey().substring(0, colon)));
+            out.writeBytes(ByteBuffer.allocate(U32 + KEY_LEN + Long.BYTES)
+                    .putInt((int) Long.parseLong(e.getKey().substring(colon + 1)))
+                    .put(e.getValue().mk()).putLong(e.getValue().storedAt()).array());
+        }
+        return out.toByteArray();
+    }
+
+    private static void writeOptional(final ByteArrayOutputStream out, final byte[] key) {
+        out.write(key == null ? 0 : 1);
+        if (key != null) {
+            out.writeBytes(key);
+        }
+    }
+
+    private static byte[] readKey(final ByteBuffer in) {
+        final byte[] k = new byte[KEY_LEN];
+        in.get(k);
+        return k;
+    }
+
+    /** Reads the presence flag of an optional key: true when the key follows. */
+    private static boolean present(final ByteBuffer in) throws Frame.WireException {
+        final int flag = in.get();
+        if (flag != 0 && flag != 1) {
+            throw new Frame.WireException(LumosErrors.ERR_PAYLOAD_MALFORMED, "bad ratchet state flag");
+        }
+        return flag == 1;
+    }
+
+    /**
+     * Rebuilds a session from {@link #exportState()}.
+     *
+     * @param state the exported bytes
+     * @param bounds denial-of-service limits (from the register, not stored)
+     * @return the session, exactly as it was exported
+     * @throws Frame.WireException ERR_PAYLOAD_MALFORMED when the bytes are not a state
+     */
+    public static DoubleRatchet restoreState(final byte[] state, final Bounds bounds) throws Frame.WireException {
+        try {
+            final ByteBuffer in = ByteBuffer.wrap(state);
+            if (in.get() != STATE_FORMAT) {
+                throw new Frame.WireException(LumosErrors.ERR_PAYLOAD_MALFORMED, "unknown ratchet state format");
+            }
+            final byte[] dhsPriv = readKey(in);
+            final byte[] dhr = present(in) ? readKey(in) : null;
+            final byte[] rk = readKey(in);
+            final byte[] cks = present(in) ? readKey(in) : null;
+            final byte[] ckr = present(in) ? readKey(in) : null;
+            final long ns = in.getInt() & U32_MASK;
+            final long nr = in.getInt() & U32_MASK;
+            final long pn = in.getInt() & U32_MASK;
+            final byte[] ad = new byte[in.getShort() & 0xFFFF];
+            in.get(ad);
+            final DoubleRatchet s = new DoubleRatchet(rk, ad, dhsPriv, bounds);
+            s.dhr = dhr;
+            s.cks = cks;
+            s.ckr = ckr;
+            s.ns = ns;
+            s.nr = nr;
+            s.pn = pn;
+            final long count = in.getInt() & U32_MASK;
+            if (count > s.bounds.skippedCap()) {
+                throw new Frame.WireException(LumosErrors.ERR_PAYLOAD_MALFORMED, "skipped keys exceed the cap");
+            }
+            for (long i = 0; i < count; i++) {
+                final byte[] dh = readKey(in);
+                final long n = in.getInt() & U32_MASK;
+                s.skip.put(skipKey(dh, n), new Skipped(readKey(in), in.getLong()));
+            }
+            if (in.hasRemaining()) {
+                throw new Frame.WireException(LumosErrors.ERR_PAYLOAD_MALFORMED, "trailing ratchet state bytes");
+            }
+            return s;
+        } catch (final BufferUnderflowException | GeneralSecurityException e) {
+            throw new Frame.WireException(LumosErrors.ERR_PAYLOAD_MALFORMED, "ratchet state truncated or invalid");
+        }
     }
 
     private void skipMessageKeys(final long until, final long now) throws Frame.WireException {
