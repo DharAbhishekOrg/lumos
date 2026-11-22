@@ -76,6 +76,9 @@ public enum RecordKind: String, CaseIterable, Sendable {
     /// This device's relay registration (routing id and credential), one
     /// sealed row. Added at version 7 (WP-05 S7c).
     case relayAccount = "relay_account"
+    /// One conversation's relay route, keyed by the match id's blind index.
+    /// Added at version 7.
+    case relayRoute = "relay_route"
 
     /// The table name for this kind.
     public var table: String { rawValue }
@@ -87,7 +90,7 @@ public enum RecordKind: String, CaseIterable, Sendable {
     public var isLookedUpByTag: Bool {
         switch self {
         case .blockEntry, .hiddenPeer, .interestRecord, .matchRecord,
-             .conversation, .chatMessage, .ratchetSession, .prekeySecret: return true
+             .conversation, .chatMessage, .ratchetSession, .prekeySecret, .relayRoute: return true
         default: return false
         }
     }
@@ -193,7 +196,7 @@ public enum LocalSchema {
     ]
 
     /// The record kinds version 7 added (WP-05 S7c).
-    private static let version7Kinds: [RecordKind] = [.relayAccount]
+    private static let version7Kinds: [RecordKind] = [.relayAccount, .relayRoute]
 
     /// The complete statement list taking an empty database to version 1.
     public static var migrationToVersion1: [String] {
@@ -226,7 +229,7 @@ public enum LocalSchema {
     public static var migrationToVersion6: [String] { createTables(for: version6Kinds) }
 
     /// The statements taking a version-6 database to version 7: the relay
-    /// account table and nothing else.
+    /// account and relay route tables and nothing else.
     public static var migrationToVersion7: [String] { createTables(for: version7Kinds) }
 
     /// The create-table and create-index pair for each of the given kinds.

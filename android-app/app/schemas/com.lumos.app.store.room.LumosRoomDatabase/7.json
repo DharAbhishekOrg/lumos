@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 7,
-    "identityHash": "3b2b01639bd1a842b8259f633e58b0cc",
+    "identityHash": "6fdc3c9b94b972fb090a1837f1254b96",
     "entities": [
       {
         "tableName": "identity_key_record",
@@ -1001,11 +1001,58 @@
             "id"
           ]
         }
+      },
+      {
+        "tableName": "relay_route",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `payload` BLOB NOT NULL, `lookup_tag` BLOB, `created_at` INTEGER NOT NULL, `updated_at` INTEGER NOT NULL, `payload_version` INTEGER NOT NULL, PRIMARY KEY(`id`))",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "payload",
+            "columnName": "payload",
+            "affinity": "BLOB",
+            "notNull": true
+          },
+          {
+            "fieldPath": "lookupTag",
+            "columnName": "lookup_tag",
+            "affinity": "BLOB"
+          },
+          {
+            "fieldPath": "createdAt",
+            "columnName": "created_at",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "updatedAt",
+            "columnName": "updated_at",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "payloadVersion",
+            "columnName": "payload_version",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "id"
+          ]
+        }
       }
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '3b2b01639bd1a842b8259f633e58b0cc')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '6fdc3c9b94b972fb090a1837f1254b96')"
     ]
   }
 }

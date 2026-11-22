@@ -117,13 +117,25 @@ Split on 2026-11-22 into three sub-slices, each merged on its own:
   in-memory relay with the S5 semantics; the real cross-stack run is S8's.
   A conversation's relay route (the peer's routing id, the capability to
   send to it and the capability this device issued) is an input here.
-- **S7d, route exchange and receipts.** How matched devices hand each other
+- **S7d, Android chat crypto on libsodium.** Found during S7c (2026-11-23):
+  protocol-java's LumosCrypto builds X25519 and Ed25519 keys through
+  XECPublicKeySpec, NamedParameterSpec and EdECPoint and agrees through JCA
+  "XDH", all of which Android added at API 33. The app supports API 26, so on
+  Android 8 to 12 the chat path (X3DH, ratchet, remote sessions) cannot run.
+  Nothing reaches it from the UI yet, so no user is exposed. The fix is
+  ADR-001's own answer and the one identity already took: a primitive seam in
+  protocol-java, JCA behind it on the JVM, libsodium (already shipped as
+  Lazysodium) behind it in the app. Proven on the CI emulator, which runs
+  API 30, by replaying the chat vector families there; the lumoslint
+  minsdk-api rule gains the API-33 key classes and algorithm names so the
+  JCA path cannot creep back into shipped code.
+- **S7e, route exchange and receipts.** How matched devices hand each other
   their relay route over the authenticated nearby session, and the delivery
   and read receipts that move the ticks past one (SRS-RMT-005, SRS-RMT-014).
   Both are new bytes on the wire, so both get the S7a treatment: Go
   reference, vectors, Java and Swift. The app's INTERNET permission and the
   wiring of the client into the running app come with it.
-- **S7e, iOS chat path.** The chat store and relay client on iOS.
+- **S7f, iOS chat path.** The chat store and relay client on iOS.
 
 ### S8: docker-compose staging and integration suite
 - Offline queue, TTL expiry, replay rejection, duplicate envelope and block

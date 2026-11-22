@@ -146,7 +146,7 @@ public final class LocalSchema {
             RecordKind.RATCHET_SESSION, RecordKind.MESSAGE_DEDUP, RecordKind.PREKEY_SECRET);
 
     /** The record kinds version 7 added (WP-05 S7c). */
-    private static final List<RecordKind> VERSION_7_KINDS = List.of(RecordKind.RELAY_ACCOUNT);
+    private static final List<RecordKind> VERSION_7_KINDS = List.of(RecordKind.RELAY_ACCOUNT, RecordKind.RELAY_ROUTE);
 
     /**
      * The complete statement list taking an empty database to version 1.
@@ -230,7 +230,8 @@ public final class LocalSchema {
     /**
      * The statements taking a version-6 database to version 7.
      *
-     * <p>One new table for the relay registration and nothing else.
+     * <p>Two new tables, the relay registration and the per-conversation
+     * relay routes, and nothing else.
      *
      * @return the ordered statements of migration 6 to 7
      */

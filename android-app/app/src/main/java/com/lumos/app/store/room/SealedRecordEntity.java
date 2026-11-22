@@ -142,4 +142,8 @@ public class SealedRecordEntity {
     /** This device's relay registration. Schema version 7. */
     @Entity(tableName = "relay_account")
     public static class RelayAccountRow extends SealedRecordEntity { }
+
+    /** One conversation's relay route. Schema version 7. */
+    @Entity(tableName = "relay_route")
+    public static class RelayRouteRow extends SealedRecordEntity { }
 }

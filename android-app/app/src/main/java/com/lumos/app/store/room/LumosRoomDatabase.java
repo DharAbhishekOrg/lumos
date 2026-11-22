@@ -58,6 +58,7 @@ import com.lumos.app.store.LocalSchema;
             SealedRecordEntity.MessageDedupRow.class,
             SealedRecordEntity.PrekeySecretRow.class,
             SealedRecordEntity.RelayAccountRow.class,
+            SealedRecordEntity.RelayRouteRow.class,
         },
         version = LocalSchema.VERSION,
         exportSchema = true)
@@ -163,8 +164,8 @@ public abstract class LumosRoomDatabase extends RoomDatabase {
 
     /**
      * Room's version of the canonical 6-to-7 step (WP-05 S7c): the relay
-     * account table, then the canonical version in the meta table - the same shape
-     * as every step before it.
+     * account and relay route tables, then the canonical version in the meta
+     * table - the same shape as every step before it.
      */
     public static final Migration MIGRATION_6_7 = new Migration(6, 7) {
         @Override
