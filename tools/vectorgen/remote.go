@@ -46,6 +46,9 @@ type bytesNegative struct {
 }
 
 type remoteParty struct {
+	IdentityEdPubHex  string   `json:"identity_ed_pub_hex"`
+	IdentityDHPubHex  string   `json:"identity_dh_pub_hex"`
+	IdentityDHSigHex  string   `json:"identity_dh_sig_hex"`
 	IdentityEdSeedHex string   `json:"testonly_identity_ed_seed_hex"`
 	IdentityDHPrivHex string   `json:"testonly_identity_dh_priv_hex"`
 	TurnPrivsHex      []string `json:"testonly_ratchet_turn_privs_hex"`
@@ -59,8 +62,11 @@ type remoteAlice struct {
 
 type remoteBob struct {
 	remoteParty
+	SPKPubHex  string `json:"spk_pub_hex"`
+	SPKSigHex  string `json:"spk_sig_hex"`
 	SPKPrivHex string `json:"testonly_spk_priv_hex"`
 	SPKID      uint32 `json:"spk_id"`
+	OPKPubHex  string `json:"opk_pub_hex"`
 	OPKPrivHex string `json:"testonly_opk_priv_hex"`
 	OPKID      uint32 `json:"opk_id"`
 }
@@ -216,16 +222,26 @@ func newSessionKeys() (*sessionKeys, error) {
 		return nil, err
 	}
 	h := func(b []byte) string { return hex.EncodeToString(b) }
+	party := func(ed ed25519.PrivateKey, dh *ecdh.PrivateKey, turns []string) remoteParty {
+		return remoteParty{
+			IdentityEdPubHex: h(ed.Public().(ed25519.PublicKey)), IdentityDHPubHex: h(dh.PublicKey().Bytes()),
+			IdentityDHSigHex:  h(x3dh.SignIdentityDH(ed, dh.PublicKey())),
+			IdentityEdSeedHex: h(ed.Seed()), IdentityDHPrivHex: h(dh.Bytes()), TurnPrivsHex: turns,
+		}
+	}
 	k.file = remoteSession{
 		MatchIDHex: h(vectorMatchID[:]),
 		Now:        1_700_000_000,
 		Alice: remoteAlice{
-			remoteParty:      remoteParty{IdentityEdSeedHex: h(k.aliceEd.Seed()), IdentityDHPrivHex: h(k.aliceDH.Bytes()), TurnPrivsHex: aliceTurnHex},
+			remoteParty:      party(k.aliceEd, k.aliceDH, aliceTurnHex),
 			EphemeralPrivHex: h(k.eph.Bytes()), FirstRatchetPrivHex: h(k.aliceFirst.Bytes()),
 		},
 		Bob: remoteBob{
-			remoteParty: remoteParty{IdentityEdSeedHex: h(k.bobEd.Seed()), IdentityDHPrivHex: h(k.bobDH.Bytes()), TurnPrivsHex: bobTurnHex},
-			SPKPrivHex:  h(k.bobSPK.Bytes()), SPKID: 7, OPKPrivHex: h(k.bobOPK.Bytes()), OPKID: 42,
+			remoteParty: party(k.bobEd, k.bobDH, bobTurnHex),
+			SPKPubHex:   h(k.bobSPK.PublicKey().Bytes()),
+			SPKSigHex:   h(x3dh.SignPrekey(k.bobEd, 7, k.bobSPK.PublicKey())),
+			SPKPrivHex:  h(k.bobSPK.Bytes()), SPKID: 7,
+			OPKPubHex: h(k.bobOPK.PublicKey().Bytes()), OPKPrivHex: h(k.bobOPK.Bytes()), OPKID: 42,
 		},
 	}
 	return k, nil
