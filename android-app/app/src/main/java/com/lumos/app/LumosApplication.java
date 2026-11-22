@@ -1,28 +1,65 @@
 /*
- * Lumos - android-app/app / The process entry point: installs the crypto backend before anything else runs.
+ * Lumos - android-app/app / The process entry point: the crypto backend first, then the relay plumbing.
  * Author: dhar.abhishek.email@gmail.com
- * Implements: TRS-CRY-001, TRS-CRY-003
- * ADRs: ADR-001
+ * Implements: TRS-CRY-001, TRS-CRY-003, SRS-RMT-003, TRS-TRN-012
+ * ADRs: ADR-001, ADR-012
  * Threading: main
  * Notes: Android creates the Application before any activity, service or
- * receiver, so installing here means no protocol code - HELLO verification
- * in the proximity service, X3DH, the ratchet - can ever reach the JCA
- * backend, which cannot run below API 33 (WP-05 S7d). Loading libsodium is
- * a few milliseconds of native-library load; nothing else happens here.
+ * receiver, so installing libsodium here means no protocol code - HELLO
+ * verification in the proximity service, X3DH, the ratchet - can ever reach
+ * the JCA backend, which cannot run below API 33 (WP-05 S7d). It then makes
+ * sure the periodic relay poll exists (it only ever runs with a network) and
+ * owns the one serial executor every relay pass runs on. The chat runtime is
+ * booted lazily on that executor, never on the main thread, and only once.
  */
 
 package com.lumos.app;
 
 import android.app.Application;
 import com.lumos.app.crypto.LibsodiumCryptoBackend;
+import com.lumos.app.relay.ChatRuntime;
+import com.lumos.app.relay.RelayJobs;
 import com.lumos.protocol.wire.LumosCrypto;
+import java.io.IOException;
+import java.security.GeneralSecurityException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /** The Lumos process. */
 public final class LumosApplication extends Application {
+
+    private final ExecutorService relayExecutor = Executors.newSingleThreadExecutor();
+    private ChatRuntime runtime;
+    private boolean booted;
 
     @Override
     public void onCreate() {
         super.onCreate();
         LumosCrypto.install(LibsodiumCryptoBackend.load());
+        if (!BuildConfig.RELAY_BASE_URL.isEmpty()) {
+            RelayJobs.ensurePeriodic(this);
+        }
+    }
+
+    /** @return the one serial executor relay passes run on */
+    public ExecutorService relayExecutor() {
+        return relayExecutor;
+    }
+
+    /**
+     * The chat runtime, booted on first use. Call on the relay executor only.
+     *
+     * @return the runtime, or null when the relay is not configured or this install has not onboarded
+     * @throws IOException when the key root file is unreadable
+     * @throws GeneralSecurityException when the keystore refuses the KEK
+     * @throws com.lumos.app.store.StoreException when the database cannot be opened
+     */
+    public synchronized ChatRuntime runtime()
+            throws IOException, GeneralSecurityException, com.lumos.app.store.StoreException {
+        if (!booted) {
+            runtime = AppBoot.boot(this);
+            booted = runtime != null;
+        }
+        return runtime;
     }
 }

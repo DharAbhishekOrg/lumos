@@ -487,7 +487,7 @@
     "ADR-008",
     "ADR-010"
    ],
-   "last_commit": "2e25a7b",
+   "last_commit": "1ce9da2",
    "updated": "2026-11-22"
   },
   {
@@ -764,12 +764,14 @@
    "status": "tested",
    "code": [
     "android-app/app/src/main/java/com/lumos/app/match/InterestSession.java",
+    "android-app/app/src/main/java/com/lumos/app/relay/NearbyRouteSwap.java",
     "android-app/app/src/main/java/com/lumos/app/relay/RouteExchange.java",
     "android-app/protocol-java/src/main/java/com/lumos/protocol/match/ConsentGate.java",
     "ios-app/protocol-conformance/Sources/LumosProtocol/Match.swift"
    ],
    "tests": [
     "java:app-dev:MutualConsentFlowTest.aDeclineTransmitsNothingAndNoConversationCrossesBeforeAMatch",
+    "java:app-dev:NearbyRouteSwapTest.aForgedRouteBeforeAMatchIsRefusedByTheGateAndNeverStored",
     "java:app-dev:RelayReceiptsTest.aRouteIsOfferedAndTakenOnlyAfterAMatchAndOnlyWellFormed",
     "java:protocol-conformance:ConsentGateTest.conversationNeverFlowsBeforeAMatchAndConsentNeverAfterABlock",
     "java:protocol-conformance:ConsentGateTest.everyClassIsDecidedExactlyOnce",
@@ -779,7 +781,7 @@
    "adr": [
     "ADR-002"
    ],
-   "last_commit": "2e25a7b",
+   "last_commit": "1ce9da2",
    "updated": "2026-11-22"
   },
   {
@@ -3159,7 +3161,7 @@
     "ADR-003",
     "ADR-010"
    ],
-   "last_commit": "2e25a7b",
+   "last_commit": "1ce9da2",
    "updated": "2026-11-22"
   },
   {
@@ -4176,8 +4178,11 @@
    "req_id": "SRS-RMT-001",
    "status": "implemented",
    "code": [
+    "android-app/app/src/main/java/com/lumos/app/AppBoot.java",
     "android-app/app/src/main/java/com/lumos/app/chat/ChatRecords.java",
     "android-app/app/src/main/java/com/lumos/app/chat/ChatStore.java",
+    "android-app/app/src/main/java/com/lumos/app/relay/ChatRuntime.java",
+    "android-app/app/src/main/java/com/lumos/app/relay/NearbyRouteSwap.java",
     "android-app/app/src/main/java/com/lumos/app/relay/PrekeyPublisher.java",
     "android-app/app/src/main/java/com/lumos/app/relay/RelayClient.java",
     "android-app/app/src/main/java/com/lumos/app/relay/RelayRoutes.java",
@@ -4200,7 +4205,9 @@
     "go:protocol/chat:TestAnOfflinePeerOpensPrekeyEnvelopesOutOfOrderAndTheSessionSettles",
     "go:protocol/chat:TestCommittedRoutesAndReceiptsDecodeAndReencode",
     "go:protocol/chat:TestTheCommittedSessionReplaysByteForByte",
+    "java:app-dev:ChatRuntimeTest.onboardingsIdentitiesChatThroughTheAssembledRuntime",
     "java:app-dev:ChatStoreTest.twoDevicesChatThroughTheirOutboxesWhileOneIsOffline",
+    "java:app-dev:NearbyRouteSwapTest.theRoutesCrossOnceAfterTheMatchAndTheyChatOverTheRelay",
     "java:app-dev:RelayReceiptsTest.oneTickWhenTheRelayTakesItTwoOnlyFromTheDeliveredReceiptBlueOnlyFromTheRead",
     "java:app-dev:RelaySyncTest.aMessageCrossesTheRelayShowsOnceAndIsOneTickNotDelivered",
     "java:protocol-conformance:ReceiptsConformanceTest.everyRouteAndReceiptDecodesAndReencodesByteForByte",
@@ -4210,7 +4217,7 @@
    ],
    "evidence": [],
    "adr": [],
-   "last_commit": "2e25a7b",
+   "last_commit": "1ce9da2",
    "updated": "2026-11-22"
   },
   {
@@ -4235,12 +4242,16 @@
    "code": [
     "android-app/app/src/main/java/com/lumos/app/chat/ChatRecords.java",
     "android-app/app/src/main/java/com/lumos/app/chat/ChatStore.java",
-    "android-app/app/src/main/java/com/lumos/app/relay/RelaySync.java"
+    "android-app/app/src/main/java/com/lumos/app/relay/RelayJobs.java",
+    "android-app/app/src/main/java/com/lumos/app/relay/RelaySchedule.java",
+    "android-app/app/src/main/java/com/lumos/app/relay/RelaySync.java",
+    "android-app/app/src/main/java/com/lumos/app/relay/RelaySyncJobService.java"
    ],
    "tests": [
     "java:app-dev:ChatStoreTest.aRestartLosesNothingAndReusesNoKey",
     "java:app-dev:ChatStoreTest.twoDevicesChatThroughTheirOutboxesWhileOneIsOffline",
     "java:app-dev:RelayClientTest.everyAnswerIsSortedByWhatTheCallerDoesNext",
+    "java:app-dev:RelayScheduleTest.everyOutcomeHasOneNextStep",
     "java:app-dev:RelaySyncTest.aFullMailboxHoldsThatConversationInOrderWhileAnotherFlows",
     "java:app-dev:RelaySyncTest.killedJustBeforeTheRelayTookASendNothingIsLost",
     "java:app-dev:RelaySyncTest.offlineEverythingWaitsInOrderAndGoesWhenThePathReturns",
@@ -4248,7 +4259,7 @@
    ],
    "evidence": [],
    "adr": [],
-   "last_commit": "826c3e2",
+   "last_commit": "1ce9da2",
    "updated": "2026-11-22"
   },
   {
@@ -4341,6 +4352,7 @@
    "status": "implemented",
    "code": [
     "android-app/app/src/main/java/com/lumos/app/crypto/LibsodiumCryptoBackend.java",
+    "android-app/app/src/main/java/com/lumos/app/identity/ChatIdentity.java",
     "android-app/protocol-java/src/main/java/com/lumos/protocol/chat/RemoteSession.java",
     "android-app/protocol-java/src/main/java/com/lumos/protocol/chat/RemoteText.java",
     "android-app/protocol-java/src/main/java/com/lumos/protocol/x3dh/X3dh.java",
@@ -4354,6 +4366,7 @@
     "go:protocol/chat:TestInitiateRefusesAnUnsignedBundle",
     "go:protocol/chat:TestRespondRefusesWhatTheMatchDidNotPin",
     "go:protocol/chat:TestTheCommittedSessionReplaysByteForByte",
+    "java:app-dev:ChatRuntimeTest.onboardingsIdentitiesChatThroughTheAssembledRuntime",
     "java:app-instrumented:ChatCryptoInstrumentedTest.everyRatchetSequenceDecryptsByteForByte",
     "java:app-instrumented:ChatCryptoInstrumentedTest.theScriptedRemoteTextSessionReplaysByteForByte",
     "java:app-instrumented:ChatCryptoInstrumentedTest.x3dhAgreesFromBothSidesAndRefusesBadBundles",
@@ -4362,7 +4375,7 @@
    ],
    "evidence": [],
    "adr": [],
-   "last_commit": "30420a4",
+   "last_commit": "1ce9da2",
    "updated": "2026-11-22"
   },
   {
@@ -4619,15 +4632,17 @@
    "req_id": "SRS-RMT-018",
    "status": "implemented",
    "code": [
+    "android-app/app/src/main/java/com/lumos/app/relay/ChatRuntime.java",
     "android-app/app/src/main/java/com/lumos/app/relay/RelayClient.java",
     "android-app/app/src/main/java/com/lumos/app/relay/RelaySync.java"
    ],
    "tests": [
+    "java:app-dev:NearbyRouteSwapTest.theRoutesCrossOnceAfterTheMatchAndTheyChatOverTheRelay",
     "java:app-dev:RelaySyncTest.aMessageCrossesTheRelayShowsOnceAndIsOneTickNotDelivered"
    ],
    "evidence": [],
    "adr": [],
-   "last_commit": "826c3e2",
+   "last_commit": "1ce9da2",
    "updated": "2026-11-22"
   },
   {
@@ -5517,7 +5532,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "2e25a7b",
+   "last_commit": "1ce9da2",
    "updated": "2026-11-22"
   },
   {
@@ -5527,7 +5542,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "2e25a7b",
+   "last_commit": "1ce9da2",
    "updated": "2026-11-22"
   },
   {
@@ -5537,7 +5552,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "2e25a7b",
+   "last_commit": "1ce9da2",
    "updated": "2026-11-22"
   },
   {
@@ -5561,7 +5576,7 @@
    "adr": [
     "ADR-003"
    ],
-   "last_commit": "2e25a7b",
+   "last_commit": "1ce9da2",
    "updated": "2026-11-22"
   },
   {
@@ -5583,7 +5598,7 @@
    "adr": [
     "ADR-002"
    ],
-   "last_commit": "2e25a7b",
+   "last_commit": "1ce9da2",
    "updated": "2026-11-22"
   },
   {
@@ -5602,7 +5617,7 @@
    "adr": [
     "ADR-002"
    ],
-   "last_commit": "2e25a7b",
+   "last_commit": "1ce9da2",
    "updated": "2026-11-22"
   },
   {
@@ -5612,7 +5627,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "2e25a7b",
+   "last_commit": "1ce9da2",
    "updated": "2026-11-22"
   },
   {
@@ -5622,7 +5637,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "2e25a7b",
+   "last_commit": "1ce9da2",
    "updated": "2026-11-22"
   },
   {
@@ -5632,7 +5647,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "2e25a7b",
+   "last_commit": "1ce9da2",
    "updated": "2026-11-22"
   },
   {
@@ -5642,7 +5657,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "2e25a7b",
+   "last_commit": "1ce9da2",
    "updated": "2026-11-22"
   },
   {
@@ -5652,7 +5667,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "2e25a7b",
+   "last_commit": "1ce9da2",
    "updated": "2026-11-22"
   },
   {
@@ -5662,7 +5677,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "2e25a7b",
+   "last_commit": "1ce9da2",
    "updated": "2026-11-22"
   },
   {
@@ -7629,24 +7644,28 @@
    "req_id": "TRS-LOC-002",
    "status": "tested",
    "code": [
-    "android-app/app/src/main/java/com/lumos/app/store/SealedRecordCodec.java",
+    "android-app/app/src/main/java/com/lumos/app/AppBoot.java",
     "android-app/app/src/main/java/com/lumos/app/data/DataKeyHierarchy.java",
-    "ios-app/shell/Sources/LumosAppShell/LocalStore.swift",
-    "ios-app/shell/Sources/LumosAppShell/DataKeyHierarchy.swift"
+    "android-app/app/src/main/java/com/lumos/app/data/KeyRootFile.java",
+    "android-app/app/src/main/java/com/lumos/app/store/SealedRecordCodec.java",
+    "ios-app/shell/Sources/LumosAppShell/DataKeyHierarchy.swift",
+    "ios-app/shell/Sources/LumosAppShell/LocalStore.swift"
    ],
    "tests": [
-    "java:app-dev:StorageEncryptionTest.noSensitiveValueAppearsInTheDatabaseFile",
-    "java:app-dev:StorageEncryptionTest.aDifferentDatabaseKeyCannotOpenTheRecords",
+    "go:tools/schemacheck:TestBothPlatformsDeclareTheSameSchema",
+    "java:app-dev:KeyRootFileTest.aRootRoundTripsAndReplacesTheOldOneWhole",
+    "java:app-dev:KeyRootFileTest.anythingThatIsNotAKeyRootIsAnError",
     "java:app-dev:LocalStoreTest.blockEntriesAreFoundByBlindIndexWithoutStoringThePeerIdentifier",
-    "swift:LumosAppShell:LocalStoreTests.testNoSensitiveValueAppearsInTheDatabaseFile",
+    "java:app-dev:StorageEncryptionTest.aDifferentDatabaseKeyCannotOpenTheRecords",
+    "java:app-dev:StorageEncryptionTest.noSensitiveValueAppearsInTheDatabaseFile",
     "swift:LumosAppShell:LocalStoreTests.testBlockEntriesAreFoundByBlindIndexWithoutStoringThePeerIdentifier",
-    "go:tools/schemacheck:TestBothPlatformsDeclareTheSameSchema"
+    "swift:LumosAppShell:LocalStoreTests.testNoSensitiveValueAppearsInTheDatabaseFile"
    ],
    "evidence": [],
    "adr": [
     "ADR-003"
    ],
-   "last_commit": "826c3e2",
+   "last_commit": "1ce9da2",
    "updated": "2026-11-22"
   },
   {
@@ -8753,7 +8772,7 @@
    ],
    "evidence": [],
    "adr": [],
-   "last_commit": "2e25a7b",
+   "last_commit": "1ce9da2",
    "updated": "2026-11-22"
   },
   {
@@ -8814,7 +8833,7 @@
    ],
    "evidence": [],
    "adr": [],
-   "last_commit": "2e25a7b",
+   "last_commit": "1ce9da2",
    "updated": "2026-11-22"
   },
   {
@@ -8837,8 +8856,8 @@
     "ADR-010",
     "ADR-011"
    ],
-   "last_commit": "059b325",
-   "updated": "2026-08-18"
+   "last_commit": "1ce9da2",
+   "updated": "2026-11-22"
   },
   {
    "req_id": "TRS-TRN-001",
@@ -8985,14 +9004,17 @@
    "req_id": "TRS-TRN-012",
    "status": "implemented",
    "code": [
+    "android-app/app/src/main/java/com/lumos/app/relay/RelayJobs.java",
+    "android-app/app/src/main/java/com/lumos/app/relay/RelaySchedule.java",
     "android-app/app/src/main/java/com/lumos/app/relay/RelaySync.java"
    ],
    "tests": [
+    "java:app-dev:RelayScheduleTest.everyOutcomeHasOneNextStep",
     "java:app-dev:RelaySyncTest.offlineEverythingWaitsInOrderAndGoesWhenThePathReturns"
    ],
    "evidence": [],
    "adr": [],
-   "last_commit": "826c3e2",
+   "last_commit": "1ce9da2",
    "updated": "2026-11-22"
   },
   {
