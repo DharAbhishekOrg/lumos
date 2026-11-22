@@ -15,6 +15,7 @@
 
 package com.lumos.app.relay;
 
+import android.app.Application;
 import android.app.job.JobParameters;
 import android.app.job.JobService;
 import com.lumos.app.LumosApplication;
@@ -24,10 +25,11 @@ public final class RelaySyncJobService extends JobService {
 
     @Override
     public boolean onStartJob(final JobParameters params) {
-        if (!(getApplication() instanceof LumosApplication)) {
+        final Application application = getApplication();
+        if (!(application instanceof LumosApplication)) {
             return false;
         }
-        final LumosApplication app = (LumosApplication) getApplication();
+        final LumosApplication app = (LumosApplication) application;
         app.relayExecutor().execute(() -> jobFinished(params, runPasses(app)));
         return true;
     }
