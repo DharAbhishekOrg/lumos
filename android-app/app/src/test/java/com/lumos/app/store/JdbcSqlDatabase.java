@@ -39,6 +39,11 @@ import java.util.Map;
  */
 public final class JdbcSqlDatabase implements SqlDatabase {
 
+    /** How deep the current transaction is nested; 0 outside one. */
+    private int depth;
+    /** Set when a nested body failed: the outermost transaction must roll back. */
+    private boolean rollbackOnly;
+
     private final Connection connection;
 
     private JdbcSqlDatabase(final Connection connection) {
@@ -140,8 +145,27 @@ public final class JdbcSqlDatabase implements SqlDatabase {
 
     @Override
     public <T> T inTransaction(final TransactionBody<T> body) throws StoreException {
+        if (depth > 0) {
+            // Nested: join the outer transaction, as Android SQLite does. A
+            // failure here dooms the whole transaction even if the caller
+            // catches it, which is exactly the platform's behaviour.
+            depth++;
+            boolean succeeded = false;
+            try {
+                final T result = body.run();
+                succeeded = true;
+                return result;
+            } finally {
+                depth--;
+                if (!succeeded) {
+                    rollbackOnly = true; // any escape, checked or not
+                }
+            }
+        }
         try {
             connection.setAutoCommit(false);
+            depth = 1;
+            rollbackOnly = false;
             // A success flag rather than a catch: rollback then has to happen for
             // ANY escape, including an unchecked one, and setAutoCommit(true)
             // with a transaction still open would COMMIT the partial work it was
@@ -149,10 +173,15 @@ public final class JdbcSqlDatabase implements SqlDatabase {
             boolean committed = false;
             try {
                 final T result = body.run();
+                if (rollbackOnly) {
+                    throw new StoreException(StoreException.Reason.ENGINE,
+                            "a nested transaction failed; the whole transaction is rolled back");
+                }
                 connection.commit();
                 committed = true;
                 return result;
             } finally {
+                depth = 0;
                 if (!committed) {
                     connection.rollback();
                 }
@@ -162,6 +191,7 @@ public final class JdbcSqlDatabase implements SqlDatabase {
             throw new StoreException(StoreException.Reason.ENGINE, "transaction failed", e);
         }
     }
+
 
     @Override
     public void close() throws StoreException {

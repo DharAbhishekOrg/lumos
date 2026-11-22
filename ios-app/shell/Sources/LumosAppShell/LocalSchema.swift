@@ -59,6 +59,20 @@ public enum RecordKind: String, CaseIterable, Sendable {
     /// timestamps only, persisted so a restart cannot reset the flood
     /// limit (SRS-SAF-006). Added at version 5.
     case interestBudget = "interest_budget"
+    /// A conversation with a matched peer, keyed by the match id's blind
+    /// index. Added at version 6 (WP-05 S7b).
+    case conversation = "conversation"
+    /// One message or applied event, keyed by the match id's blind index.
+    /// Added at version 6.
+    case chatMessage = "chat_message"
+    /// A send waiting for its transport (TRS-PAT-004). Added at version 6.
+    case outboxItem = "outbox_item"
+    /// One conversation's Double Ratchet state. Added at version 6.
+    case ratchetSession = "ratchet_session"
+    /// A displayed message id, kept until it expires. Added at version 6.
+    case messageDedup = "message_dedup"
+    /// A private prekey scalar, keyed by its id's blind index. Added at version 6.
+    case prekeySecret = "prekey_secret"
 
     /// The table name for this kind.
     public var table: String { rawValue }
@@ -69,7 +83,8 @@ public enum RecordKind: String, CaseIterable, Sendable {
     /// peer?" without the peer identifier being readable in the file.
     public var isLookedUpByTag: Bool {
         switch self {
-        case .blockEntry, .hiddenPeer, .interestRecord, .matchRecord: return true
+        case .blockEntry, .hiddenPeer, .interestRecord, .matchRecord,
+             .conversation, .chatMessage, .ratchetSession, .prekeySecret: return true
         default: return false
         }
     }
@@ -89,7 +104,7 @@ public struct Migration: Sendable {
 public enum LocalSchema {
 
     /// The schema version this build writes and expects.
-    public static let version = 5
+    public static let version = 6
 
     /// The version of an absent or empty database, before any migration runs.
     public static let versionEmpty = 0
@@ -169,6 +184,11 @@ public enum LocalSchema {
         .interestRecord, .matchRecord, .interestBudget
     ]
 
+    /// The record kinds version 6 added (WP-05 S7b).
+    private static let version6Kinds: [RecordKind] = [
+        .conversation, .chatMessage, .outboxItem, .ratchetSession, .messageDedup, .prekeySecret
+    ]
+
     /// The complete statement list taking an empty database to version 1.
     public static var migrationToVersion1: [String] {
         ["CREATE TABLE \(tableMeta) ("
@@ -195,6 +215,10 @@ public enum LocalSchema {
     /// tables, the interruption-safe shape every step of this ladder keeps.
     public static var migrationToVersion5: [String] { createTables(for: version5Kinds) }
 
+    /// The statements taking a version-5 database to version 6: the six chat
+    /// tables, the interruption-safe shape every step of this ladder keeps.
+    public static var migrationToVersion6: [String] { createTables(for: version6Kinds) }
+
     /// The create-table and create-index pair for each of the given kinds.
     /// - Parameter kinds: the kinds a migration step introduces
     /// - Returns: the ordered statements
@@ -213,6 +237,7 @@ public enum LocalSchema {
          Migration(fromVersion: 1, toVersion: 2, statements: migrationToVersion2),
          Migration(fromVersion: 2, toVersion: 3, statements: migrationToVersion3),
          Migration(fromVersion: 3, toVersion: 4, statements: migrationToVersion4),
-         Migration(fromVersion: 4, toVersion: 5, statements: migrationToVersion5)]
+         Migration(fromVersion: 4, toVersion: 5, statements: migrationToVersion5),
+         Migration(fromVersion: 5, toVersion: 6, statements: migrationToVersion6)]
     }
 }

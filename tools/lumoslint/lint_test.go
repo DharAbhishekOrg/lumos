@@ -278,3 +278,31 @@ func TestPendingArchitectureRulesAreDeclared(t *testing.T) {
 		}
 	}
 }
+
+func TestTheMinSdkRuleFiresInTheLibraryAndNowhereElse(t *testing.T) {
+	root := t.TempDir()
+	write := func(rel, body string) string {
+		p := filepath.Join(root, filepath.FromSlash(rel))
+		if err := os.MkdirAll(filepath.Dir(p), 0o755); err != nil {
+			t.Fatal(err)
+		}
+		if err := os.WriteFile(p, []byte(body), 0o644); err != nil {
+			t.Fatal(err)
+		}
+		return p
+	}
+	bad := "class A {\n  void f() {\n    out.writeBytes(b);\n    String h = HexFormat.of().formatHex(b);\n  }\n}\n"
+	lib := write("android-app/protocol-java/src/main/java/com/x/A.java", bad)
+	if got := CheckMinSdkApis(root, lib); len(got) != 2 {
+		t.Fatalf("want two findings in the library, got %v", got)
+	}
+	app := write("android-app/app/src/main/java/com/x/A.java", bad)
+	if got := CheckMinSdkApis(root, app); len(got) != 0 {
+		t.Fatalf("the app module is Android Lint's, not this rule's: %v", got)
+	}
+	comment := write("android-app/protocol-java/src/main/java/com/x/B.java",
+		"class B {\n  // HexFormat is API 34, so not here\n  /* writeBytes( either */\n}\n")
+	if got := CheckMinSdkApis(root, comment); len(got) != 0 {
+		t.Fatalf("a comment naming an API is not a use of it: %v", got)
+	}
+}

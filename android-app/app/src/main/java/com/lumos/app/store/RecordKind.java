@@ -114,7 +114,66 @@ public enum RecordKind {
      *
      * <p>Added at schema version 5 (WP-04 S3).
      */
-    INTEREST_BUDGET(false);
+    INTEREST_BUDGET(false),
+
+    /**
+     * One conversation with a matched peer (TRS-LOC-001 "conversation"),
+     * looked up by a blind index over the match identifier. It holds the
+     * peer's pinned identity and nothing that is a message.
+     *
+     * <p>Added at schema version 6 (WP-05 S7b).
+     */
+    CONVERSATION(true),
+
+    /**
+     * One message or applied event in a conversation (TRS-LOC-001
+     * "message"), looked up by a blind index over the match identifier so a
+     * conversation's messages are found without the identifier being
+     * readable. Edits, deletes and reactions are applied to the target's
+     * record; the body is sealed like every payload.
+     *
+     * <p>Added at schema version 6 (WP-05 S7b).
+     */
+    CHAT_MESSAGE(true),
+
+    /**
+     * A send waiting for its transport (TRS-LOC-001 "outbox", TRS-PAT-004):
+     * the already-sealed envelope and its idempotency key, written in the
+     * same transaction as the message it carries (TRS Sec. 8.3) so it
+     * survives process death and a retry resends the same bytes.
+     *
+     * <p>Added at schema version 6 (WP-05 S7b).
+     */
+    OUTBOX_ITEM(false),
+
+    /**
+     * The Double Ratchet state of one conversation, looked up by a blind
+     * index over the match identifier. Written in the same transaction as
+     * every message it seals or opens, so a restart can never reuse a
+     * message key that was already deleted (SRS-RMT-017).
+     *
+     * <p>Added at schema version 6 (WP-05 S7b).
+     */
+    RATCHET_SESSION(true),
+
+    /**
+     * A message identifier already displayed, kept until it expires
+     * (TRS-LOC-005, SRS-RMT-004). The row id IS the message id - a random
+     * UUID the sender minted, so it derives from nothing - and the primary
+     * key is the index the high-volume lookup needs.
+     *
+     * <p>Added at schema version 6 (WP-05 S7b).
+     */
+    MESSAGE_DEDUP(false),
+
+    /**
+     * A private signed or one-time prekey scalar, looked up by a blind index
+     * over its id. A one-time prekey is deleted in the same transaction that
+     * opens the first message it agreed (TRS-CRY-005).
+     *
+     * <p>Added at schema version 6 (WP-05 S7b).
+     */
+    PREKEY_SECRET(true);
 
     private final boolean lookupByTag;
 
@@ -134,8 +193,9 @@ public enum RecordKind {
     /**
      * Whether this kind is looked up by a blind index over a natural key.
      *
-     * <p>The peer-keyed kinds: BLOCK_ENTRY, HIDDEN_PEER, INTEREST_RECORD
-     * and MATCH_RECORD. Each must answer "what do we hold for this peer?"
+     * <p>The peer-keyed kinds: BLOCK_ENTRY, HIDDEN_PEER, INTEREST_RECORD,
+     * MATCH_RECORD, CONVERSATION, CHAT_MESSAGE and RATCHET_SESSION; and
+     * PREKEY_SECRET, keyed by prekey id. Each must answer "what do we hold for this peer?"
      * without the peer identifier being readable in the file - the threat
      * model treats the block list as a safety asset, not a preference
      * (data map Sec. 2.4), and who the user avoided, wanted or matched is

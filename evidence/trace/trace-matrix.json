@@ -265,8 +265,8 @@
    "adr": [
     "ADR-003"
    ],
-   "last_commit": "cd785f1",
-   "updated": "2026-11-20"
+   "last_commit": "53887e7",
+   "updated": "2026-11-22"
   },
   {
    "req_id": "SRS-DAT-003",
@@ -487,8 +487,8 @@
     "ADR-008",
     "ADR-010"
    ],
-   "last_commit": "5bcb119",
-   "updated": "2026-11-21"
+   "last_commit": "53887e7",
+   "updated": "2026-11-22"
   },
   {
    "req_id": "SRS-IDN-002",
@@ -1970,7 +1970,7 @@
     "ci:conformance#31528127667"
    ],
    "adr": [],
-   "last_commit": "93730b1",
+   "last_commit": "53887e7",
    "updated": "2026-11-22"
   },
   {
@@ -3154,8 +3154,8 @@
     "ADR-003",
     "ADR-010"
    ],
-   "last_commit": "5bcb119",
-   "updated": "2026-11-21"
+   "last_commit": "53887e7",
+   "updated": "2026-11-22"
   },
   {
    "req_id": "SRS-NFR-SEC-004",
@@ -4166,6 +4166,8 @@
    "req_id": "SRS-RMT-001",
    "status": "implemented",
    "code": [
+    "android-app/app/src/main/java/com/lumos/app/chat/ChatRecords.java",
+    "android-app/app/src/main/java/com/lumos/app/chat/ChatStore.java",
     "android-app/protocol-java/src/main/java/com/lumos/protocol/chat/RemoteSession.java",
     "android-app/protocol-java/src/main/java/com/lumos/protocol/chat/RemoteText.java",
     "ios-app/protocol-conformance/Sources/LumosProtocol/RemoteText.swift",
@@ -4177,6 +4179,7 @@
    "tests": [
     "go:protocol/chat:TestAnOfflinePeerOpensPrekeyEnvelopesOutOfOrderAndTheSessionSettles",
     "go:protocol/chat:TestTheCommittedSessionReplaysByteForByte",
+    "java:app-dev:ChatStoreTest.twoDevicesChatThroughTheirOutboxesWhileOneIsOffline",
     "java:protocol-conformance:RemoteTextConformanceTest.theScriptedSessionReplaysByteForByte",
     "swift:LumosProtocolConformance:RemoteTextConformanceTests.testTheScriptedSessionReplaysByteForByte"
    ],
@@ -4203,18 +4206,26 @@
   },
   {
    "req_id": "SRS-RMT-003",
-   "status": "not_started",
-   "code": [],
-   "tests": [],
+   "status": "implemented",
+   "code": [
+    "android-app/app/src/main/java/com/lumos/app/chat/ChatRecords.java",
+    "android-app/app/src/main/java/com/lumos/app/chat/ChatStore.java"
+   ],
+   "tests": [
+    "java:app-dev:ChatStoreTest.aRestartLosesNothingAndReusesNoKey",
+    "java:app-dev:ChatStoreTest.twoDevicesChatThroughTheirOutboxesWhileOneIsOffline"
+   ],
    "evidence": [],
    "adr": [],
-   "last_commit": null,
-   "updated": null
+   "last_commit": "f1580e0",
+   "updated": "2026-11-22"
   },
   {
    "req_id": "SRS-RMT-004",
-   "status": "implemented",
+   "status": "tested",
    "code": [
+    "android-app/app/src/main/java/com/lumos/app/chat/ChatRecords.java",
+    "android-app/app/src/main/java/com/lumos/app/chat/ChatStore.java",
     "android-app/protocol-java/src/main/java/com/lumos/protocol/chat/RemoteSession.java",
     "android-app/protocol-java/src/main/java/com/lumos/protocol/chat/RemoteText.java",
     "ios-app/protocol-conformance/Sources/LumosProtocol/RemoteText.swift",
@@ -4223,6 +4234,8 @@
    ],
    "tests": [
     "go:protocol/chat:TestARelayCannotRelabelAMessage",
+    "java:app-dev:ChatStoreTest.aMessageShowsAtMostOnceEvenIfDeliveredTwice",
+    "java:app-dev:ChatStoreTest.aRelabelledEnvelopeIsRefusedAndChangesNothing",
     "java:protocol-conformance:RemoteTextConformanceTest.aRelabelledOrTamperedFirstMessageIsRefused",
     "swift:LumosProtocolConformance:RemoteTextConformanceTests.testARelabelledOrMisattributedFirstMessageIsRefused"
    ],
@@ -4326,6 +4339,8 @@
    "req_id": "SRS-RMT-009",
    "status": "tested",
    "code": [
+    "android-app/app/src/main/java/com/lumos/app/chat/ChatRecords.java",
+    "android-app/app/src/main/java/com/lumos/app/chat/ChatStore.java",
     "android-app/protocol-java/src/main/java/com/lumos/protocol/chat/RemoteSession.java",
     "android-app/protocol-java/src/main/java/com/lumos/protocol/chat/RemoteText.java",
     "backend/internal/api/relay.go",
@@ -4343,6 +4358,7 @@
     "go:protocol/chat:TestARelayCannotRelabelAMessage",
     "go:protocol/chat:TestMalformedEnvelopesAreRefused",
     "go:protocol/chat:TestMalformedTextEventsAreRefusedWithTheirCodes",
+    "java:app-dev:ChatStoreTest.aRelabelledEnvelopeIsRefusedAndChangesNothing",
     "java:protocol-conformance:RemoteTextConformanceTest.aRelabelledOrTamperedFirstMessageIsRefused",
     "java:protocol-conformance:RemoteTextConformanceTest.everyNegativeEarnsItsExactCode",
     "swift:LumosProtocolConformance:RemoteTextConformanceTests.testARelabelledOrMisattributedFirstMessageIsRefused",
@@ -4365,8 +4381,10 @@
   },
   {
    "req_id": "SRS-RMT-011",
-   "status": "implemented",
+   "status": "tested",
    "code": [
+    "android-app/app/src/main/java/com/lumos/app/chat/ChatRecords.java",
+    "android-app/app/src/main/java/com/lumos/app/chat/ChatStore.java",
     "android-app/protocol-java/src/main/java/com/lumos/protocol/chat/RemoteSession.java",
     "android-app/protocol-java/src/main/java/com/lumos/protocol/chat/RemoteText.java",
     "ios-app/protocol-conformance/Sources/LumosProtocol/RemoteText.swift",
@@ -4381,6 +4399,8 @@
     "go:protocol/chat:TestEveryTextEventKindRoundTrips",
     "go:protocol/chat:TestMalformedEnvelopesAreRefused",
     "go:protocol/chat:TestMalformedTextEventsAreRefusedWithTheirCodes",
+    "java:app-dev:ChatStoreTest.anUnknownEventKindIsConsumedAndIgnoredAndTheSessionCarriesOn",
+    "java:app-dev:ChatStoreTest.twoDevicesChatThroughTheirOutboxesWhileOneIsOffline",
     "java:protocol-conformance:RemoteTextConformanceTest.everyNegativeEarnsItsExactCode",
     "java:protocol-conformance:RemoteTextConformanceTest.everyTextEventDecodesAndReencodesByteForByte",
     "swift:LumosProtocolConformance:RemoteTextConformanceTests.testEveryNegativeEarnsItsExactCode",
@@ -4475,13 +4495,23 @@
   },
   {
    "req_id": "SRS-RMT-017",
-   "status": "not_started",
-   "code": [],
-   "tests": [],
+   "status": "tested",
+   "code": [
+    "android-app/app/src/main/java/com/lumos/app/chat/ChatRecords.java",
+    "android-app/app/src/main/java/com/lumos/app/chat/ChatStore.java",
+    "android-app/protocol-java/src/main/java/com/lumos/protocol/ratchet/DoubleRatchet.java"
+   ],
+   "tests": [
+    "java:app-dev:ChatStoreTest.aRestartLosesNothingAndReusesNoKey",
+    "java:protocol-conformance:RatchetPersistenceTest.aKeyAlreadyUsedStaysGoneAfterARestart",
+    "java:protocol-conformance:RatchetPersistenceTest.aRestoredSessionIsIndistinguishableFromOneThatNeverRestarted",
+    "java:protocol-conformance:RatchetPersistenceTest.bytesThatAreNotAStateAreRefusedWithAStableCode",
+    "java:protocol-conformance:RatchetPersistenceTest.skippedKeysSurviveARestartAndAreStillUsedOnce"
+   ],
    "evidence": [],
    "adr": [],
-   "last_commit": null,
-   "updated": null
+   "last_commit": "f1580e0",
+   "updated": "2026-11-22"
   },
   {
    "req_id": "SRS-RMT-018",
@@ -5380,7 +5410,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "93730b1",
+   "last_commit": "53887e7",
    "updated": "2026-11-22"
   },
   {
@@ -5390,7 +5420,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "93730b1",
+   "last_commit": "53887e7",
    "updated": "2026-11-22"
   },
   {
@@ -5400,7 +5430,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "93730b1",
+   "last_commit": "53887e7",
    "updated": "2026-11-22"
   },
   {
@@ -5424,7 +5454,7 @@
    "adr": [
     "ADR-003"
    ],
-   "last_commit": "93730b1",
+   "last_commit": "53887e7",
    "updated": "2026-11-22"
   },
   {
@@ -5446,7 +5476,7 @@
    "adr": [
     "ADR-002"
    ],
-   "last_commit": "93730b1",
+   "last_commit": "53887e7",
    "updated": "2026-11-22"
   },
   {
@@ -5465,7 +5495,7 @@
    "adr": [
     "ADR-002"
    ],
-   "last_commit": "93730b1",
+   "last_commit": "53887e7",
    "updated": "2026-11-22"
   },
   {
@@ -5475,7 +5505,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "93730b1",
+   "last_commit": "53887e7",
    "updated": "2026-11-22"
   },
   {
@@ -5485,7 +5515,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "93730b1",
+   "last_commit": "53887e7",
    "updated": "2026-11-22"
   },
   {
@@ -5495,7 +5525,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "93730b1",
+   "last_commit": "53887e7",
    "updated": "2026-11-22"
   },
   {
@@ -5505,7 +5535,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "93730b1",
+   "last_commit": "53887e7",
    "updated": "2026-11-22"
   },
   {
@@ -5515,7 +5545,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "93730b1",
+   "last_commit": "53887e7",
    "updated": "2026-11-22"
   },
   {
@@ -5525,7 +5555,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "93730b1",
+   "last_commit": "53887e7",
    "updated": "2026-11-22"
   },
   {
@@ -6185,7 +6215,7 @@
     "ci:conformance#31528127667"
    ],
    "adr": [],
-   "last_commit": "51cb4f1",
+   "last_commit": "53887e7",
    "updated": "2026-11-22"
   },
   {
@@ -6347,8 +6377,8 @@
    ],
    "evidence": [],
    "adr": [],
-   "last_commit": "474df8e",
-   "updated": "2026-11-19"
+   "last_commit": "53887e7",
+   "updated": "2026-11-22"
   },
   {
    "req_id": "TRS-CODE-002",
@@ -6373,8 +6403,8 @@
    ],
    "evidence": [],
    "adr": [],
-   "last_commit": "474df8e",
-   "updated": "2026-11-19"
+   "last_commit": "53887e7",
+   "updated": "2026-11-22"
   },
   {
    "req_id": "TRS-CODE-004",
@@ -6420,34 +6450,36 @@
    ],
    "evidence": [],
    "adr": [],
-   "last_commit": "474df8e",
-   "updated": "2026-11-19"
+   "last_commit": "53887e7",
+   "updated": "2026-11-22"
   },
   {
    "req_id": "TRS-CODE-006",
    "status": "tested",
    "code": [
+    ".github/workflows/conformance.yml",
+    ".github/workflows/pipeline.yml",
     ".golangci.yml",
     ".swiftlint.yml",
-    "tools/staticanalysis/stack.go",
+    "android-app/app/build.gradle.kts",
+    "android-app/protocol-conformance/build.gradle.kts",
+    "gradle/libs.versions.toml",
+    "tools/lumoslint/minsdk.go",
     "tools/staticanalysis/checkstyle/checkstyle.xml",
     "tools/staticanalysis/spotbugs/exclude.xml",
-    "android-app/protocol-conformance/build.gradle.kts",
-    "android-app/app/build.gradle.kts",
-    "gradle/libs.versions.toml",
-    ".github/workflows/pipeline.yml",
-    ".github/workflows/conformance.yml"
+    "tools/staticanalysis/stack.go"
    ],
    "tests": [
+    "go:tools/lumoslint:TestTheMinSdkRuleFiresInTheLibraryAndNowhereElse",
+    "go:tools/staticanalysis:TestAppModuleWiresSpotbugsOnceItHasProductionCode",
+    "go:tools/staticanalysis:TestCheckstyleCarriesTheSpecifiedBudgets",
     "go:tools/staticanalysis:TestEveryAnalyserIsConfiguredAndInvoked",
     "go:tools/staticanalysis:TestEveryPinnedAnalyserIsDeclaredInTheManifest",
-    "go:tools/staticanalysis:TestStackCoversEveryLanguageTheRepositoryOwns",
     "go:tools/staticanalysis:TestGolangciEnforcesTheComplexityBudgetAndReportsEverything",
     "go:tools/staticanalysis:TestGosecExclusionsAreScopedToBuildTooling",
-    "go:tools/staticanalysis:TestCheckstyleCarriesTheSpecifiedBudgets",
+    "go:tools/staticanalysis:TestStackCoversEveryLanguageTheRepositoryOwns",
     "go:tools/staticanalysis:TestSwiftLintCarriesTheSpecifiedBudgets",
-    "go:tools/staticanalysis:TestSwiftTargetsAreAllInSwift6LanguageMode",
-    "go:tools/staticanalysis:TestAppModuleWiresSpotbugsOnceItHasProductionCode"
+    "go:tools/staticanalysis:TestSwiftTargetsAreAllInSwift6LanguageMode"
    ],
    "evidence": [
     "ci:conformance#31737418403",
@@ -6741,6 +6773,7 @@
     "go:protocol/crypto/ratchet:TestSkippedAcrossDHTurn",
     "go:protocol/crypto:TestConformanceRatchetSequences",
     "java:protocol-conformance:RatchetConformanceTest.committedSequencesDecryptByteForByte",
+    "java:protocol-conformance:RatchetPersistenceTest.aRestoredSessionIsIndistinguishableFromOneThatNeverRestarted",
     "java:protocol-conformance:RemoteTextConformanceTest.theScriptedSessionReplaysByteForByte",
     "swift:LumosProtocolConformance:RatchetConformanceTests.testCommittedSequencesDecryptByteForByte",
     "swift:LumosProtocolConformance:RemoteTextConformanceTests.testTheScriptedSessionReplaysByteForByte"
@@ -6794,6 +6827,8 @@
    "req_id": "TRS-CRY-005",
    "status": "tested",
    "code": [
+    "android-app/app/src/main/java/com/lumos/app/chat/ChatRecords.java",
+    "android-app/app/src/main/java/com/lumos/app/chat/ChatStore.java",
     "backend/internal/registry/postgres.go",
     "backend/internal/registry/repository.go",
     "backend/internal/registry/service.go",
@@ -6804,7 +6839,8 @@
     "go:backend/internal/registry:TestAConsumedPrekeyIdIsNeverAcceptedAgain",
     "go:backend/internal/registry:TestOneTimePrekeysAreNeverIssuedTwiceUnderConcurrentClaims",
     "go:protocol/chat:TestInitiateRefusesAnUnsignedBundle",
-    "go:protocol/chat:TestRespondRefusesWhatTheMatchDidNotPin"
+    "go:protocol/chat:TestRespondRefusesWhatTheMatchDidNotPin",
+    "java:app-dev:ChatStoreTest.aConsumedOneTimePrekeyIsNeverAcceptedAgain"
    ],
    "evidence": [],
    "adr": [],
@@ -7301,7 +7337,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "93730b1",
+   "last_commit": "53887e7",
    "updated": "2026-11-22"
   },
   {
@@ -7311,7 +7347,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "93730b1",
+   "last_commit": "53887e7",
    "updated": "2026-11-22"
   },
   {
@@ -7331,7 +7367,7 @@
    "adr": [
     "ADR-002"
    ],
-   "last_commit": "93730b1",
+   "last_commit": "53887e7",
    "updated": "2026-11-22"
   },
   {
@@ -7341,7 +7377,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "93730b1",
+   "last_commit": "53887e7",
    "updated": "2026-11-22"
   },
   {
@@ -7351,7 +7387,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "93730b1",
+   "last_commit": "53887e7",
    "updated": "2026-11-22"
   },
   {
@@ -7361,7 +7397,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "93730b1",
+   "last_commit": "53887e7",
    "updated": "2026-11-22"
   },
   {
@@ -7383,7 +7419,7 @@
     "ADR-003",
     "ADR-010"
    ],
-   "last_commit": "93730b1",
+   "last_commit": "53887e7",
    "updated": "2026-11-22"
   },
   {
@@ -7393,7 +7429,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "93730b1",
+   "last_commit": "53887e7",
    "updated": "2026-11-22"
   },
   {
@@ -7403,7 +7439,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "93730b1",
+   "last_commit": "53887e7",
    "updated": "2026-11-22"
   },
   {
@@ -7413,7 +7449,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "93730b1",
+   "last_commit": "53887e7",
    "updated": "2026-11-22"
   },
   {
@@ -7423,7 +7459,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "93730b1",
+   "last_commit": "53887e7",
    "updated": "2026-11-22"
   },
   {
@@ -7433,7 +7469,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "93730b1",
+   "last_commit": "53887e7",
    "updated": "2026-11-22"
   },
   {
@@ -7467,56 +7503,77 @@
    "adr": [
     "ADR-003"
    ],
-   "last_commit": "cd785f1",
-   "updated": "2026-11-20"
+   "last_commit": "53887e7",
+   "updated": "2026-11-22"
   },
   {
    "req_id": "TRS-LOC-003",
    "status": "tested",
    "code": [
+    "android-app/app/schemas/com.lumos.app.store.room.LumosRoomDatabase/6.json",
     "android-app/app/src/main/java/com/lumos/app/store/LocalSchema.java",
-    "android-app/app/src/main/java/com/lumos/app/store/Migration.java",
     "android-app/app/src/main/java/com/lumos/app/store/LocalStore.java",
+    "android-app/app/src/main/java/com/lumos/app/store/Migration.java",
+    "android-app/app/src/main/java/com/lumos/app/store/RecordKind.java",
+    "android-app/app/src/main/java/com/lumos/app/store/room/LumosRoomDatabase.java",
+    "android-app/app/src/main/java/com/lumos/app/store/room/SealedRecordEntity.java",
     "ios-app/shell/Sources/LumosAppShell/LocalSchema.swift",
     "ios-app/shell/Sources/LumosAppShell/LocalStore.swift"
    ],
    "tests": [
-    "java:app-dev:MigrationTest.emptyDatabaseMigratesToCurrentVersion",
-    "java:app-dev:MigrationTest.aFailingStepLeavesThePreviousVersionIntact",
-    "java:app-dev:MigrationTest.aDatabaseFromTheFutureIsRefusedNotDowngraded",
-    "java:app-dev:MigrationTest.theLadderIsContiguousAndForwardOnly",
-    "java:app-dev:MigrationTest.everyRecordTableCarriesTheCanonicalColumns",
+    "go:tools/schemacheck:TestBothPlatformsDeclareTheSameSchema",
     "java:app-dev:LocalStoreTest.aFailedTransactionLeavesNoPartialWrite",
-    "swift:LumosAppShell:LocalStoreTests.testEmptyDatabaseMigratesToCurrentVersion",
-    "swift:LumosAppShell:LocalStoreTests.testFailingStepRollsBackWholeAndLeavesTheVersion",
+    "java:app-dev:MigrationTest.aDatabaseFromTheFutureIsRefusedNotDowngraded",
+    "java:app-dev:MigrationTest.aFailingStepLeavesThePreviousVersionIntact",
+    "java:app-dev:MigrationTest.emptyDatabaseMigratesToCurrentVersion",
+    "java:app-dev:MigrationTest.everyRecordTableCarriesTheCanonicalColumns",
+    "java:app-dev:MigrationTest.theLadderIsContiguousAndForwardOnly",
     "swift:LumosAppShell:LocalStoreTests.testDatabaseFromTheFutureIsRefusedNotDowngraded",
+    "swift:LumosAppShell:LocalStoreTests.testEmptyDatabaseMigratesToCurrentVersion",
     "swift:LumosAppShell:LocalStoreTests.testFailedTransactionLeavesNoPartialWrite",
-    "go:tools/schemacheck:TestBothPlatformsDeclareTheSameSchema"
+    "swift:LumosAppShell:LocalStoreTests.testFailingStepRollsBackWholeAndLeavesTheVersion"
    ],
    "evidence": [],
    "adr": [],
-   "last_commit": "cd785f1",
-   "updated": "2026-11-20"
+   "last_commit": "53887e7",
+   "updated": "2026-11-22"
   },
   {
    "req_id": "TRS-LOC-004",
-   "status": "not_started",
-   "code": [],
-   "tests": [],
+   "status": "implemented",
+   "code": [
+    "android-app/app/src/main/java/com/lumos/app/chat/ChatRecords.java",
+    "android-app/app/src/main/java/com/lumos/app/chat/ChatStore.java",
+    "android-app/app/src/main/java/com/lumos/app/store/LocalStore.java",
+    "android-app/app/src/main/java/com/lumos/app/store/SqlDatabase.java"
+   ],
+   "tests": [
+    "java:app-dev:ChatStoreTest.aRestartLosesNothingAndReusesNoKey",
+    "java:app-dev:ChatStoreTest.theMessageAndItsOutboxItemLandTogetherOrNotAtAll",
+    "java:app-dev:TransactionTest.aFailureAfterTheFirstWriteRollsBackTheFirstWriteToo",
+    "java:app-dev:TransactionTest.aNestedFailureCaughtByTheOuterBodyStillRollsEverythingBack",
+    "java:app-dev:TransactionTest.everyWriteInsideLandsTogether"
+   ],
    "evidence": [],
    "adr": [],
-   "last_commit": null,
-   "updated": null
+   "last_commit": "f1580e0",
+   "updated": "2026-11-22"
   },
   {
    "req_id": "TRS-LOC-005",
-   "status": "not_started",
-   "code": [],
-   "tests": [],
+   "status": "implemented",
+   "code": [
+    "android-app/app/src/main/java/com/lumos/app/chat/ChatRecords.java",
+    "android-app/app/src/main/java/com/lumos/app/chat/ChatStore.java"
+   ],
+   "tests": [
+    "java:app-dev:ChatStoreTest.aMessageShowsAtMostOnceEvenIfDeliveredTwice",
+    "java:app-dev:ChatStoreTest.aRestartLosesNothingAndReusesNoKey"
+   ],
    "evidence": [],
    "adr": [],
-   "last_commit": null,
-   "updated": null
+   "last_commit": "f1580e0",
+   "updated": "2026-11-22"
   },
   {
    "req_id": "TRS-LOC-006",
@@ -7571,8 +7628,8 @@
    "adr": [
     "ADR-003"
    ],
-   "last_commit": "5bcb119",
-   "updated": "2026-11-21"
+   "last_commit": "53887e7",
+   "updated": "2026-11-22"
   },
   {
    "req_id": "TRS-LOC-010",
@@ -7590,8 +7647,8 @@
    ],
    "evidence": [],
    "adr": [],
-   "last_commit": "cd785f1",
-   "updated": "2026-11-20"
+   "last_commit": "53887e7",
+   "updated": "2026-11-22"
   },
   {
    "req_id": "TRS-MED-001",
@@ -7867,13 +7924,25 @@
   },
   {
    "req_id": "TRS-PAT-004",
-   "status": "not_started",
-   "code": [],
-   "tests": [],
+   "status": "tested",
+   "code": [
+    "android-app/app/src/main/java/com/lumos/app/chat/ChatRecords.java",
+    "android-app/app/src/main/java/com/lumos/app/chat/ChatStore.java",
+    "android-app/app/src/main/java/com/lumos/app/store/LocalStore.java",
+    "android-app/app/src/main/java/com/lumos/app/store/SqlDatabase.java"
+   ],
+   "tests": [
+    "java:app-dev:ChatStoreTest.aRestartLosesNothingAndReusesNoKey",
+    "java:app-dev:ChatStoreTest.theMessageAndItsOutboxItemLandTogetherOrNotAtAll",
+    "java:app-dev:ChatStoreTest.theOutboxIsFirstInFirstOutEvenWithinOneMillisecond",
+    "java:app-dev:TransactionTest.aFailureAfterTheFirstWriteRollsBackTheFirstWriteToo",
+    "java:app-dev:TransactionTest.aNestedFailureCaughtByTheOuterBodyStillRollsEverythingBack",
+    "java:app-dev:TransactionTest.everyWriteInsideLandsTogether"
+   ],
    "evidence": [],
    "adr": [],
-   "last_commit": null,
-   "updated": null
+   "last_commit": "f1580e0",
+   "updated": "2026-11-22"
   },
   {
    "req_id": "TRS-PAT-005",
@@ -8236,7 +8305,7 @@
    "adr": [
     "ADR-004"
    ],
-   "last_commit": "93730b1",
+   "last_commit": "53887e7",
    "updated": "2026-11-22"
   },
   {
@@ -8339,7 +8408,7 @@
     "ci:conformance#31528127667"
    ],
    "adr": [],
-   "last_commit": "93730b1",
+   "last_commit": "53887e7",
    "updated": "2026-11-22"
   },
   {
@@ -8517,7 +8586,7 @@
    ],
    "evidence": [],
    "adr": [],
-   "last_commit": "c67685e",
+   "last_commit": "53887e7",
    "updated": "2026-11-22"
   },
   {
@@ -8578,7 +8647,7 @@
    ],
    "evidence": [],
    "adr": [],
-   "last_commit": "c67685e",
+   "last_commit": "53887e7",
    "updated": "2026-11-22"
   },
   {
@@ -8864,7 +8933,7 @@
    "adr": [
     "ADR-004"
    ],
-   "last_commit": "93730b1",
+   "last_commit": "53887e7",
    "updated": "2026-11-22"
   },
   {

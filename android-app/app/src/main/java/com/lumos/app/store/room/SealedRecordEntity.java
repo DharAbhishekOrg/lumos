@@ -114,4 +114,28 @@ public class SealedRecordEntity {
     /** The rolling-hour interest budget (SRS-MAT-011). Schema version 5. */
     @Entity(tableName = "interest_budget")
     public static class InterestBudgetRow extends SealedRecordEntity { }
+
+    /** A conversation with a matched peer. Schema version 6. */
+    @Entity(tableName = "conversation")
+    public static class ConversationRow extends SealedRecordEntity { }
+
+    /** One message or applied event. Schema version 6. */
+    @Entity(tableName = "chat_message")
+    public static class ChatMessageRow extends SealedRecordEntity { }
+
+    /** A send waiting for its transport (TRS-PAT-004). Schema version 6. */
+    @Entity(tableName = "outbox_item")
+    public static class OutboxItemRow extends SealedRecordEntity { }
+
+    /** One conversation's Double Ratchet state. Schema version 6. */
+    @Entity(tableName = "ratchet_session")
+    public static class RatchetSessionRow extends SealedRecordEntity { }
+
+    /** A displayed message id, kept until it expires. Schema version 6. */
+    @Entity(tableName = "message_dedup")
+    public static class MessageDedupRow extends SealedRecordEntity { }
+
+    /** A private prekey scalar. Schema version 6. */
+    @Entity(tableName = "prekey_secret")
+    public static class PrekeySecretRow extends SealedRecordEntity { }
 }

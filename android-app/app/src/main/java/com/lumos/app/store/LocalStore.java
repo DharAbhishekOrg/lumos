@@ -155,6 +155,20 @@ public final class LocalStore {
     }
 
     /**
+     * Runs several store operations as ONE transaction: all of them land or
+     * none does (TRS Sec. 8.3). Operations inside may call {@link #put} and
+     * {@link #delete} freely; their own transactions join this one.
+     *
+     * @param <T> the work's result type
+     * @param body the work
+     * @return the work's result
+     * @throws StoreException if any operation fails; nothing is written then
+     */
+    public <T> T transaction(final SqlDatabase.TransactionBody<T> body) throws StoreException {
+        return database.inTransaction(body);
+    }
+
+    /**
      * Writes a record, sealing its payload.
      *
      * @param kind the record's table
@@ -258,6 +272,29 @@ public final class LocalStore {
         for (final Map<String, Object> row : rows) {
             out.add(codec.open(kind, String.valueOf(row.get(LocalSchema.COLUMN_ID)),
                     (byte[]) row.get(LocalSchema.COLUMN_PAYLOAD)));
+        }
+        return out;
+    }
+
+    /**
+     * Finds records by their blind-index tag, with their row identifiers, so
+     * a caller can update or delete the rows it found.
+     *
+     * @param kind the record's table
+     * @param naturalKey the value being looked up
+     * @return every matching row, opened
+     * @throws StoreException on engine failure or an unopenable row
+     */
+    public List<Entry> findEntriesByNaturalKey(final RecordKind kind, final byte[] naturalKey)
+            throws StoreException {
+        final List<Map<String, Object>> rows = database.query(
+                "SELECT " + LocalSchema.COLUMN_ID + ", " + LocalSchema.COLUMN_PAYLOAD + " FROM "
+                        + kind.table() + " WHERE " + LocalSchema.COLUMN_LOOKUP_TAG + " = ?",
+                List.of((Object) codec.lookupTag(kind, naturalKey)));
+        final List<Entry> out = new ArrayList<>(rows.size());
+        for (final Map<String, Object> row : rows) {
+            final String id = String.valueOf(row.get(LocalSchema.COLUMN_ID));
+            out.add(new Entry(id, codec.open(kind, id, (byte[]) row.get(LocalSchema.COLUMN_PAYLOAD))));
         }
         return out;
     }
