@@ -185,7 +185,7 @@ public enum ConsentGate {
 
     /// Classes that exist only between matched people.
     public static let matchOnly: Set<MessageClass> = [
-        .profileFull, .textMessage, .deliveryReceipt, .readReceipt, .typing,
+        .profileFull, .relayRoute, .textMessage, .deliveryReceipt, .readReceipt, .typing,
         .objectMeta, .objectChunk, .objectAck, .objectCancel, .voiceMeta
     ]
 

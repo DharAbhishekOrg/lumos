@@ -745,6 +745,7 @@
     "go:protocol/match:TestTheOnlyDoorIsMutualAcceptance",
     "java:app-dev:InterestLedgerTest.bothSidesOfTheRaceDeriveTheSameMatchIdentifier",
     "java:app-dev:MutualConsentFlowTest.mutualAcceptanceOpensTheDoorWithOneIdentifierAndOneToken",
+    "java:protocol-conformance:ConsentGateTest.everyClassIsDecidedExactlyOnce",
     "java:protocol-conformance:MatchConformanceTest.committedTimelinesReplayStepForStep",
     "swift:LumosAppShell:InterestLedgerTests.testBothSidesOfTheRaceDeriveTheSameMatchIdentifier",
     "swift:LumosProtocolConformance:MatchConformanceTests.testCommittedTimelinesReplayStepForStep"
@@ -753,8 +754,8 @@
    "adr": [
     "ADR-002"
    ],
-   "last_commit": "8b1dc0c",
-   "updated": "2026-11-20"
+   "last_commit": "278f853",
+   "updated": "2026-11-22"
   },
   {
    "req_id": "SRS-MAT-006",
@@ -1970,7 +1971,7 @@
     "ci:conformance#31528127667"
    ],
    "adr": [],
-   "last_commit": "30420a4",
+   "last_commit": "278f853",
    "updated": "2026-11-22"
   },
   {
@@ -4178,25 +4179,32 @@
     "android-app/app/src/main/java/com/lumos/app/relay/RelayRoutes.java",
     "android-app/app/src/main/java/com/lumos/app/relay/RelaySessions.java",
     "android-app/app/src/main/java/com/lumos/app/relay/RelaySync.java",
+    "android-app/protocol-java/src/main/java/com/lumos/protocol/chat/RelayRoute.java",
     "android-app/protocol-java/src/main/java/com/lumos/protocol/chat/RemoteSession.java",
     "android-app/protocol-java/src/main/java/com/lumos/protocol/chat/RemoteText.java",
+    "ios-app/protocol-conformance/Sources/LumosProtocol/Receipts.swift",
     "ios-app/protocol-conformance/Sources/LumosProtocol/RemoteText.swift",
     "protocol/chat/remote.go",
+    "protocol/chat/route.go",
     "protocol/chat/session.go",
     "test-vectors/chat/remote_text.json",
     "tools/vectorgen/remote.go"
    ],
    "tests": [
+    "go:protocol/chat:TestARouteRoundTripsAndAnythingElseIsRefused",
     "go:protocol/chat:TestAnOfflinePeerOpensPrekeyEnvelopesOutOfOrderAndTheSessionSettles",
+    "go:protocol/chat:TestCommittedRoutesAndReceiptsDecodeAndReencode",
     "go:protocol/chat:TestTheCommittedSessionReplaysByteForByte",
     "java:app-dev:ChatStoreTest.twoDevicesChatThroughTheirOutboxesWhileOneIsOffline",
     "java:app-dev:RelaySyncTest.aMessageCrossesTheRelayShowsOnceAndIsOneTickNotDelivered",
+    "java:protocol-conformance:ReceiptsConformanceTest.everyRouteAndReceiptDecodesAndReencodesByteForByte",
     "java:protocol-conformance:RemoteTextConformanceTest.theScriptedSessionReplaysByteForByte",
+    "swift:LumosProtocolConformance:ReceiptsConformanceTests.testEveryRouteAndReceiptRoundTripsByteForByte",
     "swift:LumosProtocolConformance:RemoteTextConformanceTests.testTheScriptedSessionReplaysByteForByte"
    ],
    "evidence": [],
    "adr": [],
-   "last_commit": "826c3e2",
+   "last_commit": "278f853",
    "updated": "2026-11-22"
   },
   {
@@ -4271,26 +4279,34 @@
     "android-app/app/src/main/java/com/lumos/app/chat/ChatStore.java",
     "android-app/app/src/main/java/com/lumos/app/chat/DeliveryTickStyle.java",
     "android-app/protocol-java/src/main/java/com/lumos/protocol/chat/DeliveryMachine.java",
+    "android-app/protocol-java/src/main/java/com/lumos/protocol/chat/Receipt.java",
     "ios-app/protocol-conformance/Sources/LumosProtocol/Delivery.swift",
+    "ios-app/protocol-conformance/Sources/LumosProtocol/Receipts.swift",
     "ios-app/shell/Sources/LumosAppShell/DeliveryTicks.swift",
-    "protocol/chat/delivery.go"
+    "protocol/chat/delivery.go",
+    "protocol/chat/receipt.go"
    ],
    "tests": [
+    "go:protocol/chat:TestAReceiptRoundTripsAtEveryLegalCount",
     "go:protocol/chat:TestCommittedDeliveryTimelinesReplayExactly",
     "go:protocol/chat:TestEveryStateHasTheOwnersTick",
+    "go:protocol/chat:TestReceiptsTravelTheSessionAndCannotBeRelabelled",
+    "go:protocol/chat:TestTheCommittedReceiptSessionReplaysAndEveryRelabelFails",
     "java:app-dev:DeliveryTickStyleTest.everyStateHasItsOwnSpokenLabel",
     "java:app-dev:DeliveryTickStyleTest.theTicksFollowTheOwnersWhatsAppStyleRuling",
     "java:app-dev:RelaySyncTest.aSendRefusedForGoodShowsFailedAndTheNextOneStillGoes",
     "java:protocol-conformance:DeliveryConformanceTest.committedTicksMatch",
     "java:protocol-conformance:DeliveryConformanceTest.committedTimelinesReplayStepForStep",
+    "java:protocol-conformance:ReceiptsConformanceTest.theRecordedSessionReplaysAndEveryRelabelFails",
     "swift:LumosAppShell:DeliveryTicksTests.testEveryStateHasItsOwnSpokenLabel",
     "swift:LumosAppShell:DeliveryTicksTests.testTheTicksFollowTheOwnersWhatsAppStyleRuling",
     "swift:LumosProtocolConformance:DeliveryConformanceTests.testCommittedTicksMatch",
-    "swift:LumosProtocolConformance:DeliveryConformanceTests.testCommittedTimelinesReplayStepForStep"
+    "swift:LumosProtocolConformance:DeliveryConformanceTests.testCommittedTimelinesReplayStepForStep",
+    "swift:LumosProtocolConformance:ReceiptsConformanceTests.testTheRecordedSessionReplaysAndEveryRelabelFails"
    ],
    "evidence": [],
    "adr": [],
-   "last_commit": "826c3e2",
+   "last_commit": "278f853",
    "updated": "2026-11-22"
   },
   {
@@ -4371,12 +4387,17 @@
     "android-app/app/src/main/java/com/lumos/app/relay/Json.java",
     "android-app/app/src/main/java/com/lumos/app/relay/RelayClient.java",
     "android-app/app/src/main/java/com/lumos/app/relay/RelaySync.java",
+    "android-app/protocol-java/src/main/java/com/lumos/protocol/chat/Receipt.java",
+    "android-app/protocol-java/src/main/java/com/lumos/protocol/chat/RelayRoute.java",
     "android-app/protocol-java/src/main/java/com/lumos/protocol/chat/RemoteSession.java",
     "android-app/protocol-java/src/main/java/com/lumos/protocol/chat/RemoteText.java",
     "backend/internal/api/relay.go",
     "backend/internal/relay/service.go",
+    "ios-app/protocol-conformance/Sources/LumosProtocol/Receipts.swift",
     "ios-app/protocol-conformance/Sources/LumosProtocol/RemoteText.swift",
+    "protocol/chat/receipt.go",
     "protocol/chat/remote.go",
+    "protocol/chat/route.go",
     "protocol/chat/session.go"
    ],
    "tests": [
@@ -4386,8 +4407,11 @@
     "go:backend/internal/relay:TestRetriesAreIdempotentAndAReusedIDIsAReplay",
     "go:protocol/chat:FuzzDecoders",
     "go:protocol/chat:TestARelayCannotRelabelAMessage",
+    "go:protocol/chat:TestARouteRoundTripsAndAnythingElseIsRefused",
     "go:protocol/chat:TestMalformedEnvelopesAreRefused",
     "go:protocol/chat:TestMalformedTextEventsAreRefusedWithTheirCodes",
+    "go:protocol/chat:TestReceiptsOutsideTheLayoutAreRefused",
+    "go:protocol/chat:TestReceiptsTravelTheSessionAndCannotBeRelabelled",
     "java:app-dev:ChatStoreTest.aRelabelledEnvelopeIsRefusedAndChangesNothing",
     "java:app-dev:JsonTest.aFieldOfTheWrongTypeIsRefusedWhereItIsRead",
     "java:app-dev:JsonTest.everythingElseIsRefused",
@@ -4395,14 +4419,18 @@
     "java:app-dev:RelayClientTest.aSuccessThatDoesNotParseIsBusyNeverACrash",
     "java:app-dev:RelayClientTest.anErrorCodeIsKeptOnlyWhenItLooksLikeOne",
     "java:app-dev:RelaySyncTest.badEnvelopesAreAcknowledgedNeverShownAndTheSessionCarriesOn",
+    "java:protocol-conformance:ReceiptsConformanceTest.everyNegativeEarnsItsExactCode",
+    "java:protocol-conformance:ReceiptsConformanceTest.theRecordedSessionReplaysAndEveryRelabelFails",
     "java:protocol-conformance:RemoteTextConformanceTest.aRelabelledOrTamperedFirstMessageIsRefused",
     "java:protocol-conformance:RemoteTextConformanceTest.everyNegativeEarnsItsExactCode",
+    "swift:LumosProtocolConformance:ReceiptsConformanceTests.testEveryNegativeEarnsItsExactCode",
+    "swift:LumosProtocolConformance:ReceiptsConformanceTests.testTheRecordedSessionReplaysAndEveryRelabelFails",
     "swift:LumosProtocolConformance:RemoteTextConformanceTests.testARelabelledOrMisattributedFirstMessageIsRefused",
     "swift:LumosProtocolConformance:RemoteTextConformanceTests.testEveryNegativeEarnsItsExactCode"
    ],
    "evidence": [],
    "adr": [],
-   "last_commit": "826c3e2",
+   "last_commit": "278f853",
    "updated": "2026-11-22"
   },
   {
@@ -4478,19 +4506,25 @@
    "status": "implemented",
    "code": [
     "android-app/protocol-java/src/main/java/com/lumos/protocol/chat/DeliveryMachine.java",
+    "android-app/protocol-java/src/main/java/com/lumos/protocol/chat/Receipt.java",
     "ios-app/protocol-conformance/Sources/LumosProtocol/Delivery.swift",
-    "protocol/chat/delivery.go"
+    "ios-app/protocol-conformance/Sources/LumosProtocol/Receipts.swift",
+    "protocol/chat/delivery.go",
+    "protocol/chat/receipt.go"
    ],
    "tests": [
+    "go:protocol/chat:TestAReceiptRoundTripsAtEveryLegalCount",
     "go:protocol/chat:TestCommittedReceiptPolicyMatches",
     "go:protocol/chat:TestReadReceiptsOffNeverSilencesDeliveryReceipts",
+    "go:protocol/chat:TestReceiptsTravelTheSessionAndCannotBeRelabelled",
+    "go:protocol/chat:TestTheCommittedReceiptSessionReplaysAndEveryRelabelFails",
     "java:protocol-conformance:DeliveryConformanceTest.committedReceiptPolicyMatches",
     "swift:LumosProtocolConformance:DeliveryConformanceTests.testCommittedReceiptPolicyMatches"
    ],
    "evidence": [],
    "adr": [],
-   "last_commit": "1768728",
-   "updated": "2026-11-21"
+   "last_commit": "278f853",
+   "updated": "2026-11-22"
   },
   {
    "req_id": "SRS-RMT-015",
@@ -4517,19 +4551,24 @@
    "req_id": "SRS-RMT-016",
    "status": "implemented",
    "code": [
+    "android-app/protocol-java/src/main/java/com/lumos/protocol/chat/RelayRoute.java",
     "backend/internal/api/relay.go",
     "backend/internal/relay/postgres.go",
-    "backend/internal/relay/service.go"
+    "backend/internal/relay/service.go",
+    "ios-app/protocol-conformance/Sources/LumosProtocol/Receipts.swift",
+    "protocol/chat/route.go"
    ],
    "tests": [
     "go:backend/internal/api:TestABlockedSenderGetsTheSameAnswerAndNothingArrives",
     "go:backend/internal/relay:TestABlockedSenderIsToldNothingAndDeliversNothing",
     "go:backend/internal/relay:TestASenderIsLimitedPerMinuteAndTheLimitSaysNothingAboutBlocks",
-    "go:backend/internal/relay:TestConcurrentAllowsCannotOvershootTheCeiling"
+    "go:backend/internal/relay:TestConcurrentAllowsCannotOvershootTheCeiling",
+    "go:protocol/chat:TestARouteRoundTripsAndAnythingElseIsRefused",
+    "go:protocol/chat:TestCommittedRoutesAndReceiptsDecodeAndReencode"
    ],
    "evidence": [],
    "adr": [],
-   "last_commit": "99f1632",
+   "last_commit": "278f853",
    "updated": "2026-11-22"
   },
   {
@@ -5457,7 +5496,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "30420a4",
+   "last_commit": "278f853",
    "updated": "2026-11-22"
   },
   {
@@ -5467,7 +5506,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "30420a4",
+   "last_commit": "278f853",
    "updated": "2026-11-22"
   },
   {
@@ -5477,7 +5516,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "30420a4",
+   "last_commit": "278f853",
    "updated": "2026-11-22"
   },
   {
@@ -5501,7 +5540,7 @@
    "adr": [
     "ADR-003"
    ],
-   "last_commit": "30420a4",
+   "last_commit": "278f853",
    "updated": "2026-11-22"
   },
   {
@@ -5523,7 +5562,7 @@
    "adr": [
     "ADR-002"
    ],
-   "last_commit": "30420a4",
+   "last_commit": "278f853",
    "updated": "2026-11-22"
   },
   {
@@ -5542,7 +5581,7 @@
    "adr": [
     "ADR-002"
    ],
-   "last_commit": "30420a4",
+   "last_commit": "278f853",
    "updated": "2026-11-22"
   },
   {
@@ -5552,7 +5591,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "30420a4",
+   "last_commit": "278f853",
    "updated": "2026-11-22"
   },
   {
@@ -5562,7 +5601,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "30420a4",
+   "last_commit": "278f853",
    "updated": "2026-11-22"
   },
   {
@@ -5572,7 +5611,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "30420a4",
+   "last_commit": "278f853",
    "updated": "2026-11-22"
   },
   {
@@ -5582,7 +5621,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "30420a4",
+   "last_commit": "278f853",
    "updated": "2026-11-22"
   },
   {
@@ -5592,7 +5631,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "30420a4",
+   "last_commit": "278f853",
    "updated": "2026-11-22"
   },
   {
@@ -5602,7 +5641,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "30420a4",
+   "last_commit": "278f853",
    "updated": "2026-11-22"
   },
   {
@@ -6098,7 +6137,7 @@
    "adr": [
     "ADR-004"
    ],
-   "last_commit": "95ef055",
+   "last_commit": "278f853",
    "updated": "2026-11-22"
   },
   {
@@ -6108,7 +6147,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "95ef055",
+   "last_commit": "278f853",
    "updated": "2026-11-22"
   },
   {
@@ -6118,7 +6157,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "95ef055",
+   "last_commit": "278f853",
    "updated": "2026-11-22"
   },
   {
@@ -6128,7 +6167,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "95ef055",
+   "last_commit": "278f853",
    "updated": "2026-11-22"
   },
   {
@@ -6138,7 +6177,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "95ef055",
+   "last_commit": "278f853",
    "updated": "2026-11-22"
   },
   {
@@ -6148,7 +6187,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "95ef055",
+   "last_commit": "278f853",
    "updated": "2026-11-22"
   },
   {
@@ -6158,7 +6197,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "95ef055",
+   "last_commit": "278f853",
    "updated": "2026-11-22"
   },
   {
@@ -6168,7 +6207,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "95ef055",
+   "last_commit": "278f853",
    "updated": "2026-11-22"
   },
   {
@@ -6191,7 +6230,7 @@
     "ci:conformance#31528127667"
    ],
    "adr": [],
-   "last_commit": "95ef055",
+   "last_commit": "278f853",
    "updated": "2026-11-22"
   },
   {
@@ -6201,7 +6240,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "95ef055",
+   "last_commit": "278f853",
    "updated": "2026-11-22"
   },
   {
@@ -6211,7 +6250,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "95ef055",
+   "last_commit": "278f853",
    "updated": "2026-11-22"
   },
   {
@@ -6221,7 +6260,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "95ef055",
+   "last_commit": "278f853",
    "updated": "2026-11-22"
   },
   {
@@ -6231,7 +6270,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "95ef055",
+   "last_commit": "278f853",
    "updated": "2026-11-22"
   },
   {
@@ -6241,7 +6280,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "95ef055",
+   "last_commit": "278f853",
    "updated": "2026-11-22"
   },
   {
@@ -6320,7 +6359,7 @@
    "adr": [
     "ADR-004"
    ],
-   "last_commit": "95ef055",
+   "last_commit": "278f853",
    "updated": "2026-11-22"
   },
   {
@@ -6619,7 +6658,7 @@
     "ADR-005",
     "ADR-006"
    ],
-   "last_commit": "93730b1",
+   "last_commit": "278f853",
    "updated": "2026-11-22"
   },
   {
@@ -6643,28 +6682,30 @@
     "ADR-004",
     "ADR-006"
    ],
-   "last_commit": "93730b1",
+   "last_commit": "278f853",
    "updated": "2026-11-22"
   },
   {
    "req_id": "TRS-CONST-003",
    "status": "implemented",
    "code": [
-    "tools/constantsgen/register.go",
-    "tools/constantsgen/main.go"
+    "docs/change-requests/CR-005.md",
+    "tools/constantsgen/main.go",
+    "tools/constantsgen/register.go"
    ],
    "tests": [
-    "go:tools/constantsgen:TestDeclaredHashMatchesContent",
-    "go:tools/constantsgen:TestHashIsSensitiveToValueChanges",
     "go:tools/constantsgen:TestCanonicalFormExcludesDocumentation",
+    "go:tools/constantsgen:TestCommittedFilesMatchRegister",
+    "go:tools/constantsgen:TestDeclaredHashMatchesContent",
     "go:tools/constantsgen:TestEmissionIsDeterministic",
-    "go:tools/constantsgen:TestCommittedFilesMatchRegister"
+    "go:tools/constantsgen:TestHashIsSensitiveToValueChanges",
+    "go:tools/constantsgen:TestReceiptKindsAreNeverTextEventKinds"
    ],
    "evidence": [],
    "adr": [
     "ADR-004"
    ],
-   "last_commit": "93730b1",
+   "last_commit": "278f853",
    "updated": "2026-11-22"
   },
   {
@@ -6674,7 +6715,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "93730b1",
+   "last_commit": "278f853",
    "updated": "2026-11-22"
   },
   {
@@ -6702,7 +6743,7 @@
    "adr": [
     "ADR-004"
    ],
-   "last_commit": "93730b1",
+   "last_commit": "278f853",
    "updated": "2026-11-22"
   },
   {
@@ -6712,7 +6753,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "93730b1",
+   "last_commit": "278f853",
    "updated": "2026-11-22"
   },
   {
@@ -7201,7 +7242,7 @@
    "adr": [
     "ADR-001"
    ],
-   "last_commit": "93730b1",
+   "last_commit": "278f853",
    "updated": "2026-11-22"
   },
   {
@@ -7418,7 +7459,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "826c3e2",
+   "last_commit": "278f853",
    "updated": "2026-11-22"
   },
   {
@@ -7428,7 +7469,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "826c3e2",
+   "last_commit": "278f853",
    "updated": "2026-11-22"
   },
   {
@@ -7448,7 +7489,7 @@
    "adr": [
     "ADR-002"
    ],
-   "last_commit": "826c3e2",
+   "last_commit": "278f853",
    "updated": "2026-11-22"
   },
   {
@@ -7458,7 +7499,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "826c3e2",
+   "last_commit": "278f853",
    "updated": "2026-11-22"
   },
   {
@@ -7468,7 +7509,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "826c3e2",
+   "last_commit": "278f853",
    "updated": "2026-11-22"
   },
   {
@@ -7478,7 +7519,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "826c3e2",
+   "last_commit": "278f853",
    "updated": "2026-11-22"
   },
   {
@@ -7500,7 +7541,7 @@
     "ADR-003",
     "ADR-010"
    ],
-   "last_commit": "826c3e2",
+   "last_commit": "278f853",
    "updated": "2026-11-22"
   },
   {
@@ -7510,7 +7551,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "826c3e2",
+   "last_commit": "278f853",
    "updated": "2026-11-22"
   },
   {
@@ -7520,7 +7561,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "826c3e2",
+   "last_commit": "278f853",
    "updated": "2026-11-22"
   },
   {
@@ -7530,7 +7571,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "826c3e2",
+   "last_commit": "278f853",
    "updated": "2026-11-22"
   },
   {
@@ -7540,7 +7581,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "826c3e2",
+   "last_commit": "278f853",
    "updated": "2026-11-22"
   },
   {
@@ -7550,7 +7591,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "826c3e2",
+   "last_commit": "278f853",
    "updated": "2026-11-22"
   },
   {
@@ -8106,7 +8147,7 @@
    "adr": [
     "ADR-007"
    ],
-   "last_commit": "93730b1",
+   "last_commit": "278f853",
    "updated": "2026-11-22"
   },
   {
@@ -8145,7 +8186,7 @@
    "adr": [
     "ADR-007"
    ],
-   "last_commit": "93730b1",
+   "last_commit": "278f853",
    "updated": "2026-11-22"
   },
   {
@@ -8170,7 +8211,7 @@
     "ci:conformance#31528127667"
    ],
    "adr": [],
-   "last_commit": "93730b1",
+   "last_commit": "278f853",
    "updated": "2026-11-22"
   },
   {
@@ -8201,15 +8242,21 @@
     "ci:conformance#31528127667"
    ],
    "adr": [],
-   "last_commit": "93730b1",
+   "last_commit": "278f853",
    "updated": "2026-11-22"
   },
   {
    "req_id": "TRS-PROTO-005",
    "status": "tested",
    "code": [
+    "android-app/protocol-java/src/main/java/com/lumos/protocol/chat/Receipt.java",
+    "android-app/protocol-java/src/main/java/com/lumos/protocol/chat/RelayRoute.java",
     "android-app/protocol-java/src/main/java/com/lumos/protocol/wire/Frame.java",
     "ios-app/protocol-conformance/Sources/LumosProtocol/Frame.swift",
+    "ios-app/protocol-conformance/Sources/LumosProtocol/Receipts.swift",
+    "protocol/chat/receipt.go",
+    "protocol/chat/route.go",
+    "protocol/constants/lumos_constants.json",
     "protocol/schema/schema.go",
     "protocol/schemas/adv_v1.schema.json",
     "protocol/schemas/error_codes.schema.json",
@@ -8218,17 +8265,23 @@
     "protocol/schemas/prekey_bundle.schema.json"
    ],
    "tests": [
+    "go:protocol/chat:TestAReceiptRoundTripsAtEveryLegalCount",
+    "go:protocol/chat:TestARouteRoundTripsAndAnythingElseIsRefused",
+    "go:protocol/chat:TestCommittedRoutesAndReceiptsDecodeAndReencode",
+    "go:protocol/chat:TestReceiptsTravelTheSessionAndCannotBeRelabelled",
     "go:protocol/schema:TestMessagePayloadsCoverEveryRegisteredClass",
     "go:protocol/schema:TestTextEventEnvelopeMatchesAMD005",
     "go:tools/constantsgen:TestMessageClassesMatchTRS92",
     "java:protocol-conformance:FramingConformanceTest.frameRoundtrip",
-    "swift:LumosProtocolConformance:FramingConformanceTests.testFrameRoundtripReproducesCommittedBytes"
+    "java:protocol-conformance:ReceiptsConformanceTest.everyRouteAndReceiptDecodesAndReencodesByteForByte",
+    "swift:LumosProtocolConformance:FramingConformanceTests.testFrameRoundtripReproducesCommittedBytes",
+    "swift:LumosProtocolConformance:ReceiptsConformanceTests.testEveryRouteAndReceiptRoundTripsByteForByte"
    ],
    "evidence": [
     "ci:conformance#31528127667"
    ],
    "adr": [],
-   "last_commit": "93730b1",
+   "last_commit": "278f853",
    "updated": "2026-11-22"
   },
   {
@@ -8268,19 +8321,24 @@
    "adr": [
     "ADR-007"
    ],
-   "last_commit": "93730b1",
+   "last_commit": "278f853",
    "updated": "2026-11-22"
   },
   {
    "req_id": "TRS-PROTO-007",
    "status": "tested",
    "code": [
+    "android-app/protocol-java/src/main/java/com/lumos/protocol/chat/Receipt.java",
+    "android-app/protocol-java/src/main/java/com/lumos/protocol/chat/RelayRoute.java",
     "android-app/protocol-java/src/main/java/com/lumos/protocol/chat/RemoteSession.java",
     "android-app/protocol-java/src/main/java/com/lumos/protocol/chat/RemoteText.java",
     "android-app/protocol-java/src/main/java/com/lumos/protocol/wire/Frame.java",
     "ios-app/protocol-conformance/Sources/LumosProtocol/Frame.swift",
+    "ios-app/protocol-conformance/Sources/LumosProtocol/Receipts.swift",
     "ios-app/protocol-conformance/Sources/LumosProtocol/RemoteText.swift",
+    "protocol/chat/receipt.go",
     "protocol/chat/remote.go",
+    "protocol/chat/route.go",
     "protocol/chat/session.go",
     "protocol/gen/go/lumosconstants/class_limits.go",
     "protocol/gen/go/lumoserrors/error_codes.go",
@@ -8300,8 +8358,11 @@
    ],
    "tests": [
     "go:protocol/chat:FuzzDecoders",
+    "go:protocol/chat:FuzzReceiptAndRouteDecoders",
+    "go:protocol/chat:TestARouteRoundTripsAndAnythingElseIsRefused",
     "go:protocol/chat:TestMalformedEnvelopesAreRefused",
     "go:protocol/chat:TestMalformedTextEventsAreRefusedWithTheirCodes",
+    "go:protocol/chat:TestReceiptsOutsideTheLayoutAreRefused",
     "go:protocol/wire:TestDecodeErrorPaths",
     "go:protocol/wire:TestEncodeRejectsOversizedAndUnknown",
     "go:tools/constantsgen:TestClassLimitsResolveUnitsCorrectly",
@@ -8317,7 +8378,7 @@
     "ci:conformance#31528127667"
    ],
    "adr": [],
-   "last_commit": "93730b1",
+   "last_commit": "278f853",
    "updated": "2026-11-22"
   },
   {
@@ -8327,7 +8388,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "93730b1",
+   "last_commit": "278f853",
    "updated": "2026-11-22"
   },
   {
@@ -8360,7 +8421,7 @@
    "adr": [
     "ADR-002"
    ],
-   "last_commit": "93730b1",
+   "last_commit": "278f853",
    "updated": "2026-11-22"
   },
   {
@@ -8389,7 +8450,7 @@
    "adr": [
     "ADR-004"
    ],
-   "last_commit": "30420a4",
+   "last_commit": "278f853",
    "updated": "2026-11-22"
   },
   {
@@ -8406,7 +8467,7 @@
    ],
    "evidence": [],
    "adr": [],
-   "last_commit": "93730b1",
+   "last_commit": "278f853",
    "updated": "2026-11-22"
   },
   {
@@ -8416,7 +8477,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "93730b1",
+   "last_commit": "278f853",
    "updated": "2026-11-22"
   },
   {
@@ -8442,7 +8503,7 @@
     "ci:conformance#31528127667"
    ],
    "adr": [],
-   "last_commit": "93730b1",
+   "last_commit": "278f853",
    "updated": "2026-11-22"
   },
   {
@@ -8462,7 +8523,7 @@
    ],
    "evidence": [],
    "adr": [],
-   "last_commit": "93730b1",
+   "last_commit": "278f853",
    "updated": "2026-11-22"
   },
   {
@@ -8492,7 +8553,7 @@
     "ci:conformance#31528127667"
    ],
    "adr": [],
-   "last_commit": "30420a4",
+   "last_commit": "278f853",
    "updated": "2026-11-22"
   },
   {
@@ -8502,7 +8563,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "93730b1",
+   "last_commit": "278f853",
    "updated": "2026-11-22"
   },
   {
@@ -8531,7 +8592,7 @@
     "ADR-002",
     "ADR-008"
    ],
-   "last_commit": "93730b1",
+   "last_commit": "278f853",
    "updated": "2026-11-22"
   },
   {
@@ -8553,7 +8614,7 @@
    "adr": [
     "ADR-002"
    ],
-   "last_commit": "93730b1",
+   "last_commit": "278f853",
    "updated": "2026-11-22"
   },
   {
@@ -8606,7 +8667,7 @@
    "adr": [
     "ADR-004"
    ],
-   "last_commit": "95ef055",
+   "last_commit": "278f853",
    "updated": "2026-11-22"
   },
   {
@@ -9021,7 +9082,7 @@
    "adr": [
     "ADR-004"
    ],
-   "last_commit": "30420a4",
+   "last_commit": "278f853",
    "updated": "2026-11-22"
   },
   {

@@ -133,11 +133,18 @@ Split on 2026-11-22 into three sub-slices, each merged on its own:
   minsdk-api rule gains the API-33 key classes and algorithm names so the
   JCA path cannot creep back into shipped code.
 - **S7e, route exchange and receipts.** How matched devices hand each other
-  their relay route over the authenticated nearby session, and the delivery
-  and read receipts that move the ticks past one (SRS-RMT-005, SRS-RMT-014).
-  Both are new bytes on the wire, so both get the S7a treatment: Go
-  reference, vectors, Java and Swift. The app's INTERNET permission and the
-  wiring of the client into the running app come with it.
+  their relay route, and the delivery and read receipts that move the ticks
+  past one (SRS-RMT-005, SRS-RMT-014). Owner rulings 2026-11-23 (CR-005): the
+  route travels in a new post-match, nearby-only class RELAY_ROUTE (0x07);
+  receipts keep the TRS classes 0x11/0x12, sealed in the chat's ratchet.
+  Split in two:
+  - **S7e1, the wire.** CR-005 applied: the class, RECEIPT_IDS_PER_ENVELOPE,
+    the consent gate, the route and receipt codecs in Go, Java and Swift, and
+    the chat/receipts.json family with a relay's relabelling moves.
+  - **S7e2, the app.** Receipts sent on receive and applied on arrival
+    (read receipts only when the user allows, SRS-RMT-014); the route
+    exchange over the nearby session after a match; the INTERNET
+    permission; the relay pass scheduled on connectivity and push wake.
 - **S7f, iOS chat path.** The chat store and relay client on iOS.
 
 ### S8: docker-compose staging and integration suite
