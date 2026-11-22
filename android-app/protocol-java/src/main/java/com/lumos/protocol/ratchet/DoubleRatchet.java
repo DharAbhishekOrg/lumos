@@ -429,7 +429,7 @@ public final class DoubleRatchet {
     }
 
     private byte[] agree() throws GeneralSecurityException {
-        return LumosCrypto.x25519(LumosCrypto.x25519Private(dhsPriv), LumosCrypto.x25519Public(dhr));
+        return LumosCrypto.x25519(dhsPriv, dhr);
     }
 
     private void pruneExpired(final long now) {

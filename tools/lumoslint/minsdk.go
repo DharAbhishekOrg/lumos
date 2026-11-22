@@ -12,6 +12,12 @@
 // denylist of the Java 9+ APIs that D8 does NOT backport and that this code
 // base is likely to reach for. It is deliberately narrow: the app module
 // itself stays under Android Lint, which knows every API level exactly.
+//
+// WP-05 S7d found the same gap at the JCA: XDH, Ed25519 and the XEC/EdEC key
+// specs are API 33 and ChaCha20-Poly1305 is API 28, and a JCA algorithm name
+// is a string no compiler or linter resolves. Those curves and the AEAD now go
+// through the CryptoBackend seam (libsodium on Android), and only the JVM's
+// JcaCryptoBackend may name them; anywhere else in the library is a finding.
 package main
 
 import (
@@ -26,6 +32,10 @@ import (
 // minSdkLibraryRoot is the Java library the app ships but Lint does not check.
 const minSdkLibraryRoot = "android-app/protocol-java/src/main/java/"
 
+// minSdkJcaBackend is the one library file allowed the API-33 JCA crypto: the
+// JVM backend, which the Android app never installs.
+const minSdkJcaBackend = "android-app/protocol-java/src/main/java/com/lumos/protocol/wire/JcaCryptoBackend.java"
+
 // minSdkDenied maps a pattern to the reason it cannot run at minSdk 26.
 var minSdkDenied = []struct {
 	pattern *regexp.Regexp
@@ -36,6 +46,17 @@ var minSdkDenied = []struct {
 	{regexp.MustCompile(`\.readAllBytes\(|\.readNBytes\(|\.transferTo\(`), "InputStream bulk reads are API 33"},
 	{regexp.MustCompile(`\.toList\(\)`), "Stream.toList is API 34; use collect(Collectors.toList())"},
 	{regexp.MustCompile(`\.isBlank\(\)|\.strip\(\)|\.lines\(\)|\.repeat\(`), "these String methods are API 33"},
+}
+
+// minSdkJcaDenied is the API-33 (and API-28) JCA crypto, allowed only in the JVM backend.
+var minSdkJcaDenied = []struct {
+	pattern *regexp.Regexp
+	why     string
+}{
+	{regexp.MustCompile(`\b(XECPublicKeySpec|XECPrivateKeySpec|NamedParameterSpec|EdECPoint|EdECPublicKeySpec|EdECPrivateKeySpec)\b`),
+		"the XEC/EdEC key specs are API 33; go through LumosCrypto's CryptoBackend"},
+	{regexp.MustCompile(`"(XDH|X25519|Ed25519|EdDSA)"`), "JCA XDH and Ed25519 are API 33; go through LumosCrypto's CryptoBackend"},
+	{regexp.MustCompile(`"ChaCha20-Poly1305"`), "JCA ChaCha20-Poly1305 is API 28; go through LumosCrypto's CryptoBackend"},
 }
 
 // CheckMinSdkApis reports denied API uses in the protocol library's main sources.
@@ -60,6 +81,15 @@ func CheckMinSdkApis(root, path string) []Finding {
 			continue
 		}
 		for _, d := range minSdkDenied {
+			if d.pattern.MatchString(text) {
+				out = append(out, Finding{Rule: "minsdk-api", Path: rel,
+					Detail: "line " + strconv.Itoa(line) + ": " + d.why})
+			}
+		}
+		if filepath.ToSlash(rel) == minSdkJcaBackend {
+			continue
+		}
+		for _, d := range minSdkJcaDenied {
 			if d.pattern.MatchString(text) {
 				out = append(out, Finding{Rule: "minsdk-api", Path: rel,
 					Detail: "line " + strconv.Itoa(line) + ": " + d.why})

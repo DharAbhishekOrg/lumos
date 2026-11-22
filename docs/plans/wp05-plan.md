@@ -121,8 +121,11 @@ Split on 2026-11-22 into three sub-slices, each merged on its own:
   protocol-java's LumosCrypto builds X25519 and Ed25519 keys through
   XECPublicKeySpec, NamedParameterSpec and EdECPoint and agrees through JCA
   "XDH", all of which Android added at API 33. The app supports API 26, so on
-  Android 8 to 12 the chat path (X3DH, ratchet, remote sessions) cannot run.
-  Nothing reaches it from the UI yet, so no user is exposed. The fix is
+  Android 8 to 12 the chat path (X3DH, ratchet, remote sessions) cannot run,
+  and neither can nearby HELLO verification: PresenceTable verifies peers'
+  Ed25519 signatures through the same JCA call, which fails closed, so every
+  peer would be refused. Nothing reaches either from the UI yet, so no user is
+  exposed. The fix is
   ADR-001's own answer and the one identity already took: a primitive seam in
   protocol-java, JCA behind it on the JVM, libsodium (already shipped as
   Lazysodium) behind it in the app. Proven on the CI emulator, which runs

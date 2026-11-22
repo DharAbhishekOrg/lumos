@@ -306,3 +306,36 @@ func TestTheMinSdkRuleFiresInTheLibraryAndNowhereElse(t *testing.T) {
 		t.Fatalf("a comment naming an API is not a use of it: %v", got)
 	}
 }
+
+// TestTheJcaCurvesAreAllowedOnlyInTheJvmBackend pins WP-05 S7d's guard: the
+// API-33 JCA crypto may appear in JcaCryptoBackend and nowhere else in the
+// library, so the chat path cannot drift back onto it.
+func TestTheJcaCurvesAreAllowedOnlyInTheJvmBackend(t *testing.T) {
+	root := t.TempDir()
+	write := func(rel, body string) string {
+		p := filepath.Join(root, filepath.FromSlash(rel))
+		if err := os.MkdirAll(filepath.Dir(p), 0o755); err != nil {
+			t.Fatal(err)
+		}
+		if err := os.WriteFile(p, []byte(body), 0o644); err != nil {
+			t.Fatal(err)
+		}
+		return p
+	}
+	jca := "class A {\n  void f() {\n    KeyAgreement.getInstance(\"XDH\");\n" +
+		"    new XECPublicKeySpec(NamedParameterSpec.X25519, u);\n" +
+		"    Signature.getInstance(\"Ed25519\");\n    Cipher.getInstance(\"ChaCha20-Poly1305\");\n  }\n}\n"
+	elsewhere := write("android-app/protocol-java/src/main/java/com/lumos/protocol/x3dh/X3dh.java", jca)
+	if got := CheckMinSdkApis(root, elsewhere); len(got) != 4 {
+		t.Fatalf("want four findings outside the JVM backend, got %v", got)
+	}
+	backend := write("android-app/protocol-java/src/main/java/com/lumos/protocol/wire/JcaCryptoBackend.java", jca)
+	if got := CheckMinSdkApis(root, backend); len(got) != 0 {
+		t.Fatalf("the JVM backend is where these belong: %v", got)
+	}
+	still := write("android-app/protocol-java/src/main/java/com/lumos/protocol/wire/JcaCryptoBackend.java",
+		"class B {\n  void f() {\n    out.writeBytes(b);\n  }\n}\n")
+	if got := CheckMinSdkApis(root, still); len(got) != 1 {
+		t.Fatalf("the backend still obeys the minSdk API rules: %v", got)
+	}
+}

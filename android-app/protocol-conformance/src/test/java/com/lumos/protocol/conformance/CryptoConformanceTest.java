@@ -192,10 +192,10 @@ final class CryptoConformanceTest {
                     "signed-prekey signature for " + name);
 
             // DH1..DH4 from the initiator side, using the recorded private halves.
-            final var initIdDh = LumosCrypto.x25519Private(Vectors.hex(c, "testonly_initiator_identity_dh_priv_hex"));
-            final var initEph = LumosCrypto.x25519Private(Vectors.hex(c, "testonly_initiator_ephemeral_priv_hex"));
-            final var respIdDh = LumosCrypto.x25519Public(Vectors.hex(c, "responder_identity_dh_pub_hex"));
-            final var respSpk = LumosCrypto.x25519Public(Vectors.hex(c, "responder_signed_prekey_pub_hex"));
+            final var initIdDh = Vectors.hex(c, "testonly_initiator_identity_dh_priv_hex");
+            final var initEph = Vectors.hex(c, "testonly_initiator_ephemeral_priv_hex");
+            final var respIdDh = Vectors.hex(c, "responder_identity_dh_pub_hex");
+            final var respSpk = Vectors.hex(c, "responder_signed_prekey_pub_hex");
 
             final byte[] dh1 = LumosCrypto.x25519(initIdDh, respSpk);
             final byte[] dh2 = LumosCrypto.x25519(initEph, respIdDh);
@@ -203,7 +203,7 @@ final class CryptoConformanceTest {
             byte[] dh4 = new byte[0];
             if (Vectors.b(c, "with_one_time_prekey")) {
                 dh4 = LumosCrypto.x25519(initEph,
-                        LumosCrypto.x25519Public(Vectors.hex(c, "responder_one_time_prekey_pub_hex")));
+                        Vectors.hex(c, "responder_one_time_prekey_pub_hex"));
             }
 
             final byte[] f = new byte[LumosConstants.X3DH_F_PREFIX_LEN];
