@@ -270,13 +270,20 @@
   },
   {
    "req_id": "SRS-DAT-003",
-   "status": "not_started",
-   "code": [],
-   "tests": [],
+   "status": "tested",
+   "code": [
+    "backend/internal/relay/service.go",
+    "backend/internal/relay/store.go"
+   ],
+   "tests": [
+    "go:backend/internal/relay:TestAcknowledgedOrExpiredEnvelopesAreGone",
+    "go:backend/internal/relay:TestTheByteQuotaRefusesWhatWouldNotFit",
+    "go:backend/internal/relay:TestTheEnvelopeQuotaIsAtomicUnderConcurrentSenders"
+   ],
    "evidence": [],
    "adr": [],
-   "last_commit": null,
-   "updated": null
+   "last_commit": "99f1632",
+   "updated": "2026-11-22"
   },
   {
    "req_id": "SRS-DAT-004",
@@ -4157,13 +4164,18 @@
   },
   {
    "req_id": "SRS-RMT-002",
-   "status": "not_started",
-   "code": [],
-   "tests": [],
+   "status": "implemented",
+   "code": [
+    "backend/internal/relay/service.go",
+    "backend/internal/relay/store.go"
+   ],
+   "tests": [
+    "go:backend/internal/relay:TestTheEnvelopeRecordIsTheTRSRecordAndHoldsNoCapability"
+   ],
    "evidence": [],
    "adr": [],
-   "last_commit": null,
-   "updated": null
+   "last_commit": "99f1632",
+   "updated": "2026-11-22"
   },
   {
    "req_id": "SRS-RMT-003",
@@ -4244,13 +4256,21 @@
   },
   {
    "req_id": "SRS-RMT-009",
-   "status": "not_started",
-   "code": [],
-   "tests": [],
+   "status": "tested",
+   "code": [
+    "backend/internal/api/relay.go",
+    "backend/internal/relay/service.go"
+   ],
+   "tests": [
+    "go:backend/internal/api:FuzzTheSendRouteNeverPanicsOrFailsInternally",
+    "go:backend/internal/api:TestTheRelayRefusesWhatItMustAndSaysOnlyACode",
+    "go:backend/internal/relay:TestAcknowledgedOrExpiredEnvelopesAreGone",
+    "go:backend/internal/relay:TestRetriesAreIdempotentAndAReusedIDIsAReplay"
+   ],
    "evidence": [],
    "adr": [],
-   "last_commit": null,
-   "updated": null
+   "last_commit": "99f1632",
+   "updated": "2026-11-22"
   },
   {
    "req_id": "SRS-RMT-010",
@@ -4319,23 +4339,35 @@
   },
   {
    "req_id": "SRS-RMT-015",
-   "status": "not_started",
-   "code": [],
-   "tests": [],
+   "status": "tested",
+   "code": [
+    "backend/internal/relay/service.go",
+    "backend/internal/relay/store.go"
+   ],
+   "tests": [
+    "go:backend/internal/api:TestAMessageWaitsUntilItsRecipientFetchesAndAcknowledgesIt",
+    "go:backend/internal/relay:TestAcknowledgedOrExpiredEnvelopesAreGone"
+   ],
    "evidence": [],
    "adr": [],
-   "last_commit": null,
-   "updated": null
+   "last_commit": "99f1632",
+   "updated": "2026-11-22"
   },
   {
    "req_id": "SRS-RMT-016",
-   "status": "not_started",
-   "code": [],
-   "tests": [],
+   "status": "implemented",
+   "code": [
+    "backend/internal/api/relay.go",
+    "backend/internal/relay/service.go"
+   ],
+   "tests": [
+    "go:backend/internal/api:TestABlockedSenderGetsTheSameAnswerAndNothingArrives",
+    "go:backend/internal/relay:TestABlockedSenderIsToldNothingAndDeliversNothing"
+   ],
    "evidence": [],
    "adr": [],
-   "last_commit": null,
-   "updated": null
+   "last_commit": "99f1632",
+   "updated": "2026-11-22"
   },
   {
    "req_id": "SRS-RMT-017",
@@ -4698,13 +4730,18 @@
   },
   {
    "req_id": "SRS-TRN-009",
-   "status": "not_started",
-   "code": [],
-   "tests": [],
+   "status": "implemented",
+   "code": [
+    "backend/internal/relay/service.go"
+   ],
+   "tests": [
+    "go:backend/internal/api:TestTheRelayRefusesWhatItMustAndSaysOnlyACode",
+    "go:backend/internal/relay:TestOnlyRelayEligibleClassesCrossTheInternet"
+   ],
    "evidence": [],
    "adr": [],
-   "last_commit": null,
-   "updated": null
+   "last_commit": "99f1632",
+   "updated": "2026-11-22"
   },
   {
    "req_id": "SRS-TRN-010",
@@ -5498,17 +5535,19 @@
    "status": "implemented",
    "code": [
     "backend/cmd/lumosd/main.go",
-    "backend/internal/api/registry.go"
+    "backend/internal/api/registry.go",
+    "backend/internal/api/relay.go"
    ],
    "tests": [
     "go:backend/cmd/lumosd:TestOnlyHealthIsServed",
     "go:backend/cmd/lumosd:TestWithADatabaseTheRegistryRoutesAreServed",
+    "go:backend/internal/api:TestAMessageWaitsUntilItsRecipientFetchesAndAcknowledgesIt",
     "go:backend/internal/api:TestOversizedAndUnknownFieldsAreRefusedBeforeTheService",
     "go:backend/internal/api:TestTwoDevicesAgreeOnASecretThroughTheRegistry"
    ],
    "evidence": [],
    "adr": [],
-   "last_commit": "5778d87",
+   "last_commit": "99f1632",
    "updated": "2026-11-22"
   },
   {
@@ -5516,35 +5555,52 @@
    "status": "implemented",
    "code": [
     "backend/cmd/lumosd/main.go",
-    "backend/internal/api/registry.go"
+    "backend/internal/api/registry.go",
+    "backend/internal/api/relay.go",
+    "backend/internal/relay/service.go",
+    "backend/internal/relay/store.go"
    ],
    "tests": [
     "go:backend/cmd/lumosd:TestAnUnreachableDatabaseFailsStartup",
-    "go:backend/internal/api:TestNoResponseCarriesPrivateOrStoredSecrets"
+    "go:backend/internal/api:TestNoResponseCarriesPrivateOrStoredSecrets",
+    "go:backend/internal/api:TestNothingTheRelayHandlesReachesTheLog"
    ],
    "evidence": [],
    "adr": [],
-   "last_commit": "5778d87",
+   "last_commit": "99f1632",
    "updated": "2026-11-22"
   },
   {
    "req_id": "TRS-BCK-003",
-   "status": "not_started",
-   "code": [],
-   "tests": [],
+   "status": "tested",
+   "code": [
+    "backend/internal/relay/store.go"
+   ],
+   "tests": [
+    "go:backend/internal/relay:TestTheEnvelopeRecordIsTheTRSRecordAndHoldsNoCapability"
+   ],
    "evidence": [],
    "adr": [],
-   "last_commit": "5778d87",
+   "last_commit": "99f1632",
    "updated": "2026-11-22"
   },
   {
    "req_id": "TRS-BCK-004",
-   "status": "not_started",
-   "code": [],
-   "tests": [],
+   "status": "implemented",
+   "code": [
+    "backend/internal/relay/service.go",
+    "backend/internal/relay/store.go"
+   ],
+   "tests": [
+    "go:backend/internal/relay:TestAcknowledgedOrExpiredEnvelopesAreGone",
+    "go:backend/internal/relay:TestRetriesAreIdempotentAndAReusedIDIsAReplay",
+    "go:backend/internal/relay:TestSizeLimitsComeFromTheRegister",
+    "go:backend/internal/relay:TestTheByteQuotaRefusesWhatWouldNotFit",
+    "go:backend/internal/relay:TestTheEnvelopeQuotaIsAtomicUnderConcurrentSenders"
+   ],
    "evidence": [],
    "adr": [],
-   "last_commit": "5778d87",
+   "last_commit": "99f1632",
    "updated": "2026-11-22"
   },
   {
@@ -5566,7 +5622,7 @@
    ],
    "evidence": [],
    "adr": [],
-   "last_commit": "5778d87",
+   "last_commit": "99f1632",
    "updated": "2026-11-22"
   },
   {
@@ -5576,7 +5632,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "5778d87",
+   "last_commit": "99f1632",
    "updated": "2026-11-22"
   },
   {
@@ -5595,7 +5651,7 @@
    ],
    "evidence": [],
    "adr": [],
-   "last_commit": "5778d87",
+   "last_commit": "99f1632",
    "updated": "2026-11-22"
   },
   {
@@ -5613,7 +5669,7 @@
    ],
    "evidence": [],
    "adr": [],
-   "last_commit": "5778d87",
+   "last_commit": "99f1632",
    "updated": "2026-11-22"
   },
   {
@@ -5623,7 +5679,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "5778d87",
+   "last_commit": "99f1632",
    "updated": "2026-11-22"
   },
   {
@@ -5633,7 +5689,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "5778d87",
+   "last_commit": "99f1632",
    "updated": "2026-11-22"
   },
   {
@@ -5643,7 +5699,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "5778d87",
+   "last_commit": "99f1632",
    "updated": "2026-11-22"
   },
   {
@@ -5653,7 +5709,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "5778d87",
+   "last_commit": "99f1632",
    "updated": "2026-11-22"
   },
   {
@@ -5663,7 +5719,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "5778d87",
+   "last_commit": "99f1632",
    "updated": "2026-11-22"
   },
   {
@@ -5673,7 +5729,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "5778d87",
+   "last_commit": "99f1632",
    "updated": "2026-11-22"
   },
   {
@@ -6023,8 +6079,8 @@
    "adr": [
     "ADR-004"
    ],
-   "last_commit": "c3ae02d",
-   "updated": "2026-11-21"
+   "last_commit": "99f1632",
+   "updated": "2026-11-22"
   },
   {
    "req_id": "TRS-CICD-006",
@@ -6319,8 +6375,8 @@
     "ADR-005",
     "ADR-006"
    ],
-   "last_commit": "c3ae02d",
-   "updated": "2026-11-21"
+   "last_commit": "99f1632",
+   "updated": "2026-11-22"
   },
   {
    "req_id": "TRS-CONST-002",
@@ -6343,8 +6399,8 @@
     "ADR-004",
     "ADR-006"
    ],
-   "last_commit": "c3ae02d",
-   "updated": "2026-11-21"
+   "last_commit": "99f1632",
+   "updated": "2026-11-22"
   },
   {
    "req_id": "TRS-CONST-003",
@@ -6364,8 +6420,8 @@
    "adr": [
     "ADR-004"
    ],
-   "last_commit": "c3ae02d",
-   "updated": "2026-11-21"
+   "last_commit": "99f1632",
+   "updated": "2026-11-22"
   },
   {
    "req_id": "TRS-CONST-004",
@@ -6374,8 +6430,8 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "c3ae02d",
-   "updated": "2026-11-21"
+   "last_commit": "99f1632",
+   "updated": "2026-11-22"
   },
   {
    "req_id": "TRS-CONST-005",
@@ -6402,8 +6458,8 @@
    "adr": [
     "ADR-004"
    ],
-   "last_commit": "c3ae02d",
-   "updated": "2026-11-21"
+   "last_commit": "99f1632",
+   "updated": "2026-11-22"
   },
   {
    "req_id": "TRS-CONST-006",
@@ -6412,8 +6468,8 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "c3ae02d",
-   "updated": "2026-11-21"
+   "last_commit": "99f1632",
+   "updated": "2026-11-22"
   },
   {
    "req_id": "TRS-CRY-001",
@@ -6837,8 +6893,8 @@
    "adr": [
     "ADR-001"
    ],
-   "last_commit": "c3ae02d",
-   "updated": "2026-11-21"
+   "last_commit": "99f1632",
+   "updated": "2026-11-22"
   },
   {
    "req_id": "TRS-CRY-016",
@@ -7706,8 +7762,8 @@
    "adr": [
     "ADR-007"
    ],
-   "last_commit": "c3ae02d",
-   "updated": "2026-11-21"
+   "last_commit": "99f1632",
+   "updated": "2026-11-22"
   },
   {
    "req_id": "TRS-PROTO-002",
@@ -7745,8 +7801,8 @@
    "adr": [
     "ADR-007"
    ],
-   "last_commit": "c3ae02d",
-   "updated": "2026-11-21"
+   "last_commit": "99f1632",
+   "updated": "2026-11-22"
   },
   {
    "req_id": "TRS-PROTO-003",
@@ -7770,8 +7826,8 @@
     "ci:conformance#31528127667"
    ],
    "adr": [],
-   "last_commit": "c3ae02d",
-   "updated": "2026-11-21"
+   "last_commit": "99f1632",
+   "updated": "2026-11-22"
   },
   {
    "req_id": "TRS-PROTO-004",
@@ -7801,8 +7857,8 @@
     "ci:conformance#31528127667"
    ],
    "adr": [],
-   "last_commit": "c3ae02d",
-   "updated": "2026-11-21"
+   "last_commit": "99f1632",
+   "updated": "2026-11-22"
   },
   {
    "req_id": "TRS-PROTO-005",
@@ -7828,8 +7884,8 @@
     "ci:conformance#31528127667"
    ],
    "adr": [],
-   "last_commit": "c3ae02d",
-   "updated": "2026-11-21"
+   "last_commit": "99f1632",
+   "updated": "2026-11-22"
   },
   {
    "req_id": "TRS-PROTO-006",
@@ -7868,8 +7924,8 @@
    "adr": [
     "ADR-007"
    ],
-   "last_commit": "c3ae02d",
-   "updated": "2026-11-21"
+   "last_commit": "99f1632",
+   "updated": "2026-11-22"
   },
   {
    "req_id": "TRS-PROTO-007",
@@ -7907,8 +7963,8 @@
     "ci:conformance#31528127667"
    ],
    "adr": [],
-   "last_commit": "c3ae02d",
-   "updated": "2026-11-21"
+   "last_commit": "99f1632",
+   "updated": "2026-11-22"
   },
   {
    "req_id": "TRS-PROTO-008",
@@ -7917,8 +7973,8 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "c3ae02d",
-   "updated": "2026-11-21"
+   "last_commit": "99f1632",
+   "updated": "2026-11-22"
   },
   {
    "req_id": "TRS-PROTO-009",
@@ -7950,8 +8006,8 @@
    "adr": [
     "ADR-002"
    ],
-   "last_commit": "c3ae02d",
-   "updated": "2026-11-21"
+   "last_commit": "99f1632",
+   "updated": "2026-11-22"
   },
   {
    "req_id": "TRS-PROTO-010",
@@ -7979,8 +8035,8 @@
    "adr": [
     "ADR-004"
    ],
-   "last_commit": "c3ae02d",
-   "updated": "2026-11-21"
+   "last_commit": "99f1632",
+   "updated": "2026-11-22"
   },
   {
    "req_id": "TRS-PROTO-011",
@@ -7996,8 +8052,8 @@
    ],
    "evidence": [],
    "adr": [],
-   "last_commit": "c3ae02d",
-   "updated": "2026-11-21"
+   "last_commit": "99f1632",
+   "updated": "2026-11-22"
   },
   {
    "req_id": "TRS-PROTO-012",
@@ -8006,8 +8062,8 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "c3ae02d",
-   "updated": "2026-11-21"
+   "last_commit": "99f1632",
+   "updated": "2026-11-22"
   },
   {
    "req_id": "TRS-PROTO-013",
@@ -8032,8 +8088,8 @@
     "ci:conformance#31528127667"
    ],
    "adr": [],
-   "last_commit": "c3ae02d",
-   "updated": "2026-11-21"
+   "last_commit": "99f1632",
+   "updated": "2026-11-22"
   },
   {
    "req_id": "TRS-PROTO-014",
@@ -8052,8 +8108,8 @@
    ],
    "evidence": [],
    "adr": [],
-   "last_commit": "c3ae02d",
-   "updated": "2026-11-21"
+   "last_commit": "99f1632",
+   "updated": "2026-11-22"
   },
   {
    "req_id": "TRS-PROTO-015",
@@ -8082,8 +8138,8 @@
     "ci:conformance#31528127667"
    ],
    "adr": [],
-   "last_commit": "c3ae02d",
-   "updated": "2026-11-21"
+   "last_commit": "99f1632",
+   "updated": "2026-11-22"
   },
   {
    "req_id": "TRS-PROTO-016",
@@ -8092,8 +8148,8 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "c3ae02d",
-   "updated": "2026-11-21"
+   "last_commit": "99f1632",
+   "updated": "2026-11-22"
   },
   {
    "req_id": "TRS-PROTO-017",
@@ -8121,8 +8177,8 @@
     "ADR-002",
     "ADR-008"
    ],
-   "last_commit": "c3ae02d",
-   "updated": "2026-11-21"
+   "last_commit": "99f1632",
+   "updated": "2026-11-22"
   },
   {
    "req_id": "TRS-PROTO-018",
@@ -8143,8 +8199,8 @@
    "adr": [
     "ADR-002"
    ],
-   "last_commit": "c3ae02d",
-   "updated": "2026-11-21"
+   "last_commit": "99f1632",
+   "updated": "2026-11-22"
   },
   {
    "req_id": "TRS-REP-001",
@@ -8196,8 +8252,8 @@
    "adr": [
     "ADR-004"
    ],
-   "last_commit": "c3ae02d",
-   "updated": "2026-11-21"
+   "last_commit": "99f1632",
+   "updated": "2026-11-22"
   },
   {
    "req_id": "TRS-REP-003",
@@ -8597,8 +8653,8 @@
    "adr": [
     "ADR-004"
    ],
-   "last_commit": "c3ae02d",
-   "updated": "2026-11-21"
+   "last_commit": "99f1632",
+   "updated": "2026-11-22"
   },
   {
    "req_id": "TRS-TST-002",
@@ -8642,13 +8698,18 @@
   },
   {
    "req_id": "TRS-TST-006",
-   "status": "not_started",
-   "code": [],
-   "tests": [],
+   "status": "implemented",
+   "code": [
+    "backend/internal/api/relay_test.go"
+   ],
+   "tests": [
+    "go:backend/internal/api:TestABlockedSenderGetsTheSameAnswerAndNothingArrives",
+    "go:backend/internal/api:TestAMessageWaitsUntilItsRecipientFetchesAndAcknowledgesIt"
+   ],
    "evidence": [],
    "adr": [],
-   "last_commit": null,
-   "updated": null
+   "last_commit": "99f1632",
+   "updated": "2026-11-22"
   },
   {
    "req_id": "TRS-TST-007",
