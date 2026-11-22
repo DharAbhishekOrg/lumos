@@ -620,13 +620,20 @@
   },
   {
    "req_id": "SRS-IDN-008",
-   "status": "not_started",
-   "code": [],
-   "tests": [],
+   "status": "tested",
+   "code": [
+    "backend/internal/api/push.go",
+    "backend/internal/registry/postgres.go",
+    "backend/internal/registry/repository.go"
+   ],
+   "tests": [
+    "go:backend/internal/api:TestADeviceCanRevokeItselfAndEverythingGoesWithIt",
+    "go:backend/internal/registry:TestRevokingADeviceDropsItsPushRoute"
+   ],
    "evidence": [],
    "adr": [],
-   "last_commit": null,
-   "updated": null
+   "last_commit": "992a221",
+   "updated": "2026-11-22"
   },
   {
    "req_id": "SRS-MAT-001",
@@ -4230,13 +4237,19 @@
   },
   {
    "req_id": "SRS-RMT-006",
-   "status": "not_started",
-   "code": [],
-   "tests": [],
+   "status": "implemented",
+   "code": [
+    "backend/internal/push/apns.go",
+    "backend/internal/push/fcm.go"
+   ],
+   "tests": [
+    "go:backend/internal/push:TestAPNsSendsTheGenericAlertOverHTTP2WithASignedProviderToken",
+    "go:backend/internal/push:TestFCMSendsTheGenericWakeWithAWorkloadIdentityToken"
+   ],
    "evidence": [],
    "adr": [],
-   "last_commit": null,
-   "updated": null
+   "last_commit": "992a221",
+   "updated": "2026-11-22"
   },
   {
    "req_id": "SRS-RMT-007",
@@ -5549,6 +5562,7 @@
    "status": "implemented",
    "code": [
     "backend/cmd/lumosd/main.go",
+    "backend/internal/api/push.go",
     "backend/internal/api/registry.go",
     "backend/internal/api/relay.go"
    ],
@@ -5558,13 +5572,15 @@
     "go:backend/cmd/lumosd:TestOnlyHealthIsServed",
     "go:backend/cmd/lumosd:TestWithADatabaseAndRedisTheRelayIsServed",
     "go:backend/cmd/lumosd:TestWithADatabaseTheRegistryRoutesAreServed",
+    "go:backend/cmd/lumosd:TestWithPushConfiguredTheRelayWakesThroughIt",
     "go:backend/internal/api:TestAMessageWaitsUntilItsRecipientFetchesAndAcknowledgesIt",
+    "go:backend/internal/api:TestAPushRouteMustBeValidAndAuthenticated",
     "go:backend/internal/api:TestOversizedAndUnknownFieldsAreRefusedBeforeTheService",
     "go:backend/internal/api:TestTwoDevicesAgreeOnASecretThroughTheRegistry"
    ],
    "evidence": [],
    "adr": [],
-   "last_commit": "95ef055",
+   "last_commit": "c67685e",
    "updated": "2026-11-22"
   },
   {
@@ -5574,6 +5590,9 @@
     "backend/cmd/lumosd/main.go",
     "backend/internal/api/registry.go",
     "backend/internal/api/relay.go",
+    "backend/internal/push/apns.go",
+    "backend/internal/push/push.go",
+    "backend/internal/registry/push.go",
     "backend/internal/relay/postgres.go",
     "backend/internal/relay/redis.go",
     "backend/internal/relay/service.go",
@@ -5583,11 +5602,14 @@
     "go:backend/cmd/lumosd:TestAnUnreachableDatabaseFailsStartup",
     "go:backend/internal/api:TestNoResponseCarriesPrivateOrStoredSecrets",
     "go:backend/internal/api:TestNothingTheRelayHandlesReachesTheLog",
+    "go:backend/internal/push:TestAnUnreachableAPNsErrorNeverCarriesTheTokenFromTheURL",
+    "go:backend/internal/push:TestBackgroundWakesReportErrorsWithoutTheToken",
+    "go:backend/internal/registry:TestOnlyTokensSafeForAProviderRequestAreAccepted",
     "go:backend/internal/relay:TestAnAcknowledgedEnvelopeLeavesOnlyItsDigest"
    ],
    "evidence": [],
    "adr": [],
-   "last_commit": "95ef055",
+   "last_commit": "c67685e",
    "updated": "2026-11-22"
   },
   {
@@ -5602,7 +5624,7 @@
    ],
    "evidence": [],
    "adr": [],
-   "last_commit": "95ef055",
+   "last_commit": "c67685e",
    "updated": "2026-11-22"
   },
   {
@@ -5627,7 +5649,7 @@
    ],
    "evidence": [],
    "adr": [],
-   "last_commit": "95ef055",
+   "last_commit": "c67685e",
    "updated": "2026-11-22"
   },
   {
@@ -5649,17 +5671,27 @@
    ],
    "evidence": [],
    "adr": [],
-   "last_commit": "95ef055",
+   "last_commit": "c67685e",
    "updated": "2026-11-22"
   },
   {
    "req_id": "TRS-BCK-006",
-   "status": "not_started",
-   "code": [],
-   "tests": [],
+   "status": "tested",
+   "code": [
+    "backend/internal/push/apns.go",
+    "backend/internal/push/fcm.go",
+    "backend/internal/push/push.go",
+    "backend/internal/registry/push.go"
+   ],
+   "tests": [
+    "go:backend/internal/api:TestAMessageWakesItsRecipientThroughItsPushRoute",
+    "go:backend/internal/push:TestAPNsSendsTheGenericAlertOverHTTP2WithASignedProviderToken",
+    "go:backend/internal/push:TestFCMSendsTheGenericWakeWithAWorkloadIdentityToken",
+    "go:backend/internal/relay:TestOnlyANewlyStoredEnvelopeWakesTheRecipient"
+   ],
    "evidence": [],
    "adr": [],
-   "last_commit": "95ef055",
+   "last_commit": "c67685e",
    "updated": "2026-11-22"
   },
   {
@@ -5678,7 +5710,7 @@
    ],
    "evidence": [],
    "adr": [],
-   "last_commit": "95ef055",
+   "last_commit": "c67685e",
    "updated": "2026-11-22"
   },
   {
@@ -5706,7 +5738,7 @@
    ],
    "evidence": [],
    "adr": [],
-   "last_commit": "95ef055",
+   "last_commit": "c67685e",
    "updated": "2026-11-22"
   },
   {
@@ -5716,7 +5748,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "95ef055",
+   "last_commit": "c67685e",
    "updated": "2026-11-22"
   },
   {
@@ -5726,7 +5758,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "95ef055",
+   "last_commit": "c67685e",
    "updated": "2026-11-22"
   },
   {
@@ -5736,17 +5768,23 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "95ef055",
+   "last_commit": "c67685e",
    "updated": "2026-11-22"
   },
   {
    "req_id": "TRS-BCK-012",
-   "status": "not_started",
-   "code": [],
-   "tests": [],
+   "status": "implemented",
+   "code": [
+    "backend/cmd/lumosd/main.go",
+    "backend/internal/push/fcm.go"
+   ],
+   "tests": [
+    "go:backend/cmd/lumosd:TestAPNsIsConfiguredWhollyOrNotAtAll",
+    "go:backend/internal/push:TestFCMSendsTheGenericWakeWithAWorkloadIdentityToken"
+   ],
    "evidence": [],
    "adr": [],
-   "last_commit": "95ef055",
+   "last_commit": "c67685e",
    "updated": "2026-11-22"
   },
   {
@@ -5756,7 +5794,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "95ef055",
+   "last_commit": "c67685e",
    "updated": "2026-11-22"
   },
   {
@@ -5766,7 +5804,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "95ef055",
+   "last_commit": "c67685e",
    "updated": "2026-11-22"
   },
   {
@@ -8353,7 +8391,7 @@
    ],
    "evidence": [],
    "adr": [],
-   "last_commit": "95ef055",
+   "last_commit": "c67685e",
    "updated": "2026-11-22"
   },
   {
@@ -8414,7 +8452,7 @@
    ],
    "evidence": [],
    "adr": [],
-   "last_commit": "95ef055",
+   "last_commit": "c67685e",
    "updated": "2026-11-22"
   },
   {
@@ -8737,11 +8775,13 @@
    "req_id": "TRS-TST-006",
    "status": "implemented",
    "code": [
+    "backend/internal/api/push_test.go",
     "backend/internal/api/relay_test.go"
    ],
    "tests": [
     "go:backend/internal/api:TestABlockedSenderGetsTheSameAnswerAndNothingArrives",
-    "go:backend/internal/api:TestAMessageWaitsUntilItsRecipientFetchesAndAcknowledgesIt"
+    "go:backend/internal/api:TestAMessageWaitsUntilItsRecipientFetchesAndAcknowledgesIt",
+    "go:backend/internal/api:TestAMessageWakesItsRecipientThroughItsPushRoute"
    ],
    "evidence": [],
    "adr": [],

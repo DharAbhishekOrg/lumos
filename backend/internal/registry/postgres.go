@@ -30,7 +30,7 @@ import (
 )
 
 // schemaVersion is the newest step of the ladder below.
-const schemaVersion = 2
+const schemaVersion = 3
 
 // migrations is the forward-only ladder; index i moves version i to i+1.
 var migrations = []string{
@@ -67,6 +67,14 @@ var migrations = []string{
 		mailbox bytea NOT NULL REFERENCES devices(id) ON DELETE CASCADE,
 		proof   bytea NOT NULL CHECK (octet_length(proof) = 32),
 		PRIMARY KEY (mailbox, proof)
+	);`,
+	// v3: one push route per device (WP-05 S6). Keyed on the device, so a
+	// rotated token replaces the row and never orphans a mailbox.
+	`CREATE TABLE push_routes (
+		device_id  bytea    PRIMARY KEY REFERENCES devices(id) ON DELETE CASCADE,
+		provider   smallint NOT NULL CHECK (provider IN (1, 2)),
+		token      text     NOT NULL CHECK (length(token) > 0),
+		updated_at bigint   NOT NULL
 	);`,
 }
 
@@ -171,7 +179,28 @@ func (p *PostgresRepository) Device(ctx context.Context, id DeviceID) (Device, e
 
 // RevokeDevice implements Repository.
 func (p *PostgresRepository) RevokeDevice(ctx context.Context, id DeviceID) error {
-	tag, err := p.pool.Exec(ctx, `UPDATE devices SET revoked = true WHERE id = $1`, id[:])
+	return pgx.BeginFunc(ctx, p.pool, func(tx pgx.Tx) error {
+		tag, err := tx.Exec(ctx, `UPDATE devices SET revoked = true WHERE id = $1`, id[:])
+		if err != nil {
+			return err
+		}
+		if tag.RowsAffected() == 0 {
+			return ErrNotFound
+		}
+		// SRS-IDN-008: revocation drops the push route in the same step.
+		_, err = tx.Exec(ctx, `DELETE FROM push_routes WHERE device_id = $1`, id[:])
+		return err
+	})
+}
+
+// SetPushRoute implements Repository.
+func (p *PostgresRepository) SetPushRoute(ctx context.Context, id DeviceID, r PushRoute) error {
+	tag, err := p.pool.Exec(ctx, `
+		INSERT INTO push_routes (device_id, provider, token, updated_at)
+		SELECT id, $2, $3, $4 FROM devices WHERE id = $1 AND NOT revoked
+		ON CONFLICT (device_id) DO UPDATE
+		SET provider = EXCLUDED.provider, token = EXCLUDED.token, updated_at = EXCLUDED.updated_at`,
+		id[:], int16(r.Provider), r.Token, r.UpdatedAt)
 	if err != nil {
 		return err
 	}
@@ -179,6 +208,25 @@ func (p *PostgresRepository) RevokeDevice(ctx context.Context, id DeviceID) erro
 		return ErrNotFound
 	}
 	return nil
+}
+
+// PushRoute implements Repository.
+func (p *PostgresRepository) PushRoute(ctx context.Context, id DeviceID) (PushRoute, error) {
+	var r PushRoute
+	var provider int16
+	err := p.pool.QueryRow(ctx, `SELECT provider, token, updated_at FROM push_routes WHERE device_id = $1`, id[:]).
+		Scan(&provider, &r.Token, &r.UpdatedAt)
+	if errors.Is(err, pgx.ErrNoRows) {
+		return PushRoute{}, ErrNotFound
+	}
+	r.Provider = PushProvider(provider) // #nosec G115 -- the CHECK constraint admits only 1 and 2
+	return r, err
+}
+
+// ClearPushRoute implements Repository.
+func (p *PostgresRepository) ClearPushRoute(ctx context.Context, id DeviceID, token string) error {
+	_, err := p.pool.Exec(ctx, `DELETE FROM push_routes WHERE device_id = $1 AND ($2 = '' OR token = $2)`, id[:], token)
+	return err
 }
 
 // PutSignedBundle implements Repository.

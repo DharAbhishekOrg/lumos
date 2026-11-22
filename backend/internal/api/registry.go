@@ -45,6 +45,9 @@ func (h *Registry) Register(mux *http.ServeMux) {
 	mux.HandleFunc("PUT /v1/prekeys", h.authed(h.publish))
 	mux.HandleFunc("GET /v1/prekeys/status", h.authed(h.status))
 	mux.HandleFunc("POST /v1/prekeys/{routing_id}/claim", h.authed(h.claim))
+	mux.HandleFunc("PUT /v1/push/route", h.authed(h.setPushRoute))
+	mux.HandleFunc("DELETE /v1/push/route", h.authed(h.clearPushRoute))
+	mux.HandleFunc("DELETE /v1/devices/self", h.authed(h.revokeSelf))
 }
 
 type errorBody struct {

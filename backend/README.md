@@ -34,6 +34,17 @@ Go; part of the repository-root Go module `github.com/dharabhishekorg/lumos`.
   a minute by default) on memory and Redis. Over the limit the relay answers
   `429` with `Retry-After` and `ERR_RELAY_RATE_LIMITED`, before any
   capability lookup, so the answer reveals nothing about blocks.
+- WP-05 S6: push. A device registers one push token (`PUT /v1/push/route`,
+  FCM or APNs), stored with the device so a rotated token never orphans its
+  mailbox; `DELETE /v1/devices/self` revokes a device and drops its route
+  (SRS-IDN-008). When the relay stores a NEW envelope it sends the
+  recipient one generic wake: no sender, content or count (TRS-BCK-006).
+  `internal/push` holds the FCM adapter (HTTP v1, authenticated by the
+  runtime's service account through the metadata server, so no key file
+  exists) and the APNs adapter (HTTP/2, ES256 provider token from the
+  owner's `.p8` key mounted from Secret Manager), both tested against fake
+  provider servers. Real delivery is owner-executed: see
+  `docs/ops/environments.md`.
 
 ### Running the PostgreSQL and Redis tests locally
 

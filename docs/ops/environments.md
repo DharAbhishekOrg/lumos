@@ -28,6 +28,33 @@ The Android package carries no `.debug` suffix: `buildTypes.debug` in
 `android-app/app/build.gradle.kts` sets none, so debug and release staging
 builds share `com.lumos.app.staging`.
 
+### Push configuration (WP-05 S6)
+
+`lumosd` wakes phones only when it is told how. Everything below is
+**owner-executed**; the code is ready and tested against fake provider servers.
+
+| Variable | Value for staging | What it does |
+| --- | --- | --- |
+| `LUMOS_FCM_PROJECT` | `lumos-staging-515413` | Turns on Android wakes. FCM is called as the Cloud Run service's own service account, so no key file exists |
+| `LUMOS_APNS_KEY_FILE` | path where the secret `apns-sandbox-key` is mounted | The `.p8` key, mounted from Secret Manager as a file |
+| `LUMOS_APNS_KEY_ID` | the Key ID Apple shows for the key | |
+| `LUMOS_APNS_TEAM_ID` | the owner's Apple Team ID | |
+| `LUMOS_APNS_TOPIC` | `com.lumos.app` (the iOS bundle id) | |
+| `LUMOS_APNS_PRODUCTION` | unset (sandbox) | `true` only in production |
+
+Owner steps when staging is deployed (WP-05 S8):
+1. In `lumos-staging-515413`, enable the **Firebase Cloud Messaging API**
+   (`fcm.googleapis.com`).
+2. Grant the Cloud Run service account the role
+   **Firebase Cloud Messaging API Admin** (`roles/firebasecloudmessaging.admin`)
+   on that project, and nothing broader.
+3. After Apple approves the enrolment: create the APNs key, upload it as the
+   secret `apns-sandbox-key`, and mount it into the service as a file. Then
+   set the four `LUMOS_APNS_*` variables.
+
+The APNs variables are all-or-none: setting some of them stops `lumosd` at
+startup rather than running half-configured.
+
 ## Development
 
 | Item | Value |

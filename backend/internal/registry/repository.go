@@ -1,6 +1,6 @@
 // Lumos - backend/internal/registry / The storage contract and its in-memory implementation.
 // Author: dhar.abhishek.email@gmail.com
-// Implements: TRS-BCK-005, TRS-BCK-007, TRS-CRY-005
+// Implements: TRS-BCK-005, TRS-BCK-007, TRS-CRY-005, TRS-BCK-006, SRS-IDN-008
 // ADRs: ADR-001
 // Threading: concurrent-safe
 // Notes: Every store the registry service uses is behind Repository, so the
@@ -10,7 +10,11 @@
 // removed in the same atomic step that hands it out, so two concurrent claims
 // can never receive the same key (TRS-CRY-005). The repository never sees a
 // raw access credential - only its SHA-256 - so a dump of the store cannot be
-// replayed as logins. It stores only PUBLIC key material (TRS-BCK-002).
+// replayed as logins. It stores only PUBLIC key material (TRS-BCK-002). Since
+// WP-05 S6 a device also has at most one push route: the provider and the
+// token its push service issued. It is keyed on the device, never the other
+// way round, so a rotated token replaces the route and never orphans a
+// mailbox; revoking the device drops it (SRS-IDN-008).
 package registry
 
 import (
@@ -49,6 +53,22 @@ type OneTimePrekey struct {
 	Key [32]byte
 }
 
+// PushProvider names the service that delivers a device's wakes.
+type PushProvider uint8
+
+// The providers. Zero is "none" and is never stored.
+const (
+	PushFCM  PushProvider = 1
+	PushAPNs PushProvider = 2
+)
+
+// PushRoute is how to wake a device: an opaque token for one provider.
+type PushRoute struct {
+	Provider  PushProvider
+	Token     string
+	UpdatedAt int64
+}
+
 // Repository errors. They are internal sentinels: the service maps them to
 // stable registry codes before anything leaves the process.
 var (
@@ -76,6 +96,16 @@ type Repository interface {
 	// prekey is the documented X3DH fallback (TRS-CRY-005).
 	ClaimBundle(ctx context.Context, id DeviceID) (SignedBundle, *OneTimePrekey, error)
 	OneTimePrekeyCount(ctx context.Context, id DeviceID) (int, error)
+
+	// SetPushRoute replaces the device's push route. ErrNotFound for an
+	// unknown or revoked device.
+	SetPushRoute(ctx context.Context, id DeviceID, r PushRoute) error
+	// PushRoute returns the route; ErrNotFound when there is none.
+	PushRoute(ctx context.Context, id DeviceID) (PushRoute, error)
+	// ClearPushRoute removes the route. When token is non-empty it removes
+	// it only if the stored token is still that one, so a provider reporting
+	// an old token dead cannot erase the token that replaced it.
+	ClearPushRoute(ctx context.Context, id DeviceID, token string) error
 }
 
 type deviceRecord struct {
@@ -83,6 +113,7 @@ type deviceRecord struct {
 	bundle *SignedBundle
 	stock  []OneTimePrekey
 	issued map[uint32]struct{} // ids ever stocked: never accepted again
+	push   *PushRoute
 }
 
 // MemoryRepository is the in-process implementation, for tests and local
@@ -146,6 +177,41 @@ func (m *MemoryRepository) RevokeDevice(_ context.Context, id DeviceID) error {
 		return ErrNotFound
 	}
 	r.device.Revoked = true
+	r.push = nil // SRS-IDN-008: revocation drops the push route
+	return nil
+}
+
+// SetPushRoute implements Repository.
+func (m *MemoryRepository) SetPushRoute(_ context.Context, id DeviceID, route PushRoute) error {
+	m.mu.Lock()
+	defer m.mu.Unlock()
+	r, ok := m.devices[id]
+	if !ok || r.device.Revoked {
+		return ErrNotFound
+	}
+	r.push = &route
+	return nil
+}
+
+// PushRoute implements Repository.
+func (m *MemoryRepository) PushRoute(_ context.Context, id DeviceID) (PushRoute, error) {
+	m.mu.Lock()
+	defer m.mu.Unlock()
+	r, ok := m.devices[id]
+	if !ok || r.push == nil {
+		return PushRoute{}, ErrNotFound
+	}
+	return *r.push, nil
+}
+
+// ClearPushRoute implements Repository.
+func (m *MemoryRepository) ClearPushRoute(_ context.Context, id DeviceID, token string) error {
+	m.mu.Lock()
+	defer m.mu.Unlock()
+	r, ok := m.devices[id]
+	if ok && r.push != nil && (token == "" || r.push.Token == token) {
+		r.push = nil
+	}
 	return nil
 }
 
