@@ -37,7 +37,7 @@ import java.util.List;
 public final class LocalSchema {
 
     /** The schema version this build writes and expects. */
-    public static final int VERSION = 6;
+    public static final int VERSION = 7;
 
     /** The version of an absent or empty database, before any migration runs. */
     public static final int VERSION_EMPTY = 0;
@@ -145,6 +145,9 @@ public final class LocalSchema {
             RecordKind.CONVERSATION, RecordKind.CHAT_MESSAGE, RecordKind.OUTBOX_ITEM,
             RecordKind.RATCHET_SESSION, RecordKind.MESSAGE_DEDUP, RecordKind.PREKEY_SECRET);
 
+    /** The record kinds version 7 added (WP-05 S7c). */
+    private static final List<RecordKind> VERSION_7_KINDS = List.of(RecordKind.RELAY_ACCOUNT, RecordKind.RELAY_ROUTE);
+
     /**
      * The complete statement list taking an empty database to version 1.
      *
@@ -225,6 +228,18 @@ public final class LocalSchema {
     }
 
     /**
+     * The statements taking a version-6 database to version 7.
+     *
+     * <p>Two new tables, the relay registration and the per-conversation
+     * relay routes, and nothing else.
+     *
+     * @return the ordered statements of migration 6 to 7
+     */
+    public static List<String> migrationToVersion7() {
+        return Collections.unmodifiableList(createTablesFor(VERSION_7_KINDS));
+    }
+
+    /**
      * The create-table and create-index pair for each of the given kinds.
      *
      * @param kinds the kinds a migration step introduces
@@ -258,6 +273,7 @@ public final class LocalSchema {
         ladder.add(new Migration(3, 4, migrationToVersion4()));
         ladder.add(new Migration(4, 5, migrationToVersion5()));
         ladder.add(new Migration(5, 6, migrationToVersion6()));
+        ladder.add(new Migration(6, 7, migrationToVersion7()));
         return Collections.unmodifiableList(ladder);
     }
 }

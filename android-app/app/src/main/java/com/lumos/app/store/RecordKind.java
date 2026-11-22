@@ -173,7 +173,30 @@ public enum RecordKind {
      *
      * <p>Added at schema version 6 (WP-05 S7b).
      */
-    PREKEY_SECRET(true);
+    PREKEY_SECRET(true),
+
+    /**
+     * This device's relay registration: its routing id and the bearer
+     * credential the registry issued (TRS-BCK-007), in one row, and the
+     * prekey id counters in a second row that outlives a re-registration so
+     * no prekey id is ever reused (TRS-CRY-005). Sealed like every row, so the
+     * credential never sits in the database in the clear.
+     *
+     * <p>Added at schema version 7 (WP-05 S7c).
+     */
+    RELAY_ACCOUNT(false),
+
+    /**
+     * One conversation's relay route, looked up by a blind index over the
+     * match identifier: the peer's routing id, the capability that lets this
+     * device send to it, and the capability this device issued so the peer
+     * can send here. Kept apart from CONVERSATION so a session restart can
+     * never drop it, and sealed like every row: the relay must never be able
+     * to read who talks to whom from this device's disk either.
+     *
+     * <p>Added at schema version 7 (WP-05 S7c).
+     */
+    RELAY_ROUTE(true);
 
     private final boolean lookupByTag;
 

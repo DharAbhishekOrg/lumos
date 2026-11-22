@@ -452,6 +452,26 @@ public final class ChatStore {
     }
 
     /**
+     * Records that a queued send can never go as it is (the relay refused it
+     * for good): the red mark, and the outbox item is done. A retry is a new
+     * send the user chooses.
+     *
+     * @param messageId the idempotency key
+     * @throws StoreException on engine failure
+     */
+    public void markFailed(final byte[] messageId) throws StoreException {
+        store.transaction(() -> {
+            final Optional<ChatRecords.Message> m = message(messageId);
+            if (m.isPresent() && m.get().outgoing()) {
+                final DeliveryMachine.State sending = DeliveryMachine.step(m.get().state(), DeliveryMachine.Event.SEND_STARTED);
+                putMessage(m.get().withState(DeliveryMachine.step(sending, DeliveryMachine.Event.ATTEMPTS_EXHAUSTED)));
+            }
+            store.delete(RecordKind.OUTBOX_ITEM, ChatRecords.rowId(messageId));
+            return null;
+        });
+    }
+
+    /**
      * Forgets displayed ids whose dedup window has passed (TRS-LOC-005).
      *
      * @return how many were forgotten
