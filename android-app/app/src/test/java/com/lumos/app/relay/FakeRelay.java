@@ -209,6 +209,10 @@ final class FakeRelay implements HttpTransport {
             return code(401, "ERR_AUTH_REJECTED");
         }
         final JsonObject in = body == null ? null : JsonParser.parseString(body).getAsJsonObject();
+        return route.contains("/prekeys") ? prekeyRoutes(device, route, in) : mailboxRoutes(device, route, path, in);
+    }
+
+    private Response prekeyRoutes(final String device, final String route, final JsonObject in) {
         if ("PUT /v1/prekeys".equals(route)) {
             return publish(device, in);
         }
@@ -222,6 +226,10 @@ final class FakeRelay implements HttpTransport {
         if (route.startsWith("POST /v1/prekeys/") && route.endsWith("/claim")) {
             return claim(route.substring("POST /v1/prekeys/".length(), route.length() - "/claim".length()));
         }
+        return code(404, "NOT_FOUND");
+    }
+
+    private Response mailboxRoutes(final String device, final String route, final String path, final JsonObject in) {
         if ("PUT /v1/mailbox/capabilities".equals(route)) {
             proofs.computeIfAbsent(device, k -> new HashSet<>()).add(in.get("proof").getAsString());
             return empty(204);

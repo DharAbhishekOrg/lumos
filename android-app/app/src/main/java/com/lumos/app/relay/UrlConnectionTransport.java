@@ -1,14 +1,15 @@
 /*
  * Lumos - android-app/app / The relay transport over the platform's HttpURLConnection.
  * Author: dhar.abhishek.email@gmail.com
- * Implements: TRS-BCK-001, SRS-NFR-SEC-008, SRS-NFR-SEC-009, TRS-BCK-002
+ * Implements: TRS-BCK-001, SRS-NFR-SEC-009, TRS-BCK-002
  * ADRs: ADR-001
  * Threading: any
  * Notes: The platform's own TLS and certificate validation, untouched: no
  * custom trust manager, no hostname verifier, no socket factory, so there is
  * nothing here that could be a trust-all bypass (SRS-NFR-SEC-009). TLS 1.3 is
- * what the platform negotiates on Android 10 and later; the backend refuses
- * anything older than its policy (SRS-NFR-SEC-008, owner-run TLS scan). The
+ * what the platform negotiates on Android 10 and later; the TLS floor itself
+ * (SRS-NFR-SEC-008) is the backend's policy and the owner-run TLS scan's to
+ * prove, not this client's. The
  * base must be https; plain http is accepted only for a loopback host, which
  * is what tests and a local docker-compose backend use. Redirects are never
  * followed, so the bearer credential only ever goes to the configured host.

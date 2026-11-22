@@ -88,6 +88,25 @@ public final class RelaySync {
     }
 
     /**
+     * Why a pass stopped early.
+     *
+     * @param kind what the caller does next
+     * @param code the stable code, or empty; diagnostics only
+     * @param retryAfterSeconds the server's Retry-After, or -1
+     */
+    public record Stop(RelayException.Kind kind, String code, long retryAfterSeconds) {
+
+        static Stop of(final RelayException e) {
+            return new Stop(e.kind(), e.code(), e.retryAfterSeconds());
+        }
+
+        /** @return true when the pass should simply run again later */
+        public boolean retryable() {
+            return kind == RelayException.Kind.OFFLINE || kind == RelayException.Kind.BUSY;
+        }
+    }
+
+    /**
      * What one pass did.
      *
      * @param sent sends the relay took
@@ -97,8 +116,7 @@ public final class RelaySync {
      * @param moreWaiting true when the mailbox may hold more than this pass took
      * @param stoppedBy why the pass stopped early, or null when it ran to the end
      */
-    public record Report(int sent, int failed, int shown, int acknowledged, boolean moreWaiting,
-            RelayException stoppedBy) {
+    public record Report(int sent, int failed, int shown, int acknowledged, boolean moreWaiting, Stop stoppedBy) {
 
         /** @return true when the pass stopped on something worth retrying as is */
         public boolean retryLater() {
@@ -115,7 +133,7 @@ public final class RelaySync {
         private boolean more;
 
         Report report(final RelayException stop) {
-            return new Report(sent, failed, shown, acknowledged, more, stop);
+            return new Report(sent, failed, shown, acknowledged, more, stop == null ? null : Stop.of(stop));
         }
     }
 
