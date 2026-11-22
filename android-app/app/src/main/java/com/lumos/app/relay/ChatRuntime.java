@@ -29,20 +29,19 @@ import com.lumos.protocol.chat.RemoteText;
 import com.lumos.protocol.wire.Frame;
 import java.security.GeneralSecurityException;
 import java.security.SecureRandom;
+import java.util.Optional;
 
 /** The assembled chat runtime. */
 public final class ChatRuntime {
 
     private final ChatStore chat;
-    private final RelayRoutes routes;
     private final RelaySync sync;
     private final RelaySessions sessions;
     private final RouteExchange exchange;
 
-    private ChatRuntime(final ChatStore chat, final RelayRoutes routes, final RelaySync sync,
-            final RelaySessions sessions, final RouteExchange exchange) {
+    private ChatRuntime(final ChatStore chat, final RelaySync sync, final RelaySessions sessions,
+            final RouteExchange exchange) {
         this.chat = chat;
-        this.routes = routes;
         this.sync = sync;
         this.sessions = sessions;
         this.exchange = exchange;
@@ -70,11 +69,11 @@ public final class ChatRuntime {
         final RelayAccount account = RelayAccount.over(store, crypto);
         final PrekeyPublisher prekeys = PrekeyPublisher.over(store, chat, identity.identity(), identity::sign, random);
         final RelayClient anonymous = RelayClient.anonymous(transport);
-        return new ChatRuntime(chat, routes, RelaySync.over(chat, routes, account, prekeys, anonymous, clock),
+        return new ChatRuntime(chat, RelaySync.over(chat, routes, account, prekeys, anonymous, clock),
                 RelaySessions.over(chat, routes, account, anonymous, random), RouteExchange.over(routes, account));
     }
 
-    /** @return the chat store */
+    /** @return the one chat store, shared with the UI by design (see the SpotBugs filter) */
     public ChatStore chat() {
         return chat;
     }
@@ -89,28 +88,23 @@ public final class ChatRuntime {
         return exchange;
     }
 
-    /** @return the conversations' routes */
-    public RelayRoutes routes() {
-        return routes;
-    }
-
     /**
      * Queues a text event, starting the session first when there is none.
      *
      * @param matchId the conversation
      * @param peerIdentityEd the identity the match pinned
      * @param event the event
-     * @return the new message id, or null while no session can start yet (no route or no bundle)
+     * @return the new message id, or empty while no session can start yet (no route or no bundle)
      * @throws RelayException when the registry could not be reached to start the session
      * @throws StoreException on engine failure
      * @throws GeneralSecurityException when the device key could not be made
      * @throws Frame.WireException when the peer's bundle is not the pinned identity's, or sealing fails
      */
-    public byte[] send(final byte[] matchId, final byte[] peerIdentityEd, final RemoteText.TextEvent event)
+    public Optional<byte[]> send(final byte[] matchId, final byte[] peerIdentityEd, final RemoteText.TextEvent event)
             throws RelayException, StoreException, GeneralSecurityException, Frame.WireException {
         if (!sessions.start(matchId, peerIdentityEd)) {
-            return null;
+            return Optional.empty();
         }
-        return chat.send(matchId, event);
+        return Optional.of(chat.send(matchId, event));
     }
 }

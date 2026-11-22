@@ -14,8 +14,9 @@
 package com.lumos.app.relay;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.lumos.app.Fixtures;
 import com.lumos.app.data.DataKeyHierarchy;
@@ -86,14 +87,17 @@ public class ChatRuntimeTest {
         final MatchMachine.State matched = MatchMachine.State.MATCHED;
         asha.runtime.chat().acceptConversation(match, ravi.record.ed25519Public());
         ravi.runtime.chat().acceptConversation(match, asha.record.ed25519Public());
+        assertFalse(asha.runtime.send(match, ravi.record.ed25519Public(),
+                new RemoteText.TextEvent(TextEventKind.TEXT, null, "early".getBytes(StandardCharsets.UTF_8)))
+                .isPresent(), "no route yet: nothing is queued and no session starts");
         ravi.runtime.exchange().take(match, matched, asha.runtime.exchange().offer(match, matched).orElseThrow());
         asha.runtime.exchange().take(match, matched, ravi.runtime.exchange().offer(match, matched).orElseThrow());
         asha.runtime.sync().run();
         ravi.runtime.sync().run();
 
-        assertNotNull(asha.runtime.send(match, ravi.record.ed25519Public(),
-                new RemoteText.TextEvent(TextEventKind.TEXT, null, "hi".getBytes(StandardCharsets.UTF_8))),
-                "the session starts on demand from Ravi's published bundle");
+        assertTrue(asha.runtime.send(match, ravi.record.ed25519Public(),
+                new RemoteText.TextEvent(TextEventKind.TEXT, null, "hi".getBytes(StandardCharsets.UTF_8)))
+                .isPresent(), "the session starts on demand from Ravi's published bundle");
         assertEquals(1, asha.runtime.sync().run().sent());
         assertEquals(1, ravi.runtime.sync().run().shown());
         ravi.runtime.sync().run();

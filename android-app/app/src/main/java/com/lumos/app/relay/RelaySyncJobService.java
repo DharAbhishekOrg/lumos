@@ -24,6 +24,9 @@ public final class RelaySyncJobService extends JobService {
 
     @Override
     public boolean onStartJob(final JobParameters params) {
+        if (!(getApplication() instanceof LumosApplication)) {
+            return false;
+        }
         final LumosApplication app = (LumosApplication) getApplication();
         app.relayExecutor().execute(() -> jobFinished(params, runPasses(app)));
         return true;

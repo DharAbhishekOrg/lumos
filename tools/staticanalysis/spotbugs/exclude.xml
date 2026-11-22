@@ -224,4 +224,16 @@
     <Class name="com.lumos.app.identity.IdentityCrypto$KeyMaterial"/>
     <Bug pattern="EI_EXPOSE_REP,EI_EXPOSE_REP2"/>
   </Match>
+  <!--
+    WP-05 S7e2b: ChatRuntime is the chat composition root, and chat() hands
+    out its one ChatStore ON PURPOSE - the UI reads conversations and marks
+    them read through the same store the relay pass writes, so a copy would
+    be a second, diverging store. Scoped to that one accessor; the runtime's
+    other getters return services SpotBugs already treats as immutable.
+  -->
+  <Match>
+    <Class name="com.lumos.app.relay.ChatRuntime"/>
+    <Method name="chat"/>
+    <Bug pattern="EI_EXPOSE_REP"/>
+  </Match>
 </FindBugsFilter>
