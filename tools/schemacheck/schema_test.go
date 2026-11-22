@@ -77,7 +77,8 @@ func TestExtractionActuallyFoundSomething(t *testing.T) {
 // schema version 4; interest_record, match_record and interest_budget
 // joined at WP-04 S3 with schema version 5; conversation, chat_message,
 // outbox_item, ratchet_session, message_dedup and prekey_secret joined at
-// WP-05 S7b with schema version 6.
+// WP-05 S7b with schema version 6; relay_account joined at WP-05 S7c with
+// schema version 7.
 func TestTheWpTwoKindsArePresent(t *testing.T) {
 	java, swift := load(t)
 	want := []string{
@@ -85,7 +86,7 @@ func TestTheWpTwoKindsArePresent(t *testing.T) {
 		"diagnostic_event", "discovery_visibility", "hidden_peer", "identity_key_record",
 		"interest_budget", "interest_record", "local_profile", "match_record",
 		"message_dedup", "outbox_item", "prekey_secret", "profile_field_policy",
-		"profile_media", "ratchet_session", "recovery_record",
+		"profile_media", "ratchet_session", "recovery_record", "relay_account",
 	}
 	if !equalStrings(java.Tables, want) {
 		t.Errorf("java tables = %v, want %v", java.Tables, want)

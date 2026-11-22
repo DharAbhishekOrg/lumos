@@ -57,6 +57,7 @@ import com.lumos.app.store.LocalSchema;
             SealedRecordEntity.RatchetSessionRow.class,
             SealedRecordEntity.MessageDedupRow.class,
             SealedRecordEntity.PrekeySecretRow.class,
+            SealedRecordEntity.RelayAccountRow.class,
         },
         version = LocalSchema.VERSION,
         exportSchema = true)
@@ -161,6 +162,23 @@ public abstract class LumosRoomDatabase extends RoomDatabase {
     };
 
     /**
+     * Room's version of the canonical 6-to-7 step (WP-05 S7c): the relay
+     * account table, then the canonical version in the meta table - the same shape
+     * as every step before it.
+     */
+    public static final Migration MIGRATION_6_7 = new Migration(6, 7) {
+        @Override
+        public void migrate(@NonNull final SupportSQLiteDatabase database) {
+            for (final String sql : LocalSchema.migrationToVersion7()) {
+                database.execSQL(sql);
+            }
+            database.execSQL("INSERT OR REPLACE INTO " + LocalSchema.TABLE_META + " ("
+                    + LocalSchema.META_KEY + ", " + LocalSchema.META_VALUE + ") VALUES (?, ?)",
+                    new Object[] {LocalSchema.META_SCHEMA_VERSION, String.valueOf(7)});
+        }
+    };
+
+    /**
      * Opens the database in the application's private storage.
      *
      * @param context the application context
@@ -168,7 +186,8 @@ public abstract class LumosRoomDatabase extends RoomDatabase {
      */
     public static LumosRoomDatabase open(final Context context) {
         return Room.databaseBuilder(context, LumosRoomDatabase.class, DATABASE_FILE)
-                .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5, MIGRATION_5_6)
+                .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5, MIGRATION_5_6,
+                        MIGRATION_6_7)
                 .addCallback(new Callback() {
                     @Override
                     public void onCreate(@NonNull final SupportSQLiteDatabase database) {

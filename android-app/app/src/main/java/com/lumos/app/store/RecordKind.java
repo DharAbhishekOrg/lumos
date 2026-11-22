@@ -173,7 +173,17 @@ public enum RecordKind {
      *
      * <p>Added at schema version 6 (WP-05 S7b).
      */
-    PREKEY_SECRET(true);
+    PREKEY_SECRET(true),
+
+    /**
+     * This device's relay registration: its routing id and the bearer
+     * credential the registry issued (TRS-BCK-007). One row, sealed like
+     * every row, so the credential never sits in the database in the clear;
+     * a fresh registration replaces it.
+     *
+     * <p>Added at schema version 7 (WP-05 S7c).
+     */
+    RELAY_ACCOUNT(false);
 
     private final boolean lookupByTag;
 

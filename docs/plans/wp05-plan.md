@@ -106,8 +106,24 @@ Split on 2026-11-22 into three sub-slices, each merged on its own:
   store (the Swift schema mirror is in, the store follows with the iOS chat
   path), the dedup id cap (the TTL is in), and simultaneous initiation by
   both peers.
-- **S7c, relay client.** Upload, fetch and acknowledge against the S5 relay,
-  with a process-kill recovery test (SRS-RMT-003, SRS-RMT-017).
+- **S7c, Android relay client.** The registry and relay contract as a typed
+  client over `HttpURLConnection` (no new dependency: a strict JSON codec for
+  the fixed contract); the device's relay registration kept sealed in schema
+  v7; signed and one-time prekey publishing and replenishment, the private
+  halves stored before anything is uploaded; the outbox drained in order
+  against the relay; the mailbox fetched, opened and acknowledged only after
+  the open has committed. Process-kill recovery tests at every step between
+  the relay and the store (SRS-RMT-003, SRS-RMT-017, SRS-RMT-004), against an
+  in-memory relay with the S5 semantics; the real cross-stack run is S8's.
+  A conversation's relay route (the peer's routing id, the capability to
+  send to it and the capability this device issued) is an input here.
+- **S7d, route exchange and receipts.** How matched devices hand each other
+  their relay route over the authenticated nearby session, and the delivery
+  and read receipts that move the ticks past one (SRS-RMT-005, SRS-RMT-014).
+  Both are new bytes on the wire, so both get the S7a treatment: Go
+  reference, vectors, Java and Swift. The app's INTERNET permission and the
+  wiring of the client into the running app come with it.
+- **S7e, iOS chat path.** The chat store and relay client on iOS.
 
 ### S8: docker-compose staging and integration suite
 - Offline queue, TTL expiry, replay rejection, duplicate envelope and block

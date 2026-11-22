@@ -138,4 +138,8 @@ public class SealedRecordEntity {
     /** A private prekey scalar. Schema version 6. */
     @Entity(tableName = "prekey_secret")
     public static class PrekeySecretRow extends SealedRecordEntity { }
+
+    /** This device's relay registration. Schema version 7. */
+    @Entity(tableName = "relay_account")
+    public static class RelayAccountRow extends SealedRecordEntity { }
 }
