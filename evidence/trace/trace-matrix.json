@@ -487,7 +487,7 @@
     "ADR-008",
     "ADR-010"
    ],
-   "last_commit": "30420a4",
+   "last_commit": "2e25a7b",
    "updated": "2026-11-22"
   },
   {
@@ -734,6 +734,7 @@
    "code": [
     "android-app/app/src/main/java/com/lumos/app/match/InterestLedger.java",
     "android-app/app/src/main/java/com/lumos/app/match/InterestSession.java",
+    "android-app/app/src/main/java/com/lumos/app/relay/RouteExchange.java",
     "android-app/protocol-java/src/main/java/com/lumos/protocol/match/ConsentGate.java",
     "android-app/protocol-java/src/main/java/com/lumos/protocol/match/MatchMachine.java",
     "ios-app/protocol-conformance/Sources/LumosProtocol/Match.swift",
@@ -745,6 +746,7 @@
     "go:protocol/match:TestTheOnlyDoorIsMutualAcceptance",
     "java:app-dev:InterestLedgerTest.bothSidesOfTheRaceDeriveTheSameMatchIdentifier",
     "java:app-dev:MutualConsentFlowTest.mutualAcceptanceOpensTheDoorWithOneIdentifierAndOneToken",
+    "java:app-dev:RelayReceiptsTest.aRouteIsOfferedAndTakenOnlyAfterAMatchAndOnlyWellFormed",
     "java:protocol-conformance:ConsentGateTest.everyClassIsDecidedExactlyOnce",
     "java:protocol-conformance:MatchConformanceTest.committedTimelinesReplayStepForStep",
     "swift:LumosAppShell:InterestLedgerTests.testBothSidesOfTheRaceDeriveTheSameMatchIdentifier",
@@ -754,7 +756,7 @@
    "adr": [
     "ADR-002"
    ],
-   "last_commit": "278f853",
+   "last_commit": "2e25a7b",
    "updated": "2026-11-22"
   },
   {
@@ -762,11 +764,13 @@
    "status": "tested",
    "code": [
     "android-app/app/src/main/java/com/lumos/app/match/InterestSession.java",
+    "android-app/app/src/main/java/com/lumos/app/relay/RouteExchange.java",
     "android-app/protocol-java/src/main/java/com/lumos/protocol/match/ConsentGate.java",
     "ios-app/protocol-conformance/Sources/LumosProtocol/Match.swift"
    ],
    "tests": [
     "java:app-dev:MutualConsentFlowTest.aDeclineTransmitsNothingAndNoConversationCrossesBeforeAMatch",
+    "java:app-dev:RelayReceiptsTest.aRouteIsOfferedAndTakenOnlyAfterAMatchAndOnlyWellFormed",
     "java:protocol-conformance:ConsentGateTest.conversationNeverFlowsBeforeAMatchAndConsentNeverAfterABlock",
     "java:protocol-conformance:ConsentGateTest.everyClassIsDecidedExactlyOnce",
     "swift:LumosProtocolConformance:MatchConformanceTests.testTheConsentGateDecidesEveryClassOnceAndHoldsTheDoor"
@@ -775,8 +779,8 @@
    "adr": [
     "ADR-002"
    ],
-   "last_commit": "96de473",
-   "updated": "2026-11-20"
+   "last_commit": "2e25a7b",
+   "updated": "2026-11-22"
   },
   {
    "req_id": "SRS-MAT-007",
@@ -3155,7 +3159,7 @@
     "ADR-003",
     "ADR-010"
    ],
-   "last_commit": "30420a4",
+   "last_commit": "2e25a7b",
    "updated": "2026-11-22"
   },
   {
@@ -4179,6 +4183,7 @@
     "android-app/app/src/main/java/com/lumos/app/relay/RelayRoutes.java",
     "android-app/app/src/main/java/com/lumos/app/relay/RelaySessions.java",
     "android-app/app/src/main/java/com/lumos/app/relay/RelaySync.java",
+    "android-app/app/src/main/java/com/lumos/app/relay/RouteExchange.java",
     "android-app/protocol-java/src/main/java/com/lumos/protocol/chat/RelayRoute.java",
     "android-app/protocol-java/src/main/java/com/lumos/protocol/chat/RemoteSession.java",
     "android-app/protocol-java/src/main/java/com/lumos/protocol/chat/RemoteText.java",
@@ -4196,6 +4201,7 @@
     "go:protocol/chat:TestCommittedRoutesAndReceiptsDecodeAndReencode",
     "go:protocol/chat:TestTheCommittedSessionReplaysByteForByte",
     "java:app-dev:ChatStoreTest.twoDevicesChatThroughTheirOutboxesWhileOneIsOffline",
+    "java:app-dev:RelayReceiptsTest.oneTickWhenTheRelayTakesItTwoOnlyFromTheDeliveredReceiptBlueOnlyFromTheRead",
     "java:app-dev:RelaySyncTest.aMessageCrossesTheRelayShowsOnceAndIsOneTickNotDelivered",
     "java:protocol-conformance:ReceiptsConformanceTest.everyRouteAndReceiptDecodesAndReencodesByteForByte",
     "java:protocol-conformance:RemoteTextConformanceTest.theScriptedSessionReplaysByteForByte",
@@ -4204,7 +4210,7 @@
    ],
    "evidence": [],
    "adr": [],
-   "last_commit": "278f853",
+   "last_commit": "2e25a7b",
    "updated": "2026-11-22"
   },
   {
@@ -4262,6 +4268,7 @@
     "go:protocol/chat:TestARelayCannotRelabelAMessage",
     "java:app-dev:ChatStoreTest.aMessageShowsAtMostOnceEvenIfDeliveredTwice",
     "java:app-dev:ChatStoreTest.aRelabelledEnvelopeIsRefusedAndChangesNothing",
+    "java:app-dev:RelayReceiptsTest.killedBetweenShowingAndAcknowledgingOneDeliveredReceiptIsSent",
     "java:app-dev:RelaySyncTest.killedBetweenOpeningAndAcknowledgingItIsShownOnceAndNoKeyIsReused",
     "java:app-dev:RelaySyncTest.killedJustAfterTheRelayTookASendItGoesAgainAndIsStoredOnce",
     "java:protocol-conformance:RemoteTextConformanceTest.aRelabelledOrTamperedFirstMessageIsRefused",
@@ -4269,15 +4276,17 @@
    ],
    "evidence": [],
    "adr": [],
-   "last_commit": "826c3e2",
+   "last_commit": "2e25a7b",
    "updated": "2026-11-22"
   },
   {
    "req_id": "SRS-RMT-005",
    "status": "implemented",
    "code": [
+    "android-app/app/src/main/java/com/lumos/app/chat/ChatRecords.java",
     "android-app/app/src/main/java/com/lumos/app/chat/ChatStore.java",
     "android-app/app/src/main/java/com/lumos/app/chat/DeliveryTickStyle.java",
+    "android-app/app/src/main/java/com/lumos/app/relay/RelaySync.java",
     "android-app/protocol-java/src/main/java/com/lumos/protocol/chat/DeliveryMachine.java",
     "android-app/protocol-java/src/main/java/com/lumos/protocol/chat/Receipt.java",
     "ios-app/protocol-conformance/Sources/LumosProtocol/Delivery.swift",
@@ -4292,8 +4301,10 @@
     "go:protocol/chat:TestEveryStateHasTheOwnersTick",
     "go:protocol/chat:TestReceiptsTravelTheSessionAndCannotBeRelabelled",
     "go:protocol/chat:TestTheCommittedReceiptSessionReplaysAndEveryRelabelFails",
+    "java:app-dev:ChatStoreTest.aLateDeliveredReceiptNeverDowngradesRead",
     "java:app-dev:DeliveryTickStyleTest.everyStateHasItsOwnSpokenLabel",
     "java:app-dev:DeliveryTickStyleTest.theTicksFollowTheOwnersWhatsAppStyleRuling",
+    "java:app-dev:RelayReceiptsTest.oneTickWhenTheRelayTakesItTwoOnlyFromTheDeliveredReceiptBlueOnlyFromTheRead",
     "java:app-dev:RelaySyncTest.aSendRefusedForGoodShowsFailedAndTheNextOneStillGoes",
     "java:protocol-conformance:DeliveryConformanceTest.committedTicksMatch",
     "java:protocol-conformance:DeliveryConformanceTest.committedTimelinesReplayStepForStep",
@@ -4306,7 +4317,7 @@
    ],
    "evidence": [],
    "adr": [],
-   "last_commit": "278f853",
+   "last_commit": "2e25a7b",
    "updated": "2026-11-22"
   },
   {
@@ -4412,7 +4423,9 @@
     "go:protocol/chat:TestMalformedTextEventsAreRefusedWithTheirCodes",
     "go:protocol/chat:TestReceiptsOutsideTheLayoutAreRefused",
     "go:protocol/chat:TestReceiptsTravelTheSessionAndCannotBeRelabelled",
+    "java:app-dev:ChatStoreTest.aReceiptCannotTouchThePeersOwnMessages",
     "java:app-dev:ChatStoreTest.aRelabelledEnvelopeIsRefusedAndChangesNothing",
+    "java:app-dev:ChatStoreTest.aRelabelledReceiptIsRefusedAndRolledBackSoTheTrueOneStillOpens",
     "java:app-dev:JsonTest.aFieldOfTheWrongTypeIsRefusedWhereItIsRead",
     "java:app-dev:JsonTest.everythingElseIsRefused",
     "java:app-dev:JsonTest.hexIsStrictAsciiOfExactlyTheRightLength",
@@ -4430,7 +4443,7 @@
    ],
    "evidence": [],
    "adr": [],
-   "last_commit": "278f853",
+   "last_commit": "2e25a7b",
    "updated": "2026-11-22"
   },
   {
@@ -4505,6 +4518,7 @@
    "req_id": "SRS-RMT-014",
    "status": "implemented",
    "code": [
+    "android-app/app/src/main/java/com/lumos/app/chat/ChatStore.java",
     "android-app/protocol-java/src/main/java/com/lumos/protocol/chat/DeliveryMachine.java",
     "android-app/protocol-java/src/main/java/com/lumos/protocol/chat/Receipt.java",
     "ios-app/protocol-conformance/Sources/LumosProtocol/Delivery.swift",
@@ -4518,12 +4532,14 @@
     "go:protocol/chat:TestReadReceiptsOffNeverSilencesDeliveryReceipts",
     "go:protocol/chat:TestReceiptsTravelTheSessionAndCannotBeRelabelled",
     "go:protocol/chat:TestTheCommittedReceiptSessionReplaysAndEveryRelabelFails",
+    "java:app-dev:RelayReceiptsTest.manyUnreadMessagesAreAcknowledgedInBatchesOfTheRegisterDefault",
+    "java:app-dev:RelayReceiptsTest.withReadReceiptsOffTheReadStaysOnTheDeviceAndDeliveredStillGoes",
     "java:protocol-conformance:DeliveryConformanceTest.committedReceiptPolicyMatches",
     "swift:LumosProtocolConformance:DeliveryConformanceTests.testCommittedReceiptPolicyMatches"
    ],
    "evidence": [],
    "adr": [],
-   "last_commit": "278f853",
+   "last_commit": "2e25a7b",
    "updated": "2026-11-22"
   },
   {
@@ -4551,6 +4567,8 @@
    "req_id": "SRS-RMT-016",
    "status": "implemented",
    "code": [
+    "android-app/app/src/main/java/com/lumos/app/relay/RelaySync.java",
+    "android-app/app/src/main/java/com/lumos/app/relay/RouteExchange.java",
     "android-app/protocol-java/src/main/java/com/lumos/protocol/chat/RelayRoute.java",
     "backend/internal/api/relay.go",
     "backend/internal/relay/postgres.go",
@@ -4564,11 +4582,12 @@
     "go:backend/internal/relay:TestASenderIsLimitedPerMinuteAndTheLimitSaysNothingAboutBlocks",
     "go:backend/internal/relay:TestConcurrentAllowsCannotOvershootTheCeiling",
     "go:protocol/chat:TestARouteRoundTripsAndAnythingElseIsRefused",
-    "go:protocol/chat:TestCommittedRoutesAndReceiptsDecodeAndReencode"
+    "go:protocol/chat:TestCommittedRoutesAndReceiptsDecodeAndReencode",
+    "java:app-dev:RelayReceiptsTest.afterUnmatchThePeersSendsAreTakenByTheRelayButNeverDelivered"
    ],
    "evidence": [],
    "adr": [],
-   "last_commit": "278f853",
+   "last_commit": "2e25a7b",
    "updated": "2026-11-22"
   },
   {
@@ -4576,12 +4595,14 @@
    "status": "tested",
    "code": [
     "android-app/app/src/main/java/com/lumos/app/chat/ChatRecords.java",
+    "android-app/app/src/main/java/com/lumos/app/chat/ChatSessions.java",
     "android-app/app/src/main/java/com/lumos/app/chat/ChatStore.java",
     "android-app/app/src/main/java/com/lumos/app/relay/RelaySync.java",
     "android-app/protocol-java/src/main/java/com/lumos/protocol/ratchet/DoubleRatchet.java"
    ],
    "tests": [
     "java:app-dev:ChatStoreTest.aRestartLosesNothingAndReusesNoKey",
+    "java:app-dev:RelayReceiptsTest.killedBetweenShowingAndAcknowledgingOneDeliveredReceiptIsSent",
     "java:app-dev:RelaySyncTest.killedBetweenOpeningAndAcknowledgingItIsShownOnceAndNoKeyIsReused",
     "java:app-dev:RelaySyncTest.killedJustAfterTheRelayTookASendItGoesAgainAndIsStoredOnce",
     "java:protocol-conformance:RatchetPersistenceTest.aKeyAlreadyUsedStaysGoneAfterARestart",
@@ -4591,7 +4612,7 @@
    ],
    "evidence": [],
    "adr": [],
-   "last_commit": "826c3e2",
+   "last_commit": "2e25a7b",
    "updated": "2026-11-22"
   },
   {
@@ -5496,7 +5517,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "278f853",
+   "last_commit": "2e25a7b",
    "updated": "2026-11-22"
   },
   {
@@ -5506,7 +5527,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "278f853",
+   "last_commit": "2e25a7b",
    "updated": "2026-11-22"
   },
   {
@@ -5516,7 +5537,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "278f853",
+   "last_commit": "2e25a7b",
    "updated": "2026-11-22"
   },
   {
@@ -5540,7 +5561,7 @@
    "adr": [
     "ADR-003"
    ],
-   "last_commit": "278f853",
+   "last_commit": "2e25a7b",
    "updated": "2026-11-22"
   },
   {
@@ -5562,7 +5583,7 @@
    "adr": [
     "ADR-002"
    ],
-   "last_commit": "278f853",
+   "last_commit": "2e25a7b",
    "updated": "2026-11-22"
   },
   {
@@ -5581,7 +5602,7 @@
    "adr": [
     "ADR-002"
    ],
-   "last_commit": "278f853",
+   "last_commit": "2e25a7b",
    "updated": "2026-11-22"
   },
   {
@@ -5591,7 +5612,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "278f853",
+   "last_commit": "2e25a7b",
    "updated": "2026-11-22"
   },
   {
@@ -5601,7 +5622,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "278f853",
+   "last_commit": "2e25a7b",
    "updated": "2026-11-22"
   },
   {
@@ -5611,7 +5632,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "278f853",
+   "last_commit": "2e25a7b",
    "updated": "2026-11-22"
   },
   {
@@ -5621,7 +5642,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "278f853",
+   "last_commit": "2e25a7b",
    "updated": "2026-11-22"
   },
   {
@@ -5631,7 +5652,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "278f853",
+   "last_commit": "2e25a7b",
    "updated": "2026-11-22"
   },
   {
@@ -5641,7 +5662,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "278f853",
+   "last_commit": "2e25a7b",
    "updated": "2026-11-22"
   },
   {
@@ -8049,6 +8070,7 @@
    "status": "tested",
    "code": [
     "android-app/app/src/main/java/com/lumos/app/chat/ChatRecords.java",
+    "android-app/app/src/main/java/com/lumos/app/chat/ChatSessions.java",
     "android-app/app/src/main/java/com/lumos/app/chat/ChatStore.java",
     "android-app/app/src/main/java/com/lumos/app/relay/RelaySync.java",
     "android-app/app/src/main/java/com/lumos/app/store/LocalStore.java",
@@ -8066,7 +8088,7 @@
    ],
    "evidence": [],
    "adr": [],
-   "last_commit": "826c3e2",
+   "last_commit": "2e25a7b",
    "updated": "2026-11-22"
   },
   {
@@ -8731,7 +8753,7 @@
    ],
    "evidence": [],
    "adr": [],
-   "last_commit": "30420a4",
+   "last_commit": "2e25a7b",
    "updated": "2026-11-22"
   },
   {
@@ -8792,7 +8814,7 @@
    ],
    "evidence": [],
    "adr": [],
-   "last_commit": "30420a4",
+   "last_commit": "2e25a7b",
    "updated": "2026-11-22"
   },
   {
@@ -9137,13 +9159,15 @@
     "go:backend/internal/api:TestABlockedSenderGetsTheSameAnswerAndNothingArrives",
     "go:backend/internal/api:TestAMessageWaitsUntilItsRecipientFetchesAndAcknowledgesIt",
     "go:backend/internal/api:TestAMessageWakesItsRecipientThroughItsPushRoute",
+    "java:app-dev:RelayReceiptsTest.afterUnmatchThePeersSendsAreTakenByTheRelayButNeverDelivered",
+    "java:app-dev:RelayReceiptsTest.killedBetweenShowingAndAcknowledgingOneDeliveredReceiptIsSent",
     "java:app-dev:RelaySyncTest.badEnvelopesAreAcknowledgedNeverShownAndTheSessionCarriesOn",
     "java:app-dev:RelaySyncTest.killedJustAfterTheRelayTookASendItGoesAgainAndIsStoredOnce",
     "java:app-dev:RelaySyncTest.offlineEverythingWaitsInOrderAndGoesWhenThePathReturns"
    ],
    "evidence": [],
    "adr": [],
-   "last_commit": "826c3e2",
+   "last_commit": "2e25a7b",
    "updated": "2026-11-22"
   },
   {

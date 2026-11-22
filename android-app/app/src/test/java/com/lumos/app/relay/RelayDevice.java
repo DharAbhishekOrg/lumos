@@ -54,6 +54,7 @@ final class RelayDevice {
     PrekeyPublisher prekeys;
     RelaySync sync;
     RelaySessions sessions;
+    RouteExchange exchange;
 
     RelayDevice(final Fixtures.TestClock clock, final HttpTransport transport, final List<AutoCloseable> open)
             throws Exception {
@@ -100,6 +101,7 @@ final class RelayDevice {
         final RelayClient anonymous = RelayClient.anonymous(transport);
         sync = RelaySync.over(chat, routes, account, prekeys, anonymous, clock);
         sessions = RelaySessions.over(chat, routes, account, anonymous, RNG);
+        exchange = RouteExchange.over(routes, account);
     }
 
     /** Android kills the process; the next launch boots from disk. */
@@ -111,6 +113,7 @@ final class RelayDevice {
         prekeys = null;
         sync = null;
         sessions = null;
+        exchange = null;
         boot();
     }
 

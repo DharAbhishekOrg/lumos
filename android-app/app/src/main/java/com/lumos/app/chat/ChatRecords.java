@@ -15,6 +15,7 @@
 package com.lumos.app.chat;
 
 import com.lumos.app.store.StoreException;
+import com.lumos.protocol.MessageClass;
 import com.lumos.protocol.chat.DeliveryMachine;
 import java.io.ByteArrayOutputStream;
 import java.nio.BufferUnderflowException;
@@ -28,6 +29,7 @@ public final class ChatRecords {
     static final int FORMAT = 1;
     private static final int ID_LEN = 16;
     static final int KEY_LEN = 32;
+    private static final int BYTE_MASK = 0xFF;
 
     private ChatRecords() {
         throw new AssertionError("no instances");
@@ -368,9 +370,10 @@ public final class ChatRecords {
      * @param createdAtMillis UTC enqueue time
      * @param sequence the device-wide enqueue order: the outbox is first in, first out
      * @param attempts transport attempts so far
+     * @param messageClass the class the relay carries it under: a text, or a delivery or read receipt
      */
     public record OutboxItem(byte[] messageId, byte[] matchId, byte[] envelope, long createdAtMillis, long sequence,
-            int attempts) {
+            int attempts, MessageClass messageClass) {
 
         /**
          * Copies.
@@ -381,6 +384,7 @@ public final class ChatRecords {
          * @param createdAtMillis see the record
          * @param sequence see the record
          * @param attempts see the record
+         * @param messageClass see the record
          */
         public OutboxItem {
             messageId = messageId.clone();
@@ -415,6 +419,9 @@ public final class ChatRecords {
             writeLengthPrefixed(out, envelope);
             append(out, ByteBuffer.allocate(2 * Long.BYTES + Integer.BYTES).putLong(createdAtMillis)
                     .putLong(sequence).putInt(attempts).array());
+            // Added at WP-05 S7e2 as a trailing byte, so an item written
+            // before it decodes as the text it was.
+            out.write(messageClass.code());
             return out.toByteArray();
         }
 
@@ -426,8 +433,18 @@ public final class ChatRecords {
         public static OutboxItem decode(final byte[] b) throws StoreException {
             try {
                 final ByteBuffer in = open(b);
-                return new OutboxItem(fixed(in, ID_LEN), readBytes(in), readBytes(in), in.getLong(), in.getLong(),
-                        in.getInt());
+                final byte[] id = fixed(in, ID_LEN);
+                final byte[] match = readBytes(in);
+                final byte[] envelope = readBytes(in);
+                final long created = in.getLong();
+                final long sequence = in.getLong();
+                final int attempts = in.getInt();
+                final MessageClass cls = in.hasRemaining() ? MessageClass.fromCode(in.get() & BYTE_MASK)
+                        : MessageClass.TEXT_MESSAGE;
+                if (cls == null || in.hasRemaining()) {
+                    throw corrupt();
+                }
+                return new OutboxItem(id, match, envelope, created, sequence, attempts, cls);
             } catch (final BufferUnderflowException e) {
                 throw corrupt();
             }

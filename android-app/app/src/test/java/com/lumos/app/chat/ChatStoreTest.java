@@ -153,7 +153,11 @@ public class ChatStoreTest {
         return new RemoteText.TextEvent(TextEventKind.TEXT, null, utf8(s));
     }
 
-    /** Moves every queued envelope from one device to the other, in the given order, and marks it accepted. */
+    /**
+     * Moves every queued envelope from one device to the other, in the given
+     * order, and marks it accepted. Like the relay, it carries each under its
+     * class: texts are returned in order; receipts must apply.
+     */
     private static List<ChatStore.Received> deliver(final Device from, final Device to, final int... order)
             throws Exception {
         final List<ChatRecords.OutboxItem> items = from.chat.pendingOutbox();
@@ -161,7 +165,12 @@ public class ChatStoreTest {
         final int[] sequence = order.length > 0 ? order : java.util.stream.IntStream.range(0, items.size()).toArray();
         for (final int i : sequence) {
             final ChatRecords.OutboxItem item = items.get(i);
-            out.add(to.chat.receive(MATCH, item.messageId(), item.envelope()));
+            if (item.messageClass() == com.lumos.protocol.MessageClass.TEXT_MESSAGE) {
+                out.add(to.chat.receive(MATCH, item.messageId(), item.envelope()));
+            } else {
+                assertEquals(ChatStore.Outcome.APPLIED, to.chat.receiveReceipt(MATCH, item.messageId(),
+                        item.messageClass(), item.envelope()).outcome(), "a receipt applies");
+            }
         }
         for (final ChatRecords.OutboxItem item : items) {
             from.chat.markAccepted(item.messageId());
@@ -370,5 +379,60 @@ public class ChatStoreTest {
             received.add(ChatRecords.rowId(m.messageId()));
         }
         assertEquals(sent, received, "the recipient shows them in arrival order, which here is send order");
+    }
+
+    private static ChatRecords.OutboxItem only(final Device d, final com.lumos.protocol.MessageClass kind)
+            throws Exception {
+        return d.chat.pendingOutbox().stream().filter(i -> i.messageClass() == kind).findFirst().orElseThrow();
+    }
+
+    @Test
+    void aLateDeliveredReceiptNeverDowngradesRead() throws Exception {
+        final Device[] p = matchedPair();
+        p[0].chat.send(MATCH, text("hi"));
+        final ChatRecords.OutboxItem sent = p[0].chat.pendingOutbox().get(0);
+        p[1].chat.receive(MATCH, sent.messageId(), sent.envelope());
+        p[1].chat.markRead(MATCH, true);
+        final ChatRecords.OutboxItem delivered = only(p[1], com.lumos.protocol.MessageClass.DELIVERY_RECEIPT);
+        final ChatRecords.OutboxItem read = only(p[1], com.lumos.protocol.MessageClass.READ_RECEIPT);
+        // The relay hands Alice the read receipt first and the delivered one late.
+        assertEquals(ChatStore.Outcome.APPLIED, p[0].chat.receiveReceipt(MATCH, read.messageId(),
+                read.messageClass(), read.envelope()).outcome());
+        assertEquals(DeliveryMachine.State.READ, p[0].chat.messages(MATCH).get(0).state());
+        assertEquals(ChatStore.Outcome.APPLIED, p[0].chat.receiveReceipt(MATCH, delivered.messageId(),
+                delivered.messageClass(), delivered.envelope()).outcome());
+        assertEquals(DeliveryMachine.State.READ, p[0].chat.messages(MATCH).get(0).state(), "receipts never downgrade");
+        assertEquals(ChatStore.Outcome.DUPLICATE, p[0].chat.receiveReceipt(MATCH, read.messageId(),
+                read.messageClass(), read.envelope()).outcome());
+    }
+
+    @Test
+    void aRelabelledReceiptIsRefusedAndRolledBackSoTheTrueOneStillOpens() throws Exception {
+        final Device[] p = matchedPair();
+        p[0].chat.send(MATCH, text("hi"));
+        final ChatRecords.OutboxItem sent = p[0].chat.pendingOutbox().get(0);
+        p[1].chat.receive(MATCH, sent.messageId(), sent.envelope());
+        final ChatRecords.OutboxItem delivered = only(p[1], com.lumos.protocol.MessageClass.DELIVERY_RECEIPT);
+        final ChatStore.Received forged = p[0].chat.receiveReceipt(MATCH, delivered.messageId(),
+                com.lumos.protocol.MessageClass.READ_RECEIPT, delivered.envelope());
+        assertEquals(ChatStore.Outcome.REJECTED, forged.outcome(), "a delivered receipt relabelled as read");
+        assertEquals(DeliveryMachine.State.QUEUED, p[0].chat.messages(MATCH).get(0).state(), "nothing changed");
+        assertEquals(ChatStore.Outcome.APPLIED, p[0].chat.receiveReceipt(MATCH, delivered.messageId(),
+                delivered.messageClass(), delivered.envelope()).outcome(), "the refusal advanced no ratchet");
+        assertEquals(DeliveryMachine.State.DELIVERED, p[0].chat.messages(MATCH).get(0).state());
+    }
+
+    @Test
+    void aReceiptCannotTouchThePeersOwnMessages() throws Exception {
+        final Device[] p = matchedPair();
+        p[0].chat.send(MATCH, text("hi"));
+        final ChatRecords.OutboxItem sent = p[0].chat.pendingOutbox().get(0);
+        p[1].chat.receive(MATCH, sent.messageId(), sent.envelope());
+        final ChatRecords.OutboxItem delivered = only(p[1], com.lumos.protocol.MessageClass.DELIVERY_RECEIPT);
+        // Bob's device applies its own receipt to itself: the message it names
+        // is Alice's on Bob's side, so nothing may change there.
+        p[1].chat.receiveReceipt(MATCH, delivered.messageId(), delivered.messageClass(), delivered.envelope());
+        assertEquals(DeliveryMachine.State.DELIVERED, p[1].chat.messages(MATCH).get(0).state());
+        assertFalse(p[1].chat.messages(MATCH).get(0).outgoing());
     }
 }

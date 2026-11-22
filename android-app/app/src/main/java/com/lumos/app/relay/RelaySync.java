@@ -1,7 +1,7 @@
 /*
  * Lumos - android-app/app / One relay pass: be registered, send the outbox, take in the mailbox.
  * Author: dhar.abhishek.email@gmail.com
- * Implements: SRS-RMT-001, SRS-RMT-003, SRS-RMT-004, SRS-RMT-009, SRS-RMT-015, SRS-RMT-017, SRS-RMT-018, TRS-TRN-012, TRS-PAT-004, TRS-TST-006
+ * Implements: SRS-RMT-001, SRS-RMT-003, SRS-RMT-004, SRS-RMT-005, SRS-RMT-009, SRS-RMT-015, SRS-RMT-016, SRS-RMT-017, SRS-RMT-018, TRS-TRN-012, TRS-PAT-004, TRS-TST-006
  * ADRs: ADR-001, ADR-003
  * Threading: serial-executor
  * Notes: Every step is ordered so that dying between any two of them loses
@@ -27,7 +27,9 @@
  * registers afresh, republishes prekeys and re-allows every route. The relay
  * is used whether or not any nearby radio is on (SRS-RMT-018, TRS-TRN-012).
  * Delivered and read never come from here: the relay taking a send is one
- * tick, nothing more (owner ruling 2026-11-21).
+ * tick, nothing more (owner ruling 2026-11-21). They come from the peer's
+ * receipts, which travel the same way under their own classes (CR-005) and
+ * are opened by ChatStore.receiveReceipt.
  */
 
 package com.lumos.app.relay;
@@ -161,6 +163,36 @@ public final class RelaySync {
         }
     }
 
+    /**
+     * Stops a conversation's peer from sending here (unmatch, block -
+     * SRS-RMT-016): revokes the capability this device issued it at the
+     * relay, then forgets the route. If the relay cannot be reached the
+     * route is kept, so calling again later finishes the job; the caller
+     * removes the conversation itself, so anything the peer sends meanwhile
+     * opens into no conversation and is dropped.
+     *
+     * @param matchId the conversation
+     * @return null when done (or nothing to do), otherwise why it stopped
+     * @throws StoreException on a local engine failure
+     * @throws GeneralSecurityException when the device key could not be made
+     */
+    public Stop forget(final byte[] matchId) throws StoreException, GeneralSecurityException {
+        final Optional<RelayRoutes.Route> route = routes.forMatch(matchId);
+        if (!route.isPresent()) {
+            return null;
+        }
+        try {
+            anonymous.as(account.ensure(anonymous).credential()).revoke(route.get().proof());
+            routes.remove(matchId);
+            return null;
+        } catch (final RelayException e) {
+            if (e.kind() == RelayException.Kind.AUTH) {
+                account.forget();
+            }
+            return Stop.of(e);
+        }
+    }
+
     /** Registration, prekeys and every route's proof, as the relay must hold them. */
     private RelayClient ready() throws RelayException, StoreException, GeneralSecurityException {
         final RelayTypes.Registration reg = account.ensure(anonymous);
@@ -189,7 +221,7 @@ public final class RelaySync {
             }
             try {
                 client.submit(new RelayTypes.Send(route.get().peerRoutingId(), item.messageId(),
-                        MessageClass.TEXT_MESSAGE.code(), route.get().sendCapability(), item.envelope()));
+                        item.messageClass().code(), route.get().sendCapability(), item.envelope()));
                 chat.markAccepted(item.messageId());
                 t.sent++;
             } catch (final RelayException e) {
@@ -234,15 +266,29 @@ public final class RelaySync {
         }
     }
 
-    /** Opens one envelope; true when it showed something. Anything not for an open conversation is dropped. */
+    /**
+     * Opens one envelope under the class it was delivered as; true when a
+     * text showed something. Receipts move ticks and show nothing; anything
+     * else, or anything not for an open conversation, is dropped.
+     */
     private boolean open(final Map<String, byte[]> byProof, final RelayTypes.Envelope e) throws StoreException {
         final byte[] matchId = byProof.get(Hex.encode(e.senderProof()));
         final boolean expired = e.expiresAt() * MILLIS_PER_SECOND <= clock.nowUtcMillis();
-        if (matchId == null || expired || e.messageClass() != MessageClass.TEXT_MESSAGE.code()) {
+        final MessageClass cls = MessageClass.fromCode(e.messageClass());
+        if (matchId == null || expired || cls == null) {
             return false;
         }
-        final ChatStore.Outcome o = chat.receive(matchId, e.messageId(), e.payload()).outcome();
-        return o == ChatStore.Outcome.DISPLAYED || o == ChatStore.Outcome.APPLIED;
+        switch (cls) {
+            case TEXT_MESSAGE:
+                final ChatStore.Outcome o = chat.receive(matchId, e.messageId(), e.payload()).outcome();
+                return o == ChatStore.Outcome.DISPLAYED || o == ChatStore.Outcome.APPLIED;
+            case DELIVERY_RECEIPT:
+            case READ_RECEIPT:
+                chat.receiveReceipt(matchId, e.messageId(), cls, e.payload());
+                return false;
+            default:
+                return false;
+        }
     }
 
     /**

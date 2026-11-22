@@ -141,10 +141,16 @@ Split on 2026-11-22 into three sub-slices, each merged on its own:
   - **S7e1, the wire.** CR-005 applied: the class, RECEIPT_IDS_PER_ENVELOPE,
     the consent gate, the route and receipt codecs in Go, Java and Swift, and
     the chat/receipts.json family with a relay's relabelling moves.
-  - **S7e2, the app.** Receipts sent on receive and applied on arrival
-    (read receipts only when the user allows, SRS-RMT-014); the route
-    exchange over the nearby session after a match; the INTERNET
-    permission; the relay pass scheduled on connectivity and push wake.
+  - **S7e2a, the app's logic.** Receipts sent on receive (sealed into the
+    outbox in the receive's own transaction) and applied on arrival through
+    the delivery machine; read receipts only when the user allows them
+    (SRS-RMT-014); the outbox carries each item under its class; the
+    RELAY_ROUTE offer and take behind the consent gate; unmatch revokes the
+    peer's capability at the relay (SRS-RMT-016). All JVM-tested.
+  - **S7e2b, the Android wiring.** The RELAY_ROUTE frame on the nearby
+    session after a match; the INTERNET permission; the relay pass
+    scheduled on connectivity and push wake; the composition that builds
+    the relay parts for the running app.
 - **S7f, iOS chat path.** The chat store and relay client on iOS.
 
 ### S8: docker-compose staging and integration suite

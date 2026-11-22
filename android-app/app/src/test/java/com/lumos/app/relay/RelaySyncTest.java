@@ -29,6 +29,7 @@ import com.lumos.protocol.MessageClass;
 import com.lumos.protocol.TextEventKind;
 import com.lumos.protocol.chat.DeliveryMachine;
 import com.lumos.protocol.chat.RemoteText;
+import com.lumos.protocol.match.MatchMachine;
 import com.lumos.protocol.wire.Frame;
 import java.nio.charset.StandardCharsets;
 import java.security.SecureRandom;
@@ -79,18 +80,20 @@ public class RelaySyncTest {
     }
 
     /**
-     * What the match and the (S7e) route exchange leave behind: both sides
-     * pinned, both halves crossed, both proofs allowed, and a session that
+     * What the match and the RELAY_ROUTE exchange (CR-005) leave behind: both
+     * sides pinned, both routes swapped over the "nearby session" (this test
+     * handing the payloads across), both proofs allowed, and a session that
      * the initiator started from the responder's published bundle.
      */
     private byte[] match(final RelayDevice initiator, final RelayDevice responder) throws Exception {
         final byte[] match = random(16);
         initiator.chat.acceptConversation(match, responder.edPub);
         responder.chat.acceptConversation(match, initiator.edPub);
-        final RelayRoutes.Route i = initiator.routes.issue(match);
-        final RelayRoutes.Route r = responder.routes.issue(match);
-        initiator.routes.setPeer(match, responder.routingId(), r.receiveCapability());
-        responder.routes.setPeer(match, initiator.routingId(), i.receiveCapability());
+        final MatchMachine.State matched = MatchMachine.State.MATCHED;
+        assertEquals(RouteExchange.Taken.STORED, responder.exchange.take(match, matched,
+                initiator.exchange.offer(match, matched).orElseThrow()));
+        assertEquals(RouteExchange.Taken.STORED, initiator.exchange.take(match, matched,
+                responder.exchange.offer(match, matched).orElseThrow()));
         assertNull(initiator.sync.run().stoppedBy());
         assertNull(responder.sync.run().stoppedBy());
         assertTrue(initiator.sessions.start(match, responder.edPub));
