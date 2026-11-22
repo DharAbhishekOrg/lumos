@@ -84,7 +84,7 @@ public enum RecordKind: String, CaseIterable, Sendable {
     public var isLookedUpByTag: Bool {
         switch self {
         case .blockEntry, .hiddenPeer, .interestRecord, .matchRecord,
-             .conversation, .chatMessage, .ratchetSession, .messageDedup, .prekeySecret: return true
+             .conversation, .chatMessage, .ratchetSession, .prekeySecret: return true
         default: return false
         }
     }

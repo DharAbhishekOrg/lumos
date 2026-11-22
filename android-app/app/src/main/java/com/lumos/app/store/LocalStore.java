@@ -276,6 +276,29 @@ public final class LocalStore {
         return out;
     }
 
+    /**
+     * Finds records by their blind-index tag, with their row identifiers, so
+     * a caller can update or delete the rows it found.
+     *
+     * @param kind the record's table
+     * @param naturalKey the value being looked up
+     * @return every matching row, opened
+     * @throws StoreException on engine failure or an unopenable row
+     */
+    public List<Entry> findEntriesByNaturalKey(final RecordKind kind, final byte[] naturalKey)
+            throws StoreException {
+        final List<Map<String, Object>> rows = database.query(
+                "SELECT " + LocalSchema.COLUMN_ID + ", " + LocalSchema.COLUMN_PAYLOAD + " FROM "
+                        + kind.table() + " WHERE " + LocalSchema.COLUMN_LOOKUP_TAG + " = ?",
+                List.of((Object) codec.lookupTag(kind, naturalKey)));
+        final List<Entry> out = new ArrayList<>(rows.size());
+        for (final Map<String, Object> row : rows) {
+            final String id = String.valueOf(row.get(LocalSchema.COLUMN_ID));
+            out.add(new Entry(id, codec.open(kind, id, (byte[]) row.get(LocalSchema.COLUMN_PAYLOAD))));
+        }
+        return out;
+    }
+
     /** One row of a kind: its identifier and its opened content. */
     public static final class Entry {
 

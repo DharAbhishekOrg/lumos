@@ -158,11 +158,13 @@ public enum RecordKind {
 
     /**
      * A message identifier already displayed, kept until it expires
-     * (TRS-LOC-005, SRS-RMT-004), looked up by a blind index over the id.
+     * (TRS-LOC-005, SRS-RMT-004). The row id IS the message id - a random
+     * UUID the sender minted, so it derives from nothing - and the primary
+     * key is the index the high-volume lookup needs.
      *
      * <p>Added at schema version 6 (WP-05 S7b).
      */
-    MESSAGE_DEDUP(true),
+    MESSAGE_DEDUP(false),
 
     /**
      * A private signed or one-time prekey scalar, looked up by a blind index
@@ -192,8 +194,8 @@ public enum RecordKind {
      * Whether this kind is looked up by a blind index over a natural key.
      *
      * <p>The peer-keyed kinds: BLOCK_ENTRY, HIDDEN_PEER, INTEREST_RECORD,
-     * MATCH_RECORD, CONVERSATION, CHAT_MESSAGE and RATCHET_SESSION; and the
-     * id-keyed MESSAGE_DEDUP and PREKEY_SECRET. Each must answer "what do we hold for this peer?"
+     * MATCH_RECORD, CONVERSATION, CHAT_MESSAGE and RATCHET_SESSION; and
+     * PREKEY_SECRET, keyed by prekey id. Each must answer "what do we hold for this peer?"
      * without the peer identifier being readable in the file - the threat
      * model treats the block list as a safety asset, not a preference
      * (data map Sec. 2.4), and who the user avoided, wanted or matched is
