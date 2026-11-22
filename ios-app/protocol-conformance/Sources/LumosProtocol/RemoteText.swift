@@ -143,6 +143,25 @@ public enum RemoteText {
         public let spkID: UInt32
         /// The one-time prekey id, or X3DH_OPK_ID_NONE.
         public let opkID: UInt32
+
+        /// The fields as they sit in a PREKEY envelope, without its format
+        /// byte: what the app stores until the peer first replies (WP-05 S7f1;
+        /// the same bytes the Android port keeps).
+        public var encoded: Data {
+            initiatorIdentityDH + initiatorIdentityDHSig + ephemeral + LumosCrypto.be32(spkID) + LumosCrypto.be32(opkID)
+        }
+    }
+
+    /// Parses ``PrekeyFields/encoded``.
+    /// - Throws: ERR_PAYLOAD_MALFORMED when the bytes are not exactly the fields
+    public static func decodePrekeyFields(_ input: Data) throws -> PrekeyFields {
+        let b = [UInt8](input)
+        guard b.count == prekeyFieldsSize else { throw malformed("prekey fields must be \(prekeyFieldsSize) bytes") }
+        let ids = 2 * keySize + sigSize
+        return PrekeyFields(initiatorIdentityDH: Data(b[0..<keySize]),
+                            initiatorIdentityDHSig: Data(b[keySize..<keySize + sigSize]),
+                            ephemeral: Data(b[keySize + sigSize..<ids]),
+                            spkID: be32(b, ids), opkID: be32(b, ids + u32Size))
     }
 
     /// One TEXT_MESSAGE relay payload.
