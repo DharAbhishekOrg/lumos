@@ -5,7 +5,7 @@
  "$generator": "tools/constantsgen",
  "service_uuid": "E853EB6A-775C-4A49-A6BF-320E6A5CC609",
  "$service_uuid_provenance": "One fixed 128-bit GATT service UUID per ADR-002 / TRS Sec. 9.3, generated once from a CSPRNG as an RFC 4122 version-4 UUID in WP-01 slice S2 and frozen here. Advertised by both platforms and used for scan filtering. No 16-bit alias is registered for flagship. Regenerating this value is a breaking protocol change.",
- "constants_hash": "sha256:9b33b3c547f0e2d651fa15e8748057270cc0e3de84492e45bff6d4e3f1b26919",
+ "constants_hash": "sha256:b7cebb50a545ddd203ddb2fdc86ccac1e0a4ecd9c3ed93355803516d7c1a7311",
  "constants_hash_algorithm": {
   "digest": "SHA-256",
   "encoding": "lowercase hex, prefixed 'sha256:'",
@@ -130,6 +130,11 @@
    "default": 120, "min": 30, "max": 600, "overridable": true,
    "notes": "Per sending device; envelopes submitted per fixed one-minute window, receipts and retries included. Added by CR-004 (owner-accepted 2026-11-22).",
    "anchors": ["TRS-BCK-004", "SRS-SAF-006", "SRS-NFR-SCL-003"], "source": "CR-004"
+  },
+  "RECEIPT_IDS_PER_ENVELOPE": {
+   "default": 32, "min": 1, "max": 64, "overridable": false,
+   "notes": "Message ids one delivery or read receipt may acknowledge. A wire-format bound: decoders refuse more than max, encoders send at most default. Added by CR-005 (owner-accepted 2026-11-23).",
+   "anchors": ["SRS-RMT-005", "SRS-RMT-014", "TRS-PROTO-007"], "source": "CR-005"
   },
   "MESSAGE_ID_LEN_BYTES": {
    "default": 16, "overridable": false,
@@ -627,6 +632,7 @@
    {"code": 4,   "name": "INTEREST_RESPONSE",  "purpose": "Accept/decline/ignore-safe response"},
    {"code": 5,   "name": "PROFILE_PREVIEW",    "purpose": "Approved preview fields"},
    {"code": 6,   "name": "PROFILE_FULL",       "purpose": "Approved full profile after match"},
+   {"code": 7,   "name": "RELAY_ROUTE",        "purpose": "Post-match, nearby-only: this device's relay routing id and the send capability it minted for the peer (CR-005)"},
    {"code": 16,  "name": "TEXT_MESSAGE",       "purpose": "Ratcheted private text event carrying the inner event envelope (AMD-005)"},
    {"code": 17,  "name": "DELIVERY_RECEIPT",   "purpose": "Delivered state"},
    {"code": 18,  "name": "READ_RECEIPT",       "purpose": "Optional read state"},
@@ -650,6 +656,6 @@
    {"code": 2, "name": "DELETE_FOR_EVERYONE",  "purpose": "Authenticated delete over the original message"},
    {"code": 3, "name": "REACTION",             "purpose": "Authenticated reaction over the original message"}
   ],
-  "$text_event_notes": "AMD-005 / TRS Sec. 9.2 class 0x10. Kinds 1..3 carry target_message_id. Unknown event_kind values follow TRS-PROTO-006 (safe skip if non-critical, fail closed if critical)."
+  "$text_event_notes": "AMD-005 / TRS Sec. 9.2 class 0x10. Kinds 1..3 carry target_message_id. Unknown event_kind values follow TRS-PROTO-006 (safe skip if non-critical, fail closed if critical). Codes 17 and 18 are reserved and must never become text event kinds: they are the DELIVERY_RECEIPT and READ_RECEIPT kinds a receipt plaintext carries in the same position (CR-005), so a receipt a relay passes off as text always decodes as an unknown kind and shows nothing."
  }
 }

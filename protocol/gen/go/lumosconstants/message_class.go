@@ -6,7 +6,7 @@
 // GENERATED - DO NOT EDIT. Generator: tools/constantsgen
 // Source register: protocol/constants/lumos_constants.json
 // Baseline: TRS v1.1 Sec. 23 / EDP v1.0 Sec. 4 (ADR-004)
-// constants_hash: sha256:9b33b3c547f0e2d651fa15e8748057270cc0e3de84492e45bff6d4e3f1b26919
+// constants_hash: sha256:b7cebb50a545ddd203ddb2fdc86ccac1e0a4ecd9c3ed93355803516d7c1a7311
 
 package lumosconstants
 
@@ -28,6 +28,8 @@ const (
 	MessageClassProfilePreview MessageClass = 0x05
 	// MessageClassProfileFull: Approved full profile after match
 	MessageClassProfileFull MessageClass = 0x06
+	// MessageClassRelayRoute: Post-match, nearby-only: this device's relay routing id and the send capability it minted for the peer (CR-005)
+	MessageClassRelayRoute MessageClass = 0x07
 	// MessageClassTextMessage: Ratcheted private text event carrying the inner event envelope (AMD-005)
 	MessageClassTextMessage MessageClass = 0x10
 	// MessageClassDeliveryReceipt: Delivered state
@@ -70,6 +72,7 @@ var MessageClassNames = map[MessageClass]string{
 	MessageClassInterestResponse: "INTEREST_RESPONSE",
 	MessageClassProfilePreview:   "PROFILE_PREVIEW",
 	MessageClassProfileFull:      "PROFILE_FULL",
+	MessageClassRelayRoute:       "RELAY_ROUTE",
 	MessageClassTextMessage:      "TEXT_MESSAGE",
 	MessageClassDeliveryReceipt:  "DELIVERY_RECEIPT",
 	MessageClassReadReceipt:      "READ_RECEIPT",

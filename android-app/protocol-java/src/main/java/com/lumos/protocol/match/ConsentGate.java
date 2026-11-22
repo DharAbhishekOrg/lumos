@@ -5,7 +5,8 @@
  * ADRs: ADR-002
  * Threading: any
  * Notes: SRS-MAT-006 as a table every send and every receive consults. The
- * conversation classes - full profile, text and its receipts, typing, every
+ * conversation classes - full profile, relay route (CR-005), text and its
+ * receipts, typing, every
  * object and voice class - pass only in MATCHED; the consent-stage classes
  * (request, response, preview) pass in every state except BLOCKED; and the
  * session, mesh, venue and housekeeping classes are not this gate's to
@@ -27,7 +28,7 @@ public final class ConsentGate {
 
     /** Classes that exist only between matched people (SRS-MAT-005/006). */
     public static final Set<MessageClass> MATCH_ONLY = EnumSet.of(
-            MessageClass.PROFILE_FULL, MessageClass.TEXT_MESSAGE,
+            MessageClass.PROFILE_FULL, MessageClass.RELAY_ROUTE, MessageClass.TEXT_MESSAGE,
             MessageClass.DELIVERY_RECEIPT, MessageClass.READ_RECEIPT, MessageClass.TYPING,
             MessageClass.OBJECT_META, MessageClass.OBJECT_CHUNK, MessageClass.OBJECT_ACK,
             MessageClass.OBJECT_CANCEL, MessageClass.VOICE_META);

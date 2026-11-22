@@ -7,7 +7,7 @@
  * GENERATED - DO NOT EDIT. Generator: tools/constantsgen
  * Source register: protocol/constants/lumos_constants.json
  * Baseline: TRS v1.1 Sec. 23 / EDP v1.0 Sec. 4 (ADR-004)
- * constants_hash: sha256:9b33b3c547f0e2d651fa15e8748057270cc0e3de84492e45bff6d4e3f1b26919
+ * constants_hash: sha256:b7cebb50a545ddd203ddb2fdc86ccac1e0a4ecd9c3ed93355803516d7c1a7311
  */
 package com.lumos.protocol;
 
@@ -24,7 +24,7 @@ public final class LumosConstants {
     public static final String SERVICE_UUID = "E853EB6A-775C-4A49-A6BF-320E6A5CC609";
 
     /** Binds generated code to the register that produced it (TRS-CONST-005). */
-    public static final String CONSTANTS_HASH = "sha256:9b33b3c547f0e2d651fa15e8748057270cc0e3de84492e45bff6d4e3f1b26919";
+    public static final String CONSTANTS_HASH = "sha256:b7cebb50a545ddd203ddb2fdc86ccac1e0a4ecd9c3ed93355803516d7c1a7311";
 
     /** Register schema version. */
     public static final int SCHEMA_VERSION = 1;
@@ -645,6 +645,18 @@ public final class LumosConstants {
 
     /** sessions_remote_text.PREKEY_REPLENISH_THRESHOLD.overridable */
     public static final boolean PREKEY_REPLENISH_THRESHOLD_OVERRIDABLE = true;
+
+    /** sessions_remote_text.RECEIPT_IDS_PER_ENVELOPE.default */
+    public static final int RECEIPT_IDS_PER_ENVELOPE_DEFAULT = 32;
+
+    /** sessions_remote_text.RECEIPT_IDS_PER_ENVELOPE.max */
+    public static final int RECEIPT_IDS_PER_ENVELOPE_MAX = 64;
+
+    /** sessions_remote_text.RECEIPT_IDS_PER_ENVELOPE.min */
+    public static final int RECEIPT_IDS_PER_ENVELOPE_MIN = 1;
+
+    /** sessions_remote_text.RECEIPT_IDS_PER_ENVELOPE.overridable */
+    public static final boolean RECEIPT_IDS_PER_ENVELOPE_OVERRIDABLE = false;
 
     /** sessions_remote_text.RELAY_ENVELOPE_TTL_DAYS.default */
     public static final int RELAY_ENVELOPE_TTL_DAYS_DEFAULT = 30;

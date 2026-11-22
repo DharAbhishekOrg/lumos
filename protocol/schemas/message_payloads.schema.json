@@ -32,6 +32,8 @@
    "note": "Decline and ignore must be indistinguishable on the wire - no rejection signal (SRS-MAT)."},
   {"name": "PROFILE_PREVIEW", "max_payload_ref": "media.PREVIEW_MAX_KB", "unit": "kb", "encrypted": true},
   {"name": "PROFILE_FULL", "max_payload_ref": "media.FULL_IMAGE_MAX_MB", "unit": "mb", "encrypted": true},
+  {"name": "RELAY_ROUTE", "max_payload_ref": "transport.QR_BOOTSTRAP_MAX_BYTES", "encrypted": true,
+   "note": "CR-005. Post-match and nearby-only: never on the relay allow-list. version | routing_id[16] | capability[32]."},
 
   {"name": "TEXT_MESSAGE", "max_payload_ref": "sessions_remote_text.RELAY_TEXT_ENVELOPE_MAX_BYTES", "encrypted": true,
    "inner_envelope": "text_event"},

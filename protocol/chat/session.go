@@ -108,6 +108,11 @@ func Seal(st *ratchet.State, p Plaintext, prekey *PrekeyFields, now int64) ([]by
 	if err != nil {
 		return nil, err
 	}
+	return sealBytes(st, pt, prekey, now)
+}
+
+// sealBytes is the envelope step Seal and SealReceipt share.
+func sealBytes(st *ratchet.State, pt []byte, prekey *PrekeyFields, now int64) ([]byte, error) {
 	h, ct, err := st.Encrypt(pt, now)
 	if err != nil {
 		return nil, err

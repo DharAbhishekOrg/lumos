@@ -6,7 +6,7 @@
 /// GENERATED - DO NOT EDIT. Generator: tools/constantsgen
 /// Source register: protocol/constants/lumos_constants.json
 /// Baseline: TRS v1.1 Sec. 23 / EDP v1.0 Sec. 4 (ADR-004)
-/// constants_hash: sha256:9b33b3c547f0e2d651fa15e8748057270cc0e3de84492e45bff6d4e3f1b26919
+/// constants_hash: sha256:b7cebb50a545ddd203ddb2fdc86ccac1e0a4ecd9c3ed93355803516d7c1a7311
 
 public enum LumosConstants {
 
@@ -14,7 +14,7 @@ public enum LumosConstants {
     public static let serviceUUID = "E853EB6A-775C-4A49-A6BF-320E6A5CC609"
 
     /// Binds generated code to the register that produced it (TRS-CONST-005).
-    public static let constantsHash = "sha256:9b33b3c547f0e2d651fa15e8748057270cc0e3de84492e45bff6d4e3f1b26919"
+    public static let constantsHash = "sha256:b7cebb50a545ddd203ddb2fdc86ccac1e0a4ecd9c3ed93355803516d7c1a7311"
 
     /// Register schema version.
     public static let schemaVersion = 1
@@ -636,6 +636,18 @@ public enum LumosConstants {
     /// sessions_remote_text.PREKEY_REPLENISH_THRESHOLD.overridable
     public static let prekeyReplenishThresholdOverridable = true
 
+    /// sessions_remote_text.RECEIPT_IDS_PER_ENVELOPE.default
+    public static let receiptIDSPerEnvelopeDefault = 32
+
+    /// sessions_remote_text.RECEIPT_IDS_PER_ENVELOPE.max
+    public static let receiptIDSPerEnvelopeMax = 64
+
+    /// sessions_remote_text.RECEIPT_IDS_PER_ENVELOPE.min
+    public static let receiptIDSPerEnvelopeMin = 1
+
+    /// sessions_remote_text.RECEIPT_IDS_PER_ENVELOPE.overridable
+    public static let receiptIDSPerEnvelopeOverridable = false
+
     /// sessions_remote_text.RELAY_ENVELOPE_TTL_DAYS.default
     public static let relayEnvelopeTTLDaysDefault = 30
 
@@ -1218,6 +1230,8 @@ public enum MessageClass: UInt8, CaseIterable, Sendable {
     case profilePreview = 0x05
     /// Approved full profile after match
     case profileFull = 0x06
+    /// Post-match, nearby-only: this device's relay routing id and the send capability it minted for the peer (CR-005)
+    case relayRoute = 0x07
     /// Ratcheted private text event carrying the inner event envelope (AMD-005)
     case textMessage = 0x10
     /// Delivered state
@@ -1260,6 +1274,7 @@ public enum MessageClass: UInt8, CaseIterable, Sendable {
         case .interestResponse: return "INTEREST_RESPONSE"
         case .profilePreview: return "PROFILE_PREVIEW"
         case .profileFull: return "PROFILE_FULL"
+        case .relayRoute: return "RELAY_ROUTE"
         case .textMessage: return "TEXT_MESSAGE"
         case .deliveryReceipt: return "DELIVERY_RECEIPT"
         case .readReceipt: return "READ_RECEIPT"
