@@ -25,24 +25,30 @@ import (
 // 4 KiB is an order of magnitude above both and still bounds abuse.
 const maxPushTokenLen = 4096
 
+func isHex(c byte) bool {
+	return c >= '0' && c <= '9' || c >= 'a' && c <= 'f' || c >= 'A' && c <= 'F'
+}
+
+// isFCMChar is the URL-safe set FCM registration tokens are made of.
+func isFCMChar(c byte) bool {
+	return c >= '0' && c <= '9' || c >= 'a' && c <= 'z' || c >= 'A' && c <= 'Z' || c == ':' || c == '-' || c == '_'
+}
+
 func pushTokenValid(p PushProvider, token string) bool {
+	var ok func(byte) bool
+	switch p {
+	case PushAPNs:
+		ok = isHex
+	case PushFCM:
+		ok = isFCMChar
+	default:
+		return false
+	}
 	if token == "" || len(token) > maxPushTokenLen {
 		return false
 	}
 	for i := 0; i < len(token); i++ {
-		c := token[i]
-		hex := c >= '0' && c <= '9' || c >= 'a' && c <= 'f' || c >= 'A' && c <= 'F'
-		switch p {
-		case PushAPNs:
-			if !hex {
-				return false
-			}
-		case PushFCM:
-			alnum := c >= '0' && c <= '9' || c >= 'a' && c <= 'z' || c >= 'A' && c <= 'Z'
-			if !alnum && c != ':' && c != '-' && c != '_' {
-				return false
-			}
-		default:
+		if !ok(token[i]) {
 			return false
 		}
 	}

@@ -13,6 +13,7 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"io"
 	"net/http"
 	"net/http/httptest"
@@ -34,7 +35,7 @@ func fakeMetadata(t *testing.T, fetches *atomic.Int32) *httptest.Server {
 		}
 		n := fetches.Add(1)
 		_ = json.NewEncoder(w).Encode(map[string]any{
-			"access_token": "access-" + string(rune('0'+n)), "expires_in": 3600, "token_type": "Bearer"})
+			"access_token": fmt.Sprintf("access-%d", n), "expires_in": 3600, "token_type": "Bearer"})
 	}))
 	t.Cleanup(srv.Close)
 	return srv

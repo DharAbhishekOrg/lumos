@@ -92,7 +92,7 @@ func (m *MetadataTokenSource) Token(ctx context.Context) (string, error) {
 	if err != nil {
 		return "", fmt.Errorf("push: metadata server unreachable: %w", err)
 	}
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }() // a read-only response: nothing to lose on close
 	if resp.StatusCode != http.StatusOK {
 		return "", fmt.Errorf("push: metadata server status %d", resp.StatusCode)
 	}
@@ -154,7 +154,7 @@ func (f *FCM) Send(ctx context.Context, token string) error {
 	if err != nil {
 		return fmt.Errorf("push: fcm unreachable: %w", redactURL(err))
 	}
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }() // a read-only response: nothing to lose on close
 	if resp.StatusCode == http.StatusOK {
 		return nil
 	}

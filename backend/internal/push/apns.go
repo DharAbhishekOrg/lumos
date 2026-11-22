@@ -160,7 +160,7 @@ func (a *APNs) Send(ctx context.Context, token string) error {
 		// The URL holds the device token: never let it into the error.
 		return fmt.Errorf("push: apns unreachable: %w", redactURL(err))
 	}
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }() // a read-only response: nothing to lose on close
 	if resp.StatusCode == http.StatusOK {
 		return nil
 	}
