@@ -337,6 +337,35 @@ public final class LocalStore {
         }
     }
 
+    /// Finds records by their blind-index tag, with their row identifiers, so a
+    /// caller can update or delete the rows it found.
+    /// - Parameters:
+    ///   - kind: the record's table
+    ///   - naturalKey: the value being looked up
+    /// - Returns: every matching row, opened
+    /// - Throws: ``StoreError`` on engine failure or an unopenable row
+    public func findEntriesByNaturalKey(kind: RecordKind, naturalKey: Data) throws -> [Entry] {
+        let rows = try database.query(
+            "SELECT \(LocalSchema.columnId), \(LocalSchema.columnPayload) FROM \(kind.table) "
+                + "WHERE \(LocalSchema.columnLookupTag) = ?",
+            [.blob(codec.lookupTag(kind: kind, naturalKey: naturalKey))])
+        return try rows.compactMap { row in
+            guard case .text(let id)? = row[LocalSchema.columnId],
+                  case .blob(let sealed)? = row[LocalSchema.columnPayload] else { return nil }
+            return Entry(id: id, content: try codec.open(kind: kind, id: id, sealed: sealed))
+        }
+    }
+
+    /// Runs several store operations as ONE transaction: all of them land or
+    /// none does (TRS Sec. 8.3). Operations inside may call ``put(kind:id:plaintext:naturalKey:)``
+    /// and ``delete(kind:id:)`` freely; their own transactions join this one.
+    /// - Parameter body: the work
+    /// - Returns: the work's result
+    /// - Throws: whatever the work throws; nothing is written then
+    public func transaction<T>(_ body: () throws -> T) throws -> T {
+        try database.inTransaction(body)
+    }
+
     /// One row of a kind: its identifier and its opened content.
     public struct Entry: Sendable, Equatable {
         /// The opaque row identifier.
