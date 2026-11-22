@@ -128,7 +128,7 @@ final class FakeRelay: HttpTransport {
 
     private static func json(_ status: Int, _ body: [String: Any]) -> HttpResponse {
         let data = (try? JSONSerialization.data(withJSONObject: body)) ?? Data()
-        return HttpResponse(status: status, body: String(decoding: data, as: UTF8.self))
+        return HttpResponse(status: status, body: String(bytes: data, encoding: .utf8) ?? "")
     }
 
     private static func empty(_ status: Int) -> HttpResponse {

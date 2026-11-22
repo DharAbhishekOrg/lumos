@@ -129,6 +129,9 @@ public final class RelayClient {
 
     /// Envelopes per fetch, sized so the largest possible batch fits the transport's response cap.
     public static let fetchBatch = 10
+    /// The response cap every transport enforces, as the Android transport
+    /// does (1 MiB); a full fetch of the largest envelopes must fit under it.
+    public static let maxResponseBytes: Int64 = 1 << 20
     public static let routingIDSize = 16
     public static let messageIDSize = 16
     public static let keySize = 32

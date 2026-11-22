@@ -23,7 +23,7 @@ final class RelaySyncTests: XCTestCase {
     }
 
     private func bodies(_ d: RelayDevice, _ match: Data) throws -> [String] {
-        try d.chat.messages(matchID: match).map { String(decoding: $0.body, as: UTF8.self) }
+        try d.chat.messages(matchID: match).map { String(bytes: $0.body, encoding: .utf8) ?? "" }
     }
 
     private func device() throws -> RelayDevice {

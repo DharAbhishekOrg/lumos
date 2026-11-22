@@ -329,7 +329,7 @@ public enum RelayHex {
 
     /// Lowercase hex.
     public static func encode(_ b: Data) -> String {
-        String(decoding: b.flatMap { [digits[Int($0 >> 4)], digits[Int($0 & 0x0F)]] }, as: UTF8.self)
+        String(b.flatMap { [digits[Int($0 >> 4)], digits[Int($0 & 0x0F)]] }.map { Character(Unicode.Scalar($0)) })
     }
 
     /// Exactly n bytes of hex, either case, nothing else.
