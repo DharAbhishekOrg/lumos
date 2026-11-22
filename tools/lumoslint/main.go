@@ -158,6 +158,7 @@ func checkFile(ctx context, want checks, path string) []Finding {
 	}
 	if want.arch {
 		out = append(out, CheckArchitecture(ctx.root, path)...)
+		out = append(out, CheckMinSdkApis(ctx.root, path)...)
 	}
 	if want.budgets {
 		out = append(out, CheckBudgets(path, ctx.knownADRs)...)

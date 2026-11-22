@@ -48,6 +48,14 @@ public final class RemoteText {
         throw new AssertionError("no instances");
     }
 
+    /**
+     * Appends bytes. ByteArrayOutputStream.writeBytes is API 33 and this code
+     * runs from minSdk 26; write(b, 0, n) is the same thing on every level.
+     */
+    static void append(final ByteArrayOutputStream out, final byte[] b) {
+        out.write(b, 0, b.length);
+    }
+
     private static Frame.WireException malformed(final String detail) {
         return new Frame.WireException(LumosErrors.ERR_PAYLOAD_MALFORMED, detail);
     }
@@ -104,11 +112,11 @@ public final class RemoteText {
             final ByteArrayOutputStream out = new ByteArrayOutputStream();
             out.write(kind.code());
             if (target != null) {
-                out.writeBytes(target);
+                append(out, target);
             }
             if (body != null) {
-                out.writeBytes(ByteBuffer.allocate(U32).putInt(body.length).array());
-                out.writeBytes(body);
+                append(out, ByteBuffer.allocate(U32).putInt(body.length).array());
+                append(out, body);
             }
             return out.toByteArray();
         }
@@ -288,15 +296,15 @@ public final class RemoteText {
             final ByteArrayOutputStream out = new ByteArrayOutputStream();
             if (prekey != null) {
                 out.write(FORMAT_PREKEY);
-                out.writeBytes(prekey.initiatorIdentityDh);
-                out.writeBytes(prekey.initiatorIdentityDhSig);
-                out.writeBytes(prekey.ephemeral);
-                out.writeBytes(ByteBuffer.allocate(2 * U32).putInt((int) prekey.spkId).putInt((int) prekey.opkId).array());
+                append(out, prekey.initiatorIdentityDh);
+                append(out, prekey.initiatorIdentityDhSig);
+                append(out, prekey.ephemeral);
+                append(out, ByteBuffer.allocate(2 * U32).putInt((int) prekey.spkId).putInt((int) prekey.opkId).array());
             } else {
                 out.write(FORMAT_NORMAL);
             }
-            out.writeBytes(header.bytes());
-            out.writeBytes(ciphertext);
+            append(out, header.bytes());
+            append(out, ciphertext);
             return out.toByteArray();
         }
     }

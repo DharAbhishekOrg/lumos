@@ -35,7 +35,6 @@ import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.HexFormat;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -299,19 +298,19 @@ public final class DoubleRatchet {
     public byte[] exportState() {
         final ByteArrayOutputStream out = new ByteArrayOutputStream();
         out.write(STATE_FORMAT);
-        out.writeBytes(dhsPriv);
+        append(out, dhsPriv);
         writeOptional(out, dhr);
-        out.writeBytes(rk);
+        append(out, rk);
         writeOptional(out, cks);
         writeOptional(out, ckr);
-        out.writeBytes(ByteBuffer.allocate(3 * U32).putInt((int) ns).putInt((int) nr).putInt((int) pn).array());
-        out.writeBytes(ByteBuffer.allocate(2).putShort((short) ad.length).array());
-        out.writeBytes(ad);
-        out.writeBytes(ByteBuffer.allocate(U32).putInt(skip.size()).array());
+        append(out, ByteBuffer.allocate(3 * U32).putInt((int) ns).putInt((int) nr).putInt((int) pn).array());
+        append(out, ByteBuffer.allocate(2).putShort((short) ad.length).array());
+        append(out, ad);
+        append(out, ByteBuffer.allocate(U32).putInt(skip.size()).array());
         for (final Map.Entry<String, Skipped> e : skip.entrySet()) {
             final int colon = e.getKey().indexOf(':');
-            out.writeBytes(HexFormat.of().parseHex(e.getKey().substring(0, colon)));
-            out.writeBytes(ByteBuffer.allocate(U32 + KEY_LEN + Long.BYTES)
+            append(out, unhex(e.getKey().substring(0, colon)));
+            append(out, ByteBuffer.allocate(U32 + KEY_LEN + Long.BYTES)
                     .putInt((int) Long.parseLong(e.getKey().substring(colon + 1)))
                     .put(e.getValue().mk()).putLong(e.getValue().storedAt()).array());
         }
@@ -321,7 +320,7 @@ public final class DoubleRatchet {
     private static void writeOptional(final ByteArrayOutputStream out, final byte[] key) {
         out.write(key == null ? 0 : 1);
         if (key != null) {
-            out.writeBytes(key);
+            append(out, key);
         }
     }
 
@@ -497,7 +496,35 @@ public final class DoubleRatchet {
         return okm;
     }
 
+    private static final char[] HEX = "0123456789abcdef".toCharArray();
+
+    /**
+     * Appends bytes. ByteArrayOutputStream.writeBytes is API 33 and this code
+     * runs on Android from minSdk 26; write(b, 0, n) is the same on every level.
+     */
+    private static void append(final ByteArrayOutputStream out, final byte[] b) {
+        out.write(b, 0, b.length);
+    }
+
+    /** Lower-case hex, by hand: java.util.HexFormat is API 34 on Android. */
+    private static String hex(final byte[] b) {
+        final char[] out = new char[2 * b.length];
+        for (int i = 0; i < b.length; i++) {
+            out[2 * i] = HEX[(b[i] >> 4) & 0xF];
+            out[2 * i + 1] = HEX[b[i] & 0xF];
+        }
+        return new String(out);
+    }
+
+    private static byte[] unhex(final String s) {
+        final byte[] out = new byte[s.length() / 2];
+        for (int i = 0; i < out.length; i++) {
+            out[i] = (byte) Integer.parseInt(s.substring(2 * i, 2 * i + 2), 16);
+        }
+        return out;
+    }
+
     private static String skipKey(final byte[] dh, final long n) {
-        return HexFormat.of().formatHex(dh) + ":" + n;
+        return hex(dh) + ":" + n;
     }
 }

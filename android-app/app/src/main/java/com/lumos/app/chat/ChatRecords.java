@@ -34,6 +34,14 @@ public final class ChatRecords {
     }
 
     /**
+     * Appends bytes. ByteArrayOutputStream.writeBytes is API 33 and this code
+     * runs from minSdk 26; write(b, 0, n) is the same thing on every level.
+     */
+    static void append(final ByteArrayOutputStream out, final byte[] b) {
+        out.write(b, 0, b.length);
+    }
+
+    /**
      * The UUID string of a 16-byte message id: the row id of its records.
      *
      * @param messageId the message id
@@ -59,9 +67,9 @@ public final class ChatRecords {
         return new StoreException(StoreException.Reason.ENGINE, "chat record is malformed");
     }
 
-    private static void writeBytes(final ByteArrayOutputStream out, final byte[] b) {
-        out.writeBytes(ByteBuffer.allocate(Integer.BYTES).putInt(b.length).array());
-        out.writeBytes(b);
+    private static void writeLengthPrefixed(final ByteArrayOutputStream out, final byte[] b) {
+        append(out, ByteBuffer.allocate(Integer.BYTES).putInt(b.length).array());
+        append(out, b);
     }
 
     private static byte[] readBytes(final ByteBuffer in) {
@@ -123,8 +131,8 @@ public final class ChatRecords {
         public byte[] encode() {
             final ByteArrayOutputStream out = new ByteArrayOutputStream();
             out.write(FORMAT);
-            writeBytes(out, matchId);
-            writeBytes(out, peerIdentityEd);
+            writeLengthPrefixed(out, matchId);
+            writeLengthPrefixed(out, peerIdentityEd);
             return out.toByteArray();
         }
 
@@ -179,8 +187,8 @@ public final class ChatRecords {
         public byte[] encode() {
             final ByteArrayOutputStream out = new ByteArrayOutputStream();
             out.write(FORMAT);
-            writeBytes(out, ratchetState);
-            writeBytes(out, prekeyFields);
+            writeLengthPrefixed(out, ratchetState);
+            writeLengthPrefixed(out, prekeyFields);
             return out.toByteArray();
         }
 
@@ -308,15 +316,15 @@ public final class ChatRecords {
         public byte[] encode() {
             final ByteArrayOutputStream out = new ByteArrayOutputStream();
             out.write(FORMAT);
-            out.writeBytes(messageId);
-            writeBytes(out, matchId);
+            append(out, messageId);
+            writeLengthPrefixed(out, matchId);
             out.write(outgoing ? 1 : 0);
-            writeBytes(out, body);
-            out.writeBytes(ByteBuffer.allocate(2 * Long.BYTES).putLong(createdAtMillis).putLong(sequence).array());
+            writeLengthPrefixed(out, body);
+            append(out, ByteBuffer.allocate(2 * Long.BYTES).putLong(createdAtMillis).putLong(sequence).array());
             out.write(state.ordinal());
             out.write((edited ? 1 : 0) | (deleted ? 2 : 0));
-            writeBytes(out, myReaction);
-            writeBytes(out, peerReaction);
+            writeLengthPrefixed(out, myReaction);
+            writeLengthPrefixed(out, peerReaction);
             return out.toByteArray();
         }
 
@@ -402,10 +410,10 @@ public final class ChatRecords {
         public byte[] encode() {
             final ByteArrayOutputStream out = new ByteArrayOutputStream();
             out.write(FORMAT);
-            out.writeBytes(messageId);
-            writeBytes(out, matchId);
-            writeBytes(out, envelope);
-            out.writeBytes(ByteBuffer.allocate(2 * Long.BYTES + Integer.BYTES).putLong(createdAtMillis)
+            append(out, messageId);
+            writeLengthPrefixed(out, matchId);
+            writeLengthPrefixed(out, envelope);
+            append(out, ByteBuffer.allocate(2 * Long.BYTES + Integer.BYTES).putLong(createdAtMillis)
                     .putLong(sequence).putInt(attempts).array());
             return out.toByteArray();
         }

@@ -62,8 +62,8 @@ public record PrekeySecret(boolean oneTime, long id, byte[] privateKey) {
         final ByteArrayOutputStream out = new ByteArrayOutputStream();
         out.write(ChatRecords.FORMAT);
         out.write(oneTime ? 1 : 0);
-        out.writeBytes(ByteBuffer.allocate(Integer.BYTES).putInt((int) id).array());
-        out.writeBytes(privateKey);
+        ChatRecords.append(out, ByteBuffer.allocate(Integer.BYTES).putInt((int) id).array());
+        ChatRecords.append(out, privateKey);
         return out.toByteArray();
     }
 
