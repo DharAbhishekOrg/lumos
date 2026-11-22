@@ -1970,8 +1970,8 @@
     "ci:conformance#31528127667"
    ],
    "adr": [],
-   "last_commit": "5161dce",
-   "updated": "2026-11-21"
+   "last_commit": "93730b1",
+   "updated": "2026-11-22"
   },
   {
    "req_id": "SRS-NFR-CMP-005",
@@ -4164,13 +4164,26 @@
   },
   {
    "req_id": "SRS-RMT-001",
-   "status": "not_started",
-   "code": [],
-   "tests": [],
+   "status": "implemented",
+   "code": [
+    "android-app/protocol-java/src/main/java/com/lumos/protocol/chat/RemoteSession.java",
+    "android-app/protocol-java/src/main/java/com/lumos/protocol/chat/RemoteText.java",
+    "ios-app/protocol-conformance/Sources/LumosProtocol/RemoteText.swift",
+    "protocol/chat/remote.go",
+    "protocol/chat/session.go",
+    "test-vectors/chat/remote_text.json",
+    "tools/vectorgen/remote.go"
+   ],
+   "tests": [
+    "go:protocol/chat:TestAnOfflinePeerOpensPrekeyEnvelopesOutOfOrderAndTheSessionSettles",
+    "go:protocol/chat:TestTheCommittedSessionReplaysByteForByte",
+    "java:protocol-conformance:RemoteTextConformanceTest.theScriptedSessionReplaysByteForByte",
+    "swift:LumosProtocolConformance:RemoteTextConformanceTests.testTheScriptedSessionReplaysByteForByte"
+   ],
    "evidence": [],
    "adr": [],
-   "last_commit": null,
-   "updated": null
+   "last_commit": "93730b1",
+   "updated": "2026-11-22"
   },
   {
    "req_id": "SRS-RMT-002",
@@ -4200,13 +4213,23 @@
   },
   {
    "req_id": "SRS-RMT-004",
-   "status": "not_started",
-   "code": [],
-   "tests": [],
+   "status": "implemented",
+   "code": [
+    "android-app/protocol-java/src/main/java/com/lumos/protocol/chat/RemoteSession.java",
+    "android-app/protocol-java/src/main/java/com/lumos/protocol/chat/RemoteText.java",
+    "ios-app/protocol-conformance/Sources/LumosProtocol/RemoteText.swift",
+    "protocol/chat/remote.go",
+    "protocol/chat/session.go"
+   ],
+   "tests": [
+    "go:protocol/chat:TestARelayCannotRelabelAMessage",
+    "java:protocol-conformance:RemoteTextConformanceTest.aRelabelledOrTamperedFirstMessageIsRefused",
+    "swift:LumosProtocolConformance:RemoteTextConformanceTests.testARelabelledOrMisattributedFirstMessageIsRefused"
+   ],
    "evidence": [],
    "adr": [],
-   "last_commit": null,
-   "updated": null
+   "last_commit": "93730b1",
+   "updated": "2026-11-22"
   },
   {
    "req_id": "SRS-RMT-005",
@@ -4253,36 +4276,77 @@
   },
   {
    "req_id": "SRS-RMT-007",
-   "status": "not_started",
-   "code": [],
-   "tests": [],
+   "status": "implemented",
+   "code": [
+    "android-app/protocol-java/src/main/java/com/lumos/protocol/chat/RemoteSession.java",
+    "android-app/protocol-java/src/main/java/com/lumos/protocol/chat/RemoteText.java",
+    "android-app/protocol-java/src/main/java/com/lumos/protocol/x3dh/X3dh.java",
+    "ios-app/protocol-conformance/Sources/LumosProtocol/RemoteText.swift",
+    "ios-app/protocol-conformance/Sources/LumosProtocol/X3DH.swift",
+    "protocol/chat/remote.go",
+    "protocol/chat/session.go"
+   ],
+   "tests": [
+    "go:protocol/chat:TestAnOfflinePeerOpensPrekeyEnvelopesOutOfOrderAndTheSessionSettles",
+    "go:protocol/chat:TestInitiateRefusesAnUnsignedBundle",
+    "go:protocol/chat:TestRespondRefusesWhatTheMatchDidNotPin",
+    "go:protocol/chat:TestTheCommittedSessionReplaysByteForByte",
+    "java:protocol-conformance:RemoteTextConformanceTest.theScriptedSessionReplaysByteForByte",
+    "swift:LumosProtocolConformance:RemoteTextConformanceTests.testTheScriptedSessionReplaysByteForByte"
+   ],
    "evidence": [],
    "adr": [],
-   "last_commit": null,
-   "updated": null
+   "last_commit": "93730b1",
+   "updated": "2026-11-22"
   },
   {
    "req_id": "SRS-RMT-008",
-   "status": "not_started",
-   "code": [],
-   "tests": [],
+   "status": "tested",
+   "code": [
+    "android-app/protocol-java/src/main/java/com/lumos/protocol/chat/RemoteSession.java",
+    "android-app/protocol-java/src/main/java/com/lumos/protocol/chat/RemoteText.java",
+    "ios-app/protocol-conformance/Sources/LumosProtocol/RemoteText.swift",
+    "protocol/chat/remote.go",
+    "protocol/chat/session.go",
+    "test-vectors/chat/remote_text.json",
+    "tools/vectorgen/remote.go"
+   ],
+   "tests": [
+    "go:protocol/chat:TestAnOfflinePeerOpensPrekeyEnvelopesOutOfOrderAndTheSessionSettles",
+    "go:protocol/chat:TestTheCommittedSessionReplaysByteForByte",
+    "java:protocol-conformance:RemoteTextConformanceTest.theScriptedSessionReplaysByteForByte",
+    "swift:LumosProtocolConformance:RemoteTextConformanceTests.testTheScriptedSessionReplaysByteForByte"
+   ],
    "evidence": [],
    "adr": [],
-   "last_commit": null,
-   "updated": null
+   "last_commit": "93730b1",
+   "updated": "2026-11-22"
   },
   {
    "req_id": "SRS-RMT-009",
    "status": "tested",
    "code": [
+    "android-app/protocol-java/src/main/java/com/lumos/protocol/chat/RemoteSession.java",
+    "android-app/protocol-java/src/main/java/com/lumos/protocol/chat/RemoteText.java",
     "backend/internal/api/relay.go",
-    "backend/internal/relay/service.go"
+    "backend/internal/relay/service.go",
+    "ios-app/protocol-conformance/Sources/LumosProtocol/RemoteText.swift",
+    "protocol/chat/remote.go",
+    "protocol/chat/session.go"
    ],
    "tests": [
     "go:backend/internal/api:FuzzTheSendRouteNeverPanicsOrFailsInternally",
     "go:backend/internal/api:TestTheRelayRefusesWhatItMustAndSaysOnlyACode",
     "go:backend/internal/relay:TestAcknowledgedOrExpiredEnvelopesAreGone",
-    "go:backend/internal/relay:TestRetriesAreIdempotentAndAReusedIDIsAReplay"
+    "go:backend/internal/relay:TestRetriesAreIdempotentAndAReusedIDIsAReplay",
+    "go:protocol/chat:FuzzDecoders",
+    "go:protocol/chat:TestARelayCannotRelabelAMessage",
+    "go:protocol/chat:TestMalformedEnvelopesAreRefused",
+    "go:protocol/chat:TestMalformedTextEventsAreRefusedWithTheirCodes",
+    "java:protocol-conformance:RemoteTextConformanceTest.aRelabelledOrTamperedFirstMessageIsRefused",
+    "java:protocol-conformance:RemoteTextConformanceTest.everyNegativeEarnsItsExactCode",
+    "swift:LumosProtocolConformance:RemoteTextConformanceTests.testARelabelledOrMisattributedFirstMessageIsRefused",
+    "swift:LumosProtocolConformance:RemoteTextConformanceTests.testEveryNegativeEarnsItsExactCode"
    ],
    "evidence": [],
    "adr": [],
@@ -4301,13 +4365,31 @@
   },
   {
    "req_id": "SRS-RMT-011",
-   "status": "not_started",
-   "code": [],
-   "tests": [],
+   "status": "implemented",
+   "code": [
+    "android-app/protocol-java/src/main/java/com/lumos/protocol/chat/RemoteSession.java",
+    "android-app/protocol-java/src/main/java/com/lumos/protocol/chat/RemoteText.java",
+    "ios-app/protocol-conformance/Sources/LumosProtocol/RemoteText.swift",
+    "protocol/chat/remote.go",
+    "protocol/chat/session.go",
+    "test-vectors/chat/remote_text.json",
+    "tools/vectorgen/remote.go"
+   ],
+   "tests": [
+    "go:protocol/chat:FuzzDecoders",
+    "go:protocol/chat:TestCommittedTextEventsDecodeAndReencode",
+    "go:protocol/chat:TestEveryTextEventKindRoundTrips",
+    "go:protocol/chat:TestMalformedEnvelopesAreRefused",
+    "go:protocol/chat:TestMalformedTextEventsAreRefusedWithTheirCodes",
+    "java:protocol-conformance:RemoteTextConformanceTest.everyNegativeEarnsItsExactCode",
+    "java:protocol-conformance:RemoteTextConformanceTest.everyTextEventDecodesAndReencodesByteForByte",
+    "swift:LumosProtocolConformance:RemoteTextConformanceTests.testEveryNegativeEarnsItsExactCode",
+    "swift:LumosProtocolConformance:RemoteTextConformanceTests.testEveryTextEventDecodesAndReencodesByteForByte"
+   ],
    "evidence": [],
    "adr": [],
-   "last_commit": null,
-   "updated": null
+   "last_commit": "93730b1",
+   "updated": "2026-11-22"
   },
   {
    "req_id": "SRS-RMT-012",
@@ -5298,8 +5380,8 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "5161dce",
-   "updated": "2026-11-21"
+   "last_commit": "93730b1",
+   "updated": "2026-11-22"
   },
   {
    "req_id": "TRS-AND-002",
@@ -5308,8 +5390,8 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "5161dce",
-   "updated": "2026-11-21"
+   "last_commit": "93730b1",
+   "updated": "2026-11-22"
   },
   {
    "req_id": "TRS-AND-003",
@@ -5318,8 +5400,8 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "5161dce",
-   "updated": "2026-11-21"
+   "last_commit": "93730b1",
+   "updated": "2026-11-22"
   },
   {
    "req_id": "TRS-AND-004",
@@ -5342,8 +5424,8 @@
    "adr": [
     "ADR-003"
    ],
-   "last_commit": "5161dce",
-   "updated": "2026-11-21"
+   "last_commit": "93730b1",
+   "updated": "2026-11-22"
   },
   {
    "req_id": "TRS-AND-005",
@@ -5364,8 +5446,8 @@
    "adr": [
     "ADR-002"
    ],
-   "last_commit": "5161dce",
-   "updated": "2026-11-21"
+   "last_commit": "93730b1",
+   "updated": "2026-11-22"
   },
   {
    "req_id": "TRS-AND-006",
@@ -5383,8 +5465,8 @@
    "adr": [
     "ADR-002"
    ],
-   "last_commit": "5161dce",
-   "updated": "2026-11-21"
+   "last_commit": "93730b1",
+   "updated": "2026-11-22"
   },
   {
    "req_id": "TRS-AND-007",
@@ -5393,8 +5475,8 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "5161dce",
-   "updated": "2026-11-21"
+   "last_commit": "93730b1",
+   "updated": "2026-11-22"
   },
   {
    "req_id": "TRS-AND-008",
@@ -5403,8 +5485,8 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "5161dce",
-   "updated": "2026-11-21"
+   "last_commit": "93730b1",
+   "updated": "2026-11-22"
   },
   {
    "req_id": "TRS-AND-009",
@@ -5413,8 +5495,8 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "5161dce",
-   "updated": "2026-11-21"
+   "last_commit": "93730b1",
+   "updated": "2026-11-22"
   },
   {
    "req_id": "TRS-AND-010",
@@ -5423,8 +5505,8 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "5161dce",
-   "updated": "2026-11-21"
+   "last_commit": "93730b1",
+   "updated": "2026-11-22"
   },
   {
    "req_id": "TRS-AND-011",
@@ -5433,8 +5515,8 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "5161dce",
-   "updated": "2026-11-21"
+   "last_commit": "93730b1",
+   "updated": "2026-11-22"
   },
   {
    "req_id": "TRS-AND-012",
@@ -5443,8 +5525,8 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "5161dce",
-   "updated": "2026-11-21"
+   "last_commit": "93730b1",
+   "updated": "2026-11-22"
   },
   {
    "req_id": "TRS-ARCH-001",
@@ -6450,7 +6532,7 @@
     "ADR-005",
     "ADR-006"
    ],
-   "last_commit": "95ef055",
+   "last_commit": "93730b1",
    "updated": "2026-11-22"
   },
   {
@@ -6474,7 +6556,7 @@
     "ADR-004",
     "ADR-006"
    ],
-   "last_commit": "95ef055",
+   "last_commit": "93730b1",
    "updated": "2026-11-22"
   },
   {
@@ -6495,7 +6577,7 @@
    "adr": [
     "ADR-004"
    ],
-   "last_commit": "95ef055",
+   "last_commit": "93730b1",
    "updated": "2026-11-22"
   },
   {
@@ -6505,7 +6587,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "95ef055",
+   "last_commit": "93730b1",
    "updated": "2026-11-22"
   },
   {
@@ -6533,7 +6615,7 @@
    "adr": [
     "ADR-004"
    ],
-   "last_commit": "95ef055",
+   "last_commit": "93730b1",
    "updated": "2026-11-22"
   },
   {
@@ -6543,7 +6625,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "95ef055",
+   "last_commit": "93730b1",
    "updated": "2026-11-22"
   },
   {
@@ -6560,7 +6642,11 @@
     "android-app/app/src/main/java/com/lumos/app/recovery/RecoveryException.java",
     "android-app/app/src/main/java/com/lumos/app/recovery/RecoveryParams.java",
     "android-app/app/src/main/java/com/lumos/app/recovery/RecoveryRecord.java",
+    "android-app/protocol-java/src/main/java/com/lumos/protocol/x3dh/X3dh.java",
+    "ios-app/protocol-conformance/Sources/LumosProtocol/X3DH.swift",
     "ios-app/shell/Sources/LumosAppShell/RecoveryRecord.swift",
+    "protocol/chat/remote.go",
+    "protocol/chat/session.go",
     "protocol/crypto/recovery/recovery.go",
     "protocol/crypto/x3dh/x3dh.go",
     "test-vectors/crypto/aead_kat.json",
@@ -6573,6 +6659,10 @@
     "tools/vectorgen/recovery.go"
    ],
    "tests": [
+    "go:protocol/chat:TestAnOfflinePeerOpensPrekeyEnvelopesOutOfOrderAndTheSessionSettles",
+    "go:protocol/chat:TestInitiateRefusesAnUnsignedBundle",
+    "go:protocol/chat:TestRespondRefusesWhatTheMatchDidNotPin",
+    "go:protocol/chat:TestTheCommittedSessionReplaysByteForByte",
     "go:protocol/crypto/recovery:TestADowngradedHeaderCannotProduceACheaperKey",
     "go:protocol/crypto/recovery:TestAbsurdParamsAreRefusedBeforeAnyDerivation",
     "go:protocol/crypto/recovery:TestExportOpenRoundTrips",
@@ -6602,6 +6692,7 @@
     "java:app-instrumented:RecoveryRecordInstrumentedTest.theAcceptedBoundsMatchTheVectorFile",
     "java:app-instrumented:RecoveryRecordInstrumentedTest.theFormatConstantsMatchTheVectorFile",
     "java:app-instrumented:RecoveryRecordInstrumentedTest.twoExportsOfTheSameContentDiffer",
+    "java:protocol-conformance:RemoteTextConformanceTest.theScriptedSessionReplaysByteForByte",
     "swift:LumosAppShell:RecoveryRecordTests.testAcceptedBoundsMatchTheVectorFile",
     "swift:LumosAppShell:RecoveryRecordTests.testAnExportedRecordLeaksNeitherPassphraseNorContent",
     "swift:LumosAppShell:RecoveryRecordTests.testArgon2idAgreesWithTheReferenceDerivation",
@@ -6612,7 +6703,8 @@
     "swift:LumosAppShell:RecoveryRecordTests.testOpeningFailuresCarryNoDistinguishingDetail",
     "swift:LumosAppShell:RecoveryRecordTests.testTwoExportsOfTheSameContentDiffer",
     "swift:LumosProtocolConformance:IdentityBindingConformanceTests.testEveryNegativeIsRejected",
-    "swift:LumosProtocolConformance:IdentityBindingConformanceTests.testPositivesDeriveVerifyAndRoundTrip"
+    "swift:LumosProtocolConformance:IdentityBindingConformanceTests.testPositivesDeriveVerifyAndRoundTrip",
+    "swift:LumosProtocolConformance:RemoteTextConformanceTests.testTheScriptedSessionReplaysByteForByte"
    ],
    "evidence": [],
    "adr": [
@@ -6626,8 +6718,13 @@
    "req_id": "TRS-CRY-002",
    "status": "tested",
    "code": [
+    "android-app/protocol-java/src/main/java/com/lumos/protocol/chat/RemoteSession.java",
+    "android-app/protocol-java/src/main/java/com/lumos/protocol/chat/RemoteText.java",
     "android-app/protocol-java/src/main/java/com/lumos/protocol/ratchet/DoubleRatchet.java",
     "ios-app/protocol-conformance/Sources/LumosProtocol/Ratchet.swift",
+    "ios-app/protocol-conformance/Sources/LumosProtocol/RemoteText.swift",
+    "protocol/chat/remote.go",
+    "protocol/chat/session.go",
     "protocol/crypto/ratchet/ratchet.go",
     "test-vectors/crypto/aead_kat.json",
     "test-vectors/crypto/ratchet_sequences.json",
@@ -6636,13 +6733,17 @@
     "tools/vectorgen/crypto.go"
    ],
    "tests": [
+    "go:protocol/chat:TestAnOfflinePeerOpensPrekeyEnvelopesOutOfOrderAndTheSessionSettles",
+    "go:protocol/chat:TestTheCommittedSessionReplaysByteForByte",
     "go:protocol/crypto/ratchet:TestConversationWithDHTurns",
     "go:protocol/crypto/ratchet:TestHeaderRoundtrip",
     "go:protocol/crypto/ratchet:TestOutOfOrderWithinChain",
     "go:protocol/crypto/ratchet:TestSkippedAcrossDHTurn",
     "go:protocol/crypto:TestConformanceRatchetSequences",
     "java:protocol-conformance:RatchetConformanceTest.committedSequencesDecryptByteForByte",
-    "swift:LumosProtocolConformance:RatchetConformanceTests.testCommittedSequencesDecryptByteForByte"
+    "java:protocol-conformance:RemoteTextConformanceTest.theScriptedSessionReplaysByteForByte",
+    "swift:LumosProtocolConformance:RatchetConformanceTests.testCommittedSequencesDecryptByteForByte",
+    "swift:LumosProtocolConformance:RemoteTextConformanceTests.testTheScriptedSessionReplaysByteForByte"
    ],
    "evidence": [],
    "adr": [
@@ -6695,12 +6796,15 @@
    "code": [
     "backend/internal/registry/postgres.go",
     "backend/internal/registry/repository.go",
-    "backend/internal/registry/service.go"
+    "backend/internal/registry/service.go",
+    "protocol/chat/session.go"
    ],
    "tests": [
     "go:backend/internal/api:TestTwoDevicesAgreeOnASecretThroughTheRegistry",
     "go:backend/internal/registry:TestAConsumedPrekeyIdIsNeverAcceptedAgain",
-    "go:backend/internal/registry:TestOneTimePrekeysAreNeverIssuedTwiceUnderConcurrentClaims"
+    "go:backend/internal/registry:TestOneTimePrekeysAreNeverIssuedTwiceUnderConcurrentClaims",
+    "go:protocol/chat:TestInitiateRefusesAnUnsignedBundle",
+    "go:protocol/chat:TestRespondRefusesWhatTheMatchDidNotPin"
    ],
    "evidence": [],
    "adr": [],
@@ -6894,14 +6998,20 @@
    "req_id": "TRS-CRY-014",
    "status": "tested",
    "code": [
+    "android-app/protocol-java/src/main/java/com/lumos/protocol/x3dh/X3dh.java",
+    "ios-app/protocol-conformance/Sources/LumosProtocol/X3DH.swift",
     "protocol/crypto/safety/safety.go",
     "protocol/crypto/x3dh/x3dh.go"
    ],
    "tests": [
+    "go:protocol/chat:TestAnOfflinePeerOpensPrekeyEnvelopesOutOfOrderAndTheSessionSettles",
+    "go:protocol/chat:TestTheCommittedSessionReplaysByteForByte",
     "go:protocol/crypto/safety:TestShapeAndSymmetry",
     "go:protocol/crypto/x3dh:TestTranscriptBindsEveryMandatedInput",
     "go:protocol/crypto/x3dh:TestVerificationPrecedesDH",
-    "go:protocol/crypto:TestConformanceX3DHKAT"
+    "go:protocol/crypto:TestConformanceX3DHKAT",
+    "java:protocol-conformance:RemoteTextConformanceTest.theScriptedSessionReplaysByteForByte",
+    "swift:LumosProtocolConformance:RemoteTextConformanceTests.testTheScriptedSessionReplaysByteForByte"
    ],
    "evidence": [],
    "adr": [
@@ -6920,15 +7030,19 @@
     "ios-app/protocol-conformance/Sources/LumosProtocol/LumosCrypto.swift",
     "protocol/crypto/recovery_vectors_test.go",
     "protocol/crypto/vectors_test.go",
+    "test-vectors/chat/remote_text.json",
     "test-vectors/crypto/aead_kat.json",
     "test-vectors/crypto/ratchet_sequences.json",
     "test-vectors/crypto/recovery_record.json",
     "test-vectors/crypto/safety_number.json",
     "test-vectors/crypto/x3dh_kat.json",
     "tools/vectorgen/crypto.go",
-    "tools/vectorgen/recovery.go"
+    "tools/vectorgen/recovery.go",
+    "tools/vectorgen/remote.go"
    ],
    "tests": [
+    "go:protocol/chat:TestAnOfflinePeerOpensPrekeyEnvelopesOutOfOrderAndTheSessionSettles",
+    "go:protocol/chat:TestTheCommittedSessionReplaysByteForByte",
     "go:protocol/crypto:TestConformanceAEADKAT",
     "go:protocol/crypto:TestConformanceRatchetSequences",
     "go:protocol/crypto:TestConformanceRecoveryDerivation",
@@ -6949,6 +7063,7 @@
     "java:protocol-conformance:CryptoConformanceTest.aeadKat",
     "java:protocol-conformance:CryptoConformanceTest.safetyNumber",
     "java:protocol-conformance:CryptoConformanceTest.x3dhKat",
+    "java:protocol-conformance:RemoteTextConformanceTest.theScriptedSessionReplaysByteForByte",
     "swift:LumosAppShell:RecoveryRecordTests.testAcceptedBoundsMatchTheVectorFile",
     "swift:LumosAppShell:RecoveryRecordTests.testAnExportedRecordLeaksNeitherPassphraseNorContent",
     "swift:LumosAppShell:RecoveryRecordTests.testArgon2idAgreesWithTheReferenceDerivation",
@@ -6960,7 +7075,8 @@
     "swift:LumosAppShell:RecoveryRecordTests.testTwoExportsOfTheSameContentDiffer",
     "swift:LumosProtocolConformance:CryptoConformanceTests.testAEADKnownAnswersAndTampers",
     "swift:LumosProtocolConformance:CryptoConformanceTests.testSafetyNumberReproducesDigitsAndEmoji",
-    "swift:LumosProtocolConformance:CryptoConformanceTests.testX3DHSharedSecretsAndTranscripts"
+    "swift:LumosProtocolConformance:CryptoConformanceTests.testX3DHSharedSecretsAndTranscripts",
+    "swift:LumosProtocolConformance:RemoteTextConformanceTests.testTheScriptedSessionReplaysByteForByte"
    ],
    "evidence": [
     "ci:conformance#31528127667"
@@ -6968,7 +7084,7 @@
    "adr": [
     "ADR-001"
    ],
-   "last_commit": "95ef055",
+   "last_commit": "93730b1",
    "updated": "2026-11-22"
   },
   {
@@ -7185,8 +7301,8 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "5161dce",
-   "updated": "2026-11-21"
+   "last_commit": "93730b1",
+   "updated": "2026-11-22"
   },
   {
    "req_id": "TRS-IOS-002",
@@ -7195,8 +7311,8 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "5161dce",
-   "updated": "2026-11-21"
+   "last_commit": "93730b1",
+   "updated": "2026-11-22"
   },
   {
    "req_id": "TRS-IOS-003",
@@ -7215,8 +7331,8 @@
    "adr": [
     "ADR-002"
    ],
-   "last_commit": "5161dce",
-   "updated": "2026-11-21"
+   "last_commit": "93730b1",
+   "updated": "2026-11-22"
   },
   {
    "req_id": "TRS-IOS-004",
@@ -7225,8 +7341,8 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "5161dce",
-   "updated": "2026-11-21"
+   "last_commit": "93730b1",
+   "updated": "2026-11-22"
   },
   {
    "req_id": "TRS-IOS-005",
@@ -7235,8 +7351,8 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "5161dce",
-   "updated": "2026-11-21"
+   "last_commit": "93730b1",
+   "updated": "2026-11-22"
   },
   {
    "req_id": "TRS-IOS-006",
@@ -7245,8 +7361,8 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "5161dce",
-   "updated": "2026-11-21"
+   "last_commit": "93730b1",
+   "updated": "2026-11-22"
   },
   {
    "req_id": "TRS-IOS-007",
@@ -7267,8 +7383,8 @@
     "ADR-003",
     "ADR-010"
    ],
-   "last_commit": "5161dce",
-   "updated": "2026-11-21"
+   "last_commit": "93730b1",
+   "updated": "2026-11-22"
   },
   {
    "req_id": "TRS-IOS-008",
@@ -7277,8 +7393,8 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "5161dce",
-   "updated": "2026-11-21"
+   "last_commit": "93730b1",
+   "updated": "2026-11-22"
   },
   {
    "req_id": "TRS-IOS-009",
@@ -7287,8 +7403,8 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "5161dce",
-   "updated": "2026-11-21"
+   "last_commit": "93730b1",
+   "updated": "2026-11-22"
   },
   {
    "req_id": "TRS-IOS-010",
@@ -7297,8 +7413,8 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "5161dce",
-   "updated": "2026-11-21"
+   "last_commit": "93730b1",
+   "updated": "2026-11-22"
   },
   {
    "req_id": "TRS-IOS-011",
@@ -7307,8 +7423,8 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "5161dce",
-   "updated": "2026-11-21"
+   "last_commit": "93730b1",
+   "updated": "2026-11-22"
   },
   {
    "req_id": "TRS-IOS-012",
@@ -7317,8 +7433,8 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "5161dce",
-   "updated": "2026-11-21"
+   "last_commit": "93730b1",
+   "updated": "2026-11-22"
   },
   {
    "req_id": "TRS-LOC-001",
@@ -7837,7 +7953,7 @@
    "adr": [
     "ADR-007"
    ],
-   "last_commit": "95ef055",
+   "last_commit": "93730b1",
    "updated": "2026-11-22"
   },
   {
@@ -7876,7 +7992,7 @@
    "adr": [
     "ADR-007"
    ],
-   "last_commit": "95ef055",
+   "last_commit": "93730b1",
    "updated": "2026-11-22"
   },
   {
@@ -7901,7 +8017,7 @@
     "ci:conformance#31528127667"
    ],
    "adr": [],
-   "last_commit": "95ef055",
+   "last_commit": "93730b1",
    "updated": "2026-11-22"
   },
   {
@@ -7932,7 +8048,7 @@
     "ci:conformance#31528127667"
    ],
    "adr": [],
-   "last_commit": "95ef055",
+   "last_commit": "93730b1",
    "updated": "2026-11-22"
   },
   {
@@ -7959,7 +8075,7 @@
     "ci:conformance#31528127667"
    ],
    "adr": [],
-   "last_commit": "95ef055",
+   "last_commit": "93730b1",
    "updated": "2026-11-22"
   },
   {
@@ -7999,15 +8115,20 @@
    "adr": [
     "ADR-007"
    ],
-   "last_commit": "95ef055",
+   "last_commit": "93730b1",
    "updated": "2026-11-22"
   },
   {
    "req_id": "TRS-PROTO-007",
    "status": "tested",
    "code": [
+    "android-app/protocol-java/src/main/java/com/lumos/protocol/chat/RemoteSession.java",
+    "android-app/protocol-java/src/main/java/com/lumos/protocol/chat/RemoteText.java",
     "android-app/protocol-java/src/main/java/com/lumos/protocol/wire/Frame.java",
     "ios-app/protocol-conformance/Sources/LumosProtocol/Frame.swift",
+    "ios-app/protocol-conformance/Sources/LumosProtocol/RemoteText.swift",
+    "protocol/chat/remote.go",
+    "protocol/chat/session.go",
     "protocol/gen/go/lumosconstants/class_limits.go",
     "protocol/gen/go/lumoserrors/error_codes.go",
     "protocol/schema/schema.go",
@@ -8025,20 +8146,25 @@
     "tools/vectorgen/main.go"
    ],
    "tests": [
+    "go:protocol/chat:FuzzDecoders",
+    "go:protocol/chat:TestMalformedEnvelopesAreRefused",
+    "go:protocol/chat:TestMalformedTextEventsAreRefusedWithTheirCodes",
     "go:protocol/wire:TestDecodeErrorPaths",
     "go:protocol/wire:TestEncodeRejectsOversizedAndUnknown",
     "go:tools/constantsgen:TestClassLimitsResolveUnitsCorrectly",
     "go:tools/constantsgen:TestEveryClassHasAPositiveLimit",
     "java:protocol-conformance:FramingConformanceTest.frameInvalid",
     "java:protocol-conformance:FramingConformanceTest.frameRoundtrip",
+    "java:protocol-conformance:RemoteTextConformanceTest.everyNegativeEarnsItsExactCode",
     "swift:LumosProtocolConformance:FramingConformanceTests.testFrameInvalidFailsWithExactCode",
-    "swift:LumosProtocolConformance:FramingConformanceTests.testFrameRoundtripReproducesCommittedBytes"
+    "swift:LumosProtocolConformance:FramingConformanceTests.testFrameRoundtripReproducesCommittedBytes",
+    "swift:LumosProtocolConformance:RemoteTextConformanceTests.testEveryNegativeEarnsItsExactCode"
    ],
    "evidence": [
     "ci:conformance#31528127667"
    ],
    "adr": [],
-   "last_commit": "95ef055",
+   "last_commit": "93730b1",
    "updated": "2026-11-22"
   },
   {
@@ -8048,7 +8174,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "95ef055",
+   "last_commit": "93730b1",
    "updated": "2026-11-22"
   },
   {
@@ -8081,7 +8207,7 @@
    "adr": [
     "ADR-002"
    ],
-   "last_commit": "95ef055",
+   "last_commit": "93730b1",
    "updated": "2026-11-22"
   },
   {
@@ -8110,7 +8236,7 @@
    "adr": [
     "ADR-004"
    ],
-   "last_commit": "95ef055",
+   "last_commit": "93730b1",
    "updated": "2026-11-22"
   },
   {
@@ -8127,7 +8253,7 @@
    ],
    "evidence": [],
    "adr": [],
-   "last_commit": "95ef055",
+   "last_commit": "93730b1",
    "updated": "2026-11-22"
   },
   {
@@ -8137,7 +8263,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "95ef055",
+   "last_commit": "93730b1",
    "updated": "2026-11-22"
   },
   {
@@ -8163,7 +8289,7 @@
     "ci:conformance#31528127667"
    ],
    "adr": [],
-   "last_commit": "95ef055",
+   "last_commit": "93730b1",
    "updated": "2026-11-22"
   },
   {
@@ -8183,7 +8309,7 @@
    ],
    "evidence": [],
    "adr": [],
-   "last_commit": "95ef055",
+   "last_commit": "93730b1",
    "updated": "2026-11-22"
   },
   {
@@ -8213,7 +8339,7 @@
     "ci:conformance#31528127667"
    ],
    "adr": [],
-   "last_commit": "95ef055",
+   "last_commit": "93730b1",
    "updated": "2026-11-22"
   },
   {
@@ -8223,7 +8349,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "95ef055",
+   "last_commit": "93730b1",
    "updated": "2026-11-22"
   },
   {
@@ -8252,7 +8378,7 @@
     "ADR-002",
     "ADR-008"
    ],
-   "last_commit": "95ef055",
+   "last_commit": "93730b1",
    "updated": "2026-11-22"
   },
   {
@@ -8274,7 +8400,7 @@
    "adr": [
     "ADR-002"
    ],
-   "last_commit": "95ef055",
+   "last_commit": "93730b1",
    "updated": "2026-11-22"
   },
   {
@@ -8682,11 +8808,17 @@
     "ios-app/protocol-conformance/Sources/LumosProtocol/Frame.swift",
     "ios-app/protocol-conformance/Sources/LumosProtocol/LumosCrypto.swift",
     "protocol/crypto/recovery_vectors_test.go",
+    "test-vectors/chat/remote_text.json",
     "test-vectors/crypto/recovery_record.json",
     "tools/vectorgen/gen.go",
-    "tools/vectorgen/recovery.go"
+    "tools/vectorgen/recovery.go",
+    "tools/vectorgen/remote.go"
    ],
    "tests": [
+    "go:protocol/chat:TestAnOfflinePeerOpensPrekeyEnvelopesOutOfOrderAndTheSessionSettles",
+    "go:protocol/chat:TestCommittedTextEventsDecodeAndReencode",
+    "go:protocol/chat:TestEveryTextEventKindRoundTrips",
+    "go:protocol/chat:TestTheCommittedSessionReplaysByteForByte",
     "go:protocol/crypto/x3dh:TestIdentityBindingVectorsReproduceThroughTheRealPath",
     "go:protocol/crypto:TestConformanceRecoveryDerivation",
     "go:protocol/crypto:TestConformanceRecoveryFailuresAreIndistinguishable",
@@ -8709,6 +8841,8 @@
     "java:protocol-conformance:CryptoConformanceTest.x3dhKat",
     "java:protocol-conformance:FramingConformanceTest.frameInvalid",
     "java:protocol-conformance:FramingConformanceTest.frameRoundtrip",
+    "java:protocol-conformance:RemoteTextConformanceTest.everyTextEventDecodesAndReencodesByteForByte",
+    "java:protocol-conformance:RemoteTextConformanceTest.theScriptedSessionReplaysByteForByte",
     "swift:LumosAppShell:RecoveryRecordTests.testAcceptedBoundsMatchTheVectorFile",
     "swift:LumosAppShell:RecoveryRecordTests.testAnExportedRecordLeaksNeitherPassphraseNorContent",
     "swift:LumosAppShell:RecoveryRecordTests.testArgon2idAgreesWithTheReferenceDerivation",
@@ -8720,7 +8854,9 @@
     "swift:LumosAppShell:RecoveryRecordTests.testTwoExportsOfTheSameContentDiffer",
     "swift:LumosProtocolConformance:CryptoConformanceTests.testAEADKnownAnswersAndTampers",
     "swift:LumosProtocolConformance:FramingConformanceTests.testFrameRoundtripReproducesCommittedBytes",
-    "swift:LumosProtocolConformance:IdentityBindingConformanceTests.testPositivesDeriveVerifyAndRoundTrip"
+    "swift:LumosProtocolConformance:IdentityBindingConformanceTests.testPositivesDeriveVerifyAndRoundTrip",
+    "swift:LumosProtocolConformance:RemoteTextConformanceTests.testEveryTextEventDecodesAndReencodesByteForByte",
+    "swift:LumosProtocolConformance:RemoteTextConformanceTests.testTheScriptedSessionReplaysByteForByte"
    ],
    "evidence": [
     "ci:conformance#31528127667"
@@ -8728,7 +8864,7 @@
    "adr": [
     "ADR-004"
    ],
-   "last_commit": "95ef055",
+   "last_commit": "93730b1",
    "updated": "2026-11-22"
   },
   {

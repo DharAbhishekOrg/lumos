@@ -88,14 +88,23 @@ SRS-DAT-001/003, AT-006/007/025 (relay half), AT-018 (relay leg).
   route, not the token.
 
 ### S7: Client chat path
-- Schema v6: conversation, message, outbox, ratchet session, dedup and replay
-  windows.
-- Transactional outbox insert (TRS §8.3).
-- X3DH session establishment against fetched bundles, including an offline
-  peer.
-- Relay client with a process-kill recovery test (SRS-RMT-003, SRS-RMT-017).
-- The AMD-005 inner event envelope for edit, delete and reaction
-  (SRS-RMT-011).
+Split on 2026-11-22 into three sub-slices, each merged on its own:
+
+- **S7a, the remote-text wire (Go reference, Java, Swift).** The AMD-005 inner
+  event envelope for edit, delete and reaction (SRS-RMT-011); the ratchet
+  plaintext, which carries the message id inside the ciphertext so a relay
+  cannot relabel messages; the relay envelope (PREKEY until the peer replies,
+  then NORMAL); X3DH session establishment against fetched bundles, including
+  an offline peer, as production code on both apps. Byte layouts are fixed
+  under the TRS §19 AI delivery rule (TRS §10.1 names the fields, not their
+  bytes) and frozen by `chat/remote_text.json`, which all three languages
+  replay byte for byte.
+- **S7b, Android chat store.** Schema v6: conversation, message, outbox,
+  ratchet session, dedup and replay windows; the transactional outbox insert
+  (TRS §8.3, TRS-PAT-004); ratchet state that survives process death without
+  reusing a deleted message key (SRS-RMT-017).
+- **S7c, relay client.** Upload, fetch and acknowledge against the S5 relay,
+  with a process-kill recovery test (SRS-RMT-003, SRS-RMT-017).
 
 ### S8: docker-compose staging and integration suite
 - Offline queue, TTL expiry, replay rejection, duplicate envelope and block

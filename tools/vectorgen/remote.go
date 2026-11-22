@@ -141,7 +141,7 @@ func buildTextEventCases() ([]textEventCase, error) {
 		}
 		back, err := chat.DecodeTextEvent(b)
 		if err != nil || back.Kind != e.ev.Kind {
-			return nil, fmt.Errorf("text event %s does not round-trip: %v", e.name, err)
+			return nil, fmt.Errorf("text event %s does not round-trip: %w", e.name, err)
 		}
 		c := textEventCase{Name: e.name, Kind: int(e.ev.Kind), EncodedHex: hex.EncodeToString(b)}
 		if e.ev.Kind != lumosconstants.TextEventKindText {
@@ -291,72 +291,90 @@ var remoteSteps = []remoteStep{
 	{"bob", "open", 4}, {"bob", "open", 5},
 }
 
-// runRemoteSession plays the script against the reference and records it.
-func runRemoteSession(k *sessionKeys) error {
-	script := sessionScript()
-	matchID := vectorMatchID
-	alice := chat.Identity{Ed: k.aliceEd, DH: k.aliceDH}
-	bob := chat.Identity{Ed: k.bobEd, DH: k.bobDH}
-	aState, prekey, err := chat.Initiate(alice, k.bobBundle(), matchID, k.eph, k.aliceFirst)
+// remotePlay is the reference running the script: both ratchets and what
+// has been sealed so far.
+type remotePlay struct {
+	k         *sessionKeys
+	aState    *ratchet.State
+	bState    *ratchet.State
+	prekey    *chat.PrekeyFields
+	heardBack bool
+	envs      [][]byte
+}
+
+func (r *remotePlay) seal(s remoteStep, p chat.Plaintext) error {
+	var err error
+	switch {
+	case s.Actor == "bob":
+		r.envs[s.Message], err = chat.Seal(r.bState, p, nil, r.k.file.Now)
+	case r.heardBack:
+		r.envs[s.Message], err = chat.Seal(r.aState, p, nil, r.k.file.Now)
+	default:
+		r.envs[s.Message], err = chat.Seal(r.aState, p, r.prekey, r.k.file.Now)
+	}
+	return err
+}
+
+func (r *remotePlay) open(s remoteStep, p chat.Plaintext) error {
+	e, err := chat.DecodeEnvelope(r.envs[s.Message])
 	if err != nil {
 		return err
 	}
-	var bState *ratchet.State
-	aliceHeardBack := false
-	msgs := make([]remoteMessage, len(script))
-	envs := make([][]byte, len(script))
-	now := k.file.Now
-	for _, s := range remoteSteps {
-		p := script[s.Message].p
-		switch {
-		case s.Op == "seal" && s.Actor == "alice":
-			pk := prekey
-			if aliceHeardBack {
-				pk = nil
-			}
-			if envs[s.Message], err = chat.Seal(aState, p, pk, now); err != nil {
+	state, kp := r.aState, r.k.aliceTurns
+	if s.Actor == "bob" {
+		if r.bState == nil {
+			k := r.k
+			keys := chat.ResponderKeys{SPK: k.bobSPK, SPKID: k.file.Bob.SPKID, OPK: k.bobOPK, OPKID: k.file.Bob.OPKID}
+			bob := chat.Identity{Ed: k.bobEd, DH: k.bobDH}
+			if r.bState, err = chat.Respond(bob, keys, k.aliceEd.Public().(ed25519.PublicKey), *e.Prekey, vectorMatchID); err != nil {
 				return err
-			}
-		case s.Op == "seal":
-			if envs[s.Message], err = chat.Seal(bState, p, nil, now); err != nil {
-				return err
-			}
-		default:
-			e, err := chat.DecodeEnvelope(envs[s.Message])
-			if err != nil {
-				return err
-			}
-			var got chat.Plaintext
-			if s.Actor == "bob" {
-				if bState == nil {
-					keys := chat.ResponderKeys{SPK: k.bobSPK, SPKID: k.file.Bob.SPKID, OPK: k.bobOPK, OPKID: k.file.Bob.OPKID}
-					if bState, err = chat.Respond(bob, keys, k.aliceEd.Public().(ed25519.PublicKey), *e.Prekey, matchID); err != nil {
-						return err
-					}
-				}
-				got, err = chat.Open(bState, e, p.MessageID, now, k.bobTurns)
-			} else {
-				got, err = chat.Open(aState, e, p.MessageID, now, k.aliceTurns)
-				aliceHeardBack = true
-			}
-			if err != nil {
-				return fmt.Errorf("step %+v: %w", s, err)
-			}
-			want, _ := p.Encode()
-			back, _ := got.Encode()
-			if hex.EncodeToString(want) != hex.EncodeToString(back) {
-				return fmt.Errorf("step %+v: plaintext mismatch", s)
 			}
 		}
+		state, kp = r.bState, r.k.bobTurns
+	} else {
+		r.heardBack = true
 	}
+	got, err := chat.Open(state, e, p.MessageID, r.k.file.Now, kp)
+	if err != nil {
+		return fmt.Errorf("step %+v: %w", s, err)
+	}
+	want, _ := p.Encode()
+	back, _ := got.Encode()
+	if hex.EncodeToString(want) != hex.EncodeToString(back) {
+		return fmt.Errorf("step %+v: plaintext mismatch", s)
+	}
+	return nil
+}
+
+// runRemoteSession plays the script against the reference and records it.
+func runRemoteSession(k *sessionKeys) error {
+	script := sessionScript()
+	alice := chat.Identity{Ed: k.aliceEd, DH: k.aliceDH}
+	aState, prekey, err := chat.Initiate(alice, k.bobBundle(), vectorMatchID, k.eph, k.aliceFirst)
+	if err != nil {
+		return err
+	}
+	r := &remotePlay{k: k, aState: aState, prekey: prekey, envs: make([][]byte, len(script))}
+	for _, s := range remoteSteps {
+		p := script[s.Message].p
+		if s.Op == "seal" {
+			err = r.seal(s, p)
+		} else {
+			err = r.open(s, p)
+		}
+		if err != nil {
+			return err
+		}
+	}
+	msgs := make([]remoteMessage, len(script))
 	for i, s := range script {
 		pt, err := s.p.Encode()
 		if err != nil {
 			return err
 		}
-		e, _ := chat.DecodeEnvelope(envs[i])
+		e, _ := chat.DecodeEnvelope(r.envs[i])
 		msgs[i] = remoteMessage{From: s.from, MessageIDHex: hex.EncodeToString(s.p.MessageID[:]),
-			PlaintextHex: hex.EncodeToString(pt), Prekey: e.Prekey != nil, EnvelopeHex: hex.EncodeToString(envs[i])}
+			PlaintextHex: hex.EncodeToString(pt), Prekey: e.Prekey != nil, EnvelopeHex: hex.EncodeToString(r.envs[i])}
 	}
 	k.file.Messages, k.file.Steps = msgs, remoteSteps
 	return nil
