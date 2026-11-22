@@ -103,12 +103,14 @@ type tombstone struct {
 	expiresAt int64
 }
 
-// MemoryStore is the in-process Store, one mutex over everything.
+// MemoryStore is the in-process reference for every relay storage seam,
+// one mutex over everything.
 type MemoryStore struct {
 	mu           sync.Mutex
 	envelopes    map[key]Envelope
 	tombstones   map[key]tombstone
 	capabilities map[registry.DeviceID]map[[32]byte]struct{}
+	rates        map[registry.DeviceID]rateWindow
 }
 
 // NewMemoryStore returns an empty store.
@@ -117,6 +119,7 @@ func NewMemoryStore() *MemoryStore {
 		envelopes:    map[key]Envelope{},
 		tombstones:   map[key]tombstone{},
 		capabilities: map[registry.DeviceID]map[[32]byte]struct{}{},
+		rates:        map[registry.DeviceID]rateWindow{},
 	}
 }
 

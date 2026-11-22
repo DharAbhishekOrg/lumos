@@ -6,7 +6,7 @@
 // GENERATED - DO NOT EDIT. Generator: tools/constantsgen
 // Source register: protocol/constants/lumos_constants.json
 // Baseline: TRS v1.1 Sec. 23 / EDP v1.0 Sec. 4 (ADR-004)
-// constants_hash: sha256:755935dc90f6ab1ae325b5d27b1d655f7b56898714a824e9e785d107e37fa1d4
+// constants_hash: sha256:9b33b3c547f0e2d651fa15e8748057270cc0e3de84492e45bff6d4e3f1b26919
 
 package lumosconstants
 
@@ -14,7 +14,7 @@ package lumosconstants
 const ServiceUUID = "E853EB6A-775C-4A49-A6BF-320E6A5CC609"
 
 // ConstantsHash binds generated code to the register that produced it (TRS-CONST-005).
-const ConstantsHash = "sha256:755935dc90f6ab1ae325b5d27b1d655f7b56898714a824e9e785d107e37fa1d4"
+const ConstantsHash = "sha256:9b33b3c547f0e2d651fa15e8748057270cc0e3de84492e45bff6d4e3f1b26919"
 
 // SchemaVersion is the register schema version.
 const SchemaVersion = 1
@@ -659,6 +659,18 @@ const RelayMailboxQuotaEnvelopesMin = 200
 
 // RelayMailboxQuotaOverridable is sessions_remote_text.RELAY_MAILBOX_QUOTA.overridable.
 const RelayMailboxQuotaOverridable = true
+
+// RelaySendRatePerMinDefault is sessions_remote_text.RELAY_SEND_RATE_PER_MIN.default.
+const RelaySendRatePerMinDefault = 120
+
+// RelaySendRatePerMinMax is sessions_remote_text.RELAY_SEND_RATE_PER_MIN.max.
+const RelaySendRatePerMinMax = 600
+
+// RelaySendRatePerMinMin is sessions_remote_text.RELAY_SEND_RATE_PER_MIN.min.
+const RelaySendRatePerMinMin = 30
+
+// RelaySendRatePerMinOverridable is sessions_remote_text.RELAY_SEND_RATE_PER_MIN.overridable.
+const RelaySendRatePerMinOverridable = true
 
 // RelayTextEnvelopeMaxBytesDefault is sessions_remote_text.RELAY_TEXT_ENVELOPE_MAX_BYTES.default.
 const RelayTextEnvelopeMaxBytesDefault = 32768

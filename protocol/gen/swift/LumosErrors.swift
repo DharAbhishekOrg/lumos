@@ -6,7 +6,7 @@
 /// GENERATED - DO NOT EDIT. Generator: tools/constantsgen
 /// Source register: protocol/constants/lumos_constants.json
 /// Baseline: TRS v1.1 Sec. 23 / EDP v1.0 Sec. 4 (ADR-004)
-/// constants_hash: sha256:755935dc90f6ab1ae325b5d27b1d655f7b56898714a824e9e785d107e37fa1d4
+/// constants_hash: sha256:9b33b3c547f0e2d651fa15e8748057270cc0e3de84492e45bff6d4e3f1b26919
 
 /// Stable machine-readable error codes of TRS-PROTO-013. Append-only.
 public enum LumosErrors {
@@ -167,6 +167,9 @@ public enum LumosErrors {
     /// ERR_RELAY_MAILBOX_FULL (162, backend): The recipient's relay mailbox is at RELAY_MAILBOX_QUOTA (envelopes or bytes), or a mailbox owner's list of send capabilities is at its ceiling. The sender keeps the message queued and retries later; nothing is stored (TRS-BCK-004, SRS-DAT-003).
     public static let errRelayMailboxFull = "ERR_RELAY_MAILBOX_FULL"
 
+    /// ERR_RELAY_RATE_LIMITED (163, backend): The sending device has submitted RELAY_SEND_RATE_PER_MIN envelopes in the current one-minute window. The sender keeps the message queued and retries after the window, which the response states in Retry-After; nothing is stored (TRS-BCK-004, SRS-SAF-006, CR-004).
+    public static let errRelayRateLimited = "ERR_RELAY_RATE_LIMITED"
+
     /// Maps each stable code to its registry number.
     public static let numeric: [String: Int] = [
         "ERR_FRAME_BAD_MAGIC": 1,
@@ -221,6 +224,7 @@ public enum LumosErrors {
         "ERR_AUTH_REJECTED": 160,
         "ERR_PREKEY_UPLOAD_INVALID": 161,
         "ERR_RELAY_MAILBOX_FULL": 162,
+        "ERR_RELAY_RATE_LIMITED": 163,
     ]
 
     /// Reports whether a code is in the stable registry.

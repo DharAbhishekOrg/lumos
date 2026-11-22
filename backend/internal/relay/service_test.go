@@ -36,16 +36,16 @@ type fixture struct {
 }
 
 // storePair builds the two storage halves for one test.
-type storePair func(t *testing.T, owner registry.DeviceID) (Capabilities, Mailboxes)
+type storePair func(t *testing.T, owner registry.DeviceID) (Capabilities, Mailboxes, RateLimiter)
 
-func memoryPair(*testing.T, registry.DeviceID) (Capabilities, Mailboxes) {
+func memoryPair(*testing.T, registry.DeviceID) (Capabilities, Mailboxes, RateLimiter) {
 	m := NewMemoryStore()
-	return m, m
+	return m, m, m
 }
 
 // serverPair is PostgreSQL capabilities and Redis mailboxes, each isolated to
 // this test. The owner gets a device row because capabilities reference it.
-func serverPair(t *testing.T, owner registry.DeviceID) (Capabilities, Mailboxes) {
+func serverPair(t *testing.T, owner registry.DeviceID) (Capabilities, Mailboxes, RateLimiter) {
 	t.Helper()
 	pool := testdb.Postgres(t)
 	ctx := context.Background()
@@ -59,8 +59,13 @@ func serverPair(t *testing.T, owner registry.DeviceID) (Capabilities, Mailboxes)
 		t.Fatal(err)
 	}
 	rdb, ns := testdb.Redis(t)
-	return NewPostgresCapabilities(pool), NewRedisMailboxes(rdb, ns)
+	mail := NewRedisMailboxes(rdb, ns)
+	return NewPostgresCapabilities(pool), mail, mail
 }
+
+// unlimitedRate lifts the send rate for tests that need more sends from one
+// device in one minute than RELAY_SEND_RATE_PER_MIN allows.
+const unlimitedRate = 1 << 30
 
 // eachStore runs one contract against every storage implementation.
 func eachStore(t *testing.T, run func(t *testing.T, f *fixture)) {
@@ -73,8 +78,8 @@ func newFixture(t *testing.T, pair storePair) *fixture {
 	t.Helper()
 	f := &fixture{now: 1_700_000_000, ctx: context.Background()}
 	f.owner.ID[0], f.sender.ID[0] = 1, 2
-	caps, mail := pair(t, f.owner.ID)
-	f.svc = NewService(caps, mail, func() int64 { return f.now })
+	caps, mail, limiter := pair(t, f.owner.ID)
+	f.svc = NewService(caps, mail, limiter, func() int64 { return f.now })
 	if _, err := rand.Read(f.allowed[:]); err != nil {
 		t.Fatal(err)
 	}
@@ -253,6 +258,7 @@ func TestAcknowledgedOrExpiredEnvelopesAreGone(t *testing.T) {
 
 func TestTheEnvelopeQuotaIsAtomicUnderConcurrentSenders(t *testing.T) {
 	eachStore(t, func(t *testing.T, f *fixture) {
+		f.svc.rate = unlimitedRate // this test is about the mailbox, not the sender
 		limit := lumosconstants.RelayMailboxQuotaEnvelopes
 		extra := 100
 		ids := make([]MessageID, limit+extra)
@@ -290,6 +296,7 @@ func TestTheEnvelopeQuotaIsAtomicUnderConcurrentSenders(t *testing.T) {
 
 func TestTheByteQuotaRefusesWhatWouldNotFit(t *testing.T) {
 	eachStore(t, func(t *testing.T, f *fixture) {
+		f.svc.rate = unlimitedRate // this test is about the mailbox, not the sender
 		size, _ := lumosconstants.MaxPayloadBytes(lumosconstants.MessageClassTextMessage)
 		fits := lumosconstants.RelayMailboxQuotaBytes / int(size)
 		for i := range fits {

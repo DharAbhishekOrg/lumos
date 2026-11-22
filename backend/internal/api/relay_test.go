@@ -36,7 +36,7 @@ import (
 func newRelayServer(t *testing.T) *httptest.Server {
 	t.Helper()
 	store := relay.NewMemoryStore()
-	return relayServerOver(t, registry.NewMemoryRepository(), store, store)
+	return relayServerOver(t, registry.NewMemoryRepository(), store, store, store)
 }
 
 // newServerRelayServer is the deployed pairing: registry and capabilities on
@@ -48,17 +48,18 @@ func newServerRelayServer(t *testing.T) *httptest.Server {
 		t.Fatal(err)
 	}
 	rdb, ns := testdb.Redis(t)
+	mail := relay.NewRedisMailboxes(rdb, ns)
 	return relayServerOver(t, registry.NewPostgresRepository(pool),
-		relay.NewPostgresCapabilities(pool), relay.NewRedisMailboxes(rdb, ns))
+		relay.NewPostgresCapabilities(pool), mail, mail)
 }
 
-func relayServerOver(t *testing.T, repo registry.Repository, caps relay.Capabilities, mail relay.Mailboxes) *httptest.Server {
+func relayServerOver(t *testing.T, repo registry.Repository, caps relay.Capabilities, mail relay.Mailboxes, limiter relay.RateLimiter) *httptest.Server {
 	t.Helper()
 	now := func() int64 { return 1_700_000_000 }
 	auth := registry.NewService(repo, now, rand.Reader)
 	mux := http.NewServeMux()
 	NewRegistry(auth).Register(mux)
-	NewRelay(relay.NewService(caps, mail, now), auth).Register(mux)
+	NewRelay(relay.NewService(caps, mail, limiter, now), auth).Register(mux)
 	srv := httptest.NewServer(mux)
 	t.Cleanup(srv.Close)
 	return srv
@@ -183,6 +184,26 @@ func TestABlockedSenderGetsTheSameAnswerAndNothingArrives(t *testing.T) {
 	})
 }
 
+func TestASenderOverTheRateGets429WithRetryAfter(t *testing.T) {
+	eachRelayServer(t, func(t *testing.T, srv *httptest.Server) {
+		alice, bob := enrol(t, srv), enrol(t, srv)
+		capability := issue(t, bob)
+		for i := range lumosconstants.RelaySendRatePerMinDefault {
+			if status, body := sendText(alice, bob, randHex(t, 16), capability, []byte("x")); status != http.StatusAccepted {
+				t.Fatalf("send %d: %d %s", i+1, status, body)
+			}
+		}
+		status, body := sendText(alice, bob, randHex(t, 16), capability, []byte("x"))
+		if status != http.StatusTooManyRequests || !strings.Contains(string(body), lumoserrors.ErrRelayRateLimited) {
+			t.Fatalf("one over RELAY_SEND_RATE_PER_MIN: want 429 %s, got %d %s", lumoserrors.ErrRelayRateLimited, status, body)
+		}
+		// The server clock is 1_700_000_000, 40 seconds before its minute ends.
+		if got := alice.lastHeader.Get("Retry-After"); got != "40" {
+			t.Fatalf("Retry-After must be the seconds left in the window, got %q", got)
+		}
+	})
+}
+
 func TestTheRelayRefusesWhatItMustAndSaysOnlyACode(t *testing.T) {
 	srv := newRelayServer(t)
 	alice, bob := enrol(t, srv), enrol(t, srv)
@@ -261,7 +282,7 @@ func FuzzTheSendRouteNeverPanicsOrFailsInternally(f *testing.F) {
 	f.Add([]byte("\x00\xff{"))
 	auth := registry.NewService(registry.NewMemoryRepository(), func() int64 { return 1_700_000_000 }, rand.Reader)
 	store := relay.NewMemoryStore()
-	h := NewRelay(relay.NewService(store, store, func() int64 { return 1_700_000_000 }), auth)
+	h := NewRelay(relay.NewService(store, store, store, func() int64 { return 1_700_000_000 }), auth)
 	f.Fuzz(func(t *testing.T, body []byte) {
 		var req SubmitJSON
 		if json.Unmarshal(body, &req) == nil {

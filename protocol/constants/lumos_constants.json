@@ -5,7 +5,7 @@
  "$generator": "tools/constantsgen",
  "service_uuid": "E853EB6A-775C-4A49-A6BF-320E6A5CC609",
  "$service_uuid_provenance": "One fixed 128-bit GATT service UUID per ADR-002 / TRS Sec. 9.3, generated once from a CSPRNG as an RFC 4122 version-4 UUID in WP-01 slice S2 and frozen here. Advertised by both platforms and used for scan filtering. No 16-bit alias is registered for flagship. Regenerating this value is a breaking protocol change.",
- "constants_hash": "sha256:755935dc90f6ab1ae325b5d27b1d655f7b56898714a824e9e785d107e37fa1d4",
+ "constants_hash": "sha256:9b33b3c547f0e2d651fa15e8748057270cc0e3de84492e45bff6d4e3f1b26919",
  "constants_hash_algorithm": {
   "digest": "SHA-256",
   "encoding": "lowercase hex, prefixed 'sha256:'",
@@ -125,6 +125,11 @@
    "overridable": true,
    "notes": "Per device.",
    "anchors": ["TRS-BCK-004"], "source": "TRS 23.2"
+  },
+  "RELAY_SEND_RATE_PER_MIN": {
+   "default": 120, "min": 30, "max": 600, "overridable": true,
+   "notes": "Per sending device; envelopes submitted per fixed one-minute window, receipts and retries included. Added by CR-004 (owner-accepted 2026-11-22).",
+   "anchors": ["TRS-BCK-004", "SRS-SAF-006", "SRS-NFR-SCL-003"], "source": "CR-004"
   },
   "MESSAGE_ID_LEN_BYTES": {
    "default": 16, "overridable": false,

@@ -30,8 +30,10 @@ Go; part of the repository-root Go module `github.com/dharabhishekorg/lumos`.
   store. `lumosd` serves the relay when `LUMOS_REDIS_URL` is set as well as
   `LUMOS_DATABASE_URL`; a Redis URL without a database is refused at
   startup. The Redis deployment must use the `noeviction` policy.
-  **Not yet done:** relay rate limits need a register value first; CR-004
-  proposes it.
+- CR-004: the per-device send rate limit (`RELAY_SEND_RATE_PER_MIN`, 120
+  a minute by default) on memory and Redis. Over the limit the relay answers
+  `429` with `Retry-After` and `ERR_RELAY_RATE_LIMITED`, before any
+  capability lookup, so the answer reveals nothing about blocks.
 
 ### Running the PostgreSQL and Redis tests locally
 

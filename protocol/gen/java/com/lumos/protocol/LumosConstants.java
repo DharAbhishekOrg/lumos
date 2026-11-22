@@ -7,7 +7,7 @@
  * GENERATED - DO NOT EDIT. Generator: tools/constantsgen
  * Source register: protocol/constants/lumos_constants.json
  * Baseline: TRS v1.1 Sec. 23 / EDP v1.0 Sec. 4 (ADR-004)
- * constants_hash: sha256:755935dc90f6ab1ae325b5d27b1d655f7b56898714a824e9e785d107e37fa1d4
+ * constants_hash: sha256:9b33b3c547f0e2d651fa15e8748057270cc0e3de84492e45bff6d4e3f1b26919
  */
 package com.lumos.protocol;
 
@@ -24,7 +24,7 @@ public final class LumosConstants {
     public static final String SERVICE_UUID = "E853EB6A-775C-4A49-A6BF-320E6A5CC609";
 
     /** Binds generated code to the register that produced it (TRS-CONST-005). */
-    public static final String CONSTANTS_HASH = "sha256:755935dc90f6ab1ae325b5d27b1d655f7b56898714a824e9e785d107e37fa1d4";
+    public static final String CONSTANTS_HASH = "sha256:9b33b3c547f0e2d651fa15e8748057270cc0e3de84492e45bff6d4e3f1b26919";
 
     /** Register schema version. */
     public static final int SCHEMA_VERSION = 1;
@@ -678,6 +678,18 @@ public final class LumosConstants {
 
     /** sessions_remote_text.RELAY_MAILBOX_QUOTA.overridable */
     public static final boolean RELAY_MAILBOX_QUOTA_OVERRIDABLE = true;
+
+    /** sessions_remote_text.RELAY_SEND_RATE_PER_MIN.default */
+    public static final int RELAY_SEND_RATE_PER_MIN_DEFAULT = 120;
+
+    /** sessions_remote_text.RELAY_SEND_RATE_PER_MIN.max */
+    public static final int RELAY_SEND_RATE_PER_MIN_MAX = 600;
+
+    /** sessions_remote_text.RELAY_SEND_RATE_PER_MIN.min */
+    public static final int RELAY_SEND_RATE_PER_MIN_MIN = 30;
+
+    /** sessions_remote_text.RELAY_SEND_RATE_PER_MIN.overridable */
+    public static final boolean RELAY_SEND_RATE_PER_MIN_OVERRIDABLE = true;
 
     /** sessions_remote_text.RELAY_TEXT_ENVELOPE_MAX_BYTES.default */
     public static final int RELAY_TEXT_ENVELOPE_MAX_BYTES_DEFAULT = 32768;

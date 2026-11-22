@@ -6,7 +6,7 @@
 /// GENERATED - DO NOT EDIT. Generator: tools/constantsgen
 /// Source register: protocol/constants/lumos_constants.json
 /// Baseline: TRS v1.1 Sec. 23 / EDP v1.0 Sec. 4 (ADR-004)
-/// constants_hash: sha256:755935dc90f6ab1ae325b5d27b1d655f7b56898714a824e9e785d107e37fa1d4
+/// constants_hash: sha256:9b33b3c547f0e2d651fa15e8748057270cc0e3de84492e45bff6d4e3f1b26919
 
 public enum LumosConstants {
 
@@ -14,7 +14,7 @@ public enum LumosConstants {
     public static let serviceUUID = "E853EB6A-775C-4A49-A6BF-320E6A5CC609"
 
     /// Binds generated code to the register that produced it (TRS-CONST-005).
-    public static let constantsHash = "sha256:755935dc90f6ab1ae325b5d27b1d655f7b56898714a824e9e785d107e37fa1d4"
+    public static let constantsHash = "sha256:9b33b3c547f0e2d651fa15e8748057270cc0e3de84492e45bff6d4e3f1b26919"
 
     /// Register schema version.
     public static let schemaVersion = 1
@@ -668,6 +668,18 @@ public enum LumosConstants {
 
     /// sessions_remote_text.RELAY_MAILBOX_QUOTA.overridable
     public static let relayMailboxQuotaOverridable = true
+
+    /// sessions_remote_text.RELAY_SEND_RATE_PER_MIN.default
+    public static let relaySendRatePerMinDefault = 120
+
+    /// sessions_remote_text.RELAY_SEND_RATE_PER_MIN.max
+    public static let relaySendRatePerMinMax = 600
+
+    /// sessions_remote_text.RELAY_SEND_RATE_PER_MIN.min
+    public static let relaySendRatePerMinMin = 30
+
+    /// sessions_remote_text.RELAY_SEND_RATE_PER_MIN.overridable
+    public static let relaySendRatePerMinOverridable = true
 
     /// sessions_remote_text.RELAY_TEXT_ENVELOPE_MAX_BYTES.default
     public static let relayTextEnvelopeMaxBytesDefault = 32768

@@ -136,6 +136,12 @@
    "maximum": 5000,
    "description": "sessions_remote_text.RELAY_MAILBOX_QUOTA.envelopes (register default 1000)"
   },
+  "RELAY_SEND_RATE_PER_MIN": {
+   "type": "integer",
+   "minimum": 30,
+   "maximum": 600,
+   "description": "sessions_remote_text.RELAY_SEND_RATE_PER_MIN.default (register default 120)"
+  },
   "RELAY_TEXT_ENVELOPE_MAX_BYTES": {
    "type": "integer",
    "minimum": 8192,
@@ -281,7 +287,7 @@
  },
  "title": "Lumos signed-configuration overrides",
  "type": "object",
- "x-constants-hash": "sha256:755935dc90f6ab1ae325b5d27b1d655f7b56898714a824e9e785d107e37fa1d4",
+ "x-constants-hash": "sha256:9b33b3c547f0e2d651fa15e8748057270cc0e3de84492e45bff6d4e3f1b26919",
  "x-cross-field-constraints": [
   {
    "constant": "SCAN_WINDOW_FG_MS",
@@ -307,7 +313,7 @@
    "rule": "on / (on + off) * 100 must fall within the stated duty-cycle range"
   }
  ],
- "x-overridable-count": 35,
+ "x-overridable-count": 36,
  "x-overridable-names": [
   "CONFIG_REFRESH_INTERVAL_HOURS",
   "DEDUP_CACHE",
@@ -327,6 +333,7 @@
   "REASSEMBLY_TIMEOUT_SEC",
   "RELAY_ENVELOPE_TTL_DAYS",
   "RELAY_MAILBOX_QUOTA",
+  "RELAY_SEND_RATE_PER_MIN",
   "RELAY_TEXT_ENVELOPE_MAX_BYTES",
   "RESCAN_LADDER",
   "RETRY_BUDGET_PER_PATH",
