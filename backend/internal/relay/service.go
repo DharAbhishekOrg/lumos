@@ -1,4 +1,4 @@
-// Lumos - backend/internal/relay / Send, fetch, acknowledge: the relay's rules over a Store.
+// Lumos - backend/internal/relay / Send, fetch, acknowledge: the relay's rules over its stores.
 // Author: dhar.abhishek.email@gmail.com
 // Implements: TRS-BCK-002, TRS-BCK-003, TRS-BCK-004, SRS-RMT-002, SRS-RMT-009, SRS-RMT-015, SRS-RMT-016, SRS-DAT-003, SRS-TRN-009
 // ADRs: ADR-001
@@ -12,9 +12,10 @@
 // success as a delivered send and nothing is stored: SRS-RMT-016 stops
 // delivery, and SRS-MAT-003 forbids telling the sender they were declined.
 // Their message simply never earns a delivery receipt. TTL, quota and
-// idempotency follow TRS-BCK-004; per-sender rate limits arrive with the Redis
-// store that TRS-BCK-008 assigns them to. Nothing here logs, ever: payloads
-// are opaque and metadata is the mailbox owner's business (TRS-BCK-002).
+// idempotency follow TRS-BCK-004. Per-sender rate limits need a value the
+// register does not yet have; CR-004 proposes it. Nothing here logs, ever:
+// payloads are opaque and metadata is the mailbox owner's business
+// (TRS-BCK-002).
 package relay
 
 import (
@@ -49,17 +50,19 @@ var relayEligible = map[lumosconstants.MessageClass]bool{
 // Clock returns unix seconds.
 type Clock func() int64
 
-// Service applies the relay's rules to a Store.
+// Service applies the relay's rules to its two stores.
 type Service struct {
-	store  Store
+	caps   Capabilities
+	store  Mailboxes
 	now    Clock
 	quota  Quota
 	ttlSec int64
 }
 
 // NewService builds the relay with the register's defaults.
-func NewService(store Store, now Clock) *Service {
+func NewService(caps Capabilities, store Mailboxes, now Clock) *Service {
 	return &Service{
+		caps:   caps,
 		store:  store,
 		now:    now,
 		quota:  Quota{Envelopes: lumosconstants.RelayMailboxQuotaEnvelopes, Bytes: lumosconstants.RelayMailboxQuotaBytes},
@@ -99,7 +102,7 @@ func (s *Service) Submit(ctx context.Context, _ registry.Device, in Send) error 
 		return wireErr(lumoserrors.ErrFramePayloadTooLarge, "payload exceeds the class limit")
 	}
 	proof := ProofOf(in.Capability)
-	ok, err := s.store.CapabilityValid(ctx, in.Recipient, proof)
+	ok, err := s.caps.CapabilityValid(ctx, in.Recipient, proof)
 	if err != nil {
 		return err
 	}
@@ -138,23 +141,18 @@ func (s *Service) Ack(ctx context.Context, owner registry.Device, ids []MessageI
 }
 
 // Allow registers a capability proof the owner issued to one matched peer.
+// Idempotent; past the ceiling a new capability is ERR_RELAY_MAILBOX_FULL.
 func (s *Service) Allow(ctx context.Context, owner registry.Device, proof [32]byte) error {
-	if ok, err := s.store.CapabilityValid(ctx, owner.ID, proof); err != nil || ok {
-		return err // idempotent
-	}
-	n, err := s.store.CapabilityCount(ctx, owner.ID)
-	if err != nil {
-		return err
-	}
-	if n >= capabilityCeiling {
+	err := s.caps.RegisterCapability(ctx, owner.ID, proof, capabilityCeiling)
+	if errors.Is(err, ErrMailboxFull) {
 		return wireErr(lumoserrors.ErrRelayMailboxFull, "capability ceiling reached")
 	}
-	return s.store.RegisterCapability(ctx, owner.ID, proof)
+	return err
 }
 
 // Revoke withdraws a capability: the block or unmatch half of SRS-RMT-016.
 func (s *Service) Revoke(ctx context.Context, owner registry.Device, proof [32]byte) error {
-	return s.store.RevokeCapability(ctx, owner.ID, proof)
+	return s.caps.RevokeCapability(ctx, owner.ID, proof)
 }
 
 // Purge removes everything expired; run periodically.

@@ -1,6 +1,6 @@
-// Lumos - backend/cmd/lumosd / Tests for the health-check shell.
+// Lumos - backend/cmd/lumosd / Tests for what the process serves under each configuration.
 // Author: dhar.abhishek.email@gmail.com
-// Implements: TRS-REP-007, TRS-BCK-002
+// Implements: TRS-REP-007, TRS-BCK-002, TRS-BCK-001, TRS-BCK-008
 // ADRs: -
 // Threading: any
 // Notes: TestHealthCarriesNoUserData is the one that matters. A health endpoint
@@ -119,17 +119,27 @@ func TestOnlyHealthIsServed(t *testing.T) {
 }
 
 func TestNoDatabaseURLMeansNoRegistry(t *testing.T) {
-	reg, closeDB, err := openRegistry(context.Background(), "")
-	if err != nil || reg != nil {
-		t.Fatalf("an empty DSN must mean 'health only', got reg=%v err=%v", reg, err)
+	b, err := openBackend(context.Background(), "", "")
+	if err != nil || b != nil {
+		t.Fatalf("an empty DSN must mean 'health only', got backend=%v err=%v", b, err)
 	}
-	closeDB()
+	b.Close() // a nil backend closes as a no-op
+}
+
+func TestARedisURLWithoutADatabaseIsRefused(t *testing.T) {
+	_, err := openBackend(context.Background(), "", "redis://:not-a-real-secret@127.0.0.1:1/0")
+	if err == nil {
+		t.Fatal("a relay without the registry cannot authenticate anyone; startup must stop")
+	}
+	if strings.Contains(err.Error(), "not-a-real-secret") {
+		t.Fatal("a startup error must never echo a credential")
+	}
 }
 
 func TestAnUnreachableDatabaseFailsStartup(t *testing.T) {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
-	_, _, err := openRegistry(ctx, "postgres://lumos:not-a-real-secret@127.0.0.1:1/none?sslmode=disable&connect_timeout=2")
+	_, err := openBackend(ctx, "postgres://lumos:not-a-real-secret@127.0.0.1:1/none?sslmode=disable&connect_timeout=2", "")
 	if err == nil {
 		t.Fatal("a database that cannot be reached must stop startup, not degrade silently")
 	}
@@ -138,7 +148,9 @@ func TestAnUnreachableDatabaseFailsStartup(t *testing.T) {
 	}
 }
 
-func TestWithADatabaseTheRegistryRoutesAreServed(t *testing.T) {
+// freshSchemaDSN returns the test DSN bound to a new schema dropped at cleanup.
+func freshSchemaDSN(t *testing.T) string {
+	t.Helper()
 	dsn := os.Getenv("LUMOS_TEST_POSTGRES_DSN")
 	if dsn == "" {
 		if os.Getenv("LUMOS_REQUIRE_POSTGRES") == "1" {
@@ -151,26 +163,74 @@ func TestWithADatabaseTheRegistryRoutesAreServed(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	defer admin.Close()
 	schema := fmt.Sprintf("lumosd_%d", time.Now().UnixNano())
 	if _, err := admin.Exec(ctx, "CREATE SCHEMA "+schema); err != nil {
+		admin.Close()
 		t.Fatal(err)
 	}
-	defer func() { _, _ = admin.Exec(ctx, "DROP SCHEMA "+schema+" CASCADE") }()
+	t.Cleanup(func() {
+		_, _ = admin.Exec(context.Background(), "DROP SCHEMA "+schema+" CASCADE")
+		admin.Close()
+	})
+	return dsn + " search_path=" + schema
+}
 
-	reg, closeDB, err := openRegistry(ctx, dsn+" search_path="+schema)
-	if err != nil || reg == nil {
-		t.Fatalf("openRegistry: %v", err)
-	}
-	defer closeDB()
+func serve(b *Backend, method, path string) *httptest.ResponseRecorder {
 	rec := httptest.NewRecorder()
-	NewMux(reg).ServeHTTP(rec, httptest.NewRequest(http.MethodPost, "/v1/auth/challenge", nil))
-	if rec.Code != http.StatusOK || !strings.Contains(rec.Body.String(), "challenge") {
+	NewMux(b).ServeHTTP(rec, httptest.NewRequest(method, path, nil))
+	return rec
+}
+
+func TestWithADatabaseTheRegistryRoutesAreServed(t *testing.T) {
+	b, err := openBackend(context.Background(), freshSchemaDSN(t), "")
+	if err != nil || b == nil || b.Registry == nil {
+		t.Fatalf("openBackend: %v", err)
+	}
+	defer b.Close()
+	if b.Relay != nil {
+		t.Fatal("without LUMOS_REDIS_URL the relay must not be served")
+	}
+	if rec := serve(b, http.MethodPost, "/v1/auth/challenge"); rec.Code != http.StatusOK || !strings.Contains(rec.Body.String(), "challenge") {
 		t.Fatalf("challenge over PostgreSQL: %d %s", rec.Code, rec.Body.String())
 	}
-	rec = httptest.NewRecorder()
-	NewMux(reg).ServeHTTP(rec, httptest.NewRequest(http.MethodGet, "/healthz", nil))
-	if rec.Code != http.StatusOK {
+	if rec := serve(b, http.MethodGet, "/v1/envelopes"); rec.Code != http.StatusNotFound {
+		t.Fatalf("relay route served without Redis: %d", rec.Code)
+	}
+	if rec := serve(b, http.MethodGet, "/healthz"); rec.Code != http.StatusOK {
 		t.Fatalf("health must still be served alongside the registry: %d", rec.Code)
+	}
+}
+
+func TestWithADatabaseAndRedisTheRelayIsServed(t *testing.T) {
+	dsn := freshSchemaDSN(t)
+	addr := os.Getenv("LUMOS_TEST_REDIS_ADDR")
+	if addr == "" {
+		if os.Getenv("LUMOS_REQUIRE_REDIS") == "1" {
+			t.Fatal("LUMOS_REQUIRE_REDIS=1 but LUMOS_TEST_REDIS_ADDR is empty")
+		}
+		t.Skip("no LUMOS_TEST_REDIS_ADDR")
+	}
+	b, err := openBackend(context.Background(), dsn, "redis://"+addr+"/0")
+	if err != nil || b == nil || b.Relay == nil {
+		t.Fatalf("openBackend: %v", err)
+	}
+	defer b.Close()
+	// Authentication runs first, so an anonymous fetch proves the route exists
+	// and is guarded without touching any mailbox.
+	if rec := serve(b, http.MethodGet, "/v1/envelopes"); rec.Code != http.StatusUnauthorized {
+		t.Fatalf("an anonymous fetch must be refused by the relay, got %d", rec.Code)
+	}
+}
+
+func TestAnUnreachableRedisFailsStartup(t *testing.T) {
+	dsn := freshSchemaDSN(t)
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+	_, err := openBackend(ctx, dsn, "redis://:not-a-real-secret@127.0.0.1:1/0?dial_timeout=2s")
+	if err == nil {
+		t.Fatal("a Redis that cannot be reached must stop startup")
+	}
+	if strings.Contains(err.Error(), "not-a-real-secret") {
+		t.Fatal("a startup error must never echo the Redis password")
 	}
 }

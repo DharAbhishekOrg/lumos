@@ -130,9 +130,9 @@
    },
    {
     "path": "golang.org/x/sys",
-    "version": "v0.47.0",
+    "version": "v0.48.0",
     "license": "BSD-3-Clause",
-    "why": "Indirect dependency of golang.org/x/crypto.",
+    "why": "Indirect dependency of golang.org/x/crypto and github.com/redis/go-redis/v9.",
     "indirect": true
    },
    {
@@ -175,6 +175,27 @@
     "version": "v0.41.0",
     "license": "BSD-3-Clause",
     "why": "Indirect dependency of github.com/jackc/pgx/v5.",
+    "indirect": true
+   },
+   {
+    "path": "github.com/redis/go-redis/v9",
+    "version": "v9.23.0",
+    "license": "BSD-2-Clause",
+    "why": "Redis client for the relay's envelope mailboxes (TRS-BCK-008: Redis stores TTL queues, rate limits and transient coordination). The official Redis Go client; pure Go, no cgo. Added in WP-05 S5b.",
+    "approved": "owner, 2026-11-22"
+   },
+   {
+    "path": "github.com/cespare/xxhash/v2",
+    "version": "v2.3.0",
+    "license": "MIT",
+    "why": "Indirect dependency of github.com/redis/go-redis/v9.",
+    "indirect": true
+   },
+   {
+    "path": "go.uber.org/atomic",
+    "version": "v1.12.0",
+    "license": "MIT",
+    "why": "Indirect dependency of github.com/redis/go-redis/v9.",
     "indirect": true
    }
   ]
