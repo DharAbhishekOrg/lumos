@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Lumos - android-app/app / The conversation screen's copy.
+  Author: dhar.abhishek.email@gmail.com
+  Implements: SRS-UX-002, SRS-UX-012, SRS-UX-013, SRS-UX-014, TRS-UX-005, SRS-NFR-A11Y-001
+  ADRs: -
+  Threading: n/a
+  Notes: The house rules of strings.xml hold here too, and ChatCopyTest
+  enforces them on this file: second person, short sentences, no protocol
+  words (TRS-UX-005: no relay, ratchet, envelope, Bluetooth jargon), and
+  never promising more than the code does. Sentences with a value in them use
+  numbered arguments, never concatenation, so a translation can reorder
+  them (SRS-UX-014). Failures say what happened to the person's words: a
+  send that did not go keeps the text, and the copy says so.
+-->
+<resources>
+
+    <string name="conversation_fallback_name">Your match</string>
+    <string name="conversation_back">Back</string>
+    <string name="conversation_reach_here_now">Here now</string>
+    <string name="conversation_reach_remote">Not nearby. Messages still get through.</string>
+    <string name="conversation_reach_waits">Not nearby. Messages send when you meet.</string>
+    <string name="conversation_offline">You are offline. Messages send when you are back online.</string>
+    <string name="conversation_empty">Say hi. Only the two of you can read this chat.</string>
+
+    <string name="conversation_day_today">Today</string>
+    <string name="conversation_day_yesterday">Yesterday</string>
+
+    <string name="message_deleted_by_you">You deleted this message.</string>
+    <string name="message_deleted_by_them">This message was deleted.</string>
+    <string name="message_edited">Edited</string>
+    <string name="message_time_edited">Edited · %1$s</string>
+
+    <!-- Spoken for a whole bubble, so a screen reader hears one sentence. -->
+    <string name="message_spoken_mine">You, %1$s: %2$s. %3$s</string>
+    <string name="message_spoken_theirs">%1$s, %2$s: %3$s</string>
+    <string name="message_spoken_with_reactions">%1$s Reactions: %2$s</string>
+
+    <string name="composer_hint">Message</string>
+    <string name="composer_send">Send</string>
+    <string name="composer_too_long">This message is too long. Try splitting it in two.</string>
+    <string name="composer_not_ready">This chat is still being set up. Your message is kept. Try again soon.</string>
+    <string name="composer_failed">That did not send. Your message is kept. Try again.</string>
+
+    <string name="action_react">React</string>
+    <string name="action_copy">Copy text</string>
+    <string name="action_delete_for_me">Delete for me</string>
+    <string name="action_delete_for_everyone">Delete for everyone</string>
+    <string name="action_cancel">Cancel</string>
+    <string name="action_copied">Copied.</string>
+    <string name="action_delete_for_me_waiting">This message is still sending. You can delete it once it has gone.</string>
+    <string name="delete_for_everyone_title">Delete for everyone?</string>
+    <string name="delete_for_everyone_body">It is removed for both of you. They may already have read it.</string>
+
+</resources>

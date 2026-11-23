@@ -1,7 +1,7 @@
 /*
  * Lumos - android-app/app / Conversations, messages, the outbox and ratchet sessions, each change one transaction.
  * Author: dhar.abhishek.email@gmail.com
- * Implements: SRS-RMT-001, SRS-RMT-003, SRS-RMT-004, SRS-RMT-005, SRS-RMT-009, SRS-RMT-011, SRS-RMT-014, SRS-RMT-017, TRS-LOC-004, TRS-LOC-005, TRS-PAT-004, TRS-CRY-005
+ * Implements: SRS-RMT-001, SRS-RMT-003, SRS-RMT-004, SRS-RMT-005, SRS-RMT-009, SRS-RMT-010, SRS-RMT-011, SRS-RMT-014, SRS-RMT-017, SRS-NFR-SEC-006, TRS-LOC-004, TRS-LOC-005, TRS-PAT-004, TRS-CRY-005
  * ADRs: ADR-001, ADR-003
  * Threading: serial-executor
  * Notes: The rule everything here follows is TRS Sec. 8.3: a change that
@@ -128,6 +128,17 @@ public final class ChatStore {
     public void acceptConversation(final byte[] matchId, final byte[] peerIdentityEd) throws StoreException {
         store.putByNaturalKey(RecordKind.CONVERSATION, new ChatRecords.Conversation(matchId, peerIdentityEd).encode(),
                 matchId);
+    }
+
+    /**
+     * The identity a match pinned for its peer: what a send must address.
+     *
+     * @param matchId the conversation
+     * @return the peer's Ed25519 identity, or empty for a conversation this device never accepted
+     * @throws StoreException on engine failure
+     */
+    public Optional<byte[]> peerIdentity(final byte[] matchId) throws StoreException {
+        return conversation(matchId).map(ChatRecords.Conversation::peerIdentityEd);
     }
 
     private Optional<ChatRecords.Conversation> conversation(final byte[] matchId) throws StoreException {
@@ -447,8 +458,7 @@ public final class ChatStore {
     // ---- reading, the outbox and housekeeping -----------------------------------------------
 
     /**
-     * A conversation's messages, in this device's order: the order it sent
-     * or received them.
+     * A conversation's messages, in this device's order: the order it sent or received them.
      *
      * @param matchId the conversation
      * @return the messages
@@ -487,11 +497,27 @@ public final class ChatStore {
      * @throws StoreException on engine failure
      */
     public void markAccepted(final byte[] messageId) throws StoreException {
+        finishSend(messageId, DeliveryMachine.Event.TRANSPORT_ACCEPTED);
+    }
+
+    /**
+     * Records that a queued send can never go as it is (the relay refused it for good): the red mark,
+     * and the outbox item is done. A retry is a new send the user chooses.
+     *
+     * @param messageId the idempotency key
+     * @throws StoreException on engine failure
+     */
+    public void markFailed(final byte[] messageId) throws StoreException {
+        finishSend(messageId, DeliveryMachine.Event.ATTEMPTS_EXHAUSTED);
+    }
+
+    /** A queued send is done, with the transport's verdict; the outbox item goes in the same transaction. */
+    private void finishSend(final byte[] messageId, final DeliveryMachine.Event verdict) throws StoreException {
         store.transaction(() -> {
             final Optional<ChatRecords.Message> m = message(messageId);
             if (m.isPresent() && m.get().outgoing()) {
                 final DeliveryMachine.State sending = DeliveryMachine.step(m.get().state(), DeliveryMachine.Event.SEND_STARTED);
-                putMessage(m.get().withState(DeliveryMachine.step(sending, DeliveryMachine.Event.TRANSPORT_ACCEPTED)));
+                putMessage(m.get().withState(DeliveryMachine.step(sending, verdict)));
             }
             store.delete(RecordKind.OUTBOX_ITEM, ChatRecords.rowId(messageId));
             return null;
@@ -499,22 +525,21 @@ public final class ChatStore {
     }
 
     /**
-     * Records that a queued send can never go as it is (the relay refused it
-     * for good): the red mark, and the outbox item is done. A retry is a new
-     * send the user chooses.
+     * Removes one message from this device only (SRS-RMT-010); the peer is told nothing. Refused while it
+     * waits in the outbox: its sealed envelope would still go, and the person must not think it gone.
      *
-     * @param messageId the idempotency key
+     * @param messageId the message
+     * @return true when removed; false when still waiting to go out, or unknown
      * @throws StoreException on engine failure
      */
-    public void markFailed(final byte[] messageId) throws StoreException {
-        store.transaction(() -> {
+    public boolean deleteForMe(final byte[] messageId) throws StoreException {
+        return store.transaction(() -> {
             final Optional<ChatRecords.Message> m = message(messageId);
-            if (m.isPresent() && m.get().outgoing()) {
-                final DeliveryMachine.State sending = DeliveryMachine.step(m.get().state(), DeliveryMachine.Event.SEND_STARTED);
-                putMessage(m.get().withState(DeliveryMachine.step(sending, DeliveryMachine.Event.ATTEMPTS_EXHAUSTED)));
+            if (m.isEmpty() || store.get(RecordKind.OUTBOX_ITEM, ChatRecords.rowId(messageId)).isPresent()) {
+                return false;
             }
-            store.delete(RecordKind.OUTBOX_ITEM, ChatRecords.rowId(messageId));
-            return null;
+            store.delete(RecordKind.CHAT_MESSAGE, ChatRecords.rowId(messageId));
+            return true;
         });
     }
 
@@ -525,14 +550,6 @@ public final class ChatStore {
      * @throws StoreException on engine failure
      */
     public int purgeExpiredDedup() throws StoreException {
-        final long now = clock.nowUtcMillis();
-        int n = 0;
-        for (final LocalStore.Entry e : store.allOf(RecordKind.MESSAGE_DEDUP)) {
-            if (ChatRecords.decodeDedup(e.content()) < now) {
-                store.delete(RecordKind.MESSAGE_DEDUP, e.id());
-                n++;
-            }
-        }
-        return n;
+        return ChatSessions.purgeExpiredDedup(store, clock.nowUtcMillis());
     }
 }

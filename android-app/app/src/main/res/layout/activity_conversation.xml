@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Lumos - android-app/app / One conversation: header, messages, composer.
+  Author: dhar.abhishek.email@gmail.com
+  Implements: SRS-UX-011, SRS-UX-012, TRS-UX-004, TRS-AND-010, SRS-NFR-A11Y-003
+  ADRs: -
+  Threading: n/a
+  Notes: The window paints the chat background (Theme.Lumos.Conversation),
+  so the root does not paint it again. Edge to edge (TRS-AND-010): the activity pads the root by the system
+  bars and the keyboard, so the composer rides above the keyboard and
+  nothing is clipped. Every control is at least 48dp (SRS-NFR-A11Y-003). The
+  offline state is an inline banner, never a modal spinner (SRS-UX-012).
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/conversation_root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/lumos_surface_raised"
+        android:gravity="center_vertical"
+        android:minHeight="64dp"
+        android:orientation="horizontal"
+        android:paddingStart="@dimen/lumos_space_1"
+        android:paddingEnd="@dimen/lumos_space_4">
+
+        <ImageButton
+            android:id="@+id/conversation_back"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/conversation_back"
+            android:src="@drawable/ic_back"
+            app:tint="@color/lumos_ink" />
+
+        <TextView
+            android:id="@+id/conversation_avatar"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginStart="@dimen/lumos_space_1"
+            android:background="@drawable/bg_field"
+            android:backgroundTint="@color/lumos_violet_soft"
+            android:gravity="center"
+            android:importantForAccessibility="no"
+            android:textAppearance="?attr/textAppearanceTitleMedium"
+            android:textColor="@color/lumos_ink" />
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/lumos_space_3"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/conversation_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?attr/textAppearanceTitleMedium"
+                android:textColor="@color/lumos_ink" />
+
+            <TextView
+                android:id="@+id/conversation_reach"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?attr/textAppearanceBodySmall"
+                android:textColor="@color/lumos_ink_muted" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/conversation_offline"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/lumos_space_3"
+        android:accessibilityLiveRegion="polite"
+        android:background="@drawable/bg_banner"
+        android:padding="@dimen/lumos_space_3"
+        android:text="@string/conversation_offline"
+        android:textAppearance="?attr/textAppearanceBodyMedium"
+        android:textColor="@color/lumos_ink"
+        android:visibility="gone" />
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/conversation_messages"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clipToPadding="false"
+            android:paddingStart="@dimen/lumos_space_4"
+            android:paddingTop="@dimen/lumos_space_3"
+            android:paddingEnd="@dimen/lumos_space_4"
+            android:paddingBottom="@dimen/lumos_space_3" />
+
+        <TextView
+            android:id="@+id/conversation_empty"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_margin="@dimen/lumos_space_8"
+            android:gravity="center"
+            android:text="@string/conversation_empty"
+            android:textAppearance="?attr/textAppearanceBodyLarge"
+            android:textColor="@color/lumos_ink_muted"
+            android:visibility="gone" />
+    </FrameLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/lumos_surface_raised"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingStart="@dimen/lumos_space_3"
+        android:paddingTop="@dimen/lumos_space_2"
+        android:paddingEnd="@dimen/lumos_space_3"
+        android:paddingBottom="@dimen/lumos_space_2">
+
+        <EditText
+            android:id="@+id/composer_text"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:autofillHints=""
+            android:background="@drawable/bg_field"
+            android:hint="@string/composer_hint"
+            android:importantForAutofill="no"
+            android:inputType="textMultiLine|textCapSentences"
+            android:maxLines="6"
+            android:minHeight="52dp"
+            android:paddingStart="@dimen/lumos_space_4"
+            android:paddingEnd="@dimen/lumos_space_4"
+            android:textAppearance="?attr/textAppearanceBodyLarge"
+            android:textColor="@color/lumos_ink"
+            android:textColorHint="@color/lumos_ink_subtle" />
+
+        <ImageButton
+            android:id="@+id/composer_send"
+            android:layout_width="56dp"
+            android:layout_height="56dp"
+            android:layout_marginStart="@dimen/lumos_space_2"
+            android:background="@drawable/bg_field"
+            android:backgroundTint="@color/lumos_violet"
+            android:contentDescription="@string/composer_send"
+            android:src="@drawable/ic_send"
+            app:tint="@color/lumos_on_violet" />
+    </LinearLayout>
+</LinearLayout>

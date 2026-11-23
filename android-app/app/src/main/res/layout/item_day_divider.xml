@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Lumos - android-app/app / The day a group of messages belongs to.
+  Author: dhar.abhishek.email@gmail.com
+  Implements: SRS-RMT-010, SRS-UX-011
+  ADRs: -
+  Threading: n/a
+  Notes: Today, Yesterday, or the localized date. A heading for screen readers (set through ViewCompat, which reaches back to API 26), so a person can jump day by day.
+-->
+<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/day_label"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center"
+    android:paddingTop="@dimen/lumos_space_3"
+    android:paddingBottom="@dimen/lumos_space_2"
+    android:textAppearance="?attr/textAppearanceLabelMedium"
+    android:textColor="@color/lumos_ink_subtle" />

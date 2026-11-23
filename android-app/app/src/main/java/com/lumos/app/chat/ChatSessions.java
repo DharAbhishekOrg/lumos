@@ -1,7 +1,7 @@
 /*
  * Lumos - android-app/app / Ratchet sessions at rest: load, seal, open, save - inside the caller's transaction.
  * Author: dhar.abhishek.email@gmail.com
- * Implements: SRS-RMT-007, SRS-RMT-017, TRS-CRY-005, TRS-LOC-004
+ * Implements: SRS-NFR-SEC-006, SRS-RMT-007, SRS-RMT-017, TRS-CRY-005, TRS-LOC-004
  * ADRs: ADR-001, ADR-003
  * Threading: serial-executor
  * Notes: Split from ChatStore (WP-05 S7e2) so text and receipts share one
@@ -140,6 +140,7 @@ final class ChatSessions {
         }
         store.put(RecordKind.MESSAGE_DEDUP, ChatRecords.rowId(outerId),
                 ChatRecords.encodeDedup(clock.nowUtcMillis() + LumosConstants.DEDUP_CACHE_DAYS * MILLIS_PER_DAY), null);
+        trimDedup(store, LumosConstants.DEDUP_CACHE_IDS);
         return plaintext;
     }
 
@@ -193,5 +194,53 @@ final class ChatSessions {
         } catch (final Frame.WireException e) {
             throw new StoreException(StoreException.Reason.ENGINE, "stored prekey fields are unreadable");
         }
+    }
+
+    /**
+     * Forgets displayed ids whose dedup window has passed (TRS-LOC-005).
+     *
+     * @param store the store
+     * @param nowMillis the current UTC time
+     * @return how many were forgotten
+     * @throws StoreException on engine failure
+     */
+    static int purgeExpiredDedup(final LocalStore store, final long nowMillis) throws StoreException {
+        int n = 0;
+        for (final LocalStore.Entry e : store.allOf(RecordKind.MESSAGE_DEDUP)) {
+            if (ChatRecords.decodeDedup(e.content()) < nowMillis) {
+                store.delete(RecordKind.MESSAGE_DEDUP, e.id());
+                n++;
+            }
+        }
+        return n;
+    }
+
+    /**
+     * Holds the dedup cache to its id cap (SRS-NFR-SEC-006, the register's
+     * DEDUP_CACHE ids). Over the cap, the ids closest to expiry go first. The
+     * cache is defence in depth: a replayed id whose entry was evicted still
+     * fails, because the ratchet deleted that message's key when it opened
+     * (SRS-RMT-017). The count is cheap, so the full scan runs only when the
+     * cap is actually exceeded.
+     *
+     * @param store the store, inside the caller's transaction
+     * @param cap the most ids to keep
+     * @return how many were evicted
+     * @throws StoreException on engine failure
+     */
+    static int trimDedup(final LocalStore store, final int cap) throws StoreException {
+        final int excess = store.count(RecordKind.MESSAGE_DEDUP) - cap;
+        if (excess <= 0) {
+            return 0;
+        }
+        final java.util.List<java.util.Map.Entry<Long, String>> byExpiry = new java.util.ArrayList<>();
+        for (final LocalStore.Entry e : store.allOf(RecordKind.MESSAGE_DEDUP)) {
+            byExpiry.add(java.util.Map.entry(ChatRecords.decodeDedup(e.content()), e.id()));
+        }
+        byExpiry.sort(java.util.Map.Entry.comparingByKey());
+        for (int i = 0; i < excess; i++) {
+            store.delete(RecordKind.MESSAGE_DEDUP, byExpiry.get(i).getValue());
+        }
+        return excess;
     }
 }

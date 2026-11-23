@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Lumos - android-app/app / Conversation-only dimensions.
+  Author: dhar.abhishek.email@gmail.com
+  Implements: SRS-UX-011
+  ADRs: -
+  Threading: n/a
+  Notes: The tick glyph's size beside a message time; everything else in the conversation uses the token dimensions.
+-->
+<resources>
+    <dimen name="message_tick_size">18dp</dimen>
+</resources>

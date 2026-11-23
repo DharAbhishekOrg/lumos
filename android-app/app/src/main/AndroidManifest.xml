@@ -75,6 +75,7 @@
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
         android:label="Lumos"
+        android:supportsRtl="true"
         android:theme="@style/Theme.Lumos">
 
         <service
@@ -94,6 +95,16 @@
         <activity
             android:name="com.lumos.app.nearby.NearbyActivity"
             android:exported="false" />
+
+        <!-- One conversation. Not exported: only the app opens it, with a
+             match id, and it refuses to show anything for a conversation the
+             chat stack does not have (CS2a). adjustResize so the composer
+             rides above the keyboard. -->
+        <activity
+            android:name="com.lumos.app.conversation.ConversationActivity"
+            android:exported="false"
+            android:theme="@style/Theme.Lumos.Conversation"
+            android:windowSoftInputMode="adjustResize" />
 
     </application>
 
