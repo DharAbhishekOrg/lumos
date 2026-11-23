@@ -105,6 +105,20 @@ public final class SoftwareKekStore: KekStore {
         self.kek = SymmetricKey(size: .bits256)
     }
 
+    /// Reopens a software KEK persisted earlier (WP-05 S7f2b, ADR-012): the
+    /// fallback tier only, kept in a ThisDeviceOnly Keychain item.
+    /// - Throws: ``KekError/unwrapFailed`` unless the key is 32 bytes
+    public init(rawKey: Data) throws {
+        guard rawKey.count == 32 else { throw KekError.unwrapFailed }
+        self.kek = SymmetricKey(data: rawKey)
+    }
+
+    /// The key bytes, for the key root's Keychain item; nil once destroyed.
+    /// This is why the tier reports softwareFallback: the KEK is extractable.
+    public var rawKeyForPersistence: Data? {
+        kek?.withUnsafeBytes { Data($0) }
+    }
+
     public var protection: KeyProtection { .softwareFallback }
 
     public var isDestroyed: Bool { kek == nil }
@@ -164,6 +178,20 @@ public final class SecureEnclaveKekStore: KekStore {
     /// - Throws: whatever the enclave reports when unavailable or refusing
     public init() throws {
         self.enclaveKey = try SecureEnclave.P256.KeyAgreement.PrivateKey()
+    }
+
+    /// Reopens the enclave key from its encrypted data representation (WP-05
+    /// S7f2b, ADR-012). The representation is only usable by this device's
+    /// enclave, so persisting it in a ThisDeviceOnly Keychain item exports
+    /// nothing usable elsewhere.
+    /// - Throws: whatever the enclave reports for a foreign or corrupt representation
+    public init(dataRepresentation: Data) throws {
+        self.enclaveKey = try SecureEnclave.P256.KeyAgreement.PrivateKey(dataRepresentation: dataRepresentation)
+    }
+
+    /// The enclave key's encrypted representation, for the key root; nil once destroyed.
+    public var dataRepresentation: Data? {
+        enclaveKey?.dataRepresentation
     }
 
     public var protection: KeyProtection { .secureEnclave }
