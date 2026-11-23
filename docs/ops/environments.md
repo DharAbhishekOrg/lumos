@@ -21,8 +21,9 @@ Google account. Changing any of it is owner-executed.
 | iOS app | Not yet: the owner's Apple Developer Program enrolment was submitted and paid on 2026-11-22 and is pending Apple's review |
 | APNs key | Not yet. When created: Sandbox, Team Scoped, stored as secret `apns-sandbox-key` in this project's Secret Manager |
 | Region | `asia-south1` (Mumbai), owner ruling 2026-11-22 |
-| Database | Not yet created (WP-05 S8). PostgreSQL; its URL reaches `lumosd` as `LUMOS_DATABASE_URL` from Secret Manager |
-| Redis | Not yet created (WP-05 S8). Must use the **`noeviction`** policy: eviction would silently drop pending messages. Its URL reaches `lumosd` as `LUMOS_REDIS_URL` from Secret Manager |
+| Database | Not yet created. PostgreSQL 16 on Cloud SQL, private IP; its URL reaches `lumosd` as `LUMOS_DATABASE_URL` from Secret Manager. Owner runbook: [staging-deploy.md](staging-deploy.md) |
+| Redis | Not yet created. Memorystore for Redis 7.2, private IP. Must use the **`noeviction`** policy (eviction would silently drop pending messages) and must persist (a restart without persistence loses queued mail). Its URL reaches `lumosd` as `LUMOS_REDIS_URL` from Secret Manager. Runbook: [staging-deploy.md](staging-deploy.md) |
+| Backend service | Not yet deployed. Cloud Run `lumosd-staging`, image from `backend/deploy/staging/Dockerfile`; the same image runs in the `staging integration` CI check |
 
 The Android package carries no `.debug` suffix: `buildTypes.debug` in
 `android-app/app/build.gradle.kts` sets none, so debug and release staging

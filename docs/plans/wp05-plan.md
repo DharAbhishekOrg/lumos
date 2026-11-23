@@ -190,6 +190,20 @@ together, alternating Android and iOS. Nothing in WP-05 implements them.
 ### S8: docker-compose staging and integration suite
 - Offline queue, TTL expiry, replay rejection, duplicate envelope and block
   scenarios against the composed backend.
+- **Done (2026-11-23):** `backend/deploy/staging/` (the lumosd image on scratch,
+  digest-pinned; compose with PostgreSQL 16 and Redis 7.2 noeviction +
+  append-only), `backend/integration` (the black-box Go suite above plus
+  atomic prekey claims, rate limit, local-only classes, revocation, and mail
+  surviving a restart), and `StagingCrossStackTest` (Android's real relay
+  client against the stack). All run in the new `staging integration` CI
+  check, gated by `conformance gate`. The suite found a real defect: the
+  relay ordered a same-second burst by random message id, shuffling it for
+  the recipient; both stores now fetch in submission order. The cloud deploy
+  is owner-executed ([docs/ops/staging-deploy.md](../ops/staging-deploy.md)).
+  Owner licence ruling 2026-11-23: scratch image plus the MPL-2.0 Mozilla CA
+  bundle; upstream PostgreSQL/Redis images approved for local and CI only.
+  Not yet covered: the iOS client against the stack (no Docker on the macOS
+  runners); its relay logic is the Android port's, scenario for scenario.
 
 ### S9: Closeout
 

@@ -1,0 +1,7 @@
+# Lumos - build context filter for backend/deploy/staging/Dockerfile: only what the lumosd build reads.
+*
+!go.mod
+!go.sum
+!backend/**
+!protocol/**/*.go
+!backend/deploy/staging/NOTICE-ca-certificates.txt

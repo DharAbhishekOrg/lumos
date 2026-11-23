@@ -1,0 +1,15 @@
+# Lumos - backend/deploy/staging / Test-only overlay: exposes Redis on 127.0.0.1 for the expiry scenario.
+# Author: dhar.abhishek.email@gmail.com
+# Implements: TRS-TST-006
+# ADRs: ADR-001
+# Notes: WP-05 S8. The integration suite cannot wait 30 days for an envelope
+# to expire, so it shortens one envelope's Redis TTL directly and checks that
+# the relay then never serves it (SRS-DAT-003 enforced by Redis itself, not
+# by a sweep). Only this overlay publishes Redis, and only on loopback.
+#
+#   docker compose -f backend/deploy/staging/docker-compose.yml -f backend/deploy/staging/docker-compose.test.yml up -d --build --wait
+
+services:
+  redis:
+    ports:
+      - "127.0.0.1:6379:6379"

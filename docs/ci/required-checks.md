@@ -70,12 +70,14 @@ un-requires it until the ruleset is edited too. Names of required checks say
 
 ### Reported but not required
 
-These report on every pull request and are covered by `pipeline gate`, which is
-required. Requiring them individually as well is harmless and redundant.
+These report on every pull request and are covered by a required gate:
+`staging integration` by `conformance gate`, every other row by `pipeline
+gate`. Requiring them individually as well is harmless and redundant.
 
 | Check name | Workflow | Job | Required | What it gates |
 | --- | --- | --- | --- | --- |
 | `path filter` | conformance | `changes` | no | decides whether Swift and the emulator can be skipped |
+| `staging integration` | conformance | `staging` | no | WP-05 S8: TRS-TST-006 against the composed lumosd + PostgreSQL + Redis stack, Go suite and Android cross-stack; gated by `conformance gate` |
 | `lint (headers, constants, architecture, layout, eslint)` | pipeline | `lint` | no | file headers, ADR-004 constants, layering, layout, eslint, golangci-lint |
 | `static analysis - Checkstyle + SpotBugs` | pipeline | `java-static-analysis` | no | TRS-CODE-006, Java half |
 | `secret scan (full history)` | pipeline | `secret-scan` | no | TRS-REP-005, gitleaks over the full history |

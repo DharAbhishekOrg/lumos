@@ -9,7 +9,8 @@
 // of a mailbox's keys share one hash tag, {<mailbox hex>}, so they live in one
 // slot. Per mailbox:
 //
-//	q      sorted set  id -> created   (fetch order: oldest first, then id bytes)
+//	q      sorted set  id -> arrival   (fetch order: submission order, WP-05 S8)
+//	n      string      arrival counter (INCR in the same script as the insert)
 //	x      sorted set  id -> expires   (expiry sweep)
 //	s      hash        id -> size      (byte accounting)
 //	b      string      bytes pending
@@ -87,11 +88,12 @@ if redis.call('ZCARD', q) + 1 > tonumber(ARGV[11]) or used + size > tonumber(ARG
 end
 redis.call('HSET', e, 'c', ARGV[4], 'x', ARGV[5], 's', ARGV[6], 'k', ARGV[7], 'a', ARGV[8], 'd', digest, 'p', ARGV[10])
 redis.call('PEXPIRE', e, ttl)
-redis.call('ZADD', q, ARGV[4], id)
+local n = P .. 'n'
+redis.call('ZADD', q, redis.call('INCR', n), id)
 redis.call('ZADD', x, ARGV[5], id)
 redis.call('HSET', s, id, ARGV[6])
 redis.call('INCRBY', b, size)
-for _, k in ipairs({q, x, s, b}) do
+for _, k in ipairs({q, x, s, b, n}) do
   if redis.call('PTTL', k) < ttl then redis.call('PEXPIRE', k, ttl) end
 end
 return 0

@@ -594,6 +594,88 @@ jobs:
           path: evidence/ci/executed-tests.json
           retention-days: 7
 
+  # WP-05 S8: TRS-TST-006 against the COMPOSED backend - the lumosd image
+  # built from backend/deploy/staging/Dockerfile, PostgreSQL 16 and Redis 7.2
+  # (noeviction, append-only) from backend/deploy/staging/docker-compose.yml - driven
+  # only over HTTP. Two suites: the Go black-box suite (offline queue, Redis
+  # expiry, replay, duplicate, block, atomic prekey claims, rate limit,
+  # local-only classes, revocation, and mail surviving `docker compose
+  # restart` of lumosd and Redis), then the Android relay client's
+  # cross-stack test through the app's real UrlConnectionTransport.
+  # LUMOS_REQUIRE_STAGING=1 turns every skip into a failure. Not
+  # path-filtered: any backend, client or protocol change can break the stack.
+  # Results upload as staging-test-results, outside the test-results-*
+  # pattern, so the traceability collector does not count them (yet).
+  staging:
+    name: staging integration
+    runs-on: ubuntu-latest
+    env:
+      COMPOSE: docker compose -f backend/deploy/staging/docker-compose.yml -f backend/deploy/staging/docker-compose.test.yml
+      LUMOS_STAGING_URL: http://127.0.0.1:8080
+      LUMOS_STAGING_REDIS_ADDR: 127.0.0.1:6379
+      LUMOS_REQUIRE_STAGING: "1"
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-go@v7
+        with:
+          go-version-file: go.mod
+          cache: true
+      - name: build and start the staging stack
+        env:
+          LUMOS_REVISION: ${{ github.sha }}
+        run: |
+          export LUMOS_BUILT_AT="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+          $COMPOSE up -d --build --wait
+          # lumosd has no in-image healthcheck (scratch has no shell or curl):
+          # poll the API itself until it answers.
+          for _ in $(seq 1 60); do
+            if curl -sf "$LUMOS_STAGING_URL/healthz"; then echo; exit 0; fi
+            sleep 1
+          done
+          $COMPOSE logs --no-color --tail 100; exit 1
+      - name: integration suite
+        shell: bash
+        run: |
+          set -o pipefail
+          go test -count=1 -v ./backend/integration/ | tee "$RUNNER_TEMP/staging-go.txt"
+      - name: queued mail survives a restart of lumosd and Redis
+        shell: bash
+        env:
+          LUMOS_STAGING_STATE: ${{ runner.temp }}/staging-state.json
+        run: |
+          set -euo pipefail
+          LUMOS_STAGING_PHASE=before go test -count=1 -v -run Restart ./backend/integration/
+          $COMPOSE restart lumosd redis
+          $COMPOSE up -d --no-build --wait
+          LUMOS_STAGING_PHASE=after go test -count=1 -v -run Restart ./backend/integration/
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: '21'
+      - uses: android-actions/setup-android@v4
+        with:
+          packages: 'platforms;android-36 build-tools;36.1.0 platform-tools'
+      - uses: gradle/actions/setup-gradle@v6
+      - name: Android relay client against the staging stack
+        run: |
+          ./gradlew -PlumosAndroid=true :app:testDevDebugUnitTest \
+            --tests 'com.lumos.app.relay.StagingCrossStackTest' --no-daemon --console=plain
+      - name: stack logs on failure
+        if: failure()
+        run: $COMPOSE logs --no-color --tail 200
+      - name: upload staging results
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: staging-test-results
+          path: |
+            ${{ runner.temp }}/staging-go.txt
+            android-app/app/build/test-results/testDevDebugUnitTest
+          retention-days: 7
+      - name: stop the stack
+        if: always()
+        run: $COMPOSE down -v
+
   # One check that is true when this whole workflow is true, so a ruleset can
   # require a single name instead of restating the path-filter logic. It stays
   # green when Swift or the emulator is deliberately skipped and red for every
@@ -606,7 +688,7 @@ jobs:
   conformance-gate:
     name: conformance gate
     runs-on: ubuntu-latest
-    needs: [changes, go, java, android, android-instrumented, swift, ts, trace]
+    needs: [changes, go, java, android, android-instrumented, swift, ts, trace, staging]
     if: always()
     steps:
       - name: assess
@@ -620,6 +702,7 @@ jobs:
             "android unit tests=${{ needs.android.result }}"
             "admin console tests=${{ needs.ts.result }}"
             "traceability gate=${{ needs.trace.result }}"
+            "staging integration=${{ needs.staging.result }}"
           )
           printf '%s\n' "${results[@]}"
           echo "android instrumented tests=${{ needs.android-instrumented.result }} (path-filtered)"
