@@ -113,68 +113,68 @@ public final class URLSessionTransport: HttpTransport {
                             retryAfterSeconds: URLSessionTransport.retryAfter(
                                 response.value(forHTTPHeaderField: "Retry-After")))
     }
+}
 
-    /// The session delegate: refuses redirects, caps the body, and hands the
-    /// result back to the blocked caller.
-    private final class Guardian: NSObject, URLSessionDataDelegate, @unchecked Sendable {
-        enum Outcome {
-            case success(HTTPURLResponse, Data)
-            case lost
-        }
+/// The session delegate: refuses redirects, caps the body, and hands the
+/// result back to the blocked caller.
+private final class Guardian: NSObject, URLSessionDataDelegate, @unchecked Sendable {
+    enum Outcome {
+        case success(HTTPURLResponse, Data)
+        case lost
+    }
 
-        private let lock = NSLock()
-        private var bodies: [Int: Data] = [:]
-        private var results: [Int: Outcome] = [:]
-        private var waiters: [Int: DispatchSemaphore] = [:]
+    private let lock = NSLock()
+    private var bodies: [Int: Data] = [:]
+    private var results: [Int: Outcome] = [:]
+    private var waiters: [Int: DispatchSemaphore] = [:]
 
-        func run(_ task: URLSessionDataTask) -> Outcome {
-            let done = DispatchSemaphore(value: 0)
-            lock.lock()
-            waiters[task.taskIdentifier] = done
-            bodies[task.taskIdentifier] = Data()
+    func run(_ task: URLSessionDataTask) -> Outcome {
+        let done = DispatchSemaphore(value: 0)
+        lock.lock()
+        waiters[task.taskIdentifier] = done
+        bodies[task.taskIdentifier] = Data()
+        lock.unlock()
+        task.resume()
+        done.wait()
+        lock.lock()
+        defer { lock.unlock() }
+        let outcome = results.removeValue(forKey: task.taskIdentifier) ?? .lost
+        waiters[task.taskIdentifier] = nil
+        bodies[task.taskIdentifier] = nil
+        return outcome
+    }
+
+    func urlSession(_ session: URLSession, task: URLSessionTask, willPerformHTTPRedirection response: HTTPURLResponse,
+                    newRequest request: URLRequest, completionHandler: @escaping (URLRequest?) -> Void) {
+        completionHandler(nil) // never followed: the 3xx itself is the answer
+    }
+
+    func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive data: Data) {
+        lock.lock()
+        let id = dataTask.taskIdentifier
+        let total = (bodies[id]?.count ?? 0) + data.count
+        if total > Int(RelayClient.maxResponseBytes) {
+            results[id] = .lost
             lock.unlock()
-            task.resume()
-            done.wait()
-            lock.lock()
-            defer { lock.unlock() }
-            let outcome = results.removeValue(forKey: task.taskIdentifier) ?? .lost
-            waiters[task.taskIdentifier] = nil
-            bodies[task.taskIdentifier] = nil
-            return outcome
+            dataTask.cancel()
+            return
         }
+        bodies[id]?.append(data)
+        lock.unlock()
+    }
 
-        func urlSession(_ session: URLSession, task: URLSessionTask, willPerformHTTPRedirection response: HTTPURLResponse,
-                        newRequest request: URLRequest, completionHandler: @escaping (URLRequest?) -> Void) {
-            completionHandler(nil) // never followed: the 3xx itself is the answer
-        }
-
-        func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive data: Data) {
-            lock.lock()
-            let id = dataTask.taskIdentifier
-            let total = (bodies[id]?.count ?? 0) + data.count
-            if total > Int(RelayClient.maxResponseBytes) {
+    func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
+        lock.lock()
+        let id = task.taskIdentifier
+        if results[id] == nil {
+            if error == nil, let response = task.response as? HTTPURLResponse {
+                results[id] = .success(response, bodies[id] ?? Data())
+            } else {
                 results[id] = .lost
-                lock.unlock()
-                dataTask.cancel()
-                return
             }
-            bodies[id]?.append(data)
-            lock.unlock()
         }
-
-        func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
-            lock.lock()
-            let id = task.taskIdentifier
-            if results[id] == nil {
-                if error == nil, let response = task.response as? HTTPURLResponse {
-                    results[id] = .success(response, bodies[id] ?? Data())
-                } else {
-                    results[id] = .lost
-                }
-            }
-            let waiter = waiters[id]
-            lock.unlock()
-            waiter?.signal()
-        }
+        let waiter = waiters[id]
+        lock.unlock()
+        waiter?.signal()
     }
 }

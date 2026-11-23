@@ -63,10 +63,11 @@ public struct KeyRoot {
     /// - Throws: ``Unreadable`` when a record exists but cannot be opened
     public static func open(from vault: KeyRootVault) throws -> KeyRoot? {
         guard let record = try vault.load() else { return nil }
-        let (tier, kekBytes, wrappedRoot) = try decode(record)
+        let parsed = try decode(record)
+        let wrappedRoot = parsed.wrappedRoot
         let kek: KekStore
         do {
-            kek = try reopenKek(tier: tier, bytes: kekBytes)
+            kek = try reopenKek(tier: parsed.tier, bytes: parsed.kek)
         } catch {
             throw Unreadable()
         }
@@ -126,7 +127,14 @@ public struct KeyRoot {
         return Data([version, tierByte(tier)]) + u16(kekBytes.count) + kekBytes + u16(wrappedRoot.count) + wrappedRoot
     }
 
-    static func decode(_ record: Data) throws -> (KeyProtection, Data, Data) {
+    /// A parsed record.
+    struct Record: Equatable {
+        let tier: KeyProtection
+        let kek: Data
+        let wrappedRoot: Data
+    }
+
+    static func decode(_ record: Data) throws -> Record {
         let b = [UInt8](record)
         guard b.count >= 6, b[0] == version else { throw Unreadable() }
         let tier: KeyProtection
@@ -140,7 +148,7 @@ public struct KeyRoot {
         let rootAt = 4 + kekLen
         let rootLen = Int(b[rootAt]) << 8 | Int(b[rootAt + 1])
         guard rootLen > 0, b.count == rootAt + 2 + rootLen else { throw Unreadable() }
-        return (tier, Data(b[4..<rootAt]), Data(b[(rootAt + 2)...]))
+        return Record(tier: tier, kek: Data(b[4..<rootAt]), wrappedRoot: Data(b[(rootAt + 2)...]))
     }
 }
 

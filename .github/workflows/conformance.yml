@@ -434,10 +434,11 @@ jobs:
       # The zero-warning claim for Swift therefore rests on the host build
       # above, which compiles the same sources - including LumosAppShell - with
       # -warnings-as-errors. What that does not cover is an iOS-ONLY diagnostic,
-      # such as an availability warning for an API newer than iOS 17. The shell
-      # uses no iOS-specific API today, so the gap is real but currently empty;
-      # closing it needs a Swift SDK destination rather than -Xswiftc overrides,
-      # and that is a WP-03 problem, when iOS-only code actually arrives.
+      # such as an availability warning for an API newer than iOS 17. Since
+      # WP-05 S7f2b the shell has iOS-only code (RelayBackground, behind
+      # #if os(iOS): BackgroundTasks and Network), so this step is now the only
+      # compile of it: its ERRORS fail here, its warnings do not. Closing that
+      # needs a Swift SDK destination rather than -Xswiftc overrides.
       - name: build the iOS shell for iOS
         run: |
           set -euo pipefail
