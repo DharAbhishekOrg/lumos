@@ -45,6 +45,11 @@
         <item name="textAppearanceHeadlineMedium">@style/TextAppearance.Lumos.Title1</item>
     </style>
 
+    <!-- A conversation sits on surface, not canvas: the window paints it once. -->
+    <style name="Theme.Lumos.Conversation">
+        <item name="android:windowBackground">@color/lumos_surface</item>
+    </style>
+
     <style name="ShapeAppearance.Lumos.Small" parent="ShapeAppearance.Material3.Corner.Small">
         <item name="cornerSize">@dimen/lumos_radius_sm</item>
     </style>

@@ -499,7 +499,7 @@
     "ADR-008",
     "ADR-010"
    ],
-   "last_commit": "b19540a",
+   "last_commit": "dbc2319",
    "updated": "2026-11-23"
   },
   {
@@ -1776,13 +1776,17 @@
   },
   {
    "req_id": "SRS-NFR-A11Y-001",
-   "status": "not_started",
-   "code": [],
-   "tests": [],
+   "status": "implemented",
+   "code": [
+    "android-app/app/src/main/java/com/lumos/app/conversation/MessageAdapter.java"
+   ],
+   "tests": [
+    "java:app-instrumented:ConversationInstrumentedTest.thePersonAndAScreenReaderGetTheWholeConversation"
+   ],
    "evidence": [],
    "adr": [],
-   "last_commit": null,
-   "updated": null
+   "last_commit": "dbc2319",
+   "updated": "2026-11-23"
   },
   {
    "req_id": "SRS-NFR-A11Y-002",
@@ -1844,13 +1848,17 @@
   },
   {
    "req_id": "SRS-NFR-A11Y-007",
-   "status": "not_started",
-   "code": [],
-   "tests": [],
+   "status": "implemented",
+   "code": [
+    "android-app/app/src/main/java/com/lumos/app/conversation/MessageAdapter.java"
+   ],
+   "tests": [
+    "java:app-instrumented:ConversationInstrumentedTest.thePersonAndAScreenReaderGetTheWholeConversation"
+   ],
    "evidence": [],
    "adr": [],
-   "last_commit": null,
-   "updated": null
+   "last_commit": "dbc2319",
+   "updated": "2026-11-23"
   },
   {
    "req_id": "SRS-NFR-A11Y-008",
@@ -3206,7 +3214,7 @@
     "ADR-003",
     "ADR-010"
    ],
-   "last_commit": "b19540a",
+   "last_commit": "dbc2319",
    "updated": "2026-11-23"
   },
   {
@@ -3304,6 +3312,7 @@
     "go:protocol/crypto/ratchet:TestSkippedKeyTTLExpiry",
     "go:protocol/crypto/ratchet:TestSkippedSessionCapFromRegister",
     "java:app-dev:ChatStoreTest.aMessageShowsAtMostOnceEvenIfDeliveredTwice",
+    "java:app-dev:DedupCapTest.overTheCapTheOldestIdsGoAndTheNewestStay",
     "java:protocol-conformance:RatchetConformanceTest.aUsedKeyIsGoneAndATamperedHeaderFails",
     "java:protocol-conformance:RatchetConformanceTest.skippedKeysAreConsumedOnceAndExpire",
     "java:protocol-conformance:RatchetConformanceTest.theMaxSkipNegativeFailsWithItsExactCode",
@@ -3316,7 +3325,7 @@
    "adr": [
     "ADR-001"
    ],
-   "last_commit": "f409d2a",
+   "last_commit": "dbc2319",
    "updated": "2026-11-23"
   },
   {
@@ -4488,6 +4497,7 @@
     "android-app/app/src/main/java/com/lumos/app/chat/ChatRecords.java",
     "android-app/app/src/main/java/com/lumos/app/chat/ChatStore.java",
     "android-app/app/src/main/java/com/lumos/app/chat/DeliveryTickStyle.java",
+    "android-app/app/src/main/java/com/lumos/app/conversation/MessageAdapter.java",
     "android-app/app/src/main/java/com/lumos/app/relay/RelaySync.java",
     "android-app/protocol-java/src/main/java/com/lumos/protocol/chat/DeliveryMachine.java",
     "android-app/protocol-java/src/main/java/com/lumos/protocol/chat/Receipt.java",
@@ -4511,6 +4521,7 @@
     "java:app-dev:DeliveryTickStyleTest.theTicksFollowTheOwnersWhatsAppStyleRuling",
     "java:app-dev:RelayReceiptsTest.oneTickWhenTheRelayTakesItTwoOnlyFromTheDeliveredReceiptBlueOnlyFromTheRead",
     "java:app-dev:RelaySyncTest.aSendRefusedForGoodShowsFailedAndTheNextOneStillGoes",
+    "java:app-instrumented:ConversationInstrumentedTest.thePersonAndAScreenReaderGetTheWholeConversation",
     "java:app-instrumented:ThemeTokensInstrumentedTest.theTicksFollowTheTokensInBothThemes",
     "java:protocol-conformance:DeliveryConformanceTest.committedTicksMatch",
     "java:protocol-conformance:DeliveryConformanceTest.committedTimelinesReplayStepForStep",
@@ -4527,7 +4538,7 @@
    ],
    "evidence": [],
    "adr": [],
-   "last_commit": "f409d2a",
+   "last_commit": "dbc2319",
    "updated": "2026-11-23"
   },
   {
@@ -4697,13 +4708,24 @@
   },
   {
    "req_id": "SRS-RMT-010",
-   "status": "not_started",
-   "code": [],
-   "tests": [],
+   "status": "implemented",
+   "code": [
+    "android-app/app/src/main/java/com/lumos/app/chat/ChatStore.java",
+    "android-app/app/src/main/java/com/lumos/app/conversation/ConversationActivity.java",
+    "android-app/app/src/main/java/com/lumos/app/conversation/ConversationPresenter.java",
+    "android-app/app/src/main/java/com/lumos/app/conversation/ConversationRows.java"
+   ],
+   "tests": [
+    "java:app-dev:ChatStoreTest.deleteForMeWaitsUntilTheMessageHasGoneAndNeverTouchesThePeer",
+    "java:app-dev:ConversationPresenterTest.eachBubbleOffersOnlyWhatItCanDo",
+    "java:app-dev:ConversationPresenterTest.reactionsAndDeletesReachTheStackOnlyWhenAllowed",
+    "java:app-dev:ConversationRowsTest.daysAreTheLocalDaysWithTodayAndYesterdayInWords",
+    "java:app-instrumented:ConversationInstrumentedTest.thePersonAndAScreenReaderGetTheWholeConversation"
+   ],
    "evidence": [],
    "adr": [],
-   "last_commit": null,
-   "updated": null
+   "last_commit": "dbc2319",
+   "updated": "2026-11-23"
   },
   {
    "req_id": "SRS-RMT-011",
@@ -5450,23 +5472,37 @@
   },
   {
    "req_id": "SRS-UX-011",
-   "status": "not_started",
-   "code": [],
-   "tests": [],
+   "status": "implemented",
+   "code": [
+    "android-app/app/src/main/java/com/lumos/app/conversation/MessageAdapter.java",
+    "android-app/app/src/main/res/layout/activity_conversation.xml",
+    "android-app/app/src/main/res/layout/item_message_in.xml",
+    "android-app/app/src/main/res/layout/item_message_out.xml"
+   ],
+   "tests": [
+    "java:app-dev:ConversationRowsTest.runsBreakOnANewSenderALongPauseOrMidnight",
+    "java:app-instrumented:ConversationInstrumentedTest.thePersonAndAScreenReaderGetTheWholeConversation"
+   ],
    "evidence": [],
    "adr": [],
-   "last_commit": null,
-   "updated": null
+   "last_commit": "dbc2319",
+   "updated": "2026-11-23"
   },
   {
    "req_id": "SRS-UX-012",
-   "status": "not_started",
-   "code": [],
-   "tests": [],
+   "status": "implemented",
+   "code": [
+    "android-app/app/src/main/java/com/lumos/app/conversation/ConversationActivity.java",
+    "android-app/app/src/main/res/layout/activity_conversation.xml"
+   ],
+   "tests": [
+    "java:app-dev:ChatCopyTest.aSendThatDidNotGoSaysTheWordsAreKept",
+    "java:app-instrumented:ConversationInstrumentedTest.thePersonAndAScreenReaderGetTheWholeConversation"
+   ],
    "evidence": [],
    "adr": [],
-   "last_commit": null,
-   "updated": null
+   "last_commit": "dbc2319",
+   "updated": "2026-11-23"
   },
   {
    "req_id": "SRS-UX-013",
@@ -5480,13 +5516,17 @@
   },
   {
    "req_id": "SRS-UX-014",
-   "status": "not_started",
-   "code": [],
-   "tests": [],
+   "status": "implemented",
+   "code": [
+    "android-app/app/src/main/res/values/strings_chat.xml"
+   ],
+   "tests": [
+    "java:app-dev:ChatCopyTest.valuesGoInByNumberedArgumentSoTranslationsCanReorderThem"
+   ],
    "evidence": [],
    "adr": [],
-   "last_commit": null,
-   "updated": null
+   "last_commit": "dbc2319",
+   "updated": "2026-11-23"
   },
   {
    "req_id": "SRS-UX-015",
@@ -5816,7 +5856,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "b19540a",
+   "last_commit": "dbc2319",
    "updated": "2026-11-23"
   },
   {
@@ -5826,7 +5866,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "b19540a",
+   "last_commit": "dbc2319",
    "updated": "2026-11-23"
   },
   {
@@ -5836,7 +5876,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "b19540a",
+   "last_commit": "dbc2319",
    "updated": "2026-11-23"
   },
   {
@@ -5860,7 +5900,7 @@
    "adr": [
     "ADR-003"
    ],
-   "last_commit": "b19540a",
+   "last_commit": "dbc2319",
    "updated": "2026-11-23"
   },
   {
@@ -5882,7 +5922,7 @@
    "adr": [
     "ADR-002"
    ],
-   "last_commit": "b19540a",
+   "last_commit": "dbc2319",
    "updated": "2026-11-23"
   },
   {
@@ -5901,7 +5941,7 @@
    "adr": [
     "ADR-002"
    ],
-   "last_commit": "b19540a",
+   "last_commit": "dbc2319",
    "updated": "2026-11-23"
   },
   {
@@ -5911,7 +5951,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "b19540a",
+   "last_commit": "dbc2319",
    "updated": "2026-11-23"
   },
   {
@@ -5921,7 +5961,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "b19540a",
+   "last_commit": "dbc2319",
    "updated": "2026-11-23"
   },
   {
@@ -5931,7 +5971,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "b19540a",
+   "last_commit": "dbc2319",
    "updated": "2026-11-23"
   },
   {
@@ -5941,7 +5981,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "b19540a",
+   "last_commit": "dbc2319",
    "updated": "2026-11-23"
   },
   {
@@ -5951,7 +5991,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "b19540a",
+   "last_commit": "dbc2319",
    "updated": "2026-11-23"
   },
   {
@@ -5961,7 +6001,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "b19540a",
+   "last_commit": "dbc2319",
    "updated": "2026-11-23"
   },
   {
@@ -6636,7 +6676,7 @@
     "ci:conformance#31528127667"
    ],
    "adr": [],
-   "last_commit": "b19540a",
+   "last_commit": "dbc2319",
    "updated": "2026-11-23"
   },
   {
@@ -6854,8 +6894,8 @@
    ],
    "evidence": [],
    "adr": [],
-   "last_commit": "39638c4",
-   "updated": "2026-11-22"
+   "last_commit": "dbc2319",
+   "updated": "2026-11-23"
   },
   {
    "req_id": "TRS-CODE-005",
@@ -6908,8 +6948,8 @@
     "ci:pipeline#31737418465"
    ],
    "adr": [],
-   "last_commit": "39638c4",
-   "updated": "2026-11-22"
+   "last_commit": "dbc2319",
+   "updated": "2026-11-23"
   },
   {
    "req_id": "TRS-CODE-007",
@@ -9111,7 +9151,7 @@
    ],
    "evidence": [],
    "adr": [],
-   "last_commit": "b19540a",
+   "last_commit": "dbc2319",
    "updated": "2026-11-23"
   },
   {
@@ -9172,7 +9212,7 @@
    ],
    "evidence": [],
    "adr": [],
-   "last_commit": "b19540a",
+   "last_commit": "dbc2319",
    "updated": "2026-11-23"
   },
   {
@@ -9681,23 +9721,32 @@
   },
   {
    "req_id": "TRS-UX-004",
-   "status": "not_started",
-   "code": [],
-   "tests": [],
+   "status": "implemented",
+   "code": [
+    "android-app/app/src/main/java/com/lumos/app/conversation/ConversationRows.java",
+    "android-app/app/src/main/java/com/lumos/app/conversation/MessageAdapter.java"
+   ],
+   "tests": [
+    "java:app-dev:ConversationRowsTest.aDeletedMessageKeepsItsPlaceWithoutItsTextAndReactionsAndTimesCarryThrough"
+   ],
    "evidence": [],
    "adr": [],
-   "last_commit": null,
-   "updated": null
+   "last_commit": "dbc2319",
+   "updated": "2026-11-23"
   },
   {
    "req_id": "TRS-UX-005",
-   "status": "not_started",
-   "code": [],
-   "tests": [],
+   "status": "implemented",
+   "code": [
+    "android-app/app/src/main/res/values/strings_chat.xml"
+   ],
+   "tests": [
+    "java:app-dev:ChatCopyTest.noWordOfTheMachineryReachesAPerson"
+   ],
    "evidence": [],
    "adr": [],
-   "last_commit": null,
-   "updated": null
+   "last_commit": "dbc2319",
+   "updated": "2026-11-23"
   },
   {
    "req_id": "TRS-UX-006",
@@ -9751,13 +9800,15 @@
   },
   {
    "req_id": "TRS-UX-011",
-   "status": "not_started",
-   "code": [],
+   "status": "implemented",
+   "code": [
+    "android-app/app/src/main/java/com/lumos/app/conversation/ConversationActivity.java"
+   ],
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": null,
-   "updated": null
+   "last_commit": "dbc2319",
+   "updated": "2026-11-23"
   },
   {
    "req_id": "TRS-UX-012",

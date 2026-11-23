@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Lumos - android-app/app / The back arrow.
+  Author: dhar.abhishek.email@gmail.com
+  Implements: SRS-UX-011
+  ADRs: -
+  Threading: n/a
+  Notes: A 24dp stroke icon, tinted by its view.
+-->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp" android:height="24dp" android:viewportWidth="24" android:viewportHeight="24">
+    <path android:pathData="M15,6 L9,12 L15,18" android:strokeColor="#FFFFFFFF" android:strokeWidth="2"
+        android:strokeLineCap="round" android:strokeLineJoin="round" android:fillColor="#00000000" />
+</vector>

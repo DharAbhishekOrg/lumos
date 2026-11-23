@@ -67,6 +67,29 @@
   entry. The report flow itself is CR-007's.
 - **The dedup cache's id cap,** enforced (SRS-NFR-SEC-006).
 
+- **CS2a done (2026-11-24): the Android conversation screen.**
+  - **Logic:** a plain-Java presenter and row builder (JVM-tested) decide
+    every layout and action.
+  - **Bubbles:** they run in groups from one sender, with day dividers in
+    the person's zone and a deleted message keeping its place.
+  - **Ticks:** they draw from the shared style, and each bubble is one
+    spoken sentence with its actions offered to accessibility services.
+  - **Actions:** react (six quick reactions), copy, delete for me (refused
+    while the message is still waiting to go, because its sealed envelope
+    would still be sent), and delete for everyone (your own messages only).
+  - **Composer:** it sends only real content that fits one envelope; a
+    maximum-length first message is proven to fit. A failed send keeps the
+    text.
+  - **Offline:** an inline banner, never a spinner.
+  - **The dedup cache's id cap** is enforced on Android.
+  - **Found:** the wire has no reply event (AMD-005 defines text, edit,
+    delete and reaction), so a quoted reply needs a change request before it
+    can be built.
+  - **Moved to CS2b:** the safety sheet, the Matches list and the tab shell.
+    The peer's name stays "Your match" until previews are stored (CS4).
+- **CS2b (Android):** the Matches list, the five-tab shell, and the safety
+  sheet from the chat header.
+
 ### CS4 (Android) and CS5 (iOS): from Nearby to a match
 - **Profile preview, Interested / Not now, and the match moment,** with the
   verification code (SRS-MAT-008) and the three-moment motion and haptics

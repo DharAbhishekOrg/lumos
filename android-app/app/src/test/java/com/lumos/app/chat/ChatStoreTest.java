@@ -435,4 +435,29 @@ public class ChatStoreTest {
         assertEquals(DeliveryMachine.State.DELIVERED, p[1].chat.messages(MATCH).get(0).state());
         assertFalse(p[1].chat.messages(MATCH).get(0).outgoing());
     }
+
+    @Test
+    void deleteForMeWaitsUntilTheMessageHasGoneAndNeverTouchesThePeer() throws Exception {
+        final Device[] p = matchedPair();
+        final byte[] id = p[0].chat.send(MATCH, text("see you there"));
+        assertFalse(p[0].chat.deleteForMe(id), "still in the outbox: its sealed envelope would still be sent");
+        deliver(p[0], p[1]);
+        assertTrue(p[0].chat.deleteForMe(id));
+        assertTrue(p[0].chat.messages(MATCH).isEmpty(), "gone from this device");
+        assertEquals(1, p[1].chat.messages(MATCH).size(), "the peer keeps their copy and is told nothing");
+        assertTrue(p[0].chat.pendingOutbox().isEmpty(), "and nothing was queued to tell them");
+        assertArrayEquals(p[1].keys.edPub, p[0].chat.peerIdentity(MATCH).orElseThrow(), "the pinned peer");
+    }
+
+    @Test
+    void theLongestMessageTheComposerAllowsFitsItsEnvelopeEvenAsAFirstContact() throws Exception {
+        final Device[] p = matchedPair();
+        final int max = com.lumos.app.conversation.ConversationPresenter.MAX_TEXT_BYTES;
+        p[0].chat.send(MATCH, text("x".repeat(max)));
+        final ChatRecords.OutboxItem item = p[0].chat.pendingOutbox().get(0);
+        assertEquals(RemoteText.FORMAT_PREKEY, item.envelope()[0] & 0xFF, "the largest framing: PREKEY fields too");
+        assertTrue(item.envelope().length <= com.lumos.protocol.MessageClassLimits.maxPayloadBytes(
+                com.lumos.protocol.MessageClass.TEXT_MESSAGE), "within the class limit the relay enforces");
+        assertEquals(ChatStore.Outcome.DISPLAYED, deliver(p[0], p[1]).get(0).outcome());
+    }
 }

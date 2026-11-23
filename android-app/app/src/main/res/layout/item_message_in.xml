@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Lumos - android-app/app / A message I received.
+  Author: dhar.abhishek.email@gmail.com
+  Implements: SRS-UX-011, SRS-RMT-005, SRS-RMT-010, TRS-UX-004, SRS-NFR-A11Y-001, SRS-NFR-A11Y-007
+  ADRs: -
+  Threading: n/a
+  Notes: The whole row is one accessibility element with a spoken sentence
+  (the adapter sets it), so a screen reader hears who, when, what and the
+  delivery state together, and the long-press actions are offered to it as
+  custom actions. Text is selectable only through Copy, so a long-press
+  always opens the actions.
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/message_row"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="start"
+    android:orientation="vertical"
+    android:paddingTop="2dp"
+    android:paddingBottom="2dp">
+
+    <TextView
+        android:id="@+id/message_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="0dp"
+        android:layout_marginEnd="56dp"
+        android:importantForAccessibility="no"
+        android:minHeight="44dp"
+        android:paddingStart="@dimen/lumos_space_4"
+        android:paddingTop="10dp"
+        android:paddingEnd="@dimen/lumos_space_4"
+        android:paddingBottom="10dp"
+        android:textAppearance="?attr/textAppearanceBodyLarge"
+        android:textColor="@color/lumos_ink" />
+
+    <TextView
+        android:id="@+id/message_reactions"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="-6dp"
+        android:background="@drawable/bg_field"
+        android:importantForAccessibility="no"
+        android:paddingStart="@dimen/lumos_space_2"
+        android:paddingEnd="@dimen/lumos_space_2"
+        android:textAppearance="?attr/textAppearanceBodySmall"
+        android:textColor="@color/lumos_ink"
+        android:visibility="gone" />
+
+    <TextView
+        android:id="@+id/message_meta"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/lumos_space_1"
+        android:drawablePadding="@dimen/lumos_space_1"
+        android:gravity="center_vertical"
+        android:importantForAccessibility="no"
+        android:paddingStart="6dp"
+        android:paddingEnd="6dp"
+        android:textAppearance="?attr/textAppearanceLabelSmall"
+        android:textColor="@color/lumos_ink_subtle" />
+</LinearLayout>

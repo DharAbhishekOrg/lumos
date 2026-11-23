@@ -236,4 +236,46 @@
     <Method name="chat"/>
     <Bug pattern="EI_EXPOSE_REP"/>
   </Match>
+  <!--
+    CS2a: ConversationActivity is a lifecycle class exactly as NearbyActivity
+    is (see above): findViewById's generic return and getApplication() make
+    typed lookups "unconfirmed casts" (the application is checked with
+    instanceof before the cast). setSource is the instrumented demo's seam,
+    as NearbyActivity.setHost is: it stores the scripted source on purpose.
+  -->
+  <Match>
+    <Class name="com.lumos.app.conversation.ConversationActivity"/>
+    <Bug pattern="BC_UNCONFIRMED_CAST_OF_RETURN_VALUE"/>
+  </Match>
+  <!-- The adapter binds its rows' views with the same generic findViewById. -->
+  <Match>
+    <Class name="com.lumos.app.conversation.MessageAdapter"/>
+    <Bug pattern="BC_UNCONFIRMED_CAST_OF_RETURN_VALUE"/>
+  </Match>
+  <Match>
+    <Class name="com.lumos.app.conversation.ConversationActivity"/>
+    <Method name="setSource"/>
+    <Bug pattern="EI_EXPOSE_STATIC_REP2"/>
+  </Match>
+  <!--
+    CS2a: constructor-injected collaborators (TRS Sec. 24.2), one class at a
+    time as the policy above asks: the presenter keeps its chat source (it
+    copies the match id), and the runtime source keeps the Application, whose
+    lifetime is the process. The presenter's Screen copies its rows with
+    List.copyOf, which SpotBugs cannot see is unmodifiable.
+  -->
+  <Match>
+    <Class name="com.lumos.app.conversation.ConversationPresenter"/>
+    <Method name="&lt;init&gt;"/>
+    <Bug pattern="EI_EXPOSE_REP2"/>
+  </Match>
+  <Match>
+    <Class name="com.lumos.app.conversation.RuntimeConversationSource"/>
+    <Method name="&lt;init&gt;"/>
+    <Bug pattern="EI_EXPOSE_REP2"/>
+  </Match>
+  <Match>
+    <Class name="com.lumos.app.conversation.ConversationPresenter$Screen"/>
+    <Bug pattern="EI_EXPOSE_REP,EI_EXPOSE_REP2"/>
+  </Match>
 </FindBugsFilter>
