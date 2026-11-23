@@ -3,7 +3,7 @@
  * Author: dhar.abhishek.email@gmail.com
  * Implements: SRS-RMT-001, SRS-RMT-005, SRS-RMT-010, SRS-SAF-001, SRS-UX-011, SRS-UX-012, TRS-AND-003, TRS-AND-010,
  *             TRS-UX-011
- * ADRs: ADR-012
+ * ADRs: ADR-011, ADR-012
  * Threading: main
  * Notes: Deliberately thin, like NearbyActivity: it runs the presenter on the
  * app's relay executor (the chat store's one thread), posts the result back
@@ -14,7 +14,8 @@
  * go keeps the text and says why in a snackbar; nothing blocks the screen
  * (SRS-UX-012). The shield in the header opens the safety sheet; a
  * confirmed unmatch or block runs on the worker, and on success the screen
- * says so and closes, because the conversation no longer exists.
+ * says so and closes, because the conversation no longer exists. Like
+ * every screen, it is kept out of the app switcher's thumbnails (ADR-011).
  */
 
 package com.lumos.app.conversation;
@@ -43,7 +44,9 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.snackbar.Snackbar;
 import com.lumos.app.LumosApplication;
 import com.lumos.app.R;
+import com.lumos.app.onboarding.AppSurface;
 import com.lumos.app.relay.ConversationSafety;
+import com.lumos.app.safety.RecentsRedaction;
 import java.time.Duration;
 import java.time.ZoneId;
 import java.util.ArrayList;
@@ -98,6 +101,7 @@ public final class ConversationActivity extends AppCompatActivity implements Mes
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        RecentsRedaction.created(this, AppSurface.CONVERSATIONS);
         final byte[] matchId = getIntent().getByteArrayExtra(EXTRA_MATCH_ID);
         if (matchId == null || !(getApplication() instanceof LumosApplication)) {
             finish();
@@ -173,6 +177,7 @@ public final class ConversationActivity extends AppCompatActivity implements Mes
     @Override
     protected void onResume() {
         super.onResume();
+        RecentsRedaction.leaving(this, AppSurface.CONVERSATIONS, false);
         visible = true;
         reload(true);
         main.postDelayed(refresh, REFRESH.toMillis());
@@ -180,6 +185,7 @@ public final class ConversationActivity extends AppCompatActivity implements Mes
 
     @Override
     protected void onPause() {
+        RecentsRedaction.leaving(this, AppSurface.CONVERSATIONS, true);
         super.onPause();
         visible = false;
         main.removeCallbacks(refresh);

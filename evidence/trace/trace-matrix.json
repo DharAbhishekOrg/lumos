@@ -499,7 +499,7 @@
     "ADR-008",
     "ADR-010"
    ],
-   "last_commit": "77ff764",
+   "last_commit": "cc37662",
    "updated": "2026-11-23"
   },
   {
@@ -3219,7 +3219,7 @@
     "ADR-003",
     "ADR-010"
    ],
-   "last_commit": "77ff764",
+   "last_commit": "cc37662",
    "updated": "2026-11-23"
   },
   {
@@ -3443,6 +3443,7 @@
     "android-app/app/src/main/java/com/lumos/app/nearby/NearbyActivity.java",
     "android-app/app/src/main/java/com/lumos/app/safety/AppLock.java",
     "android-app/app/src/main/java/com/lumos/app/safety/DeviceAuth.java",
+    "android-app/app/src/main/java/com/lumos/app/safety/RecentsRedaction.java",
     "android-app/app/src/main/java/com/lumos/app/safety/ScreenPrivacyPolicy.java",
     "android-app/app/src/main/java/com/lumos/app/store/LocalSchema.java",
     "android-app/app/src/main/java/com/lumos/app/store/SealedRecordCodec.java",
@@ -3463,6 +3464,8 @@
     "java:app-dev:ScreenPrivacyPolicyTest.captureIsNeverBlockedBecauseEvidenceCaptureIsASafetyFeature",
     "java:app-dev:ScreenPrivacyPolicyTest.screenshotWarningsApplyToConversationsAndNowhereElse",
     "java:app-dev:ScreenPrivacyPolicyTest.theRecentsSnapshotIsRedactedOnEverySurface",
+    "java:app-instrumented:ConversationInstrumentedTest.leavingTheConversationBlanksItsAppSwitcherThumbnail",
+    "java:app-instrumented:HomeInstrumentedTest.leavingTheScreenBlanksItsAppSwitcherThumbnail",
     "swift:LumosAppShell:DiscoverySuccessMetricTests.testTheWholePayloadMatchesTheClosedGrammar"
    ],
    "evidence": [],
@@ -3471,8 +3474,8 @@
     "ADR-010",
     "ADR-011"
    ],
-   "last_commit": "e782693",
-   "updated": "2026-11-20"
+   "last_commit": "cc37662",
+   "updated": "2026-11-23"
   },
   {
    "req_id": "SRS-NFR-SEC-014",
@@ -3698,6 +3701,7 @@
    "req_id": "SRS-ONB-001",
    "status": "tested",
    "code": [
+    "android-app/app/src/main/java/com/lumos/app/home/HomeActivity.java",
     "android-app/app/src/main/java/com/lumos/app/nearby/NearbyActivity.java",
     "android-app/app/src/main/java/com/lumos/app/nearby/NearbyHost.java",
     "android-app/app/src/main/java/com/lumos/app/onboarding/AgeGate.java",
@@ -3728,6 +3732,7 @@
     "java:app-dev:OnboardingGateTest.everythingOpensOnlyWhenOnboardingIsComplete",
     "java:app-dev:OnboardingMachineTest.anUnderAgeAnswerIsATerminalStateNotAReturnedValue",
     "java:app-dev:OnboardingServiceTest.aRefusedUserGetsNoIdentityAndNoConsentRecord",
+    "java:app-instrumented:HomeInstrumentedTest.withoutTheOnboardingGateNothingOpens",
     "java:app-instrumented:NearbyStatesInstrumentedTest.aGateThatSaysNoMeansTheScreenNeverInflates",
     "java:app-instrumented:NearbyStatesInstrumentedTest.noHostAtAllIsTheFreshInstallShapeAndAlsoRefuses",
     "java:app-instrumented:ProductEntryInstrumentedTest.at001AFreshInstallBlocksEveryProductSurfaceUntilConsent",
@@ -3744,8 +3749,8 @@
    "adr": [
     "ADR-004"
    ],
-   "last_commit": "e782693",
-   "updated": "2026-11-20"
+   "last_commit": "cc37662",
+   "updated": "2026-11-23"
   },
   {
    "req_id": "SRS-ONB-002",
@@ -4502,8 +4507,10 @@
    "code": [
     "android-app/app/src/main/java/com/lumos/app/chat/ChatRecords.java",
     "android-app/app/src/main/java/com/lumos/app/chat/ChatStore.java",
+    "android-app/app/src/main/java/com/lumos/app/chat/ConversationList.java",
     "android-app/app/src/main/java/com/lumos/app/chat/DeliveryTickStyle.java",
     "android-app/app/src/main/java/com/lumos/app/conversation/MessageAdapter.java",
+    "android-app/app/src/main/java/com/lumos/app/home/HomeLists.java",
     "android-app/app/src/main/java/com/lumos/app/relay/RelaySync.java",
     "android-app/protocol-java/src/main/java/com/lumos/protocol/chat/DeliveryMachine.java",
     "android-app/protocol-java/src/main/java/com/lumos/protocol/chat/Receipt.java",
@@ -4523,8 +4530,10 @@
     "go:protocol/chat:TestReceiptsTravelTheSessionAndCannotBeRelabelled",
     "go:protocol/chat:TestTheCommittedReceiptSessionReplaysAndEveryRelabelFails",
     "java:app-dev:ChatStoreTest.aLateDeliveredReceiptNeverDowngradesRead",
+    "java:app-dev:ConversationListTest.newMatchesUnreadCountsAndTheNewestFirst",
     "java:app-dev:DeliveryTickStyleTest.everyStateHasItsOwnSpokenLabel",
     "java:app-dev:DeliveryTickStyleTest.theTicksFollowTheOwnersWhatsAppStyleRuling",
+    "java:app-dev:HomeListsTest.theUnreadBadgeCapsAtNinetyNinePlus",
     "java:app-dev:RelayReceiptsTest.oneTickWhenTheRelayTakesItTwoOnlyFromTheDeliveredReceiptBlueOnlyFromTheRead",
     "java:app-dev:RelaySyncTest.aSendRefusedForGoodShowsFailedAndTheNextOneStillGoes",
     "java:app-instrumented:ConversationInstrumentedTest.thePersonAndAScreenReaderGetTheWholeConversation",
@@ -4544,7 +4553,7 @@
    ],
    "evidence": [],
    "adr": [],
-   "last_commit": "dbc2319",
+   "last_commit": "cc37662",
    "updated": "2026-11-23"
   },
   {
@@ -5525,15 +5534,18 @@
    "status": "implemented",
    "code": [
     "android-app/app/src/main/java/com/lumos/app/conversation/ConversationActivity.java",
+    "android-app/app/src/main/java/com/lumos/app/home/HomeActivity.java",
+    "android-app/app/src/main/java/com/lumos/app/home/HomeLists.java",
     "android-app/app/src/main/res/layout/activity_conversation.xml"
    ],
    "tests": [
     "java:app-dev:ChatCopyTest.aSendThatDidNotGoSaysTheWordsAreKept",
-    "java:app-instrumented:ConversationInstrumentedTest.thePersonAndAScreenReaderGetTheWholeConversation"
+    "java:app-instrumented:ConversationInstrumentedTest.thePersonAndAScreenReaderGetTheWholeConversation",
+    "java:app-instrumented:HomeInstrumentedTest.emptyListsAreSentencesAndARowOpensItsConversation"
    ],
    "evidence": [],
    "adr": [],
-   "last_commit": "dbc2319",
+   "last_commit": "cc37662",
    "updated": "2026-11-23"
   },
   {
@@ -5888,7 +5900,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "89b3a79",
+   "last_commit": "cc37662",
    "updated": "2026-11-23"
   },
   {
@@ -5898,7 +5910,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "89b3a79",
+   "last_commit": "cc37662",
    "updated": "2026-11-23"
   },
   {
@@ -5908,7 +5920,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "89b3a79",
+   "last_commit": "cc37662",
    "updated": "2026-11-23"
   },
   {
@@ -5932,7 +5944,7 @@
    "adr": [
     "ADR-003"
    ],
-   "last_commit": "89b3a79",
+   "last_commit": "cc37662",
    "updated": "2026-11-23"
   },
   {
@@ -5954,7 +5966,7 @@
    "adr": [
     "ADR-002"
    ],
-   "last_commit": "89b3a79",
+   "last_commit": "cc37662",
    "updated": "2026-11-23"
   },
   {
@@ -5973,7 +5985,7 @@
    "adr": [
     "ADR-002"
    ],
-   "last_commit": "89b3a79",
+   "last_commit": "cc37662",
    "updated": "2026-11-23"
   },
   {
@@ -5983,7 +5995,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "89b3a79",
+   "last_commit": "cc37662",
    "updated": "2026-11-23"
   },
   {
@@ -5993,7 +6005,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "89b3a79",
+   "last_commit": "cc37662",
    "updated": "2026-11-23"
   },
   {
@@ -6003,7 +6015,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "89b3a79",
+   "last_commit": "cc37662",
    "updated": "2026-11-23"
   },
   {
@@ -6013,7 +6025,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "89b3a79",
+   "last_commit": "cc37662",
    "updated": "2026-11-23"
   },
   {
@@ -6023,7 +6035,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "89b3a79",
+   "last_commit": "cc37662",
    "updated": "2026-11-23"
   },
   {
@@ -6033,7 +6045,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "89b3a79",
+   "last_commit": "cc37662",
    "updated": "2026-11-23"
   },
   {
@@ -6708,7 +6720,7 @@
     "ci:conformance#31528127667"
    ],
    "adr": [],
-   "last_commit": "dbc2319",
+   "last_commit": "cc37662",
    "updated": "2026-11-23"
   },
   {
@@ -6926,7 +6938,7 @@
    ],
    "evidence": [],
    "adr": [],
-   "last_commit": "dbc2319",
+   "last_commit": "cc37662",
    "updated": "2026-11-23"
   },
   {
@@ -6980,7 +6992,7 @@
     "ci:pipeline#31737418465"
    ],
    "adr": [],
-   "last_commit": "dbc2319",
+   "last_commit": "cc37662",
    "updated": "2026-11-23"
   },
   {
@@ -9183,7 +9195,7 @@
    ],
    "evidence": [],
    "adr": [],
-   "last_commit": "77ff764",
+   "last_commit": "cc37662",
    "updated": "2026-11-23"
   },
   {
@@ -9244,7 +9256,7 @@
    ],
    "evidence": [],
    "adr": [],
-   "last_commit": "77ff764",
+   "last_commit": "cc37662",
    "updated": "2026-11-23"
   },
   {
@@ -9834,12 +9846,13 @@
    "req_id": "TRS-UX-011",
    "status": "implemented",
    "code": [
-    "android-app/app/src/main/java/com/lumos/app/conversation/ConversationActivity.java"
+    "android-app/app/src/main/java/com/lumos/app/conversation/ConversationActivity.java",
+    "android-app/app/src/main/java/com/lumos/app/home/HomeActivity.java"
    ],
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "dbc2319",
+   "last_commit": "cc37662",
    "updated": "2026-11-23"
   },
   {

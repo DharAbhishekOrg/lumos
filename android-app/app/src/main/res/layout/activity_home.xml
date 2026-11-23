@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Lumos - android-app/app / The home shell: a title, one tab's page, and the tab bar.
+  Author: dhar.abhishek.email@gmail.com
+  Implements: SRS-UX-008, SRS-UX-012, TRS-AND-010, SRS-NFR-A11Y-003
+  ADRs: ADR-011
+  Threading: n/a
+  Notes: Exactly one of the three pages is visible: the Nearby panel (the
+  same layout NearbyActivity shows), Matches, or Chats. Each list has a
+  sentence for its empty state, never a spinner (SRS-UX-012). The title is
+  the selected tab's name and a heading for screen readers. Edge to edge
+  (TRS-AND-010): the activity pads the root by the system bars.
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/home_root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/home_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingStart="@dimen/lumos_space_4"
+        android:paddingTop="@dimen/lumos_space_4"
+        android:paddingEnd="@dimen/lumos_space_4"
+        android:paddingBottom="@dimen/lumos_space_2"
+        android:textAppearance="?attr/textAppearanceHeadlineLarge"
+        android:textColor="@color/lumos_ink" />
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <include layout="@layout/panel_nearby" />
+
+        <FrameLayout
+            android:id="@+id/matches_page"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/matches_list"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:clipToPadding="false"
+                android:paddingTop="@dimen/lumos_space_1"
+                android:paddingBottom="@dimen/lumos_space_2" />
+
+            <TextView
+                android:id="@+id/matches_empty"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="@dimen/lumos_space_6"
+                android:text="@string/matches_empty"
+                android:textAppearance="?attr/textAppearanceBodyLarge"
+                android:textColor="@color/lumos_ink_muted"
+                android:visibility="gone" />
+        </FrameLayout>
+
+        <FrameLayout
+            android:id="@+id/chats_page"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/chats_list"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:clipToPadding="false"
+                android:paddingTop="@dimen/lumos_space_1"
+                android:paddingBottom="@dimen/lumos_space_2" />
+
+            <TextView
+                android:id="@+id/chats_empty"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="@dimen/lumos_space_6"
+                android:text="@string/chats_empty"
+                android:textAppearance="?attr/textAppearanceBodyLarge"
+                android:textColor="@color/lumos_ink_muted"
+                android:visibility="gone" />
+        </FrameLayout>
+    </FrameLayout>
+
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/home_tabs"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:labelVisibilityMode="labeled"
+        app:menu="@menu/home_tabs" />
+</LinearLayout>

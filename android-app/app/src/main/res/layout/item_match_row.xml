@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Lumos - android-app/app / One new match in the Matches tab.
+  Author: dhar.abhishek.email@gmail.com
+  Implements: SRS-UX-007, SRS-NFR-A11Y-001, SRS-NFR-A11Y-003
+  ADRs: -
+  Threading: n/a
+  Notes: A match with nothing said yet: the avatar ring is coral, the match
+  colour (CR-008), and tapping the row opens the conversation to say hi.
+  One accessibility node, spoken as one sentence. At least 72dp tall.
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/match_row"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:foreground="?attr/selectableItemBackground"
+    android:focusable="true"
+    android:gravity="center_vertical"
+    android:minHeight="72dp"
+    android:orientation="horizontal"
+    android:paddingStart="@dimen/lumos_space_4"
+    android:paddingTop="@dimen/lumos_space_2"
+    android:paddingEnd="@dimen/lumos_space_4"
+    android:paddingBottom="@dimen/lumos_space_2">
+
+    <TextView
+        android:id="@+id/match_avatar"
+        android:layout_width="52dp"
+        android:layout_height="52dp"
+        android:background="@drawable/bg_field"
+        android:backgroundTint="@color/lumos_coral"
+        android:gravity="center"
+        android:importantForAccessibility="no"
+        android:textAppearance="?attr/textAppearanceTitleMedium"
+        android:textColor="@color/lumos_canvas" />
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/lumos_space_3"
+        android:layout_weight="1"
+        android:importantForAccessibility="noHideDescendants"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/match_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:textAppearance="?attr/textAppearanceTitleMedium"
+            android:textColor="@color/lumos_ink" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:text="@string/matches_row_subtitle"
+            android:textAppearance="?attr/textAppearanceBodyMedium"
+            android:textColor="@color/lumos_ink_muted" />
+    </LinearLayout>
+</LinearLayout>

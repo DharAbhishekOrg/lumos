@@ -21,6 +21,7 @@
 package com.lumos.app.relay;
 
 import com.lumos.app.chat.ChatStore;
+import com.lumos.app.chat.ConversationList;
 import com.lumos.app.identity.ChatIdentity;
 import com.lumos.app.identity.IdentityCrypto;
 import com.lumos.app.store.LocalStore;
@@ -39,14 +40,16 @@ public final class ChatRuntime {
     private final RelaySessions sessions;
     private final RouteExchange exchange;
     private final ConversationSafety safety;
+    private final ConversationList list;
 
     private ChatRuntime(final ChatStore chat, final RelaySync sync, final RelaySessions sessions,
-            final RouteExchange exchange, final ConversationSafety safety) {
+            final RouteExchange exchange, final ConversationSafety safety, final ConversationList list) {
         this.chat = chat;
         this.sync = sync;
         this.sessions = sessions;
         this.exchange = exchange;
         this.safety = safety;
+        this.list = list;
     }
 
     /**
@@ -73,7 +76,7 @@ public final class ChatRuntime {
         final RelayClient anonymous = RelayClient.anonymous(transport);
         return new ChatRuntime(chat, RelaySync.over(chat, routes, account, prekeys, anonymous, clock),
                 RelaySessions.over(chat, routes, account, anonymous, random), RouteExchange.over(routes, account),
-                ConversationSafety.over(store, chat, routes, clock));
+                ConversationSafety.over(store, chat, routes, clock), ConversationList.over(store, chat));
     }
 
     /** @return the one chat store, shared with the UI by design (see the SpotBugs filter) */
@@ -84,6 +87,11 @@ public final class ChatRuntime {
     /** @return the relay pass */
     public RelaySync sync() {
         return sync;
+    }
+
+    /** @return every conversation summarised, for the Matches and Chats lists */
+    public ConversationList conversations() {
+        return list;
     }
 
     /** @return unmatch and block, for a conversation's safety sheet */

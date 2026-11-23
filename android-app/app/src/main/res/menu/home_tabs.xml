@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Lumos - android-app/app / The home shell's tab bar.
+  Author: dhar.abhishek.email@gmail.com
+  Implements: SRS-UX-008
+  ADRs: -
+  Threading: n/a
+  Notes: The CR-008 bar is Nearby, Matches, Chat, Discover and Profile.
+  Discover (venues) and Profile join when those features exist: a tab that
+  opens onto nothing would be a placeholder, which the implementation
+  contract rules out.
+-->
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/tab_nearby"
+        android:icon="@drawable/ic_tab_nearby"
+        android:title="@string/home_tab_nearby" />
+    <item
+        android:id="@+id/tab_matches"
+        android:icon="@drawable/ic_tab_matches"
+        android:title="@string/home_tab_matches" />
+    <item
+        android:id="@+id/tab_chats"
+        android:icon="@drawable/ic_tab_chats"
+        android:title="@string/home_tab_chats" />
+</menu>

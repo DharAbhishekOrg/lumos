@@ -2,7 +2,7 @@
  * Lumos - android-app/app / The conversation screen, on a device, against a scripted chat stack.
  * Author: dhar.abhishek.email@gmail.com
  * Implements: SRS-RMT-005, SRS-RMT-010, SRS-SAF-001, SRS-UX-011, SRS-UX-012, SRS-NFR-A11Y-001, SRS-NFR-A11Y-007,
- *             TRS-UX-004
+ *             SRS-NFR-SEC-013, TRS-UX-004
  * ADRs: -
  * Threading: test-only
  * Notes: The real activity, layouts and adapter, with the chat stack
@@ -12,7 +12,8 @@
  * words, its actions offered to accessibility services, a send button that
  * only works with something to send, a send that reaches the stack and
  * clears the composer, and the safety sheet: named for the person, saying
- * they are not told, acting only after the confirmation, then closing.
+ * they are not told, acting only after the confirmation, then closing; and
+ * leaving the screen blanks its app-switcher thumbnail (ADR-011).
  */
 
 package com.lumos.app.conversation;
@@ -23,7 +24,9 @@ import static org.junit.Assert.assertTrue;
 
 import android.annotation.SuppressLint;
 import android.content.DialogInterface;
+import android.os.Build;
 import android.view.View;
+import android.view.WindowManager;
 import android.view.accessibility.AccessibilityNodeInfo;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -44,6 +47,7 @@ import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.BooleanSupplier;
 import org.junit.After;
+import org.junit.Assume;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -231,6 +235,22 @@ public final class ConversationInstrumentedTest {
             assertEquals(List.of(ConversationSafety.Ending.BLOCK), s.ended);
             assertTrue("nothing was sent to them", s.sent.isEmpty());
             waitFor(() -> sc.getState() == Lifecycle.State.DESTROYED);
+        }
+    }
+
+    @Test
+    public void leavingTheConversationBlanksItsAppSwitcherThumbnail() {
+        // ADR-011 ruling 1 below API 33 (the CI emulator is API 30): FLAG_SECURE only while leaving.
+        Assume.assumeTrue("API 33+ uses setRecentsScreenshotEnabled, which has no getter",
+                Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU);
+        ConversationActivity.setSource(new Scripted());
+        try (ActivityScenario<ConversationActivity> sc = ActivityScenario.launch(ConversationActivity.intent(
+                InstrumentationRegistry.getInstrumentation().getTargetContext(), MATCH))) {
+            sc.onActivity(a -> assertEquals("screenshots in the chat are never blocked (evidence)", 0,
+                    a.getWindow().getAttributes().flags & WindowManager.LayoutParams.FLAG_SECURE));
+            sc.moveToState(Lifecycle.State.STARTED);
+            sc.onActivity(a -> assertTrue("the thumbnail taken on the way out is blank",
+                    (a.getWindow().getAttributes().flags & WindowManager.LayoutParams.FLAG_SECURE) != 0));
         }
     }
 }

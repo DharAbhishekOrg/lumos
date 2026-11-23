@@ -96,6 +96,13 @@
             android:name="com.lumos.app.nearby.NearbyActivity"
             android:exported="false" />
 
+        <!-- The home shell (CS2c): Nearby, Matches and Chats under one tab
+             bar. Gated like Nearby, and not the launcher yet for the same
+             reason: the app opens through onboarding, a later slice. -->
+        <activity
+            android:name="com.lumos.app.home.HomeActivity"
+            android:exported="false" />
+
         <!-- One conversation. Not exported: only the app opens it, with a
              match id, and it refuses to show anything for a conversation the
              chat stack does not have (CS2a). adjustResize so the composer
