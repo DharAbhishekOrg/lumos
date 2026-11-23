@@ -52,4 +52,23 @@
     <string name="delete_for_everyone_title">Delete for everyone?</string>
     <string name="delete_for_everyone_body">It is removed for both of you. They may already have read it.</string>
 
+    <!-- The safety sheet (CS2b). Never promise more than is enforced today:
+         block keeps them out of your Nearby and stops their messages; it does
+         not yet claim to hide you from theirs. The peer is never told. -->
+    <string name="safety_options">Safety options</string>
+    <string name="safety_open">Safety options for %1$s</string>
+    <string name="safety_title">Safety with %1$s</string>
+    <string name="safety_note">Whatever you choose, %1$s is not told.</string>
+    <string name="safety_unmatch">Unmatch</string>
+    <string name="safety_unmatch_detail">End the match. Their messages stop reaching you.</string>
+    <string name="safety_block">Block</string>
+    <string name="safety_block_detail">They can no longer message you or appear in your Nearby.</string>
+    <string name="safety_unmatch_confirm_title">Unmatch %1$s?</string>
+    <string name="safety_unmatch_confirm_body">This chat is deleted from this phone. Their messages stop reaching you. They are not told. This cannot be undone.</string>
+    <string name="safety_block_confirm_title">Block %1$s?</string>
+    <string name="safety_block_confirm_body">This chat is deleted from this phone. They can no longer message you or appear in your Nearby. They are not told. This cannot be undone.</string>
+    <string name="safety_unmatched">You unmatched %1$s.</string>
+    <string name="safety_blocked">You blocked %1$s.</string>
+    <string name="safety_failed">That did not finish. Nothing changed. Try again.</string>
+
 </resources>

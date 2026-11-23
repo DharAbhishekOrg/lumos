@@ -1,7 +1,8 @@
 /*
  * Lumos - android-app/app / The conversation screen, on a device, against a scripted chat stack.
  * Author: dhar.abhishek.email@gmail.com
- * Implements: SRS-RMT-005, SRS-RMT-010, SRS-UX-011, SRS-UX-012, SRS-NFR-A11Y-001, SRS-NFR-A11Y-007, TRS-UX-004
+ * Implements: SRS-RMT-005, SRS-RMT-010, SRS-SAF-001, SRS-UX-011, SRS-UX-012, SRS-NFR-A11Y-001, SRS-NFR-A11Y-007,
+ *             TRS-UX-004
  * ADRs: -
  * Threading: test-only
  * Notes: The real activity, layouts and adapter, with the chat stack
@@ -9,8 +10,9 @@
  * would get: the name and reach, the offline banner instead of a spinner,
  * each bubble as one spoken sentence that includes the delivery state in
  * words, its actions offered to accessibility services, a send button that
- * only works with something to send, and a send that reaches the stack and
- * clears the composer.
+ * only works with something to send, a send that reaches the stack and
+ * clears the composer, and the safety sheet: named for the person, saying
+ * they are not told, acting only after the confirmation, then closing.
  */
 
 package com.lumos.app.conversation;
@@ -20,16 +22,19 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import android.annotation.SuppressLint;
+import android.content.DialogInterface;
 import android.view.View;
 import android.view.accessibility.AccessibilityNodeInfo;
 import android.widget.EditText;
 import android.widget.TextView;
+import androidx.lifecycle.Lifecycle;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.test.core.app.ActivityScenario;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.platform.app.InstrumentationRegistry;
 import com.lumos.app.R;
 import com.lumos.app.chat.ChatRecords;
+import com.lumos.app.relay.ConversationSafety;
 import com.lumos.protocol.TextEventKind;
 import com.lumos.protocol.chat.DeliveryMachine;
 import com.lumos.protocol.chat.RemoteText;
@@ -52,6 +57,7 @@ public final class ConversationInstrumentedTest {
     private static final class Scripted implements ConversationSource {
         final List<RemoteText.TextEvent> sent = new CopyOnWriteArrayList<>();
         final List<ChatRecords.Message> messages = new CopyOnWriteArrayList<>();
+        final List<ConversationSafety.Ending> ended = new CopyOnWriteArrayList<>();
 
         @Override
         public boolean entryAllowed(final byte[] matchId) {
@@ -87,6 +93,12 @@ public final class ConversationInstrumentedTest {
         @Override
         public void markRead(final byte[] matchId) {
             // Nothing to record.
+        }
+
+        @Override
+        public boolean end(final byte[] matchId, final ConversationSafety.Ending how) {
+            ended.add(how);
+            return true;
         }
     }
 
@@ -176,6 +188,49 @@ public final class ConversationInstrumentedTest {
                 sc.onActivity(a -> cleared[0] = ((EditText) a.findViewById(R.id.composer_text)).getText().length() == 0);
                 return cleared[0];
             });
+        }
+    }
+
+    @Test
+    public void theSafetySheetNamesThePersonActsOnlyWhenConfirmedAndThenCloses() throws Exception {
+        final Scripted s = new Scripted();
+        ConversationActivity.setSource(s);
+        try (ActivityScenario<ConversationActivity> sc = ActivityScenario.launch(ConversationActivity.intent(
+                InstrumentationRegistry.getInstrumentation().getTargetContext(), MATCH))) {
+            waitFor(() -> {
+                final boolean[] named = new boolean[1];
+                sc.onActivity(a -> named[0] = "Aanya".contentEquals(
+                        ((TextView) a.findViewById(R.id.conversation_name)).getText()));
+                return named[0];
+            });
+            sc.onActivity(a -> {
+                final View shield = a.findViewById(R.id.conversation_safety);
+                assertEquals(a.getString(R.string.safety_open, "Aanya"), shield.getContentDescription().toString());
+                assertTrue("a 48dp target", shield.getHeight() >= Math.round(48 * a.getResources().getDisplayMetrics().density));
+                shield.performClick();
+                final SafetySheet sheet = a.safetySheet();
+                assertTrue(sheet.sheet().isShowing());
+                assertEquals("Safety with Aanya",
+                        ((TextView) sheet.sheet().findViewById(R.id.safety_title)).getText().toString());
+                final String note = ((TextView) sheet.sheet().findViewById(R.id.safety_note)).getText().toString();
+                assertTrue(note, note.contains("not told"));
+                sheet.sheet().findViewById(R.id.safety_unmatch).performClick();
+                assertFalse("the sheet gives way to the confirmation", sheet.sheet().isShowing());
+                sheet.confirmation().getButton(DialogInterface.BUTTON_NEGATIVE).performClick();
+            });
+            InstrumentationRegistry.getInstrumentation().waitForIdleSync();
+            assertTrue("cancel does nothing", s.ended.isEmpty());
+
+            sc.onActivity(a -> {
+                a.findViewById(R.id.conversation_safety).performClick();
+                final SafetySheet sheet = a.safetySheet();
+                sheet.sheet().findViewById(R.id.safety_block).performClick();
+                sheet.confirmation().getButton(DialogInterface.BUTTON_POSITIVE).performClick();
+            });
+            waitFor(() -> !s.ended.isEmpty());
+            assertEquals(List.of(ConversationSafety.Ending.BLOCK), s.ended);
+            assertTrue("nothing was sent to them", s.sent.isEmpty());
+            waitFor(() -> sc.getState() == Lifecycle.State.DESTROYED);
         }
     }
 }

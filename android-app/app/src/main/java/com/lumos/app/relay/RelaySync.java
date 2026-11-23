@@ -165,11 +165,10 @@ public final class RelaySync {
 
     /**
      * Stops a conversation's peer from sending here (unmatch, block -
-     * SRS-RMT-016): revokes the capability this device issued it at the
-     * relay, then forgets the route. If the relay cannot be reached the
-     * route is kept, so calling again later finishes the job; the caller
-     * removes the conversation itself, so anything the peer sends meanwhile
-     * opens into no conversation and is dropped.
+     * SRS-RMT-016): marks the route ending, revokes the capability this
+     * device issued it at the relay, then forgets the route. If the relay
+     * cannot be reached the ending route is kept and every later pass
+     * finishes the job; meanwhile nothing the peer sends is opened.
      *
      * @param matchId the conversation
      * @return null when done (or nothing to do), otherwise why it stopped
@@ -181,6 +180,7 @@ public final class RelaySync {
         if (!route.isPresent()) {
             return null;
         }
+        routes.markEnding(matchId);
         try {
             anonymous.as(account.ensure(anonymous).credential()).revoke(route.get().proof());
             routes.remove(matchId);
@@ -193,13 +193,19 @@ public final class RelaySync {
         }
     }
 
-    /** Registration, prekeys and every route's proof, as the relay must hold them. */
+    /**
+     * Registration, prekeys and every route's proof, as the relay must hold
+     * them: open routes allowed, ending routes revoked and then forgotten.
+     */
     private RelayClient ready() throws RelayException, StoreException, GeneralSecurityException {
         final RelayTypes.Registration reg = account.ensure(anonymous);
         final RelayClient client = anonymous.as(reg.credential());
         prekeys.ensure(client, reg);
         for (final RelayRoutes.Route r : routes.all()) {
-            if (!Arrays.equals(r.allowedFor(), reg.routingId())) {
+            if (r.ending()) {
+                client.revoke(r.proof());
+                routes.remove(r.matchId());
+            } else if (!Arrays.equals(r.allowedFor(), reg.routingId())) {
                 client.allow(r.proof());
                 routes.markAllowed(r.matchId(), reg.routingId());
             }
@@ -215,7 +221,7 @@ public final class RelaySync {
                 continue;
             }
             final Optional<RelayRoutes.Route> route = routes.forMatch(item.matchId());
-            if (!route.isPresent() || !route.get().canSend()) {
+            if (!route.isPresent() || route.get().ending() || !route.get().canSend()) {
                 held.add(conversation);
                 continue;
             }

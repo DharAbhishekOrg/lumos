@@ -87,8 +87,36 @@
     can be built.
   - **Moved to CS2b:** the safety sheet, the Matches list and the tab shell.
     The peer's name stays "Your match" until previews are stored (CS4).
-- **CS2b (Android):** the Matches list, the five-tab shell, and the safety
-  sheet from the chat header.
+- **CS2b done (2026-11-24): the safety sheet, unmatch and block, end to end.**
+  Safety came before the list, so CS2b was re-scoped to this alone.
+  - **Sheet:** a shield in the chat header (spoken as "Safety options for"
+    the person) opens "Safety with" the person, saying first that they are
+    not told. It offers Unmatch and Block (danger colour plus its own icon),
+    each explained in one sentence, and acts only after a confirmation that
+    says the chat is deleted from this phone and it cannot be undone.
+  - **One local transaction, no network needed:** the conversation, its
+    messages, its ratchet session and its unsent queue are deleted; the
+    relay route is marked ending; a block also writes the identity to the
+    block list the Nearby feed already reads (SRS-NBY-013).
+  - **The relay half is durable:** routes now carry an ending mark (route
+    format 2; format 1 rows still read, as open). An ending route accepts
+    nothing, cannot be re-allowed, and every relay pass revokes and then
+    forgets it, retrying while offline and across a process kill. A message
+    already waiting in the mailbox is dropped unread and deleted from the
+    relay. `RelaySync.forget` now marks first too.
+  - **Not offered yet, by design:** mute (needs notifications), report
+    (CR-007; evidence retention per SRS-MAT-010 comes with it), and the
+    other contexts SRS-SAF-001 lists (profile, request, venue room).
+  - **Still to land elsewhere:** the match ledger is not composed in
+    production, so ending the match record joins CS4; the nearby Hello
+    responder must refuse a blocked identity when the GATT exchange is wired
+    (SRS-SAF-002), and only then may the block copy say "and you won't
+    appear in theirs".
+- **CS2c (Android):** the Matches/Chats list over `ChatStore` summaries, and
+  the five-tab shell (Nearby refactored into it).
+- **CS3 (iOS):** parity for CS2a-CS2c, including the dedup cap and the
+  ending-route revoke; SwiftUI screens wait on the owner's app-target
+  decision.
 
 ### CS4 (Android) and CS5 (iOS): from Nearby to a match
 - **Profile preview, Interested / Not now, and the match moment,** with the

@@ -1,7 +1,8 @@
 /*
  * Lumos - android-app/app / One conversation on screen.
  * Author: dhar.abhishek.email@gmail.com
- * Implements: SRS-RMT-001, SRS-RMT-005, SRS-RMT-010, SRS-UX-011, SRS-UX-012, TRS-AND-003, TRS-AND-010, TRS-UX-011
+ * Implements: SRS-RMT-001, SRS-RMT-005, SRS-RMT-010, SRS-SAF-001, SRS-UX-011, SRS-UX-012, TRS-AND-003, TRS-AND-010,
+ *             TRS-UX-011
  * ADRs: ADR-012
  * Threading: main
  * Notes: Deliberately thin, like NearbyActivity: it runs the presenter on the
@@ -11,7 +12,9 @@
  * conversation read when it shows. A draft survives rotation and process
  * death through the saved instance state (TRS-UX-011). A send that did not
  * go keeps the text and says why in a snackbar; nothing blocks the screen
- * (SRS-UX-012). The safety sheet joins the header in CS2b.
+ * (SRS-UX-012). The shield in the header opens the safety sheet; a
+ * confirmed unmatch or block runs on the worker, and on success the screen
+ * says so and closes, because the conversation no longer exists.
  */
 
 package com.lumos.app.conversation;
@@ -29,6 +32,7 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
@@ -39,6 +43,7 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.snackbar.Snackbar;
 import com.lumos.app.LumosApplication;
 import com.lumos.app.R;
+import com.lumos.app.relay.ConversationSafety;
 import java.time.Duration;
 import java.time.ZoneId;
 import java.util.ArrayList;
@@ -66,6 +71,8 @@ public final class ConversationActivity extends AppCompatActivity implements Mes
     private RecyclerView list;
     private EditText composer;
     private ImageButton send;
+    private String shownName = "";
+    private SafetySheet safetySheet;
     private boolean visible;
 
     /**
@@ -134,6 +141,8 @@ public final class ConversationActivity extends AppCompatActivity implements Mes
         updateSendButton();
         send.setOnClickListener(v -> sendDraft());
         findViewById(R.id.conversation_back).setOnClickListener(v -> finish());
+        findViewById(R.id.conversation_safety).setOnClickListener(
+                v -> safetySheet = SafetySheet.show(this, shownName, this::endConversation));
         ViewCompat.setAccessibilityHeading(findViewById(R.id.conversation_name), true);
     }
 
@@ -206,7 +215,9 @@ public final class ConversationActivity extends AppCompatActivity implements Mes
         }
         final String name = screen.peer().displayName().isEmpty()
                 ? getString(R.string.conversation_fallback_name) : screen.peer().displayName();
+        shownName = name;
         ((TextView) findViewById(R.id.conversation_name)).setText(name);
+        findViewById(R.id.conversation_safety).setContentDescription(getString(R.string.safety_open, name));
         ((TextView) findViewById(R.id.conversation_avatar)).setText(name.substring(0, name.offsetByCodePoints(0, 1)));
         ((TextView) findViewById(R.id.conversation_reach)).setText(reachText(screen.peer().reach()));
         findViewById(R.id.conversation_offline).setVisibility(screen.online() ? View.GONE : View.VISIBLE);
@@ -321,6 +332,28 @@ public final class ConversationActivity extends AppCompatActivity implements Mes
                         .setNegativeButton(R.string.action_cancel, null).show();
                 break;
         }
+    }
+
+    /** @return the last safety sheet opened, for the instrumented test */
+    SafetySheet safetySheet() {
+        return safetySheet;
+    }
+
+    /** Carries out a confirmed unmatch or block, then closes the screen. */
+    private void endConversation(final ConversationSafety.Ending how) {
+        final String name = shownName;
+        worker.execute(() -> {
+            final boolean ended = presenter.end(how);
+            main.post(() -> {
+                if (!ended) {
+                    Snackbar.make(list, R.string.safety_failed, Snackbar.LENGTH_LONG).show();
+                    return;
+                }
+                Toast.makeText(getApplicationContext(), getString(how == ConversationSafety.Ending.BLOCK
+                        ? R.string.safety_blocked : R.string.safety_unmatched, name), Toast.LENGTH_LONG).show();
+                finish();
+            });
+        });
     }
 
     /** Runs a send-like action, then explains a failure and redraws. */

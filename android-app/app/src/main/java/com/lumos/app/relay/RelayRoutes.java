@@ -16,6 +16,13 @@
  * capability stops exactly one peer (SRS-RMT-016). allowedFor records the
  * registration a proof was allowed under: after a fresh registration (a new,
  * empty mailbox) every route reads as not yet allowed and is allowed again.
+ *
+ * Ending a conversation (unmatch, block) marks its route as ending in the
+ * same transaction that removes the conversation. An ending route accepts
+ * nothing and is never allowed again; the next relay pass revokes its proof
+ * and then forgets it, so going offline at the moment of an unmatch cannot
+ * leave the peer able to reach this device. Format 1 rows (written before
+ * the mark existed) read as not ending.
  */
 
 package com.lumos.app.relay;
@@ -38,7 +45,8 @@ import java.util.Optional;
 /** The conversations' relay routes. */
 public final class RelayRoutes {
 
-    private static final int FORMAT = 1;
+    private static final int FORMAT_V1 = 1;
+    private static final int FORMAT = 2;
     private static final int MAX_FIELD = 64;
     private static final byte[] NONE = new byte[0];
 
@@ -69,9 +77,10 @@ public final class RelayRoutes {
      * @param peerRoutingId the peer's routing id, or empty until the peer's half arrives
      * @param sendCapability the capability the peer minted for this device, or empty
      * @param allowedFor this device's routing id when the proof was allowed, or empty
+     * @param ending true once the conversation has ended: revoke, then forget
      */
     public record Route(byte[] matchId, byte[] receiveCapability, byte[] peerRoutingId, byte[] sendCapability,
-            byte[] allowedFor) {
+            byte[] allowedFor, boolean ending) {
 
         /**
          * Copies.
@@ -81,6 +90,7 @@ public final class RelayRoutes {
          * @param peerRoutingId see the record
          * @param sendCapability see the record
          * @param allowedFor see the record
+         * @param ending see the record
          */
         public Route {
             matchId = matchId.clone();
@@ -139,16 +149,24 @@ public final class RelayRoutes {
                 out.write(f.length);
                 out.write(f, 0, f.length);
             }
+            out.write(ending ? 1 : 0);
             return out.toByteArray();
         }
 
         static Route decode(final byte[] b) throws StoreException {
             try {
                 final ByteBuffer in = ByteBuffer.wrap(b);
-                if (in.get() != FORMAT) {
+                final int format = in.get();
+                if (format != FORMAT && format != FORMAT_V1) {
                     throw unreadable();
                 }
-                final Route r = new Route(field(in), field(in), field(in), field(in), field(in));
+                final byte[] match = field(in);
+                final byte[] receive = field(in);
+                final byte[] peer = field(in);
+                final byte[] send = field(in);
+                final byte[] allowed = field(in);
+                final boolean ending = format == FORMAT && flag(in);
+                final Route r = new Route(match, receive, peer, send, allowed, ending);
                 if (in.hasRemaining()) {
                     throw unreadable();
                 }
@@ -156,6 +174,14 @@ public final class RelayRoutes {
             } catch (final BufferUnderflowException e) {
                 throw unreadable();
             }
+        }
+
+        private static boolean flag(final ByteBuffer in) throws StoreException {
+            final byte f = in.get();
+            if (f != 0 && f != 1) {
+                throw unreadable();
+            }
+            return f == 1;
         }
 
         private static byte[] field(final ByteBuffer in) throws StoreException {
@@ -188,7 +214,7 @@ public final class RelayRoutes {
         }
         final byte[] capability = new byte[RelayClient.KEY_SIZE];
         random.nextBytes(capability);
-        final Route r = new Route(matchId, capability, NONE, NONE, NONE);
+        final Route r = new Route(matchId, capability, NONE, NONE, NONE, false);
         save(r);
         Arrays.fill(capability, (byte) 0);
         return r;
@@ -196,6 +222,7 @@ public final class RelayRoutes {
 
     /**
      * Stores the peer's half, as received over the authenticated session.
+     * An ending route stays as it is.
      *
      * @param matchId the conversation
      * @param peerRoutingId the peer's routing id
@@ -209,7 +236,10 @@ public final class RelayRoutes {
         }
         final Route r = forMatch(matchId).orElseThrow(
                 () -> new StoreException(StoreException.Reason.ENGINE, "no route issued for this match"));
-        save(new Route(matchId, r.receiveCapability(), peerRoutingId, sendCapability, r.allowedFor()));
+        if (r.ending()) {
+            return;
+        }
+        save(new Route(matchId, r.receiveCapability(), peerRoutingId, sendCapability, r.allowedFor(), false));
     }
 
     /**
@@ -221,9 +251,26 @@ public final class RelayRoutes {
      */
     public void markAllowed(final byte[] matchId, final byte[] routingId) throws StoreException {
         final Optional<Route> r = forMatch(matchId);
-        if (r.isPresent()) {
+        if (r.isPresent() && !r.get().ending()) {
             final Route x = r.get();
-            save(new Route(matchId, x.receiveCapability(), x.peerRoutingId(), x.sendCapability(), routingId));
+            save(new Route(matchId, x.receiveCapability(), x.peerRoutingId(), x.sendCapability(), routingId, false));
+        }
+    }
+
+    /**
+     * Marks a conversation's route as ending: from now on nothing arrives
+     * under it, and the next relay pass revokes and forgets it. Call inside
+     * the transaction that removes the conversation.
+     *
+     * @param matchId the conversation
+     * @throws StoreException on engine failure
+     */
+    public void markEnding(final byte[] matchId) throws StoreException {
+        final Optional<Route> r = forMatch(matchId);
+        if (r.isPresent() && !r.get().ending()) {
+            final Route x = r.get();
+            save(new Route(matchId, x.receiveCapability(), x.peerRoutingId(), x.sendCapability(), x.allowedFor(),
+                    true));
         }
     }
 
@@ -254,7 +301,8 @@ public final class RelayRoutes {
     }
 
     /**
-     * Every conversation by the proof its peer's envelopes arrive under.
+     * Every open conversation by the proof its peer's envelopes arrive
+     * under; ending routes are left out, so their envelopes are dropped.
      *
      * @return proof hex to match id
      * @throws StoreException on engine failure
@@ -262,7 +310,9 @@ public final class RelayRoutes {
     public Map<String, byte[]> byProof() throws StoreException {
         final Map<String, byte[]> out = new HashMap<>();
         for (final Route r : all()) {
-            out.put(Hex.encode(r.proof()), r.matchId());
+            if (!r.ending()) {
+                out.put(Hex.encode(r.proof()), r.matchId());
+            }
         }
         return out;
     }

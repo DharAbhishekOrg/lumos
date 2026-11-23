@@ -499,7 +499,7 @@
     "ADR-008",
     "ADR-010"
    ],
-   "last_commit": "dbc2319",
+   "last_commit": "89b3a79",
    "updated": "2026-11-23"
   },
   {
@@ -889,12 +889,15 @@
    "req_id": "SRS-MAT-010",
    "status": "implemented",
    "code": [
+    "android-app/app/src/main/java/com/lumos/app/chat/ConversationRemoval.java",
     "android-app/app/src/main/java/com/lumos/app/match/InterestLedger.java",
+    "android-app/app/src/main/java/com/lumos/app/relay/ConversationSafety.java",
     "android-app/app/src/main/java/com/lumos/app/relay/RelaySync.java",
     "ios-app/shell/Sources/LumosAppShell/InterestLedger.swift",
     "ios-app/shell/Sources/LumosAppShell/RelaySync.swift"
    ],
    "tests": [
+    "java:app-dev:ConversationSafetyTest.unmatchDeletesTheChatFromThisPhoneAndEndsTheRouteWithoutTheNetwork",
     "java:app-dev:InterestLedgerTest.unmatchingFlipsTheMatchRecordWithoutDeletingIt",
     "java:app-dev:RelayReceiptsTest.afterUnmatchThePeersSendsAreTakenByTheRelayButNeverDelivered",
     "swift:LumosAppShell:InterestLedgerTests.testUnmatchingFlipsTheMatchRecordWithoutDeletingIt",
@@ -904,7 +907,7 @@
    "adr": [
     "ADR-003"
    ],
-   "last_commit": "f409d2a",
+   "last_commit": "89b3a79",
    "updated": "2026-11-23"
   },
   {
@@ -3214,7 +3217,7 @@
     "ADR-003",
     "ADR-010"
    ],
-   "last_commit": "dbc2319",
+   "last_commit": "89b3a79",
    "updated": "2026-11-23"
   },
   {
@@ -4848,6 +4851,8 @@
    "req_id": "SRS-RMT-016",
    "status": "implemented",
    "code": [
+    "android-app/app/src/main/java/com/lumos/app/relay/ConversationSafety.java",
+    "android-app/app/src/main/java/com/lumos/app/relay/RelayRoutes.java",
     "android-app/app/src/main/java/com/lumos/app/relay/RelaySync.java",
     "android-app/app/src/main/java/com/lumos/app/relay/RouteExchange.java",
     "android-app/protocol-java/src/main/java/com/lumos/protocol/chat/RelayRoute.java",
@@ -4865,12 +4870,15 @@
     "go:backend/internal/relay:TestConcurrentAllowsCannotOvershootTheCeiling",
     "go:protocol/chat:TestARouteRoundTripsAndAnythingElseIsRefused",
     "go:protocol/chat:TestCommittedRoutesAndReceiptsDecodeAndReencode",
+    "java:app-dev:ConversationSafetyTest.anEndingSurvivesBeingKilledOfflineAndAMessageAlreadyWaitingIsNeverShown",
+    "java:app-dev:ConversationSafetyTest.theNextPassRevokesSoTheirLaterMessagesNeverReachThisDevice",
     "java:app-dev:RelayReceiptsTest.afterUnmatchThePeersSendsAreTakenByTheRelayButNeverDelivered",
+    "java:app-dev:RelayRoutesTest.theEndingMarkSticksAndTheRouteAcceptsNothing",
     "swift:LumosAppShell:RelayReceiptsTests.testAfterUnmatchThePeersSendsAreTakenByTheRelayButNeverDelivered"
    ],
    "evidence": [],
    "adr": [],
-   "last_commit": "f409d2a",
+   "last_commit": "89b3a79",
    "updated": "2026-11-23"
   },
   {
@@ -4930,23 +4938,34 @@
   },
   {
    "req_id": "SRS-SAF-001",
-   "status": "not_started",
-   "code": [],
-   "tests": [],
+   "status": "implemented",
+   "code": [
+    "android-app/app/src/main/java/com/lumos/app/conversation/ConversationActivity.java",
+    "android-app/app/src/main/java/com/lumos/app/conversation/SafetySheet.java",
+    "android-app/app/src/main/java/com/lumos/app/relay/ConversationSafety.java"
+   ],
+   "tests": [
+    "java:app-dev:ConversationPresenterTest.endingPassesTheChoiceThroughOnceAndTheConversationNoLongerOpens",
+    "java:app-instrumented:ConversationInstrumentedTest.theSafetySheetNamesThePersonActsOnlyWhenConfirmedAndThenCloses"
+   ],
    "evidence": [],
-   "adr": [],
-   "last_commit": null,
-   "updated": null
+   "adr": [
+    "ADR-003"
+   ],
+   "last_commit": "89b3a79",
+   "updated": "2026-11-23"
   },
   {
    "req_id": "SRS-SAF-002",
    "status": "implemented",
    "code": [
     "android-app/app/src/main/java/com/lumos/app/nearby/BlockedPeers.java",
+    "android-app/app/src/main/java/com/lumos/app/relay/ConversationSafety.java",
     "android-app/protocol-java/src/main/java/com/lumos/protocol/match/ConsentGate.java",
     "ios-app/shell/Sources/LumosAppShell/NearbyFeed.swift"
    ],
    "tests": [
+    "java:app-dev:ConversationSafetyTest.blockPutsTheIdentityOnTheListTheNearbyFeedReads",
     "java:app-dev:NearbyFeedControllerTest.aBlockedIdentityNeverReappearsUnderRotation",
     "java:protocol-conformance:ConsentGateTest.conversationNeverFlowsBeforeAMatchAndConsentNeverAfterABlock"
    ],
@@ -4954,8 +4973,8 @@
    "adr": [
     "ADR-002"
    ],
-   "last_commit": "1e058a2",
-   "updated": "2026-11-20"
+   "last_commit": "89b3a79",
+   "updated": "2026-11-23"
   },
   {
    "req_id": "SRS-SAF-003",
@@ -5856,7 +5875,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "dbc2319",
+   "last_commit": "89b3a79",
    "updated": "2026-11-23"
   },
   {
@@ -5866,7 +5885,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "dbc2319",
+   "last_commit": "89b3a79",
    "updated": "2026-11-23"
   },
   {
@@ -5876,7 +5895,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "dbc2319",
+   "last_commit": "89b3a79",
    "updated": "2026-11-23"
   },
   {
@@ -5900,7 +5919,7 @@
    "adr": [
     "ADR-003"
    ],
-   "last_commit": "dbc2319",
+   "last_commit": "89b3a79",
    "updated": "2026-11-23"
   },
   {
@@ -5922,7 +5941,7 @@
    "adr": [
     "ADR-002"
    ],
-   "last_commit": "dbc2319",
+   "last_commit": "89b3a79",
    "updated": "2026-11-23"
   },
   {
@@ -5941,7 +5960,7 @@
    "adr": [
     "ADR-002"
    ],
-   "last_commit": "dbc2319",
+   "last_commit": "89b3a79",
    "updated": "2026-11-23"
   },
   {
@@ -5951,7 +5970,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "dbc2319",
+   "last_commit": "89b3a79",
    "updated": "2026-11-23"
   },
   {
@@ -5961,7 +5980,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "dbc2319",
+   "last_commit": "89b3a79",
    "updated": "2026-11-23"
   },
   {
@@ -5971,7 +5990,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "dbc2319",
+   "last_commit": "89b3a79",
    "updated": "2026-11-23"
   },
   {
@@ -5981,7 +6000,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "dbc2319",
+   "last_commit": "89b3a79",
    "updated": "2026-11-23"
   },
   {
@@ -5991,7 +6010,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "dbc2319",
+   "last_commit": "89b3a79",
    "updated": "2026-11-23"
   },
   {
@@ -6001,7 +6020,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "dbc2319",
+   "last_commit": "89b3a79",
    "updated": "2026-11-23"
   },
   {
@@ -9151,7 +9170,7 @@
    ],
    "evidence": [],
    "adr": [],
-   "last_commit": "dbc2319",
+   "last_commit": "89b3a79",
    "updated": "2026-11-23"
   },
   {
@@ -9212,7 +9231,7 @@
    ],
    "evidence": [],
    "adr": [],
-   "last_commit": "dbc2319",
+   "last_commit": "89b3a79",
    "updated": "2026-11-23"
   },
   {

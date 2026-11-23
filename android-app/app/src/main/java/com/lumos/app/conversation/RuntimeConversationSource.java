@@ -1,7 +1,7 @@
 /*
  * Lumos - android-app/app / The conversation screen's source, on the running chat stack.
  * Author: dhar.abhishek.email@gmail.com
- * Implements: SRS-RMT-001, SRS-RMT-003, SRS-RMT-010, SRS-RMT-014, SRS-UX-012
+ * Implements: SRS-RMT-001, SRS-RMT-003, SRS-RMT-010, SRS-RMT-014, SRS-RMT-016, SRS-UX-012
  * ADRs: ADR-012
  * Threading: serial-executor
  * Notes: Runs on the app's relay executor, where the chat store lives. Every
@@ -11,7 +11,9 @@
  * or a receipt it asks for a relay pass at once, so a message does not wait
  * for the periodic poll. Read receipts are on until the settings slice gives
  * the person the switch (SRS-RMT-014); delivery receipts never depend on it.
- * The peer's name is not stored yet (CS4), so displayName is empty.
+ * The peer's name is not stored yet (CS4), so displayName is empty. Ending
+ * a conversation asks for a pass too: that pass revokes the peer's
+ * capability at the relay.
  */
 
 package com.lumos.app.conversation;
@@ -24,6 +26,7 @@ import com.lumos.app.BuildConfig;
 import com.lumos.app.LumosApplication;
 import com.lumos.app.chat.ChatRecords;
 import com.lumos.app.relay.ChatRuntime;
+import com.lumos.app.relay.ConversationSafety;
 import com.lumos.app.relay.RelayException;
 import com.lumos.app.relay.RelayJobs;
 import com.lumos.app.store.StoreException;
@@ -130,6 +133,20 @@ public final class RuntimeConversationSource implements ConversationSource {
             }
         } catch (final StoreException e) {
             // Nothing was marked; the next open tries again.
+        }
+    }
+
+    @Override
+    public boolean end(final byte[] matchId, final ConversationSafety.Ending how) {
+        try {
+            final Optional<ChatRuntime> rt = runtime();
+            if (rt.isEmpty() || !rt.get().safety().end(matchId, how)) {
+                return false;
+            }
+            kick(app);
+            return true;
+        } catch (final StoreException e) {
+            return false;
         }
     }
 
