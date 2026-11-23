@@ -229,7 +229,13 @@ prep merges (so the tests the prep adds are counted).
   in the matrix; each is now linked to the rows its Java original proves (88
   links on 33 rows, every one in main's executed set).
 - **S9b, the closeout report.** `evidence/wp05/closeout.md` and its machine
-  twin.
+  twin, derived from conformance run 45213450535 on merge 47dd491 (2,242
+  tests): 31 of 53 in-scope IDs `tested`, 16 `implemented`, 6 `not_started`,
+  every linked test executed. Each fuzz target was also fuzzed for two
+  minutes (19.3 million executions, clean). The document-agreement test now
+  holds every closeout to its snapshot, not only WP-01's. **WP-05 is closed**
+  with the gaps the report names. The largest is that no chat screen exists
+  yet, and the proposed next slice is the chat surface.
 
 ## Owner-executed, never simulated
 
