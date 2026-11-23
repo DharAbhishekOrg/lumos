@@ -12,6 +12,7 @@ Go; part of the repository-root Go module `github.com/dharabhishekorg/lumos`.
 | `toolchain/` | Present — pinned toolchain manifest (WP-01 slice S0) |
 | `vectorgen/` | Present — the single deterministic golden-vector generator (framing + errors in S4a; crypto S4b; adv/media/config/voucher S4c) |
 | `constantsgen/` | Present — tri-language constants codegen + generated error codes, class limits and config-override schema |
+| `tokensgen/` | Present — CR-008 design tokens to Android resources and Swift, with the WCAG AA gate on every promised pair (`-check` in CI) |
 | `tracecheck/` | Present — trace-matrix completeness / freshness / honesty gate, plus `-stamp` and the executed-test collector |
 
 ## Rules

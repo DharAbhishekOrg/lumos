@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Lumos - android-app/app / Design tokens, Midnight theme (values-night).
+  Author: dhar.abhishek.email@gmail.com
+  Implements: TRS-UX-001, TRS-UX-002, SRS-UX-003
+  ADRs: -
+  Threading: n/a
+  GENERATED - DO NOT EDIT. Generator: tools/tokensgen
+  Source: docs/design/midnight-aurora.tokens.json (CR-008, accepted 2026-11-23)
+-->
+<resources>
+    <!-- The page behind everything: app background, under the floating navigation layer. -->
+    <color name="lumos_canvas">#FF0A0D1A</color>
+    <!-- Cards, list rows, the chat background. Body text (ink, ink-muted, ink-subtle) passes AA on it. -->
+    <color name="lumos_surface">#FF121629</color>
+    <!-- Sheets, menus, the safety sheet, incoming chat bubbles' neighbourhood. In light it is white with a shadow. -->
+    <color name="lumos_surface_raised">#FF1A1F38</color>
+    <!-- Pressed rows, chips at rest, the composer field. Danger text passes on it (4.7:1 dark). -->
+    <color name="lumos_surface_high">#FF242A4A</color>
+    <!-- Hairlines between list rows. Decorative only: never the only boundary of a control. -->
+    <color name="lumos_divider">#FF262C4C</color>
+    <!-- Borders of controls and inputs, focus rings' outer ring. 3:1 or more on canvas, surface and surface-high (WCAG 1.4.11). -->
+    <color name="lumos_outline">#FF6E779E</color>
+    <!-- Primary text and icons. -->
+    <color name="lumos_ink">#FFF3F4FA</color>
+    <!-- Secondary text: bios, prompt questions, timestamps beside a name. -->
+    <color name="lumos_ink_muted">#FFB6BBD3</color>
+    <!-- Tertiary text: captions, placeholder text, sent and delivered ticks. Still 4.5:1 on canvas and surface. -->
+    <color name="lumos_ink_subtle">#FF959BB8</color>
+    <!-- THE brand colour: primary buttons, selected tab, links, the outgoing bubble's family. Text in violet passes on canvas and surface. -->
+    <color name="lumos_violet">#FF9D86FF</color>
+    <!-- Text and icons ON a violet fill (6.7:1 in both themes). -->
+    <color name="lumos_on_violet">#FF0A0D1A</color>
+    <!-- Tonal containers: selected chips, the visibility pill, prompt cards. Ink and violet both pass on it. -->
+    <color name="lumos_violet_soft">#FF2A2360</color>
+    <!-- Nearby and live: someone is here now, the Bluetooth/Wi-Fi path, nearby-only media. Never used for danger or for brand CTAs. -->
+    <color name="lumos_aqua">#FF3DDCC4</color>
+    <!-- Interest and the match moment: the 'Interested' action, the match celebration. Kept away from danger controls; always with an icon. -->
+    <color name="lumos_coral">#FFFF8A7A</color>
+    <!-- Venues and perks, and gentle caution (not danger): 'only visible to people here', expiring visibility. -->
+    <color name="lumos_amber">#FFFFBE5C</color>
+    <!-- Block, report, emergency wipe, failed sends. Always paired with an icon and a word: never colour alone (SRS-NFR-A11Y-005). -->
+    <color name="lumos_danger">#FFFF5F72</color>
+    <!-- The owner's ruling: two blue ticks when read. Only for the read state, on every bubble colour (4.7:1 dark, 4.4:1 light). -->
+    <color name="lumos_read">#FF5AB4FF</color>
+    <!-- Queued, sent and delivered ticks: the same glyph family, told apart by shape and by their spoken labels, not by colour. -->
+    <color name="lumos_tick">#FF959BB8</color>
+    <!-- Messages I sent. Ink and every tick colour pass on it. -->
+    <color name="lumos_bubble_out">#FF3B2F8F</color>
+    <!-- Messages I received. -->
+    <color name="lumos_bubble_in">#FF1A1F38</color>
+    <!-- First stop of the aurora: used ONLY for the match moment's glow and the brand mark. Never a full-screen wash, never behind text. -->
+    <color name="lumos_aurora_start">#FF9D86FF</color>
+    <!-- Second stop of the aurora; same restrictions. -->
+    <color name="lumos_aurora_end">#FF3DDCC4</color>
+    <!-- Behind sheets and dialogs. With Reduce Transparency it becomes opaque canvas. -->
+    <color name="lumos_scrim">#A305070F</color>
+</resources>

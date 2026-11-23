@@ -154,6 +154,10 @@ jobs:
         run: go vet ./...
       - name: constants gate
         run: go run ./tools/constantsgen -check
+      # CR-008: the Android and iOS design tokens are generated from one file
+      # and every promised colour pair is held to WCAG 2.2 AA (TRS-UX-001).
+      - name: token gate (one source, readable pairs)
+        run: go run ./tools/tokensgen -check
       - name: vector gate (determinism + staleness)
         run: go run ./tools/vectorgen -check
       # Written to RUNNER_TEMP, never into the working tree: repolint's drift

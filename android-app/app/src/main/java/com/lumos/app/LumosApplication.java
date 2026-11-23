@@ -1,7 +1,7 @@
 /*
  * Lumos - android-app/app / The process entry point: the crypto backend first, then the relay plumbing.
  * Author: dhar.abhishek.email@gmail.com
- * Implements: TRS-CRY-001, TRS-CRY-003, SRS-RMT-003, TRS-TRN-012
+ * Implements: TRS-CRY-001, TRS-CRY-003, SRS-RMT-003, TRS-TRN-012, SRS-UX-003
  * ADRs: ADR-001, ADR-012
  * Threading: main
  * Notes: Android creates the Application before any activity, service or
@@ -11,11 +11,15 @@
  * sure the periodic relay poll exists (it only ever runs with a network) and
  * owns the one serial executor every relay pass runs on. The chat runtime is
  * booted lazily on that executor, never on the main thread, and only once.
+ * Midnight is the default appearance (CR-008); the setting that lets a person
+ * choose Daylight or follow the system lands with the chat surface's settings
+ * slice.
  */
 
 package com.lumos.app;
 
 import android.app.Application;
+import androidx.appcompat.app.AppCompatDelegate;
 import com.lumos.app.crypto.LibsodiumCryptoBackend;
 import com.lumos.app.relay.ChatRuntime;
 import com.lumos.app.relay.RelayJobs;
@@ -28,6 +32,9 @@ import java.util.concurrent.Executors;
 /** The Lumos process. */
 public final class LumosApplication extends Application {
 
+    /** Midnight, the dark theme, unless the person chooses otherwise (CR-008). */
+    public static final int DEFAULT_NIGHT_MODE = AppCompatDelegate.MODE_NIGHT_YES;
+
     private final ExecutorService relayExecutor = Executors.newSingleThreadExecutor();
     private ChatRuntime runtime;
     private boolean booted;
@@ -35,6 +42,7 @@ public final class LumosApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+        AppCompatDelegate.setDefaultNightMode(DEFAULT_NIGHT_MODE);
         LumosCrypto.install(LibsodiumCryptoBackend.load());
         if (!BuildConfig.RELAY_BASE_URL.isEmpty()) {
             RelayJobs.ensurePeriodic(this);

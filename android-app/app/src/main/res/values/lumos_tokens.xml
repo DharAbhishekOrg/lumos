@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Lumos - android-app/app / Design tokens, Daylight theme (values).
+  Author: dhar.abhishek.email@gmail.com
+  Implements: TRS-UX-001, TRS-UX-002, SRS-UX-003
+  ADRs: -
+  Threading: n/a
+  GENERATED - DO NOT EDIT. Generator: tools/tokensgen
+  Source: docs/design/midnight-aurora.tokens.json (CR-008, accepted 2026-11-23)
+-->
+<resources>
+    <!-- The page behind everything: app background, under the floating navigation layer. -->
+    <color name="lumos_canvas">#FFF6F6FB</color>
+    <!-- Cards, list rows, the chat background. Body text (ink, ink-muted, ink-subtle) passes AA on it. -->
+    <color name="lumos_surface">#FFFFFFFF</color>
+    <!-- Sheets, menus, the safety sheet, incoming chat bubbles' neighbourhood. In light it is white with a shadow. -->
+    <color name="lumos_surface_raised">#FFFFFFFF</color>
+    <!-- Pressed rows, chips at rest, the composer field. Danger text passes on it (4.7:1 dark). -->
+    <color name="lumos_surface_high">#FFECEDF6</color>
+    <!-- Hairlines between list rows. Decorative only: never the only boundary of a control. -->
+    <color name="lumos_divider">#FFDADCEA</color>
+    <!-- Borders of controls and inputs, focus rings' outer ring. 3:1 or more on canvas, surface and surface-high (WCAG 1.4.11). -->
+    <color name="lumos_outline">#FF767C99</color>
+    <!-- Primary text and icons. -->
+    <color name="lumos_ink">#FF12152A</color>
+    <!-- Secondary text: bios, prompt questions, timestamps beside a name. -->
+    <color name="lumos_ink_muted">#FF454A66</color>
+    <!-- Tertiary text: captions, placeholder text, sent and delivered ticks. Still 4.5:1 on canvas and surface. -->
+    <color name="lumos_ink_subtle">#FF5E637F</color>
+    <!-- THE brand colour: primary buttons, selected tab, links, the outgoing bubble's family. Text in violet passes on canvas and surface. -->
+    <color name="lumos_violet">#FF5A3BE0</color>
+    <!-- Text and icons ON a violet fill (6.7:1 in both themes). -->
+    <color name="lumos_on_violet">#FFFFFFFF</color>
+    <!-- Tonal containers: selected chips, the visibility pill, prompt cards. Ink and violet both pass on it. -->
+    <color name="lumos_violet_soft">#FFECE7FF</color>
+    <!-- Nearby and live: someone is here now, the Bluetooth/Wi-Fi path, nearby-only media. Never used for danger or for brand CTAs. -->
+    <color name="lumos_aqua">#FF00796B</color>
+    <!-- Interest and the match moment: the 'Interested' action, the match celebration. Kept away from danger controls; always with an icon. -->
+    <color name="lumos_coral">#FFC2412F</color>
+    <!-- Venues and perks, and gentle caution (not danger): 'only visible to people here', expiring visibility. -->
+    <color name="lumos_amber">#FF8A5A00</color>
+    <!-- Block, report, emergency wipe, failed sends. Always paired with an icon and a word: never colour alone (SRS-NFR-A11Y-005). -->
+    <color name="lumos_danger">#FFC21F35</color>
+    <!-- The owner's ruling: two blue ticks when read. Only for the read state, on every bubble colour (4.7:1 dark, 4.4:1 light). -->
+    <color name="lumos_read">#FF0A66C2</color>
+    <!-- Queued, sent and delivered ticks: the same glyph family, told apart by shape and by their spoken labels, not by colour. -->
+    <color name="lumos_tick">#FF5E637F</color>
+    <!-- Messages I sent. Ink and every tick colour pass on it. -->
+    <color name="lumos_bubble_out">#FFE4DDFF</color>
+    <!-- Messages I received. -->
+    <color name="lumos_bubble_in">#FFECEDF6</color>
+    <!-- First stop of the aurora: used ONLY for the match moment's glow and the brand mark. Never a full-screen wash, never behind text. -->
+    <color name="lumos_aurora_start">#FF5A3BE0</color>
+    <!-- Second stop of the aurora; same restrictions. -->
+    <color name="lumos_aurora_end">#FF00796B</color>
+    <!-- Behind sheets and dialogs. With Reduce Transparency it becomes opaque canvas. -->
+    <color name="lumos_scrim">#6612152A</color>
+    <dimen name="lumos_space_1">4dp</dimen>
+    <dimen name="lumos_space_2">8dp</dimen>
+    <dimen name="lumos_space_3">12dp</dimen>
+    <dimen name="lumos_space_4">16dp</dimen>
+    <dimen name="lumos_space_6">24dp</dimen>
+    <dimen name="lumos_space_8">32dp</dimen>
+    <dimen name="lumos_space_12">48dp</dimen>
+    <dimen name="lumos_radius_sm">10dp</dimen>
+    <dimen name="lumos_radius_md">16dp</dimen>
+    <dimen name="lumos_radius_lg">22dp</dimen>
+    <dimen name="lumos_radius_xl">32dp</dimen>
+    <dimen name="lumos_radius_pill">999dp</dimen>
+    <dimen name="lumos_type_display_size">34sp</dimen>
+    <dimen name="lumos_type_display_line_height">41sp</dimen>
+    <integer name="lumos_type_display_weight">700</integer>
+    <dimen name="lumos_type_title_1_size">28sp</dimen>
+    <dimen name="lumos_type_title_1_line_height">34sp</dimen>
+    <integer name="lumos_type_title_1_weight">600</integer>
+    <dimen name="lumos_type_title_2_size">22sp</dimen>
+    <dimen name="lumos_type_title_2_line_height">28sp</dimen>
+    <integer name="lumos_type_title_2_weight">600</integer>
+    <dimen name="lumos_type_headline_size">17sp</dimen>
+    <dimen name="lumos_type_headline_line_height">22sp</dimen>
+    <integer name="lumos_type_headline_weight">600</integer>
+    <dimen name="lumos_type_body_size">17sp</dimen>
+    <dimen name="lumos_type_body_line_height">24sp</dimen>
+    <integer name="lumos_type_body_weight">400</integer>
+    <dimen name="lumos_type_callout_size">15sp</dimen>
+    <dimen name="lumos_type_callout_line_height">20sp</dimen>
+    <integer name="lumos_type_callout_weight">400</integer>
+    <dimen name="lumos_type_footnote_size">13sp</dimen>
+    <dimen name="lumos_type_footnote_line_height">18sp</dimen>
+    <integer name="lumos_type_footnote_weight">400</integer>
+    <dimen name="lumos_type_caption_size">12sp</dimen>
+    <dimen name="lumos_type_caption_line_height">16sp</dimen>
+    <integer name="lumos_type_caption_weight">500</integer>
+</resources>

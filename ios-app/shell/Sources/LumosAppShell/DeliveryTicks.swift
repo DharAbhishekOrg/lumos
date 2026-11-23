@@ -1,6 +1,6 @@
 /// Lumos - ios-app/shell / How each delivery state looks and sounds.
 /// Author: dhar.abhishek.email@gmail.com
-/// Implements: SRS-RMT-005, SRS-RMT-013
+/// Implements: SRS-RMT-005, SRS-RMT-013, TRS-UX-001
 /// ADRs: ADR-002
 /// Threading: main-safe
 /// Notes: The Android DeliveryTickStyle decision for decision, per the owner's
@@ -11,7 +11,8 @@
 /// plain value, tested on any host. The shell never imports SwiftUI (its
 /// iPhone-triple CI pass has no UIKit), so the view that renders this value -
 /// the symbols overlapped, tinted, one accessibility element - lands with the
-/// app target.
+/// app target. Each tint is a design token (CR-008), the same ones Android's
+/// tick colours resolve to, so both apps draw a state in the same colour.
 
 import Foundation
 import LumosProtocol
@@ -31,6 +32,16 @@ public struct DeliveryTickStyle: Equatable, Sendable {
         case failed
         /// Waiting for a nearby path.
         case nearby
+
+        /// The design token this tint is drawn in, per theme.
+        public var color: LumosTokens.ThemedColor {
+            switch self {
+            case .pending, .grey: return LumosTokens.Color.tick
+            case .read: return LumosTokens.Color.read
+            case .failed: return LumosTokens.Color.danger
+            case .nearby: return LumosTokens.Color.aqua
+            }
+        }
     }
 
     /// SF Symbol names, drawn overlapped left to right (two for a double tick).
