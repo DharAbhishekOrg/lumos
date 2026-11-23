@@ -423,3 +423,37 @@ func TestWPFourScopeIsTheBriefNotWhatMoved(t *testing.T) {
 		}
 	}
 }
+
+// TestWPFiveScopeIsTheBriefNotWhatMoved transcribes the WP-05 brief's "Key
+// requirements" row independently of the production list. The acceptance
+// runs, the TRS Sec. 10 section and rows WP-05 touched outside its row
+// (TRS-PAT-004's outbox, SRS-SAF-002's relay half, SRS-IDN-006) must all read
+// as out of scope, as must the neighbours of every range.
+func TestWPFiveScopeIsTheBriefNotWhatMoved(t *testing.T) {
+	inScope := []string{"SRS-MAT-010", "TRS-BCK-012", "SRS-NFR-PERF-006", "SRS-DAT-001", "SRS-DAT-003"}
+	for i := 1; i <= 18; i++ {
+		inScope = append(inScope, fmt.Sprintf("SRS-RMT-%03d", i))
+	}
+	for i := 1; i <= 8; i++ {
+		inScope = append(inScope, fmt.Sprintf("TRS-BCK-%03d", i))
+	}
+	for i := 1; i <= 16; i++ {
+		inScope = append(inScope, fmt.Sprintf("TRS-CRY-%03d", i))
+	}
+	for i := 4; i <= 9; i++ {
+		inScope = append(inScope, fmt.Sprintf("SRS-NFR-SEC-%03d", i))
+	}
+	for _, id := range inScope {
+		if !InScope("WP-05", id) {
+			t.Errorf("%s is named by the WP-05 brief but reads as out of scope", id)
+		}
+	}
+	for _, id := range []string{"AT-006", "AT-007", "AT-018", "AT-025", "SRS-RMT-019", "SRS-MAT-009",
+		"SRS-MAT-011", "TRS-BCK-009", "TRS-BCK-011", "TRS-BCK-013", "TRS-CRY-017", "SRS-NFR-SEC-003",
+		"SRS-NFR-SEC-010", "SRS-NFR-PERF-005", "SRS-DAT-002", "SRS-DAT-004", "TRS-PAT-004",
+		"SRS-SAF-002", "SRS-IDN-006"} {
+		if InScope("WP-05", id) {
+			t.Errorf("%s is not in the WP-05 brief's row but reads as in scope", id)
+		}
+	}
+}

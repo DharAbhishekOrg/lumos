@@ -1,14 +1,15 @@
 /*
  * Lumos - android-app/protocol-conformance / The Double Ratchet, replayed on Java.
  * Author: dhar.abhishek.email@gmail.com
- * Implements: TRS-CRY-002, TRS-CRY-006, TRS-CRY-007, TRS-CRY-013, TRS-TST-001
+ * Implements: TRS-CRY-002, TRS-CRY-006, TRS-CRY-007, TRS-CRY-013, TRS-TST-001, SRS-NFR-SEC-007
  * ADRs: ADR-001, ADR-008
  * Threading: test-only
  * Notes: Every committed sequence of crypto/ratchet_sequences.json decrypts
  * byte-for-byte on this port using the RECORDED turn keys (never re-derived
  * seeds), and the MAX_SKIP negative fails with its exact code. Beyond the
  * vectors: a used key is gone (replay fails), a tampered header fails, a
- * skipped key is consumed once, and an expired skipped key is pruned.
+ * skipped key is consumed once, and an expired skipped key is pruned. Every
+ * low-order X25519 point is refused, directly and as a ratchet key.
  */
 
 package com.lumos.protocol.conformance;
@@ -140,5 +141,34 @@ public class RatchetConformanceTest {
                 () -> p.bob.decrypt(m0.header(), m0.ciphertext(), NOW + ttl + 1, kpB));
         assertEquals(LumosErrors.ERR_CRYPTO_AEAD_AUTH_FAILED, late.code(), "an expired key is simply gone");
         assertEquals(0, p.bob.skippedCount());
+    }
+
+    /** The seven low-order u-coordinates (0, 1, the two of order 8, p-1, p, p+1). */
+    private static final String[] LOW_ORDER_POINTS = {
+        "0000000000000000000000000000000000000000000000000000000000000000",
+        "0100000000000000000000000000000000000000000000000000000000000000",
+        "e0eb7a7c3b41b8ae1656e3faf19fc46ada098deb9c32b1fd866205165f49b800",
+        "5f9c95bca3508c24b1d0b1559c83ef5b04445cc4581c8e86d8224eddd09f1157",
+        "ecffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff7f",
+        "edffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff7f",
+        "eeffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff7f",
+    };
+
+    @Test
+    void everyLowOrderPeerKeyIsRefusedDirectlyAndAsARatchetKey() throws Exception {
+        final JsonObject root = Vectors.load(FILE);
+        final byte[] scalar = new byte[32];
+        java.util.Arrays.fill(scalar, (byte) 0x42);
+        for (final String hex : LOW_ORDER_POINTS) {
+            final byte[] point = Vectors.hexToBytes(hex);
+            assertThrows(GeneralSecurityException.class,
+                    () -> com.lumos.protocol.wire.LumosCrypto.x25519(scalar, point), "agreement with " + hex);
+            final Pair p = new Pair(root);
+            final DoubleRatchet.KeyProvider kpB = recorded(root, "testonly_responder_dh_turn_privs_hex");
+            final DoubleRatchet.Header forged = new DoubleRatchet.Header(point, 0, 0);
+            final Frame.WireException e = assertThrows(Frame.WireException.class,
+                    () -> p.bob.decrypt(forged, new byte[32], NOW, kpB));
+            assertEquals(LumosErrors.ERR_CRYPTO_AEAD_AUTH_FAILED, e.code(), "a ratchet key " + hex);
+        }
     }
 }
