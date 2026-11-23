@@ -1,0 +1,8 @@
+/etc/ssl/certs/ca-certificates.crt in this image is the Mozilla CA certificate
+store, unmodified, as packaged by Alpine Linux (ca-certificates-bundle), taken
+from the digest-pinned golang:1.26-alpine build stage of backend/deploy/staging/Dockerfile.
+
+Licence: MPL-2.0 (certificate data) AND MIT (Alpine packaging).
+Source of the data: https://www.mozilla.org/en-US/about/governance/policies/security-group/certs/
+Alpine package source: https://gitlab.alpinelinux.org/alpine/ca-certificates
+MPL-2.0 text: https://www.mozilla.org/en-US/MPL/2.0/

@@ -1,4 +1,4 @@
-# Lumos - deploy/staging / Local and CI staging: lumosd with PostgreSQL and Redis.
+# Lumos - backend/deploy/staging / Local and CI staging: lumosd with PostgreSQL and Redis.
 # Author: dhar.abhishek.email@gmail.com
 # Implements: TRS-BCK-001, TRS-BCK-003, TRS-BCK-008, SRS-DAT-003
 # ADRs: ADR-001
@@ -14,7 +14,7 @@
 # the last under BSD-3-Clause (7.4+ is RSALv2/SSPLv1). Images are pinned by
 # digest.
 #
-#   docker compose -f deploy/staging/docker-compose.yml up -d --build --wait
+#   docker compose -f backend/deploy/staging/docker-compose.yml up -d --build --wait
 
 name: lumos-staging
 
@@ -46,8 +46,11 @@ services:
 
   lumosd:
     build:
-      context: ../..
-      dockerfile: deploy/staging/Dockerfile
+      context: ../../..
+      dockerfile: backend/deploy/staging/Dockerfile
+      args:
+        REVISION: ${LUMOS_REVISION:-unknown}
+        BUILT_AT: ${LUMOS_BUILT_AT:-unset}
     image: lumos/lumosd:staging
     environment:
       LUMOS_DATABASE_URL: postgres://lumos@postgres:5432/lumos?sslmode=disable

@@ -420,5 +420,42 @@
     "licence_verification": "LICENSE read from the 0.11.0 tag: ISC, Frank Denis. libsodium itself is ISC and its text is reproduced in the notices file."
    }
   ]
+ },
+ "container_images": {
+  "note": "WP-05 S8. Images the staging stack builds from or runs, pinned by digest in backend/deploy/staging/. Owner licence ruling 2026-11-23: the lumosd image is scratch plus one unmodified MPL-2.0 data file (the Mozilla CA bundle, needed for TLS to FCM/APNs); the PostgreSQL and Redis images are approved for local and CI staging only, unmodified and never distributed (the cloud staging uses managed Cloud SQL and Memorystore).",
+  "images": [
+   {
+    "image": "golang:1.26-alpine",
+    "digest": "sha256:ecb67f987aa1a57794c91d19ade7ae0209f2f0f5496aaef9e6ae85ddf92d02ab",
+    "license": "BSD-3-Clause (Go); Alpine packages",
+    "license_verified": "Go LICENSE read inside the image (Copyright 2009 The Go Authors, BSD-3-Clause).",
+    "scope": "build stage only; supplies /etc/ssl/certs/ca-certificates.crt",
+    "why": "Builds the static lumosd binary with the go.mod toolchain line."
+   },
+   {
+    "image": "ca-certificates-bundle (Alpine, from the golang stage)",
+    "version": "20261020-r0",
+    "license": "MPL-2.0 AND MIT",
+    "license_verified": "apk info -a inside the pinned builder: 'Pre generated bundle of Mozilla certificates', license 'MPL-2.0 AND MIT'.",
+    "scope": "shipped in the lumosd image, unmodified, with backend/deploy/staging/NOTICE-ca-certificates.txt",
+    "why": "TLS trust for FCM and APNs. Owner-approved weak copyleft data file (2026-11-23)."
+   },
+   {
+    "image": "postgres:16-alpine",
+    "digest": "sha256:f2f98726820d0342055351c6e9d36e705f5bfffb3dd53ff556325114b08afb6d",
+    "version": "16.16",
+    "license": "PostgreSQL License (Alpine layer includes GPL tools)",
+    "scope": "local and CI staging only, unmodified, never distributed",
+    "why": "The registry and capability store, as Cloud SQL will be in the cloud."
+   },
+   {
+    "image": "redis:7.2-alpine",
+    "digest": "sha256:2f66de68111e64c3927859f158f8e666066dae2b97d9f82770a6f37a5aa1c335",
+    "version": "7.2.17",
+    "license": "BSD-3-Clause (the 7.2 line; Redis 7.4+ is RSALv2/SSPLv1 and must not be adopted without an owner ruling)",
+    "scope": "local and CI staging only, unmodified, never distributed",
+    "why": "The envelope mailboxes, as Memorystore will be in the cloud. Run with noeviction and an append-only file."
+   }
+  ]
  }
 }

@@ -46,6 +46,21 @@ Go; part of the repository-root Go module `github.com/dharabhishekorg/lumos`.
   provider servers. Real delivery is owner-executed: see
   `docs/ops/environments.md`.
 
+- WP-05 S8: `deploy/staging/` builds the `lumosd` image (a static binary on
+  `scratch`, non-root, with only the Mozilla CA bundle beside it; base
+  pinned by digest) and composes it with PostgreSQL 16 and Redis 7.2
+  (`noeviction`, append-only). `integration/` drives that stack over HTTP
+  like a phone would; CI runs it as `staging integration`. The relay now
+  fetches each mailbox in submission order, which that suite showed was
+  needed. The cloud deploy is owner-executed: `docs/ops/staging-deploy.md`.
+
+### Running the staging stack locally
+
+    docker compose -f backend/deploy/staging/docker-compose.yml \
+      -f backend/deploy/staging/docker-compose.test.yml up -d --build --wait
+    LUMOS_STAGING_URL=http://127.0.0.1:8080 LUMOS_STAGING_REDIS_ADDR=127.0.0.1:6379 \
+      go test -count=1 -v ./backend/integration/
+
 ### Running the PostgreSQL and Redis tests locally
 
     export LUMOS_TEST_POSTGRES_DSN="host=localhost port=5432 user=postgres dbname=postgres sslmode=disable"

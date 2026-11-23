@@ -8,7 +8,7 @@
  * app's real chat and relay stack (ChatStore, RelaySync, PrekeyPublisher,
  * RouteExchange, RelaySessions on real SQLite files) talking through the
  * app's real UrlConnectionTransport to the lumosd image, PostgreSQL and Redis
- * from deploy/staging/docker-compose.yml. Nothing is faked between them: the
+ * from backend/deploy/staging/docker-compose.yml. Nothing is faked between them: the
  * registry verifies the device-auth and prekey signatures the Java code made,
  * the bundle a session starts from is the one the registry handed out, and
  * the envelopes are opened by the other device's ratchet. "Kill" drops every

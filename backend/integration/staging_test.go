@@ -4,7 +4,7 @@
 // ADRs: ADR-001
 // Threading: test-only
 // Notes: WP-05 S8. TRS-TST-006 against the REAL stack: the lumosd image,
-// PostgreSQL and Redis from deploy/staging/docker-compose.yml, reached only
+// PostgreSQL and Redis from backend/deploy/staging/docker-compose.yml, reached only
 // over HTTP. The suite is black-box on purpose: it defines its own request
 // shapes instead of importing the server's, so a contract drift fails here.
 // Every test enrols its own fresh devices, so tests are independent.
