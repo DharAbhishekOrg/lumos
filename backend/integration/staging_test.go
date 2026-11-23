@@ -511,7 +511,7 @@ func TestQueuedMailSurvivesARestartBefore(t *testing.T) {
 
 func TestQueuedMailSurvivesARestartAfter(t *testing.T) {
 	path := restartPhase(t, "after")
-	b, err := os.ReadFile(path)
+	b, err := os.ReadFile(path) // #nosec G304 -- the path is the CI job's own state file (LUMOS_STAGING_STATE)
 	if err != nil {
 		t.Fatal(err)
 	}
