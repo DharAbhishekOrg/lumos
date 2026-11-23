@@ -294,6 +294,7 @@ final class RelayDevice {
     private(set) var sync: RelaySync!
     private(set) var sessions: RelaySessions!
     private(set) var exchange: RouteExchange!
+    private(set) var safety: ConversationSafety!
 
     var edPub: Data { ed.publicKey.rawRepresentation }
 
@@ -333,6 +334,7 @@ final class RelayDevice {
                          clock: { clock.now() })
         sessions = RelaySessions(chat: chat, routes: routes, account: account, anonymous: anonymous)
         exchange = RouteExchange(routes: routes, account: account)
+        safety = ConversationSafety(store: store, chat: chat, routes: routes, clock: { clock.now() })
     }
 
     /// Process death: drop every object and reboot from the same file.
@@ -345,6 +347,7 @@ final class RelayDevice {
         sync = nil
         sessions = nil
         exchange = nil
+        safety = nil
         try boot()
     }
 

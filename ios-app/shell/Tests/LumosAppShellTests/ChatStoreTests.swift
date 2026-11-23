@@ -1,6 +1,7 @@
 /// Lumos - LumosAppShellTests / Two devices chat through their outboxes, die, restart, and lose nothing.
 /// Author: dhar.abhishek.email@gmail.com
-/// Implements: SRS-RMT-003, SRS-RMT-004, SRS-RMT-011, SRS-RMT-014, SRS-RMT-017, TRS-LOC-004, TRS-CRY-005, TRS-TST-001
+/// Implements: SRS-RMT-003, SRS-RMT-004, SRS-RMT-010, SRS-RMT-011, SRS-RMT-014, SRS-RMT-017, SRS-NFR-SEC-006,
+///             TRS-LOC-004, TRS-CRY-005, TRS-TST-001
 /// ADRs: ADR-001, ADR-003
 /// Threading: test-only
 /// Notes: The Swift side of the Android ChatStoreTest, scenario for scenario.
@@ -428,5 +429,34 @@ final class ChatStoreTests: XCTestCase {
         }
         XCTAssertThrowsError(try ChatRecords.OutboxItem.decode(o.encoded + Data([0])), "trailing bytes are refused")
         XCTAssertThrowsError(try PrekeySecret(oneTime: true, id: 1, privateKey: Data(count: 31)))
+    }
+
+    func testDeleteForMeWaitsUntilTheMessageHasGoneAndNeverTouchesThePeer() throws {
+        let (alice, bob) = try matchedPair()
+        let id = try alice.chat.send(matchID: match, event: try text("see you there"))
+        XCTAssertFalse(try alice.chat.deleteForMe(messageID: id), "still in the outbox: its sealed envelope would still be sent")
+        try deliver(alice, bob)
+        XCTAssertTrue(try alice.chat.deleteForMe(messageID: id))
+        XCTAssertTrue(try alice.chat.messages(matchID: match).isEmpty, "gone from this device")
+        XCTAssertEqual(try bob.chat.messages(matchID: match).count, 1, "the peer keeps their copy and is told nothing")
+        XCTAssertTrue(try alice.chat.pendingOutbox().isEmpty, "and nothing was queued to tell them")
+        XCTAssertEqual(try alice.chat.peerIdentity(matchID: match), bob.keys.edPub, "the pinned peer")
+        XCTAssertFalse(try alice.chat.deleteForMe(messageID: randomBytes(16)), "an unknown id removes nothing")
+    }
+
+    func testOverTheDedupCapTheOldestIdsGoAndTheNewestStay() throws {
+        let d = try ChatDevice(ChatKeys(), clock: clock)
+        func put(_ expiresAt: Int64) throws -> String {
+            let id = ChatRecords.rowID(ChatRecords.newMessageID())
+            try d.store.put(kind: .messageDedup, id: id, plaintext: ChatRecords.encodeDedup(expiresAtMillis: expiresAt))
+            return id
+        }
+        let oldest = try put(1_000), older = try put(2_000), newer = try put(3_000), newest = try put(4_000)
+        XCTAssertEqual(try d.store.transaction { try ChatSessions.trimDedup(d.store, cap: 4) }, 0, "at the cap: untouched")
+        XCTAssertEqual(try d.store.transaction { try ChatSessions.trimDedup(d.store, cap: 2) }, 2)
+        XCTAssertNil(try d.store.get(kind: .messageDedup, id: oldest))
+        XCTAssertNil(try d.store.get(kind: .messageDedup, id: older))
+        XCTAssertNotNil(try d.store.get(kind: .messageDedup, id: newer))
+        XCTAssertNotNil(try d.store.get(kind: .messageDedup, id: newest))
     }
 }

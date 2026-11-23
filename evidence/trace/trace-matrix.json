@@ -499,7 +499,7 @@
     "ADR-008",
     "ADR-010"
    ],
-   "last_commit": "89b3a79",
+   "last_commit": "77ff764",
    "updated": "2026-11-23"
   },
   {
@@ -893,6 +893,7 @@
     "android-app/app/src/main/java/com/lumos/app/match/InterestLedger.java",
     "android-app/app/src/main/java/com/lumos/app/relay/ConversationSafety.java",
     "android-app/app/src/main/java/com/lumos/app/relay/RelaySync.java",
+    "ios-app/shell/Sources/LumosAppShell/ConversationSafety.swift",
     "ios-app/shell/Sources/LumosAppShell/InterestLedger.swift",
     "ios-app/shell/Sources/LumosAppShell/RelaySync.swift"
    ],
@@ -900,6 +901,7 @@
     "java:app-dev:ConversationSafetyTest.unmatchDeletesTheChatFromThisPhoneAndEndsTheRouteWithoutTheNetwork",
     "java:app-dev:InterestLedgerTest.unmatchingFlipsTheMatchRecordWithoutDeletingIt",
     "java:app-dev:RelayReceiptsTest.afterUnmatchThePeersSendsAreTakenByTheRelayButNeverDelivered",
+    "swift:LumosAppShell:ConversationSafetyTests.testUnmatchDeletesTheChatFromThisPhoneAndEndsTheRouteWithoutTheNetwork",
     "swift:LumosAppShell:InterestLedgerTests.testUnmatchingFlipsTheMatchRecordWithoutDeletingIt",
     "swift:LumosAppShell:RelayReceiptsTests.testAfterUnmatchThePeersSendsAreTakenByTheRelayButNeverDelivered"
    ],
@@ -907,7 +909,7 @@
    "adr": [
     "ADR-003"
    ],
-   "last_commit": "89b3a79",
+   "last_commit": "77ff764",
    "updated": "2026-11-23"
   },
   {
@@ -3217,7 +3219,7 @@
     "ADR-003",
     "ADR-010"
    ],
-   "last_commit": "89b3a79",
+   "last_commit": "77ff764",
    "updated": "2026-11-23"
   },
   {
@@ -3320,6 +3322,7 @@
     "java:protocol-conformance:RatchetConformanceTest.skippedKeysAreConsumedOnceAndExpire",
     "java:protocol-conformance:RatchetConformanceTest.theMaxSkipNegativeFailsWithItsExactCode",
     "swift:LumosAppShell:ChatStoreTests.testAMessageShowsAtMostOnceEvenIfDeliveredTwice",
+    "swift:LumosAppShell:ChatStoreTests.testOverTheDedupCapTheOldestIdsGoAndTheNewestStay",
     "swift:LumosProtocolConformance:RatchetConformanceTests.testAUsedKeyIsGoneAndATamperedHeaderFails",
     "swift:LumosProtocolConformance:RatchetConformanceTests.testSkippedKeysAreConsumedOnceAndExpire",
     "swift:LumosProtocolConformance:RatchetConformanceTests.testTheMaxSkipNegativeFailsWithItsExactCode"
@@ -3328,7 +3331,7 @@
    "adr": [
     "ADR-001"
    ],
-   "last_commit": "dbc2319",
+   "last_commit": "77ff764",
    "updated": "2026-11-23"
   },
   {
@@ -4716,18 +4719,20 @@
     "android-app/app/src/main/java/com/lumos/app/chat/ChatStore.java",
     "android-app/app/src/main/java/com/lumos/app/conversation/ConversationActivity.java",
     "android-app/app/src/main/java/com/lumos/app/conversation/ConversationPresenter.java",
-    "android-app/app/src/main/java/com/lumos/app/conversation/ConversationRows.java"
+    "android-app/app/src/main/java/com/lumos/app/conversation/ConversationRows.java",
+    "ios-app/shell/Sources/LumosAppShell/ChatStore.swift"
    ],
    "tests": [
     "java:app-dev:ChatStoreTest.deleteForMeWaitsUntilTheMessageHasGoneAndNeverTouchesThePeer",
     "java:app-dev:ConversationPresenterTest.eachBubbleOffersOnlyWhatItCanDo",
     "java:app-dev:ConversationPresenterTest.reactionsAndDeletesReachTheStackOnlyWhenAllowed",
     "java:app-dev:ConversationRowsTest.daysAreTheLocalDaysWithTodayAndYesterdayInWords",
-    "java:app-instrumented:ConversationInstrumentedTest.thePersonAndAScreenReaderGetTheWholeConversation"
+    "java:app-instrumented:ConversationInstrumentedTest.thePersonAndAScreenReaderGetTheWholeConversation",
+    "swift:LumosAppShell:ChatStoreTests.testDeleteForMeWaitsUntilTheMessageHasGoneAndNeverTouchesThePeer"
    ],
    "evidence": [],
    "adr": [],
-   "last_commit": "dbc2319",
+   "last_commit": "77ff764",
    "updated": "2026-11-23"
   },
   {
@@ -4860,6 +4865,8 @@
     "backend/internal/relay/postgres.go",
     "backend/internal/relay/service.go",
     "ios-app/protocol-conformance/Sources/LumosProtocol/Receipts.swift",
+    "ios-app/shell/Sources/LumosAppShell/ConversationSafety.swift",
+    "ios-app/shell/Sources/LumosAppShell/RelayAccount.swift",
     "ios-app/shell/Sources/LumosAppShell/RelaySync.swift",
     "protocol/chat/route.go"
    ],
@@ -4874,11 +4881,14 @@
     "java:app-dev:ConversationSafetyTest.theNextPassRevokesSoTheirLaterMessagesNeverReachThisDevice",
     "java:app-dev:RelayReceiptsTest.afterUnmatchThePeersSendsAreTakenByTheRelayButNeverDelivered",
     "java:app-dev:RelayRoutesTest.theEndingMarkSticksAndTheRouteAcceptsNothing",
+    "swift:LumosAppShell:ConversationSafetyTests.testAnEndingSurvivesBeingKilledOfflineAndAMessageAlreadyWaitingIsNeverShown",
+    "swift:LumosAppShell:ConversationSafetyTests.testTheEndingMarkSticksAndTheRouteAcceptsNothing",
+    "swift:LumosAppShell:ConversationSafetyTests.testTheNextPassRevokesSoTheirLaterMessagesNeverReachThisDevice",
     "swift:LumosAppShell:RelayReceiptsTests.testAfterUnmatchThePeersSendsAreTakenByTheRelayButNeverDelivered"
    ],
    "evidence": [],
    "adr": [],
-   "last_commit": "89b3a79",
+   "last_commit": "77ff764",
    "updated": "2026-11-23"
   },
   {
@@ -4942,7 +4952,8 @@
    "code": [
     "android-app/app/src/main/java/com/lumos/app/conversation/ConversationActivity.java",
     "android-app/app/src/main/java/com/lumos/app/conversation/SafetySheet.java",
-    "android-app/app/src/main/java/com/lumos/app/relay/ConversationSafety.java"
+    "android-app/app/src/main/java/com/lumos/app/relay/ConversationSafety.java",
+    "ios-app/shell/Sources/LumosAppShell/ConversationSafety.swift"
    ],
    "tests": [
     "java:app-dev:ConversationPresenterTest.endingPassesTheChoiceThroughOnceAndTheConversationNoLongerOpens",
@@ -4952,7 +4963,7 @@
    "adr": [
     "ADR-003"
    ],
-   "last_commit": "89b3a79",
+   "last_commit": "77ff764",
    "updated": "2026-11-23"
   },
   {
@@ -4962,18 +4973,20 @@
     "android-app/app/src/main/java/com/lumos/app/nearby/BlockedPeers.java",
     "android-app/app/src/main/java/com/lumos/app/relay/ConversationSafety.java",
     "android-app/protocol-java/src/main/java/com/lumos/protocol/match/ConsentGate.java",
+    "ios-app/shell/Sources/LumosAppShell/ConversationSafety.swift",
     "ios-app/shell/Sources/LumosAppShell/NearbyFeed.swift"
    ],
    "tests": [
     "java:app-dev:ConversationSafetyTest.blockPutsTheIdentityOnTheListTheNearbyFeedReads",
     "java:app-dev:NearbyFeedControllerTest.aBlockedIdentityNeverReappearsUnderRotation",
-    "java:protocol-conformance:ConsentGateTest.conversationNeverFlowsBeforeAMatchAndConsentNeverAfterABlock"
+    "java:protocol-conformance:ConsentGateTest.conversationNeverFlowsBeforeAMatchAndConsentNeverAfterABlock",
+    "swift:LumosAppShell:ConversationSafetyTests.testBlockPutsTheIdentityOnTheListTheNearbyFeedReads"
    ],
    "evidence": [],
    "adr": [
     "ADR-002"
    ],
-   "last_commit": "89b3a79",
+   "last_commit": "77ff764",
    "updated": "2026-11-23"
   },
   {
@@ -7866,7 +7879,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "b19540a",
+   "last_commit": "77ff764",
    "updated": "2026-11-23"
   },
   {
@@ -7876,7 +7889,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "b19540a",
+   "last_commit": "77ff764",
    "updated": "2026-11-23"
   },
   {
@@ -7896,7 +7909,7 @@
    "adr": [
     "ADR-002"
    ],
-   "last_commit": "b19540a",
+   "last_commit": "77ff764",
    "updated": "2026-11-23"
   },
   {
@@ -7906,7 +7919,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "b19540a",
+   "last_commit": "77ff764",
    "updated": "2026-11-23"
   },
   {
@@ -7916,7 +7929,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "b19540a",
+   "last_commit": "77ff764",
    "updated": "2026-11-23"
   },
   {
@@ -7926,7 +7939,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "b19540a",
+   "last_commit": "77ff764",
    "updated": "2026-11-23"
   },
   {
@@ -7948,7 +7961,7 @@
     "ADR-003",
     "ADR-010"
    ],
-   "last_commit": "b19540a",
+   "last_commit": "77ff764",
    "updated": "2026-11-23"
   },
   {
@@ -7958,7 +7971,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "b19540a",
+   "last_commit": "77ff764",
    "updated": "2026-11-23"
   },
   {
@@ -7968,7 +7981,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "b19540a",
+   "last_commit": "77ff764",
    "updated": "2026-11-23"
   },
   {
@@ -7978,7 +7991,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "b19540a",
+   "last_commit": "77ff764",
    "updated": "2026-11-23"
   },
   {
@@ -7988,7 +8001,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "b19540a",
+   "last_commit": "77ff764",
    "updated": "2026-11-23"
   },
   {
@@ -7998,7 +8011,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "b19540a",
+   "last_commit": "77ff764",
    "updated": "2026-11-23"
   },
   {
@@ -8174,7 +8187,7 @@
    "adr": [
     "ADR-003"
    ],
-   "last_commit": "b19540a",
+   "last_commit": "77ff764",
    "updated": "2026-11-23"
   },
   {
@@ -9170,7 +9183,7 @@
    ],
    "evidence": [],
    "adr": [],
-   "last_commit": "89b3a79",
+   "last_commit": "77ff764",
    "updated": "2026-11-23"
   },
   {
@@ -9231,7 +9244,7 @@
    ],
    "evidence": [],
    "adr": [],
-   "last_commit": "89b3a79",
+   "last_commit": "77ff764",
    "updated": "2026-11-23"
   },
   {

@@ -97,14 +97,28 @@ public final class HiddenPeers {
     }
 }
 
-/// Answers whether an authenticated identity is blocked (SRS-NBY-013).
+/// The block list: placed from a conversation's safety actions, read by the
+/// feed (SRS-NBY-013, SRS-SAF-002). There is no unblock until the settings
+/// slice gives the person a reviewed way to do it.
 public final class BlockedPeers {
+
+    private static let versionLine = "lumos-blocked-peer/1"
 
     private let store: LocalStore
 
     /// Binds the reader to its store.
     public init(store: LocalStore) {
         self.store = store
+    }
+
+    /// Blocks a peer; a second block of the same identity writes nothing.
+    /// - Parameters:
+    ///   - peerKey: the authenticated peer identifier, hex
+    ///   - atUtcMillis: when the user chose it
+    public func block(peerKey: String, atUtcMillis: Int64) throws {
+        guard try !isBlocked(peerKey: peerKey) else { return }
+        let payload = Self.versionLine + "\n\(atUtcMillis)\n"
+        try store.put(kind: .blockEntry, plaintext: Data(payload.utf8), naturalKey: HiddenPeers.naturalKey(peerKey))
     }
 
     /// Whether a peer is blocked.

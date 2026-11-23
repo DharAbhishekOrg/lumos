@@ -20,6 +20,12 @@
 /// revoking one stops exactly one peer (SRS-RMT-016). allowedFor records the
 /// registration a proof was allowed under: after a fresh registration every
 /// route reads as not yet allowed and is allowed again.
+///
+/// Ending a conversation (unmatch, block) marks its route ending in the same
+/// transaction that removes the conversation. An ending route accepts nothing
+/// and is never allowed again; the next relay pass revokes its proof and then
+/// forgets it, so going offline at the moment of an unmatch cannot leave the
+/// peer able to reach this device. Format 1 rows read as not ending.
 
 import CryptoKit
 import Foundation
@@ -86,7 +92,8 @@ public final class RelayAccount {
 /// The conversations' relay routes, one sealed row each.
 public final class RelayRoutes {
 
-    private static let format: UInt8 = 1
+    private static let formatV1: UInt8 = 1
+    private static let format: UInt8 = 2
     private static let maxField = 64
 
     /// One conversation's route.
@@ -100,6 +107,8 @@ public final class RelayRoutes {
         public let sendCapability: Data
         /// The routing id this route's proof was allowed under, or empty.
         public let allowedFor: Data
+        /// True once the conversation has ended: revoke, then forget.
+        public var ending: Bool = false
 
         /// Whether both halves are known, so this device can send.
         public var canSend: Bool {
@@ -115,12 +124,15 @@ public final class RelayRoutes {
                 out.append(UInt8(f.count))
                 out += f
             }
+            out.append(ending ? 1 : 0)
             return out
         }
 
         static func decode(_ b: Data) throws -> Route {
             let bytes = [UInt8](b)
-            guard bytes.first == RelayRoutes.format else { throw RelayRoutes.unreadable }
+            guard let format = bytes.first, format == RelayRoutes.format || format == RelayRoutes.formatV1 else {
+                throw RelayRoutes.unreadable
+            }
             var at = 1
             var fields: [Data] = []
             for _ in 0..<5 {
@@ -131,9 +143,15 @@ public final class RelayRoutes {
                 fields.append(Data(bytes[at..<at + n]))
                 at += n
             }
+            var ending = false
+            if format == RelayRoutes.format {
+                guard at < bytes.count, bytes[at] <= 1 else { throw RelayRoutes.unreadable }
+                ending = bytes[at] == 1
+                at += 1
+            }
             guard at == bytes.count else { throw RelayRoutes.unreadable }
             return Route(matchID: fields[0], receiveCapability: fields[1], peerRoutingID: fields[2],
-                         sendCapability: fields[3], allowedFor: fields[4])
+                         sendCapability: fields[3], allowedFor: fields[4], ending: ending)
         }
     }
 
@@ -157,22 +175,32 @@ public final class RelayRoutes {
         return r
     }
 
-    /// Stores the peer's half.
+    /// Stores the peer's half. An ending route stays as it is.
     /// - Throws: ``StoreError`` when no route was issued or the half is malformed
     public func setPeer(matchID: Data, peerRoutingID: Data, sendCapability: Data) throws {
         guard peerRoutingID.count == RelayClient.routingIDSize, sendCapability.count == RelayClient.keySize else {
             throw StoreError.engine("a peer half is a routing id and a capability")
         }
         guard let r = try forMatch(matchID) else { throw StoreError.engine("no route issued for this match") }
+        guard !r.ending else { return }
         try save(Route(matchID: matchID, receiveCapability: r.receiveCapability, peerRoutingID: peerRoutingID,
                        sendCapability: sendCapability, allowedFor: r.allowedFor))
     }
 
     /// Records that the proof is allowed under a registration.
     public func markAllowed(matchID: Data, routingID: Data) throws {
-        guard let x = try forMatch(matchID) else { return }
+        guard let x = try forMatch(matchID), !x.ending else { return }
         try save(Route(matchID: matchID, receiveCapability: x.receiveCapability, peerRoutingID: x.peerRoutingID,
                        sendCapability: x.sendCapability, allowedFor: routingID))
+    }
+
+    /// Marks a match's route ending: nothing arrives under it any more, and the
+    /// next relay pass revokes and forgets it. Call inside the transaction that
+    /// removes the conversation.
+    public func markEnding(matchID: Data) throws {
+        guard var x = try forMatch(matchID), !x.ending else { return }
+        x.ending = true
+        try save(x)
     }
 
     /// A match's route, if any.
@@ -185,9 +213,11 @@ public final class RelayRoutes {
         try store.allOf(kind: .relayRoute).map { try Route.decode($0.content) }
     }
 
-    /// Proof (hex) to match id, for naming fetched envelopes' conversations.
+    /// Proof (hex) to match id for every open route, naming fetched envelopes'
+    /// conversations; ending routes are left out, so their envelopes are dropped.
     public func byProof() throws -> [String: Data] {
-        Dictionary(try all().map { (RelayHex.encode($0.proof), $0.matchID) }, uniquingKeysWith: { first, _ in first })
+        Dictionary(try all().filter { !$0.ending }.map { (RelayHex.encode($0.proof), $0.matchID) },
+                   uniquingKeysWith: { first, _ in first })
     }
 
     /// Forgets a match's route.

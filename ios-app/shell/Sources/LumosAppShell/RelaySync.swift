@@ -91,10 +91,13 @@ public final class RelaySync {
         return t
     }
 
-    /// Revokes a match's capability at the relay and forgets the route (unmatch, block).
+    /// Marks a match's route ending, revokes its capability at the relay and
+    /// forgets the route (unmatch, block). Offline, the ending route is kept and
+    /// every later pass finishes the job; meanwhile nothing the peer sends opens.
     /// - Returns: nil when done (or nothing to do); the stop when the relay could not be told yet
     public func forget(matchID: Data) throws -> Stop? {
         guard let route = try routes.forMatch(matchID) else { return nil }
+        try routes.markEnding(matchID: matchID)
         do {
             try anonymous.as(credential: try account.ensure(anonymous).credential).revoke(proof: route.proof)
             try routes.remove(matchID: matchID)
@@ -111,9 +114,14 @@ public final class RelaySync {
         let reg = try account.ensure(anonymous)
         let client = anonymous.as(credential: reg.credential)
         try prekeys.ensure(client: client, registration: reg)
-        for r in try routes.all() where r.allowedFor != reg.routingID {
-            try client.allow(proof: r.proof)
-            try routes.markAllowed(matchID: r.matchID, routingID: reg.routingID)
+        for r in try routes.all() {
+            if r.ending {
+                try client.revoke(proof: r.proof)
+                try routes.remove(matchID: r.matchID)
+            } else if r.allowedFor != reg.routingID {
+                try client.allow(proof: r.proof)
+                try routes.markAllowed(matchID: r.matchID, routingID: reg.routingID)
+            }
         }
         return client
     }
@@ -121,7 +129,7 @@ public final class RelaySync {
     private func send(_ client: RelayClient, _ t: inout Report) throws {
         var held = Set<Data>()
         for item in try chat.pendingOutbox() where !held.contains(item.matchID) {
-            guard let route = try routes.forMatch(item.matchID), route.canSend else {
+            guard let route = try routes.forMatch(item.matchID), !route.ending, route.canSend else {
                 held.insert(item.matchID)
                 continue
             }
