@@ -1,0 +1,6 @@
+# Lumos - build context filter for deploy/staging/Dockerfile: only what the lumosd build reads.
+*
+!go.mod
+!go.sum
+!backend/**
+!protocol/**/*.go
