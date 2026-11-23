@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Lumos - android-app/app / Display text in Sora, from API 28.
+  Author: dhar.abhishek.email@gmail.com
+  Implements: TRS-UX-001, SRS-UX-003
+  ADRs: -
+  Threading: n/a
+  Notes: Sora ships as one variable font (SIL OFL 1.1, owner-approved
+  2026-11-23, unmodified: picking an instance by its wght axis is not a
+  modification of the file). android:fontVariationSettings is the API-28
+  way to pick the token weight from XML; API 26-27 use the base styles in
+  values/themes.xml.
+-->
+<resources>
+    <style name="TextAppearance.Lumos.Display" parent="TextAppearance.Material3.HeadlineLarge">
+        <item name="fontFamily">@font/sora</item>
+        <item name="android:fontFamily">@font/sora</item>
+        <item name="android:fontVariationSettings">\'wght\' 700</item>
+        <item name="android:textSize">@dimen/lumos_type_display_size</item>
+        <item name="lineHeight">@dimen/lumos_type_display_line_height</item>
+        <item name="android:letterSpacing">-0.012</item>
+    </style>
+
+    <style name="TextAppearance.Lumos.Title1" parent="TextAppearance.Material3.HeadlineMedium">
+        <item name="fontFamily">@font/sora</item>
+        <item name="android:fontFamily">@font/sora</item>
+        <item name="android:fontVariationSettings">\'wght\' 600</item>
+        <item name="android:textSize">@dimen/lumos_type_title_1_size</item>
+        <item name="lineHeight">@dimen/lumos_type_title_1_line_height</item>
+        <item name="android:letterSpacing">-0.007</item>
+    </style>
+</resources>

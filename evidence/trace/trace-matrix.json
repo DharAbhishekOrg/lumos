@@ -499,7 +499,7 @@
     "ADR-008",
     "ADR-010"
    ],
-   "last_commit": "10c5af9",
+   "last_commit": "b19540a",
    "updated": "2026-11-23"
   },
   {
@@ -1786,13 +1786,21 @@
   },
   {
    "req_id": "SRS-NFR-A11Y-002",
-   "status": "not_started",
-   "code": [],
-   "tests": [],
+   "status": "implemented",
+   "code": [
+    "docs/design/midnight-aurora.tokens.json",
+    "tools/tokensgen/contrast.go"
+   ],
+   "tests": [
+    "go:tools/tokensgen:TestAnUnreadableTokenIsRefusedNamingThemeAndPair",
+    "go:tools/tokensgen:TestTheCommittedTokensKeepEveryPromisedPairReadableInBothThemes",
+    "swift:LumosAppShell:LumosTokensTests.testEveryTickTintIsATokenVisibleOnBothBubbles",
+    "swift:LumosAppShell:LumosTokensTests.testTextIsReadableOnEverySurfaceInBothThemes"
+   ],
    "evidence": [],
    "adr": [],
-   "last_commit": null,
-   "updated": null
+   "last_commit": "b19540a",
+   "updated": "2026-11-23"
   },
   {
    "req_id": "SRS-NFR-A11Y-003",
@@ -3198,7 +3206,7 @@
     "ADR-003",
     "ADR-010"
    ],
-   "last_commit": "10c5af9",
+   "last_commit": "b19540a",
    "updated": "2026-11-23"
   },
   {
@@ -4503,12 +4511,14 @@
     "java:app-dev:DeliveryTickStyleTest.theTicksFollowTheOwnersWhatsAppStyleRuling",
     "java:app-dev:RelayReceiptsTest.oneTickWhenTheRelayTakesItTwoOnlyFromTheDeliveredReceiptBlueOnlyFromTheRead",
     "java:app-dev:RelaySyncTest.aSendRefusedForGoodShowsFailedAndTheNextOneStillGoes",
+    "java:app-instrumented:ThemeTokensInstrumentedTest.theTicksFollowTheTokensInBothThemes",
     "java:protocol-conformance:DeliveryConformanceTest.committedTicksMatch",
     "java:protocol-conformance:DeliveryConformanceTest.committedTimelinesReplayStepForStep",
     "java:protocol-conformance:ReceiptsConformanceTest.theRecordedSessionReplaysAndEveryRelabelFails",
     "swift:LumosAppShell:ChatStoreTests.testALateDeliveredReceiptNeverDowngradesRead",
     "swift:LumosAppShell:DeliveryTicksTests.testEveryStateHasItsOwnSpokenLabel",
     "swift:LumosAppShell:DeliveryTicksTests.testTheTicksFollowTheOwnersWhatsAppStyleRuling",
+    "swift:LumosAppShell:LumosTokensTests.testEveryTickTintIsATokenVisibleOnBothBubbles",
     "swift:LumosAppShell:RelayReceiptsTests.testOneTickWhenTheRelayTakesItTwoOnlyFromTheDeliveredReceiptBlueOnlyFromTheRead",
     "swift:LumosAppShell:RelaySyncTests.testASendRefusedForGoodShowsFailedAndTheNextOneStillGoes",
     "swift:LumosProtocolConformance:DeliveryConformanceTests.testCommittedTicksMatch",
@@ -5343,13 +5353,30 @@
   },
   {
    "req_id": "SRS-UX-003",
-   "status": "not_started",
-   "code": [],
-   "tests": [],
+   "status": "implemented",
+   "code": [
+    "android-app/app/src/main/java/com/lumos/app/LumosApplication.java",
+    "android-app/app/src/main/res/font/sora.ttf",
+    "android-app/app/src/main/res/values-night/lumos_tokens.xml",
+    "android-app/app/src/main/res/values-v28/lumos_type.xml",
+    "android-app/app/src/main/res/values/lumos_tokens.xml",
+    "android-app/app/src/main/res/values/themes.xml",
+    "docs/design/midnight-aurora.tokens.json",
+    "ios-app/shell/Sources/LumosAppShell/LumosTokens.swift",
+    "tools/tokensgen/emit.go",
+    "tools/tokensgen/main.go",
+    "tools/tokensgen/tokens.go"
+   ],
+   "tests": [
+    "java:app-instrumented:ThemeTokensInstrumentedTest.midnightAndDaylightResolveToTheTokenValues",
+    "java:app-instrumented:ThemeTokensInstrumentedTest.midnightIsTheDefaultAppearance",
+    "java:app-instrumented:ThemeTokensInstrumentedTest.soraLoadsAsAFont",
+    "swift:LumosAppShell:LumosTokensTests.testTheBrandValuesAreTheOnesTheOwnerAccepted"
+   ],
    "evidence": [],
    "adr": [],
-   "last_commit": null,
-   "updated": null
+   "last_commit": "b19540a",
+   "updated": "2026-11-23"
   },
   {
    "req_id": "SRS-UX-004",
@@ -5789,7 +5816,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "f409d2a",
+   "last_commit": "b19540a",
    "updated": "2026-11-23"
   },
   {
@@ -5799,7 +5826,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "f409d2a",
+   "last_commit": "b19540a",
    "updated": "2026-11-23"
   },
   {
@@ -5809,7 +5836,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "f409d2a",
+   "last_commit": "b19540a",
    "updated": "2026-11-23"
   },
   {
@@ -5833,7 +5860,7 @@
    "adr": [
     "ADR-003"
    ],
-   "last_commit": "f409d2a",
+   "last_commit": "b19540a",
    "updated": "2026-11-23"
   },
   {
@@ -5855,7 +5882,7 @@
    "adr": [
     "ADR-002"
    ],
-   "last_commit": "f409d2a",
+   "last_commit": "b19540a",
    "updated": "2026-11-23"
   },
   {
@@ -5874,7 +5901,7 @@
    "adr": [
     "ADR-002"
    ],
-   "last_commit": "f409d2a",
+   "last_commit": "b19540a",
    "updated": "2026-11-23"
   },
   {
@@ -5884,7 +5911,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "f409d2a",
+   "last_commit": "b19540a",
    "updated": "2026-11-23"
   },
   {
@@ -5894,7 +5921,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "f409d2a",
+   "last_commit": "b19540a",
    "updated": "2026-11-23"
   },
   {
@@ -5904,7 +5931,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "f409d2a",
+   "last_commit": "b19540a",
    "updated": "2026-11-23"
   },
   {
@@ -5914,7 +5941,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "f409d2a",
+   "last_commit": "b19540a",
    "updated": "2026-11-23"
   },
   {
@@ -5924,7 +5951,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "f409d2a",
+   "last_commit": "b19540a",
    "updated": "2026-11-23"
   },
   {
@@ -5934,7 +5961,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "f409d2a",
+   "last_commit": "b19540a",
    "updated": "2026-11-23"
   },
   {
@@ -6609,7 +6636,7 @@
     "ci:conformance#31528127667"
    ],
    "adr": [],
-   "last_commit": "f409d2a",
+   "last_commit": "b19540a",
    "updated": "2026-11-23"
   },
   {
@@ -6697,7 +6724,7 @@
    ],
    "evidence": [],
    "adr": [],
-   "last_commit": "ec72b5b",
+   "last_commit": "b19540a",
    "updated": "2026-11-23"
   },
   {
@@ -7780,7 +7807,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "f409d2a",
+   "last_commit": "b19540a",
    "updated": "2026-11-23"
   },
   {
@@ -7790,7 +7817,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "f409d2a",
+   "last_commit": "b19540a",
    "updated": "2026-11-23"
   },
   {
@@ -7810,7 +7837,7 @@
    "adr": [
     "ADR-002"
    ],
-   "last_commit": "f409d2a",
+   "last_commit": "b19540a",
    "updated": "2026-11-23"
   },
   {
@@ -7820,7 +7847,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "f409d2a",
+   "last_commit": "b19540a",
    "updated": "2026-11-23"
   },
   {
@@ -7830,7 +7857,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "f409d2a",
+   "last_commit": "b19540a",
    "updated": "2026-11-23"
   },
   {
@@ -7840,7 +7867,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "f409d2a",
+   "last_commit": "b19540a",
    "updated": "2026-11-23"
   },
   {
@@ -7862,7 +7889,7 @@
     "ADR-003",
     "ADR-010"
    ],
-   "last_commit": "f409d2a",
+   "last_commit": "b19540a",
    "updated": "2026-11-23"
   },
   {
@@ -7872,7 +7899,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "f409d2a",
+   "last_commit": "b19540a",
    "updated": "2026-11-23"
   },
   {
@@ -7882,7 +7909,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "f409d2a",
+   "last_commit": "b19540a",
    "updated": "2026-11-23"
   },
   {
@@ -7892,7 +7919,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "f409d2a",
+   "last_commit": "b19540a",
    "updated": "2026-11-23"
   },
   {
@@ -7902,7 +7929,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "f409d2a",
+   "last_commit": "b19540a",
    "updated": "2026-11-23"
   },
   {
@@ -7912,7 +7939,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "f409d2a",
+   "last_commit": "b19540a",
    "updated": "2026-11-23"
   },
   {
@@ -8088,7 +8115,7 @@
    "adr": [
     "ADR-003"
    ],
-   "last_commit": "10c5af9",
+   "last_commit": "b19540a",
    "updated": "2026-11-23"
   },
   {
@@ -9084,7 +9111,7 @@
    ],
    "evidence": [],
    "adr": [],
-   "last_commit": "ec72b5b",
+   "last_commit": "b19540a",
    "updated": "2026-11-23"
   },
   {
@@ -9145,7 +9172,7 @@
    ],
    "evidence": [],
    "adr": [],
-   "last_commit": "ec72b5b",
+   "last_commit": "b19540a",
    "updated": "2026-11-23"
   },
   {
@@ -9595,23 +9622,52 @@
   },
   {
    "req_id": "TRS-UX-001",
-   "status": "not_started",
-   "code": [],
-   "tests": [],
+   "status": "implemented",
+   "code": [
+    "android-app/app/src/main/res/values-night/lumos_tokens.xml",
+    "android-app/app/src/main/res/values/lumos_tokens.xml",
+    "android-app/app/src/main/res/values/themes.xml",
+    "docs/design/midnight-aurora.tokens.json",
+    "ios-app/shell/Sources/LumosAppShell/LumosTokens.swift",
+    "tools/tokensgen/emit.go",
+    "tools/tokensgen/main.go",
+    "tools/tokensgen/tokens.go"
+   ],
+   "tests": [
+    "go:tools/tokensgen:TestAPlatformFileEditedByHandFailsTheGate",
+    "go:tools/tokensgen:TestOutputIsByteDeterministic",
+    "go:tools/tokensgen:TestTheCommittedPlatformFilesAreCurrent",
+    "java:app-instrumented:ThemeTokensInstrumentedTest.midnightAndDaylightResolveToTheTokenValues",
+    "java:app-instrumented:ThemeTokensInstrumentedTest.theMaterialRolesPointAtTheTokens",
+    "swift:LumosAppShell:LumosTokensTests.testTheBrandValuesAreTheOnesTheOwnerAccepted"
+   ],
    "evidence": [],
    "adr": [],
-   "last_commit": null,
-   "updated": null
+   "last_commit": "b19540a",
+   "updated": "2026-11-23"
   },
   {
    "req_id": "TRS-UX-002",
-   "status": "not_started",
-   "code": [],
-   "tests": [],
+   "status": "implemented",
+   "code": [
+    "android-app/app/src/main/res/values-night/lumos_tokens.xml",
+    "android-app/app/src/main/res/values/lumos_tokens.xml",
+    "android-app/app/src/main/res/values/themes.xml",
+    "docs/design/midnight-aurora.tokens.json",
+    "ios-app/shell/Sources/LumosAppShell/LumosTokens.swift",
+    "tools/tokensgen/emit.go",
+    "tools/tokensgen/main.go",
+    "tools/tokensgen/tokens.go"
+   ],
+   "tests": [
+    "go:tools/tokensgen:TestTheCommittedTokensKeepEveryPromisedPairReadableInBothThemes",
+    "java:app-instrumented:ThemeTokensInstrumentedTest.midnightAndDaylightResolveToTheTokenValues",
+    "swift:LumosAppShell:LumosTokensTests.testTheBrandValuesAreTheOnesTheOwnerAccepted"
+   ],
    "evidence": [],
    "adr": [],
-   "last_commit": null,
-   "updated": null
+   "last_commit": "b19540a",
+   "updated": "2026-11-23"
   },
   {
    "req_id": "TRS-UX-003",

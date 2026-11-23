@@ -38,6 +38,22 @@
 - **Contrast tests in code:** every text and icon pair the token file's
   `usage` notes promise is recomputed against WCAG 2.2 AA in both themes, so
   a later token edit cannot quietly break accessibility.
+- **Done (2026-11-23):**
+  - `tools/tokensgen` writes the Android colours (Daylight in `values/`,
+    Midnight in `values-night/`) and dimensions, and Swift `LumosTokens`. Its
+    `-check` runs as the token gate in CI, with 41 promised pairs held to
+    WCAG AA in both themes.
+  - The Material 3 theme maps every colour role and corner to the tokens.
+  - Midnight is the default appearance.
+  - The ticks take their token colours on both apps.
+  - Sora 2.000 ships unmodified in `res/font/sora.ttf`, with its licence
+    verbatim in the notices. Android 9+ draws display text in Sora at the
+    token weights. Android 8.x uses the platform face in bold, because
+    choosing a variable-font weight from XML needs API 28.
+  - **iOS** has the tokens as plain values (the shell never imports SwiftUI).
+    The font joins the iOS app target when that exists, from the same file.
+  - **Not yet in the token source:** motion, elevation and breakpoints
+    (TRS-UX-001 stays `implemented` until they are).
 
 ### CS2 (Android) and CS3 (iOS): Matches and Chat
 - **The Matches list and the conversation screen,** bound to ChatStore:

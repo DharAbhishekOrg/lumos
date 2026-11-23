@@ -7,13 +7,14 @@
   Threading: n/a
   Notes: The owner's WhatsApp-style ruling (2026-11-21): grey for pending,
   sent and delivered, blue for read, red for failed. The nearby colour marks
-  content that waits for a Bluetooth/Wi-Fi path. Brand palette work is
-  WP-10's; these are functional colours.
+  content that waits for a Bluetooth/Wi-Fi path. Since CR-008 each is the
+  design token for its meaning, so it follows Midnight and Daylight and the
+  token gate holds it readable on every bubble.
 -->
 <resources>
-    <color name="tick_pending">#FF8696A0</color>
-    <color name="tick_sent">#FF8696A0</color>
-    <color name="tick_read">#FF1E88E5</color>
-    <color name="tick_failed">#FFD32F2F</color>
-    <color name="tick_nearby">#FF00897B</color>
+    <color name="tick_pending">@color/lumos_tick</color>
+    <color name="tick_sent">@color/lumos_tick</color>
+    <color name="tick_read">@color/lumos_read</color>
+    <color name="tick_failed">@color/lumos_danger</color>
+    <color name="tick_nearby">@color/lumos_aqua</color>
 </resources>
