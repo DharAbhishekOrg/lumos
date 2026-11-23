@@ -1,12 +1,13 @@
 /// Lumos - LumosProtocolConformance / The Double Ratchet, replayed on Swift.
 /// Author: dhar.abhishek.email@gmail.com
-/// Implements: TRS-CRY-002, TRS-CRY-006, TRS-CRY-007, TRS-CRY-013, TRS-TST-001
+/// Implements: TRS-CRY-002, TRS-CRY-006, TRS-CRY-007, TRS-CRY-013, TRS-TST-001, SRS-NFR-SEC-007
 /// ADRs: ADR-001, ADR-008
 /// Threading: test-only
 /// Notes: The Java suite on this platform: every committed sequence decrypts
 /// byte-for-byte using the RECORDED turn keys, the MAX_SKIP negative fails
 /// with its exact code before storing anything, a used key is gone, a bent
-/// header fails, and a skipped key is consumed once and expires.
+/// header fails, and a skipped key is consumed once and expires. Every
+/// low-order X25519 point is refused, directly and as a ratchet key.
 
 import CryptoKit
 import Foundation
@@ -128,5 +129,32 @@ final class RatchetConformanceTests: XCTestCase {
         XCTAssertEqual(code { _ = try bob.decrypt(m0.0, m0.1, now: late, nextKey: kpB.next) },
                        LumosErrors.errCryptoAeadAuthFailed, "an expired key is simply gone")
         XCTAssertEqual(bob.skippedCount, 0)
+    }
+
+    /// The seven low-order u-coordinates (0, 1, the two of order 8, p-1, p, p+1).
+    private static let lowOrderPoints = [
+        "0000000000000000000000000000000000000000000000000000000000000000",
+        "0100000000000000000000000000000000000000000000000000000000000000",
+        "e0eb7a7c3b41b8ae1656e3faf19fc46ada098deb9c32b1fd866205165f49b800",
+        "5f9c95bca3508c24b1d0b1559c83ef5b04445cc4581c8e86d8224eddd09f1157",
+        "ecffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff7f",
+        "edffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff7f",
+        "eeffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff7f"
+    ]
+
+    func testEveryLowOrderPeerKeyIsRefusedDirectlyAndAsARatchetKey() throws {
+        let file = try Vectors.load(path, root: root)
+        let scalar = Data(repeating: 0x42, count: 32)
+        for hex in Self.lowOrderPoints {
+            let point = try XCTUnwrap(Hex.decode(hex))
+            XCTAssertThrowsError(try LumosCrypto.x25519(privateKeyRaw: scalar, publicKeyRaw: point),
+                                 "agreement with \(hex) must be refused")
+            var (_, bob) = try pair(file)
+            let kpB = try recorded(file, "testonly_responder_dh_turn_privs_hex")
+            let forged = DoubleRatchet.Header(dh: point, pn: 0, n: 0)
+            XCTAssertEqual(code { _ = try bob.decrypt(forged, Data(repeating: 0, count: 32), now: now,
+                                                     nextKey: kpB.next) },
+                           LumosErrors.errCryptoAeadAuthFailed, "a ratchet key \(hex) is refused")
+        }
     }
 }

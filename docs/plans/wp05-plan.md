@@ -206,6 +206,30 @@ together, alternating Android and iOS. Nothing in WP-05 implements them.
   runners); its relay logic is the Android port's, scenario for scenario.
 
 ### S9: Closeout
+In two PRs, as for WP-04: the prep, then the report derived by
+`tools/closeout` from the executed-test set of main's conformance run after the
+prep merges (so the tests the prep adds are counted).
+
+- **S9a, closeout prep.** WP-05's scope transcribed into `tools/closeout`
+  with its own test. An audit of every in-scope row found three gaps, closed
+  here:
+  - **iOS accepted low-order X25519 keys.** `LumosCrypto.x25519` returned the
+    all-zero secret for all seven low-order points instead of refusing them
+    (shown on swift-crypto by the new test failing without the guard). It now
+    refuses them, as Java's CryptoBackend and Go's crypto/ecdh already did;
+    both apps replay the same seven points, directly and as a ratchet key.
+  - **No static guard for TRS-CRY-012 / SRS-NFR-SEC-009.** A new lumoslint
+    rule refuses non-CSPRNG generators and TLS trust or hostname bypasses in
+    shipped Go, Java, Swift and TypeScript. The repository is clean under it.
+  - **No schema audit for SRS-DAT-001.** A test lists every column of the
+    migrated database with its type, so a new column fails until it is
+    checked against "no user content centrally".
+
+  The iOS chat-path tests S7f ported were running in CI but were never linked
+  in the matrix; each is now linked to the rows its Java original proves (88
+  links on 33 rows, every one in main's executed set).
+- **S9b, the closeout report.** `evidence/wp05/closeout.md` and its machine
+  twin.
 
 ## Owner-executed, never simulated
 

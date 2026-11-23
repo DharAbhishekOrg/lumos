@@ -123,12 +123,20 @@ public enum LumosCrypto {
     ///   - privateKeyRaw: raw 32-byte scalar
     ///   - publicKeyRaw: raw 32-byte peer public key
     /// - Returns: the 32-byte shared secret
-    /// - Throws: on malformed key material
+    /// - Throws: on malformed key material, or a low-order peer key (all-zero secret)
     public static func x25519(privateKeyRaw: Data, publicKeyRaw: Data) throws -> Data {
         let priv = try Curve25519.KeyAgreement.PrivateKey(rawRepresentation: privateKeyRaw)
         let pub = try Curve25519.KeyAgreement.PublicKey(rawRepresentation: publicKeyRaw)
         let secret = try priv.sharedSecretFromKeyAgreement(with: pub)
-        return secret.withUnsafeBytes { Data($0) }
+        let bytes = secret.withUnsafeBytes { Data($0) }
+        // SRS-NFR-SEC-007: a low-order peer key forces the all-zero secret, which
+        // an attacker knows in advance. Refused here, by the contract Java's
+        // CryptoBackend and Go's crypto/ecdh already hold, rather than trusting
+        // each CryptoKit/BoringSSL backend to. Accumulated, so no early exit.
+        var acc: UInt8 = 0
+        for b in bytes { acc |= b }
+        guard acc != 0 else { throw WireError(LumosErrors.errCryptoAeadAuthFailed, "low-order key") }
+        return bytes
     }
 
     /// Verifies an Ed25519 signature.

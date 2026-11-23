@@ -339,3 +339,53 @@ func TestTheJcaCurvesAreAllowedOnlyInTheJvmBackend(t *testing.T) {
 		t.Fatalf("the backend still obeys the minSdk API rules: %v", got)
 	}
 }
+
+// TestTheCryptoHygieneRuleFiresInShippedCodeOnly pins the WP-05 closeout's
+// static check for TRS-CRY-012 and SRS-NFR-SEC-009: every language's weak
+// generators and trust bypasses are refused in product code, while tests,
+// tools, comments and an injected secure generator stay silent.
+func TestTheCryptoHygieneRuleFiresInShippedCodeOnly(t *testing.T) {
+	root := t.TempDir()
+	write := func(rel, body string) string {
+		p := filepath.Join(root, filepath.FromSlash(rel))
+		if err := os.MkdirAll(filepath.Dir(p), 0o755); err != nil {
+			t.Fatal(err)
+		}
+		if err := os.WriteFile(p, []byte(body), 0o644); err != nil {
+			t.Fatal(err)
+		}
+		return p
+	}
+	shipped := []struct {
+		rel, body string
+		want      int
+	}{
+		{"backend/internal/x/x.go", "import (\n\t\"math/rand\"\n\tr2 \"math/rand/v2\"\n)\nvar c = tls.Config{InsecureSkipVerify: true}\n", 3},
+		{"android-app/app/src/main/java/com/x/A.java",
+			"import java.util.Random;\nclass A {\n  int a = new Random().nextInt();\n  double b = Math.random();\n" +
+				"  int c = ThreadLocalRandom.current().nextInt();\n  HostnameVerifier v = (h, s) -> true;\n" +
+				"  class T implements X509TrustManager {}\n}\n", 6},
+		{"ios-app/shell/Sources/X/A.swift",
+			"let a = random()\nlet b = drand48()\nsrand(1)\nlet c = URLCredential(trust: challenge.protectionSpace.serverTrust!)\n", 4},
+		{"admin-console/src/a.ts", "const a = Math.random();\nconst o = { rejectUnauthorized: false };\n", 2},
+	}
+	for _, c := range shipped {
+		if got := CheckCryptoHygiene(root, write(c.rel, c.body)); len(got) != c.want {
+			t.Errorf("%s: want %d findings, got %v", c.rel, c.want, got)
+		}
+	}
+	silent := map[string]string{
+		"backend/internal/x/x_test.go":                      "import \"math/rand\"\n",
+		"android-app/app/src/test/java/com/x/T.java":        "class T { Random r = new Random(1); }\n",
+		"android-app/app/src/androidTest/java/com/x/T.java": "class T { double d = Math.random(); }\n",
+		"ios-app/shell/Tests/X/T.swift":                     "let a = random()\n",
+		"tools/x/x.go":                                      "import \"math/rand\"\n",
+		"ios-app/shell/Sources/X/B.swift":                   "// random() is libc's\nlet k = random(32)\nlet n = UInt8.random(in: 0...255, using: &g)\n",
+		"android-app/app/src/main/java/com/x/B.java":        "class B {\n  // never new Random()\n  SecureRandom r = new SecureRandom();\n}\n",
+	}
+	for rel, body := range silent {
+		if got := CheckCryptoHygiene(root, write(rel, body)); len(got) != 0 {
+			t.Errorf("%s must be silent: %v", rel, got)
+		}
+	}
+}

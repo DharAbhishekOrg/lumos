@@ -85,6 +85,14 @@ type ExecutedTests struct {
 // so neither appears here; the thirteen feed-surface rows the WP-03 closeout
 // routed to this package keep their WP-03 scope and are reported in prose.
 //
+// WP-05 comes from its brief's "Key requirements" row: "SRS-RMT-001..018,
+// SRS-MAT-010/016 hooks, TRS-BCK-001..008/012, TRS-CRY-001..016, TRS Sec. 10,
+// SRS-NFR-SEC-004..009, SRS-NFR-PERF-006, SRS-DAT-001/003, AT-006/007/025
+// (relay half), AT-018 (relay leg)". SRS v1.1 has no SRS-MAT-016 (the family
+// ends at 015), so the pattern names it and matches nothing; "TRS Sec. 10"
+// names a section and the AT IDs are acceptance runs, so none is a matrix row.
+// SRS-MAT-010 is also in WP-04's row: its remote half is this package's.
+//
 // WP-03 comes from its brief's "Key requirements" row: "SRS-NBY-001..017,
 // SRS-IDN-004, SRS-PRO-007, TRS-AND-005/006, TRS-IOS-003/009, TRS-TRN-002/003,
 // TRS-PROTO-009/017/018, SRS-NFR-BAT-001/002, SRS-NFR-PERF-005/009,
@@ -118,6 +126,15 @@ var scopePatterns = map[string][]*regexp.Regexp{
 		regexp.MustCompile(`^SRS-SAF-00[12]$`),
 		regexp.MustCompile(`^TRS-ARCH-009$`),
 		regexp.MustCompile(`^SRS-NFR-REL-004$`),
+	},
+	"WP-05": {
+		regexp.MustCompile(`^SRS-RMT-0(0[1-9]|1[0-8])$`),
+		regexp.MustCompile(`^SRS-MAT-01[06]$`),
+		regexp.MustCompile(`^TRS-BCK-0(0[1-8]|12)$`),
+		regexp.MustCompile(`^TRS-CRY-0(0[1-9]|1[0-6])$`),
+		regexp.MustCompile(`^SRS-NFR-SEC-00[4-9]$`),
+		regexp.MustCompile(`^SRS-NFR-PERF-006$`),
+		regexp.MustCompile(`^SRS-DAT-00[13]$`),
 	},
 	"WP-03": {
 		regexp.MustCompile(`^SRS-NBY-0(0[1-9]|1[0-7])$`),
