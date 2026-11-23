@@ -314,39 +314,52 @@ func TestMarkdownTableRendersEveryInScopeRow(t *testing.T) {
 // would fail the moment the next work package starts, forcing the record to be
 // edited until it no longer describes the moment it exists to describe. Held to
 // its own snapshot, the pair stays true forever, and generated_for_commit says
-// which tree it describes.
+// which tree it describes. Every evidence/wpNN that holds a snapshot is checked:
+// until the WP-05 closeout, only WP-01's was, and a later report could have
+// drifted from its twin unnoticed.
 func TestCloseoutDocumentAgreesWithItsResults(t *testing.T) {
 	root := repoRoot(t)
-
-	raw, err := os.ReadFile(filepath.Join(root, "evidence", "wp01", "closeout-results.json"))
+	dirs, err := filepath.Glob(filepath.Join(root, "evidence", "wp[0-9][0-9]"))
 	if err != nil {
-		t.Skipf("closeout-results.json not present yet: %v", err)
+		t.Fatal(err)
 	}
-	var snapshot Report
-	if err := json.Unmarshal(raw, &snapshot); err != nil {
-		t.Fatalf("parse closeout-results.json: %v", err)
-	}
-	if snapshot.GeneratedFor == "" {
-		t.Error("the snapshot does not record which commit it describes")
-	}
-	if len(snapshot.InScope) == 0 {
-		t.Fatal("the snapshot has no in-scope rows")
-	}
-
-	doc, err := os.ReadFile(filepath.Join(root, "evidence", "wp01", "closeout.md"))
-	if err != nil {
-		t.Skipf("closeout.md not present yet: %v", err)
-	}
-	for _, row := range snapshot.InScope {
-		want := "| " + row.ReqID + " | `" + row.Status + "` |"
-		if !strings.Contains(string(doc), want) {
-			t.Errorf("closeout.md does not carry %s as %q, which is what the snapshot records",
-				row.ReqID, row.Status)
+	checked := 0
+	for _, dir := range dirs {
+		raw, err := os.ReadFile(filepath.Join(dir, "closeout-results.json"))
+		if err != nil {
+			continue // a package still open has no closeout yet
+		}
+		checked++
+		name := filepath.Base(dir)
+		var snapshot Report
+		if err := json.Unmarshal(raw, &snapshot); err != nil {
+			t.Fatalf("%s: parse closeout-results.json: %v", name, err)
+		}
+		if snapshot.GeneratedFor == "" {
+			t.Errorf("%s: the snapshot does not record which commit it describes", name)
+		}
+		if len(snapshot.InScope) == 0 {
+			t.Errorf("%s: the snapshot has no in-scope rows", name)
+		}
+		doc, err := os.ReadFile(filepath.Join(dir, "closeout.md"))
+		if err != nil {
+			t.Errorf("%s: closeout-results.json has no closeout.md beside it: %v", name, err)
+			continue
+		}
+		for _, row := range snapshot.InScope {
+			want := "| " + row.ReqID + " | `" + row.Status + "` |"
+			if !strings.Contains(string(doc), want) {
+				t.Errorf("%s: closeout.md does not carry %s as %q, which is what the snapshot records",
+					name, row.ReqID, row.Status)
+			}
+		}
+		if snapshot.Pipeline.RunID != "" && !strings.Contains(string(doc), snapshot.Pipeline.RunID) {
+			t.Errorf("%s: closeout.md never cites run %s, the run its results came from",
+				name, snapshot.Pipeline.RunID)
 		}
 	}
-	if snapshot.Pipeline.RunID != "" && !strings.Contains(string(doc), snapshot.Pipeline.RunID) {
-		t.Errorf("closeout.md never cites run %s, the run its results came from",
-			snapshot.Pipeline.RunID)
+	if checked == 0 {
+		t.Skip("no closeout-results.json present yet")
 	}
 }
 
