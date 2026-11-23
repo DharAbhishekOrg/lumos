@@ -1,0 +1,384 @@
+{
+ "name": "Lumos — Midnight Aurora",
+ "version": 1,
+ "meta": {
+  "source": "Lumos SRS-UX-003 / TRS-UX-002 (Midnight Aurora: deep navy/graphite surfaces, violet, aqua, coral and amber accents, restrained gradients). Values chosen and contrast-checked 2026-11-23; proposal pending owner ruling (CR-008)."
+ },
+ "color": {
+  "themes": [
+   {
+    "id": "dark",
+    "name": "Midnight (default)"
+   },
+   {
+    "id": "light",
+    "name": "Daylight"
+   }
+  ],
+  "tokens": [
+   {
+    "name": "canvas",
+    "value": {
+     "dark": "#0A0D1A",
+     "light": "#F6F6FB"
+    },
+    "usage": "The page behind everything: app background, under the floating navigation layer."
+   },
+   {
+    "name": "surface",
+    "value": {
+     "dark": "#121629",
+     "light": "#FFFFFF"
+    },
+    "usage": "Cards, list rows, the chat background. Body text (ink, ink-muted, ink-subtle) passes AA on it."
+   },
+   {
+    "name": "surface-raised",
+    "value": {
+     "dark": "#1A1F38",
+     "light": "#FFFFFF"
+    },
+    "usage": "Sheets, menus, the safety sheet, incoming chat bubbles' neighbourhood. In light it is white with a shadow."
+   },
+   {
+    "name": "surface-high",
+    "value": {
+     "dark": "#242A4A",
+     "light": "#ECEDF6"
+    },
+    "usage": "Pressed rows, chips at rest, the composer field. Danger text passes on it (4.7:1 dark)."
+   },
+   {
+    "name": "divider",
+    "value": {
+     "dark": "#262C4C",
+     "light": "#DADCEA"
+    },
+    "usage": "Hairlines between list rows. Decorative only: never the only boundary of a control."
+   },
+   {
+    "name": "outline",
+    "value": {
+     "dark": "#6E779E",
+     "light": "#767C99"
+    },
+    "usage": "Borders of controls and inputs, focus rings' outer ring. 3:1 or more on canvas, surface and surface-high (WCAG 1.4.11)."
+   },
+   {
+    "name": "ink",
+    "value": {
+     "dark": "#F3F4FA",
+     "light": "#12152A"
+    },
+    "usage": "Primary text and icons."
+   },
+   {
+    "name": "ink-muted",
+    "value": {
+     "dark": "#B6BBD3",
+     "light": "#454A66"
+    },
+    "usage": "Secondary text: bios, prompt questions, timestamps beside a name."
+   },
+   {
+    "name": "ink-subtle",
+    "value": {
+     "dark": "#959BB8",
+     "light": "#5E637F"
+    },
+    "usage": "Tertiary text: captions, placeholder text, sent and delivered ticks. Still 4.5:1 on canvas and surface."
+   },
+   {
+    "name": "violet",
+    "value": {
+     "dark": "#9D86FF",
+     "light": "#5A3BE0"
+    },
+    "usage": "THE brand colour: primary buttons, selected tab, links, the outgoing bubble's family. Text in violet passes on canvas and surface."
+   },
+   {
+    "name": "on-violet",
+    "value": {
+     "dark": "#0A0D1A",
+     "light": "#FFFFFF"
+    },
+    "usage": "Text and icons ON a violet fill (6.7:1 in both themes)."
+   },
+   {
+    "name": "violet-soft",
+    "value": {
+     "dark": "#2A2360",
+     "light": "#ECE7FF"
+    },
+    "usage": "Tonal containers: selected chips, the visibility pill, prompt cards. Ink and violet both pass on it."
+   },
+   {
+    "name": "aqua",
+    "value": {
+     "dark": "#3DDCC4",
+     "light": "#00796B"
+    },
+    "usage": "Nearby and live: someone is here now, the Bluetooth/Wi-Fi path, nearby-only media. Never used for danger or for brand CTAs."
+   },
+   {
+    "name": "coral",
+    "value": {
+     "dark": "#FF8A7A",
+     "light": "#C2412F"
+    },
+    "usage": "Interest and the match moment: the 'Interested' action, the match celebration. Kept away from danger controls; always with an icon."
+   },
+   {
+    "name": "amber",
+    "value": {
+     "dark": "#FFBE5C",
+     "light": "#8A5A00"
+    },
+    "usage": "Venues and perks, and gentle caution (not danger): 'only visible to people here', expiring visibility."
+   },
+   {
+    "name": "danger",
+    "value": {
+     "dark": "#FF5F72",
+     "light": "#C21F35"
+    },
+    "usage": "Block, report, emergency wipe, failed sends. Always paired with an icon and a word: never colour alone (SRS-NFR-A11Y-005)."
+   },
+   {
+    "name": "read",
+    "value": {
+     "dark": "#5AB4FF",
+     "light": "#0A66C2"
+    },
+    "usage": "The owner's ruling: two blue ticks when read. Only for the read state, on every bubble colour (4.7:1 dark, 4.4:1 light)."
+   },
+   {
+    "name": "tick",
+    "value": {
+     "dark": "{ink-subtle}",
+     "light": "{ink-subtle}"
+    },
+    "usage": "Queued, sent and delivered ticks: the same glyph family, told apart by shape and by their spoken labels, not by colour."
+   },
+   {
+    "name": "bubble-out",
+    "value": {
+     "dark": "#3B2F8F",
+     "light": "#E4DDFF"
+    },
+    "usage": "Messages I sent. Ink and every tick colour pass on it."
+   },
+   {
+    "name": "bubble-in",
+    "value": {
+     "dark": "#1A1F38",
+     "light": "#ECEDF6"
+    },
+    "usage": "Messages I received."
+   },
+   {
+    "name": "aurora-start",
+    "value": {
+     "dark": "#9D86FF",
+     "light": "#5A3BE0"
+    },
+    "usage": "First stop of the aurora: used ONLY for the match moment's glow and the brand mark. Never a full-screen wash, never behind text."
+   },
+   {
+    "name": "aurora-end",
+    "value": {
+     "dark": "#3DDCC4",
+     "light": "#00796B"
+    },
+    "usage": "Second stop of the aurora; same restrictions."
+   },
+   {
+    "name": "scrim",
+    "value": {
+     "dark": "rgba(5, 7, 15, 0.64)",
+     "light": "rgba(18, 21, 42, 0.40)"
+    },
+    "usage": "Behind sheets and dialogs. With Reduce Transparency it becomes opaque canvas."
+   }
+  ]
+ },
+ "type": {
+  "fonts": [],
+  "families": {
+   "display": "\"Sora\", -apple-system, \"SF Pro Display\", Roboto, system-ui, sans-serif",
+   "ui": "-apple-system, BlinkMacSystemFont, \"SF Pro Text\", Roboto, \"Inter\", system-ui, sans-serif"
+  },
+  "groups": [
+   {
+    "name": "Display",
+    "family": "display",
+    "styles": [
+     {
+      "name": "display",
+      "fontSize": "34px",
+      "lineHeight": "41px",
+      "fontWeight": 700,
+      "letterSpacing": "-0.4px",
+      "sample": "People here now",
+      "usage": "Screen titles at the top of a scroll view (iOS Large Title size). One per screen."
+     },
+     {
+      "name": "title-1",
+      "fontSize": "28px",
+      "lineHeight": "34px",
+      "fontWeight": 600,
+      "letterSpacing": "-0.2px",
+      "sample": "It's a match",
+      "usage": "Moments: the match screen, onboarding steps, empty states."
+     }
+    ]
+   },
+   {
+    "name": "Interface",
+    "family": "ui",
+    "styles": [
+     {
+      "name": "title-2",
+      "fontSize": "22px",
+      "lineHeight": "28px",
+      "fontWeight": 600,
+      "sample": "Aanya, 27",
+      "usage": "A person's name on their profile; section heads."
+     },
+     {
+      "name": "headline",
+      "fontSize": "17px",
+      "lineHeight": "22px",
+      "fontWeight": 600,
+      "sample": "Kai",
+      "usage": "Row titles, chat header name, button labels."
+     },
+     {
+      "name": "body",
+      "fontSize": "17px",
+      "lineHeight": "24px",
+      "fontWeight": 400,
+      "sample": "Are you still at the bookshop café?",
+      "usage": "Chat messages, bios, prompt answers. Android maps to Body Large 16/24."
+     },
+     {
+      "name": "callout",
+      "fontSize": "15px",
+      "lineHeight": "20px",
+      "fontWeight": 400,
+      "sample": "Here for the jazz night",
+      "usage": "Card subtitles, prompt questions."
+     },
+     {
+      "name": "footnote",
+      "fontSize": "13px",
+      "lineHeight": "18px",
+      "fontWeight": 400,
+      "sample": "Seen just now · nearby",
+      "usage": "Metadata under a row; timestamps in chat."
+     },
+     {
+      "name": "caption",
+      "fontSize": "12px",
+      "lineHeight": "16px",
+      "fontWeight": 500,
+      "letterSpacing": "0.2px",
+      "sample": "ONLY VISIBLE HERE",
+      "usage": "Smallest allowed text: badges and labels. Nothing in the app is smaller."
+     }
+    ]
+   }
+  ]
+ },
+ "spacing": {
+  "note": "A 4-point grid. Screen edge margin is space-4 on phones and space-6 on tablets.",
+  "tokens": [
+   {
+    "name": "space-1",
+    "value": "4px",
+    "usage": "Icon-to-label gap, tick spacing."
+   },
+   {
+    "name": "space-2",
+    "value": "8px",
+    "usage": "Between related items: chips, bubble groups from one sender."
+   },
+   {
+    "name": "space-3",
+    "value": "12px",
+    "usage": "Inside compact controls; between list row text lines."
+   },
+   {
+    "name": "space-4",
+    "value": "16px",
+    "usage": "Screen edge margin on phones; card padding."
+   },
+   {
+    "name": "space-6",
+    "value": "24px",
+    "usage": "Between sections; sheet padding; tablet edge margin."
+   },
+   {
+    "name": "space-8",
+    "value": "32px",
+    "usage": "Above a screen's primary action; around the match moment."
+   },
+   {
+    "name": "space-12",
+    "value": "48px",
+    "usage": "Minimum touch target on Android (48dp); iOS uses 44pt."
+   }
+  ]
+ },
+ "radius": {
+  "note": "Soft and friendly. Material 3 Expressive allows larger shape contrast; iOS controls take the system's own shapes.",
+  "tokens": [
+   {
+    "name": "radius-sm",
+    "value": "10px",
+    "usage": "Chips, small buttons, the composer's send button container."
+   },
+   {
+    "name": "radius-md",
+    "value": "16px",
+    "usage": "Cards, photo tiles, list groups."
+   },
+   {
+    "name": "radius-lg",
+    "value": "22px",
+    "usage": "Chat bubbles (with a 6px tail corner), sheets' top corners."
+   },
+   {
+    "name": "radius-xl",
+    "value": "32px",
+    "usage": "Profile hero photo, the match card."
+   },
+   {
+    "name": "radius-pill",
+    "value": "999px",
+    "usage": "Primary buttons, the visibility pill, the floating tab bar."
+   }
+  ]
+ },
+ "shadow": {
+  "note": "Dark theme leans on surface steps, not shadows; light theme uses two soft shadows.",
+  "tokens": [
+   {
+    "name": "shadow-card",
+    "value": {
+     "dark": "0 1px 0 rgba(255, 255, 255, 0.04)",
+     "light": "0 1px 2px rgba(18, 21, 42, 0.08), 0 4px 16px rgba(18, 21, 42, 0.06)"
+    },
+    "usage": "Cards and list groups."
+   },
+   {
+    "name": "shadow-float",
+    "value": {
+     "dark": "0 12px 32px rgba(0, 0, 0, 0.45)",
+     "light": "0 12px 32px rgba(18, 21, 42, 0.16)"
+    },
+    "usage": "The floating tab bar, sheets, the match card."
+   }
+  ]
+ }
+}
