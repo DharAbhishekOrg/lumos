@@ -17,6 +17,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.lumos.app.chat.ChatRecords;
+import com.lumos.app.relay.ConversationSafety;
 import com.lumos.protocol.MessageClass;
 import com.lumos.protocol.MessageClassLimits;
 import com.lumos.protocol.TextEventKind;
@@ -43,6 +44,7 @@ class ConversationPresenterTest {
         int messageReads;
         final List<RemoteText.TextEvent> sent = new ArrayList<>();
         final List<ChatRecords.Message> messages = new ArrayList<>();
+        final List<ConversationSafety.Ending> ended = new ArrayList<>();
 
         @Override
         public boolean entryAllowed(final byte[] matchId) {
@@ -80,6 +82,14 @@ class ConversationPresenterTest {
         @Override
         public void markRead(final byte[] matchId) {
             reads++;
+        }
+
+        @Override
+        public boolean end(final byte[] matchId, final ConversationSafety.Ending how) {
+            assertArrayEquals(MATCH, matchId);
+            ended.add(how);
+            allowed = false;
+            return true;
         }
     }
 
@@ -168,5 +178,15 @@ class ConversationPresenterTest {
         assertTrue(open.open());
         assertEquals("Aanya", open.peer().displayName(), "names are trimmed");
         assertFalse(open.online());
+    }
+
+    @Test
+    void endingPassesTheChoiceThroughOnceAndTheConversationNoLongerOpens() {
+        final Scripted s = new Scripted();
+        final ConversationPresenter p = new ConversationPresenter(s, MATCH);
+        assertTrue(p.end(ConversationSafety.Ending.BLOCK));
+        assertEquals(List.of(ConversationSafety.Ending.BLOCK), s.ended, "exactly the confirmed choice, once");
+        assertEquals(0, s.sent.size(), "nothing is sent to them: they are not told");
+        assertFalse(p.load(0, ZoneId.of("UTC"), Locale.UK).open());
     }
 }

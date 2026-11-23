@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Lumos - android-app/app / A conversation's safety sheet: unmatch or block.
+  Author: dhar.abhishek.email@gmail.com
+  Implements: SRS-SAF-001, SRS-MAT-009, SRS-NFR-A11Y-003
+  ADRs: -
+  Threading: n/a
+  Notes: Two actions, each one row with an icon, a verb and one sentence on
+  what it does, so the person knows before the confirmation step. Block is
+  drawn in the danger colour and carries its own icon, so it is not told
+  apart by colour alone. Every row is at least 64dp. The line under the
+  title says the other person is not told, because that is the question
+  people ask first.
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:paddingTop="@dimen/lumos_space_6"
+    android:paddingBottom="@dimen/lumos_space_6">
+
+    <TextView
+        android:id="@+id/safety_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingStart="@dimen/lumos_space_6"
+        android:paddingEnd="@dimen/lumos_space_6"
+        android:textAppearance="?attr/textAppearanceTitleLarge"
+        android:textColor="@color/lumos_ink" />
+
+    <TextView
+        android:id="@+id/safety_note"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/lumos_space_1"
+        android:layout_marginBottom="@dimen/lumos_space_4"
+        android:paddingStart="@dimen/lumos_space_6"
+        android:paddingEnd="@dimen/lumos_space_6"
+        android:textAppearance="?attr/textAppearanceBodyMedium"
+        android:textColor="@color/lumos_ink_muted" />
+
+    <LinearLayout
+        android:id="@+id/safety_unmatch"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?attr/selectableItemBackground"
+        android:clickable="true"
+        android:focusable="true"
+        android:gravity="center_vertical"
+        android:minHeight="64dp"
+        android:orientation="horizontal"
+        android:paddingStart="@dimen/lumos_space_6"
+        android:paddingTop="@dimen/lumos_space_3"
+        android:paddingEnd="@dimen/lumos_space_6"
+        android:paddingBottom="@dimen/lumos_space_3">
+
+        <ImageView
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:importantForAccessibility="no"
+            android:src="@drawable/ic_unmatch"
+            app:tint="@color/lumos_ink" />
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/lumos_space_4"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/safety_unmatch"
+                android:textAppearance="?attr/textAppearanceTitleMedium"
+                android:textColor="@color/lumos_ink" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/safety_unmatch_detail"
+                android:textAppearance="?attr/textAppearanceBodySmall"
+                android:textColor="@color/lumos_ink_muted" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/safety_block"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?attr/selectableItemBackground"
+        android:clickable="true"
+        android:focusable="true"
+        android:gravity="center_vertical"
+        android:minHeight="64dp"
+        android:orientation="horizontal"
+        android:paddingStart="@dimen/lumos_space_6"
+        android:paddingTop="@dimen/lumos_space_3"
+        android:paddingEnd="@dimen/lumos_space_6"
+        android:paddingBottom="@dimen/lumos_space_3">
+
+        <ImageView
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:importantForAccessibility="no"
+            android:src="@drawable/ic_block"
+            app:tint="@color/lumos_danger" />
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/lumos_space_4"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/safety_block"
+                android:textAppearance="?attr/textAppearanceTitleMedium"
+                android:textColor="@color/lumos_danger" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/safety_block_detail"
+                android:textAppearance="?attr/textAppearanceBodySmall"
+                android:textColor="@color/lumos_ink_muted" />
+        </LinearLayout>
+    </LinearLayout>
+</LinearLayout>

@@ -1,13 +1,13 @@
 /*
  * Lumos - android-app/app / The chat and relay parts, assembled once for a running app.
  * Author: dhar.abhishek.email@gmail.com
- * Implements: SRS-RMT-001, SRS-RMT-003, SRS-RMT-018, TRS-TRN-012, TRS-PAT-004
+ * Implements: SRS-RMT-001, SRS-RMT-003, SRS-RMT-016, SRS-RMT-018, TRS-TRN-012, TRS-PAT-004
  * ADRs: ADR-001, ADR-003, ADR-010
  * Threading: serial-executor
  * Notes: The composition the Android boot (and any test) builds: one chat
  * store, one set of routes, one registration, one prekey publisher, one
- * relay pass and one route exchange, all over the same sealed LocalStore and
- * the same unlocked identity. It is plain Java so the whole graph is tested
+ * relay pass, one route exchange and the safety actions, all over the same
+ * sealed LocalStore and the same unlocked identity. It is plain Java so the whole graph is tested
  * on the JVM; Android only supplies the store, the KEK, the libsodium
  * backend and an https transport. Every operation is meant to run on one
  * serial executor - the relay job's thread - which is what makes ChatStore's
@@ -38,13 +38,15 @@ public final class ChatRuntime {
     private final RelaySync sync;
     private final RelaySessions sessions;
     private final RouteExchange exchange;
+    private final ConversationSafety safety;
 
     private ChatRuntime(final ChatStore chat, final RelaySync sync, final RelaySessions sessions,
-            final RouteExchange exchange) {
+            final RouteExchange exchange, final ConversationSafety safety) {
         this.chat = chat;
         this.sync = sync;
         this.sessions = sessions;
         this.exchange = exchange;
+        this.safety = safety;
     }
 
     /**
@@ -70,7 +72,8 @@ public final class ChatRuntime {
         final PrekeyPublisher prekeys = PrekeyPublisher.over(store, chat, identity.identity(), identity::sign, random);
         final RelayClient anonymous = RelayClient.anonymous(transport);
         return new ChatRuntime(chat, RelaySync.over(chat, routes, account, prekeys, anonymous, clock),
-                RelaySessions.over(chat, routes, account, anonymous, random), RouteExchange.over(routes, account));
+                RelaySessions.over(chat, routes, account, anonymous, random), RouteExchange.over(routes, account),
+                ConversationSafety.over(store, chat, routes, clock));
     }
 
     /** @return the one chat store, shared with the UI by design (see the SpotBugs filter) */
@@ -81,6 +84,11 @@ public final class ChatRuntime {
     /** @return the relay pass */
     public RelaySync sync() {
         return sync;
+    }
+
+    /** @return unmatch and block, for a conversation's safety sheet */
+    public ConversationSafety safety() {
+        return safety;
     }
 
     /** @return the RELAY_ROUTE exchange, for the nearby sessions */

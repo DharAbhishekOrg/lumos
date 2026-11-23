@@ -2,14 +2,16 @@
 <!--
   Lumos - android-app/app / One conversation: header, messages, composer.
   Author: dhar.abhishek.email@gmail.com
-  Implements: SRS-UX-011, SRS-UX-012, TRS-UX-004, TRS-AND-010, SRS-NFR-A11Y-003
+  Implements: SRS-UX-011, SRS-UX-012, SRS-SAF-001, TRS-UX-004, TRS-AND-010, SRS-NFR-A11Y-003
   ADRs: -
   Threading: n/a
   Notes: The window paints the chat background (Theme.Lumos.Conversation),
   so the root does not paint it again. Edge to edge (TRS-AND-010): the activity pads the root by the system
   bars and the keyboard, so the composer rides above the keyboard and
   nothing is clipped. Every control is at least 48dp (SRS-NFR-A11Y-003). The
-  offline state is an inline banner, never a modal spinner (SRS-UX-012).
+  offline state is an inline banner, never a modal spinner (SRS-UX-012). The
+  shield at the end of the header opens the safety sheet (SRS-SAF-001); its
+  spoken label names the person and is set when the header is drawn.
 -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -26,7 +28,7 @@
         android:minHeight="64dp"
         android:orientation="horizontal"
         android:paddingStart="@dimen/lumos_space_1"
-        android:paddingEnd="@dimen/lumos_space_4">
+        android:paddingEnd="@dimen/lumos_space_1">
 
         <ImageButton
             android:id="@+id/conversation_back"
@@ -70,6 +72,15 @@
                 android:textAppearance="?attr/textAppearanceBodySmall"
                 android:textColor="@color/lumos_ink_muted" />
         </LinearLayout>
+
+        <ImageButton
+            android:id="@+id/conversation_safety"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/safety_options"
+            android:src="@drawable/ic_shield"
+            app:tint="@color/lumos_ink" />
     </LinearLayout>
 
     <TextView

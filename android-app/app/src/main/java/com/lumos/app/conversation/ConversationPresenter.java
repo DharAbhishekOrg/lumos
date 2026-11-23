@@ -1,7 +1,7 @@
 /*
  * Lumos - android-app/app / Every decision the conversation screen makes.
  * Author: dhar.abhishek.email@gmail.com
- * Implements: SRS-RMT-003, SRS-RMT-005, SRS-RMT-010, SRS-RMT-011, SRS-UX-011, SRS-UX-012
+ * Implements: SRS-RMT-003, SRS-RMT-005, SRS-RMT-010, SRS-RMT-011, SRS-SAF-001, SRS-UX-011, SRS-UX-012
  * ADRs: -
  * Threading: serial-executor
  * Notes: The activity only draws what this returns, so the rules are tested
@@ -17,6 +17,7 @@
 package com.lumos.app.conversation;
 
 import com.lumos.app.chat.ChatRecords;
+import com.lumos.app.relay.ConversationSafety;
 import com.lumos.protocol.MessageClass;
 import com.lumos.protocol.MessageClassLimits;
 import com.lumos.protocol.TextEventKind;
@@ -219,6 +220,16 @@ public final class ConversationPresenter {
      */
     public boolean deleteForMe(final ConversationRows.Bubble b) {
         return actionsFor(b).contains(Action.DELETE_FOR_ME) && source.deleteForMe(b.messageId());
+    }
+
+    /**
+     * Ends the conversation: unmatch or block. The screen closes after.
+     *
+     * @param how unmatch or block
+     * @return true when ended
+     */
+    public boolean end(final ConversationSafety.Ending how) {
+        return source.end(matchId, how);
     }
 
     /** Marks the conversation read. */

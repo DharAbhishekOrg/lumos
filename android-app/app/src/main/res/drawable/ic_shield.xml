@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Lumos - android-app/app / The shield that opens a conversation's safety sheet.
+  Author: dhar.abhishek.email@gmail.com
+  Implements: SRS-SAF-001
+  ADRs: -
+  Threading: n/a
+  Notes: A 24dp stroke icon, tinted by its view.
+-->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp" android:height="24dp" android:viewportWidth="24" android:viewportHeight="24">
+    <path android:pathData="M12,3 L19,6 L19,11.5 C19,15.8 16.1,19.4 12,21 C7.9,19.4 5,15.8 5,11.5 L5,6 Z"
+        android:strokeColor="#FFFFFFFF" android:strokeWidth="2" android:strokeLineCap="round"
+        android:strokeLineJoin="round" android:fillColor="#00000000" />
+</vector>

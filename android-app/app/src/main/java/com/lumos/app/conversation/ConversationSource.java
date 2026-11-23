@@ -1,7 +1,7 @@
 /*
  * Lumos - android-app/app / What the conversation screen needs from the running app.
  * Author: dhar.abhishek.email@gmail.com
- * Implements: SRS-RMT-001, SRS-RMT-003, SRS-RMT-010, SRS-RMT-014
+ * Implements: SRS-RMT-001, SRS-RMT-003, SRS-RMT-010, SRS-RMT-014, SRS-SAF-001
  * ADRs: ADR-012
  * Threading: serial-executor
  * Notes: The seam between the screen and the chat stack, as NearbyHost is for
@@ -14,6 +14,7 @@
 package com.lumos.app.conversation;
 
 import com.lumos.app.chat.ChatRecords;
+import com.lumos.app.relay.ConversationSafety;
 import com.lumos.protocol.chat.RemoteText;
 import java.util.List;
 
@@ -80,4 +81,14 @@ public interface ConversationSource {
      * @param matchId the conversation
      */
     void markRead(byte[] matchId);
+
+    /**
+     * Ends the conversation on this device: unmatch or block. The peer is
+     * not told; the conversation is deleted here.
+     *
+     * @param matchId the conversation
+     * @param how unmatch or block
+     * @return true when ended; false when nothing changed
+     */
+    boolean end(byte[] matchId, ConversationSafety.Ending how);
 }
