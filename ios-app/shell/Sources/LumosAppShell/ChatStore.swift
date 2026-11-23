@@ -1,6 +1,7 @@
 /// Lumos - LumosAppShell / Conversations, messages, the outbox and ratchet sessions, each change one transaction.
 /// Author: dhar.abhishek.email@gmail.com
-/// Implements: SRS-RMT-001, SRS-RMT-003, SRS-RMT-004, SRS-RMT-005, SRS-RMT-011, SRS-RMT-014, TRS-LOC-004, TRS-PAT-004
+/// Implements: SRS-RMT-001, SRS-RMT-003, SRS-RMT-004, SRS-RMT-005, SRS-RMT-010, SRS-RMT-011, SRS-RMT-014,
+///             TRS-LOC-004, TRS-PAT-004
 /// ADRs: ADR-001, ADR-003
 /// Threading: serial-executor
 /// Notes: The Swift port of the Android ChatStore, behaviour for behaviour.
@@ -82,6 +83,12 @@ public final class ChatStore {
                                   plaintext: ChatRecords.Conversation(matchID: matchID,
                                                                       peerIdentityEd: peerIdentityEd).encoded,
                                   naturalKey: matchID)
+    }
+
+    /// The identity a match pinned for its peer: what a send must address.
+    /// - Returns: the peer's Ed25519 identity, or nil for a conversation this device never accepted
+    public func peerIdentity(matchID: Data) throws -> Data? {
+        try conversation(matchID)?.peerIdentityEd
     }
 
     private func conversation(_ matchID: Data) throws -> ChatRecords.Conversation? {
@@ -351,6 +358,19 @@ public final class ChatStore {
                 try putMessage(m.with(state: DeliveryMachine.step(sending, outcome)))
             }
             try store.delete(kind: .outboxItem, id: ChatRecords.rowID(messageID))
+        }
+    }
+
+    /// Removes one message from this device only (SRS-RMT-010); the peer is told
+    /// nothing. Refused while it waits in the outbox: its sealed envelope would
+    /// still go, and the person must not think it gone.
+    /// - Returns: true when removed; false when still waiting to go out, or unknown
+    public func deleteForMe(messageID: Data) throws -> Bool {
+        try store.transaction {
+            guard try message(messageID) != nil,
+                  try store.get(kind: .outboxItem, id: ChatRecords.rowID(messageID)) == nil else { return false }
+            try store.delete(kind: .chatMessage, id: ChatRecords.rowID(messageID))
+            return true
         }
     }
 

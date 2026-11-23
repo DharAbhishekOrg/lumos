@@ -1,6 +1,6 @@
 /// Lumos - LumosAppShell / Ratchet sessions at rest: load, seal, open, save - inside the caller's transaction.
 /// Author: dhar.abhishek.email@gmail.com
-/// Implements: SRS-RMT-007, SRS-RMT-017, TRS-CRY-005, TRS-LOC-004
+/// Implements: SRS-RMT-007, SRS-RMT-017, SRS-NFR-SEC-006, TRS-CRY-005, TRS-LOC-004
 /// ADRs: ADR-001, ADR-003
 /// Threading: serial-executor
 /// Notes: The Swift port of the Android ChatSessions. Nothing here opens a
@@ -8,7 +8,9 @@
 /// the consumed one-time prekey, the dedup entry and whatever the plaintext
 /// changes commit together or not at all (SRS-RMT-017). A session is restored
 /// from the store for every operation and saved only on success, so a failed
-/// decrypt is rolled back by throwing the in-memory ratchet away.
+/// decrypt is rolled back by throwing the in-memory ratchet away. The dedup
+/// cache is held to its id cap after every write (SRS-NFR-SEC-006), as on
+/// Android.
 
 import Foundation
 import LumosProtocol
@@ -95,7 +97,28 @@ final class ChatSessions {
         try store.put(kind: .messageDedup, id: ChatRecords.rowID(outerID),
                       plaintext: ChatRecords.encodeDedup(
                         expiresAtMillis: clock() + Int64(LumosConstants.dedupCacheDays) * ChatSessions.millisPerDay))
+        try ChatSessions.trimDedup(store, cap: LumosConstants.dedupCacheIDS)
         return plaintext
+    }
+
+    /// Holds the dedup cache to its id cap (SRS-NFR-SEC-006, the register's
+    /// DEDUP_CACHE ids). Over the cap, the ids closest to expiry go first. The
+    /// cache is defence in depth: a replayed id whose entry was evicted still
+    /// fails, because the ratchet deleted that message's key when it opened
+    /// (SRS-RMT-017). The count is cheap, so the full scan runs only when the
+    /// cap is actually exceeded.
+    /// - Returns: how many were evicted
+    @discardableResult
+    static func trimDedup(_ store: LocalStore, cap: Int) throws -> Int {
+        let excess = try store.count(kind: .messageDedup) - cap
+        guard excess > 0 else { return 0 }
+        let byExpiry = try store.allOf(kind: .messageDedup)
+            .map { (try ChatRecords.decodeDedup($0.content), $0.id) }
+            .sorted { $0.0 < $1.0 }
+        for (_, id) in byExpiry.prefix(excess) {
+            try store.delete(kind: .messageDedup, id: id)
+        }
+        return excess
     }
 
     private func respond(_ conv: ChatRecords.Conversation, _ envelope: RemoteText.Envelope) throws -> DoubleRatchet {

@@ -114,9 +114,21 @@
     appear in theirs".
 - **CS2c (Android):** the Matches/Chats list over `ChatStore` summaries, and
   the five-tab shell (Nearby refactored into it).
-- **CS3 (iOS):** parity for CS2a-CS2c, including the dedup cap and the
-  ending-route revoke; SwiftUI screens wait on the owner's app-target
-  decision.
+- **CS3a done (2026-11-24): iOS logic parity for CS2a and CS2b,** in the
+  SwiftPM shell (no screens).
+  - **Chat store:** `peerIdentity`, delete-for-me (refused while the message
+    still waits to go), and the dedup cache held to its 10,000-id cap after
+    every write (SRS-NFR-SEC-006).
+  - **Safety:** `ConversationSafety` (unmatch, block) and
+    `ConversationRemoval`, one transaction each, exposed as
+    `ChatRuntime.safety`; `BlockedPeers.block`.
+  - **Routes:** the same format-2 ending mark; every relay pass revokes and
+    forgets ending routes; `forget` marks first.
+  - **Tests:** the Android scenarios ported one for one (11 new Swift tests),
+    with the same mutation check.
+- **CS3b (iOS):** the conversation screen and safety sheet in SwiftUI. These
+  wait on the owner's app-target decision: the shell is a library and never
+  imports SwiftUI.
 
 ### CS4 (Android) and CS5 (iOS): from Nearby to a match
 - **Profile preview, Interested / Not now, and the match moment,** with the
