@@ -108,6 +108,8 @@ type tombstone struct {
 type MemoryStore struct {
 	mu           sync.Mutex
 	envelopes    map[key]Envelope
+	arrivals     map[key]uint64 // submission order; ties in CreatedAt never fall back to random ids
+	arrived      uint64
 	tombstones   map[key]tombstone
 	capabilities map[registry.DeviceID]map[[32]byte]struct{}
 	rates        map[registry.DeviceID]rateWindow
@@ -117,6 +119,7 @@ type MemoryStore struct {
 func NewMemoryStore() *MemoryStore {
 	return &MemoryStore{
 		envelopes:    map[key]Envelope{},
+		arrivals:     map[key]uint64{},
 		tombstones:   map[key]tombstone{},
 		capabilities: map[registry.DeviceID]map[[32]byte]struct{}{},
 		rates:        map[registry.DeviceID]rateWindow{},
@@ -182,6 +185,7 @@ func (m *MemoryStore) Put(_ context.Context, e Envelope, q Quota, now int64) (Pu
 		}
 		if v.ExpiresAt < now {
 			delete(m.envelopes, k2) // sweep this mailbox's expired envelopes
+			delete(m.arrivals, k2)
 			continue
 		}
 		count++
@@ -193,6 +197,8 @@ func (m *MemoryStore) Put(_ context.Context, e Envelope, q Quota, now int64) (Pu
 	stored := e
 	stored.Payload = append([]byte(nil), e.Payload...)
 	m.envelopes[k] = stored
+	m.arrived++
+	m.arrivals[k] = m.arrived
 	return Stored, nil
 }
 
@@ -200,19 +206,20 @@ func (m *MemoryStore) Put(_ context.Context, e Envelope, q Quota, now int64) (Pu
 func (m *MemoryStore) Fetch(_ context.Context, mailbox registry.DeviceID, now int64, limit int) ([]Envelope, error) {
 	m.mu.Lock()
 	defer m.mu.Unlock()
-	var out []Envelope
+	var keys []key
 	for k, v := range m.envelopes {
 		if k.mailbox == mailbox && v.ExpiresAt >= now {
-			v.Payload = append([]byte(nil), v.Payload...)
-			out = append(out, v)
+			keys = append(keys, k)
 		}
 	}
-	sort.Slice(out, func(i, j int) bool {
-		if out[i].CreatedAt != out[j].CreatedAt {
-			return out[i].CreatedAt < out[j].CreatedAt
-		}
-		return string(out[i].ID[:]) < string(out[j].ID[:])
-	})
+	// Submission order (S8): a burst inside one second keeps the order it was sent in.
+	sort.Slice(keys, func(i, j int) bool { return m.arrivals[keys[i]] < m.arrivals[keys[j]] })
+	out := make([]Envelope, 0, len(keys))
+	for _, k := range keys {
+		v := m.envelopes[k]
+		v.Payload = append([]byte(nil), v.Payload...)
+		out = append(out, v)
+	}
 	if len(out) > limit {
 		out = out[:limit]
 	}
@@ -229,6 +236,7 @@ func (m *MemoryStore) Ack(_ context.Context, mailbox registry.DeviceID, ids []Me
 		if v, ok := m.envelopes[k]; ok {
 			m.tombstones[k] = tombstone{digest: v.PayloadDigest, expiresAt: v.ExpiresAt}
 			delete(m.envelopes, k)
+			delete(m.arrivals, k)
 			n++
 		}
 	}
@@ -243,6 +251,7 @@ func (m *MemoryStore) Purge(_ context.Context, now int64) (int, error) {
 	for k, v := range m.envelopes {
 		if v.ExpiresAt < now {
 			delete(m.envelopes, k)
+			delete(m.arrivals, k)
 			n++
 		}
 	}

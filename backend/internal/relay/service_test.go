@@ -339,6 +339,30 @@ func TestFetchIsOldestFirstAndBounded(t *testing.T) {
 	})
 }
 
+// A burst inside one second must come back in the order it was sent: message
+// ids are random, so ordering ties by id would shuffle "hi" and "free
+// tonight?" for the recipient. Found by the S8 staging suite (2026-11-23).
+func TestABurstWithinOneSecondIsFetchedInSubmissionOrder(t *testing.T) {
+	eachStore(t, func(t *testing.T, f *fixture) {
+		const n = 8
+		for i := range n {
+			// ids sort in REVERSE of send order, and the clock does not move.
+			if err := f.send(f.idN(0xF0-i), []byte{byte(i)}); err != nil { // #nosec G115 -- small
+				t.Fatal(err)
+			}
+		}
+		got := f.mailbox(t)
+		if len(got) != n {
+			t.Fatalf("fetched %d, want %d", len(got), n)
+		}
+		for i, e := range got {
+			if e.Payload[0] != byte(i) { // #nosec G115 -- small
+				t.Fatalf("position %d holds the %d-th send: a burst must keep its order", i, e.Payload[0])
+			}
+		}
+	})
+}
+
 func TestTheEnvelopeRecordIsTheTRSRecordAndHoldsNoCapability(t *testing.T) {
 	eachStore(t, func(t *testing.T, f *fixture) {
 		id := f.id()
