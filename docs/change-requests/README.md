@@ -15,6 +15,7 @@ frozen*, and names the slice that executes it.
 | [005](CR-005.md) | **Accepted** | WP-05 S7e1 | New post-match, nearby-only class `RELAY_ROUTE` (0x07) for swapping relay addresses; receipt payload on 0x11/0x12 and `RECEIPT_IDS_PER_ENVELOPE` (default 32, 1–64) |
 | [006](CR-006.md) | **Accepted** | After WP-05 | Mutual-compatibility visibility in discovery (gender + seeking set, checked in-session, yes/no only) and rules-first offline free-text intent matching |
 | [007](CR-007.md) | **Accepted** | After WP-05, with CR-006 | Encounter-proven abuse reports, automatic quiet limits and temporary suspension (no automatic permanent ban), signed offline denylist, store-compliant minor protection |
+| [008](CR-008.md) | Proposed | The chat-surface slice | The design language: Midnight Aurora token values in two themes, glass on navigation only, M3 Expressive on Android, safety one tap away; Daylight theme and the Sora font need a ruling |
 
 A CR is applied in exactly one slice. Applying one that moves `constants_hash`
 also regenerates every golden vector that embeds it and reruns the full
