@@ -278,4 +278,29 @@
     <Class name="com.lumos.app.conversation.ConversationPresenter$Screen"/>
     <Bug pattern="EI_EXPOSE_REP,EI_EXPOSE_REP2"/>
   </Match>
+  <!--
+    CS2c: constructor-injected collaborators again, one class at a time. The
+    home shell's runtime source keeps the Application (its lifetime is the
+    process), and NearbyPanel keeps the panel's root view and the Nearby host
+    it renders, exactly as NearbyActivity kept them before the panel was
+    extracted from it.
+  -->
+  <!--
+    CS2c: HomeActivity is a lifecycle class like ConversationActivity: the
+    generic findViewById return reads as an unconfirmed cast.
+  -->
+  <Match>
+    <Class name="com.lumos.app.home.HomeActivity"/>
+    <Bug pattern="BC_UNCONFIRMED_CAST_OF_RETURN_VALUE"/>
+  </Match>
+  <Match>
+    <Class name="com.lumos.app.home.RuntimeHomeSource"/>
+    <Method name="&lt;init&gt;"/>
+    <Bug pattern="EI_EXPOSE_REP2"/>
+  </Match>
+  <Match>
+    <Class name="com.lumos.app.nearby.NearbyPanel"/>
+    <Method name="&lt;init&gt;"/>
+    <Bug pattern="EI_EXPOSE_REP2"/>
+  </Match>
 </FindBugsFilter>

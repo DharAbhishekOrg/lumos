@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  Lumos - android-app/app / The Nearby screen.
+  Lumos - android-app/app / The Nearby panel: NearbyActivity's whole screen and the home shell's Nearby tab.
   Author: dhar.abhishek.email@gmail.com
   Implements: SRS-NBY-003, SRS-NBY-010, SRS-NBY-014, SRS-NBY-017
   ADRs: ADR-002
@@ -11,8 +11,10 @@
   visible: the state message (the SRS-NBY-010 matrix and the SRS-NBY-014
   empty state - a sentence, never a spinner) or the card list. Which one, and
   with what text, is NearbyFeedController's decision rendered verbatim.
+  NearbyPanel binds it, so both hosts render it the same way (CS2c).
 -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/nearby_panel"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">

@@ -112,8 +112,28 @@
     responder must refuse a blocked identity when the GATT exchange is wired
     (SRS-SAF-002), and only then may the block copy say "and you won't
     appear in theirs".
-- **CS2c (Android):** the Matches/Chats list over `ChatStore` summaries, and
-  the five-tab shell (Nearby refactored into it).
+- **CS2c done (2026-11-24): the Android home shell.**
+  - **`HomeActivity`:** Nearby, Matches and Chats under one Material tab bar.
+    It is gated exactly like Nearby (no onboarding, nothing opens). The
+    selected tab survives rotation, and the Chats tab carries the unread
+    total as a badge (capped at 99+).
+  - **Three tabs, not five:** Discover (venues) and Profile join when they
+    exist. A tab that opens onto nothing would be a placeholder.
+  - **Matches:** conversations with nothing said yet. They are created at
+    match time, so this is real data.
+  - **Chats:** newest first. Each row previews the last message ("You: "
+    for your own, "Message deleted", never the deleted words), with the
+    time as time of day, Yesterday, weekday or date in the person's zone,
+    and the unread count. Each row is one spoken sentence, and a tap opens
+    the conversation.
+  - **Nearby** is now `NearbyPanel`, shared by the tab and `NearbyActivity`.
+  - **Found and fixed:** the CS2a conversation screen never applied
+    ADR-011's recents redaction. `RecentsRedaction` now applies it on
+    Nearby, home and conversation, with device tests that the thumbnail is
+    blanked on the way out.
+  - **Known limit until CS4:** names are not stored, so every row says
+    "Your match", and new matches are in a stable but arbitrary order (the
+    match time lives in the ledger, composed in CS4).
 - **CS3a done (2026-11-24): iOS logic parity for CS2a and CS2b,** in the
   SwiftPM shell (no screens).
   - **Chat store:** `peerIdentity`, delete-for-me (refused while the message

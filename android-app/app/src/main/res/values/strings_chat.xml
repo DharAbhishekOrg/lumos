@@ -71,4 +71,24 @@
     <string name="safety_blocked">You blocked %1$s.</string>
     <string name="safety_failed">That did not finish. Nothing changed. Try again.</string>
 
+    <!-- The home shell (CS2c): three tabs until Discover and Profile exist.
+         Names are not stored before CS4, so rows say conversation_fallback_name. -->
+    <string name="home_tab_nearby">Nearby</string>
+    <string name="home_tab_matches">Matches</string>
+    <string name="home_tab_chats">Chats</string>
+    <string name="matches_empty">No matches yet. When you and someone nearby are both interested, they show here.</string>
+    <string name="matches_row_subtitle">New match. Say hi.</string>
+    <string name="matches_spoken">%1$s. New match. Say hi.</string>
+    <string name="chats_empty">No chats yet. Say hi to a match and the chat shows here.</string>
+    <string name="chats_preview_mine">You: %1$s</string>
+    <string name="chats_preview_deleted">Message deleted</string>
+    <string name="chats_yesterday">Yesterday</string>
+    <string name="chats_unread_capped">99+</string>
+    <string name="chats_spoken">%1$s. %2$s. %3$s.</string>
+    <string name="chats_spoken_with_unread">%1$s %2$s</string>
+    <plurals name="chats_unread_spoken">
+        <item quantity="one">%1$d unread message.</item>
+        <item quantity="other">%1$d unread messages.</item>
+    </plurals>
+
 </resources>
