@@ -499,7 +499,7 @@
     "ADR-008",
     "ADR-010"
    ],
-   "last_commit": "81608aa",
+   "last_commit": "3ed4c7a",
    "updated": "2026-11-24"
   },
   {
@@ -3219,7 +3219,7 @@
     "ADR-003",
     "ADR-010"
    ],
-   "last_commit": "81608aa",
+   "last_commit": "3ed4c7a",
    "updated": "2026-11-24"
   },
   {
@@ -5523,6 +5523,8 @@
     "android-app/app/src/main/res/layout/activity_conversation.xml",
     "android-app/app/src/main/res/layout/item_message_in.xml",
     "android-app/app/src/main/res/layout/item_message_out.xml",
+    "ios-app/shell/Sources/LumosAppShell/ChatRecords.swift",
+    "ios-app/shell/Sources/LumosAppShell/ChatStore.swift",
     "protocol/chat/remote.go"
    ],
    "tests": [
@@ -5535,11 +5537,12 @@
     "java:app-instrumented:ConversationInstrumentedTest.aReplyShowsItsQuoteAndReplyingSendsOnlyTheAnsweredId",
     "java:app-instrumented:ConversationInstrumentedTest.thePersonAndAScreenReaderGetTheWholeConversation",
     "swift:LumosAppShell:ChatStoreTests.testAReplyIsANewMessageOnBothSidesAndNeverChangesTheMessageItAnswers",
-    "swift:LumosAppShell:ChatStoreTests.testAReplyToAMessageThisDeviceNeverHadStillShowsButSendingOneIsRefused"
+    "swift:LumosAppShell:ChatStoreTests.testAReplyToAMessageThisDeviceNeverHadStillShowsButSendingOneIsRefused",
+    "swift:LumosAppShell:ChatStoreTests.testARowWithoutTheReplyLinkReadsAsBeforeAndAReplyKeepsItsLink"
    ],
    "evidence": [],
    "adr": [],
-   "last_commit": "81608aa",
+   "last_commit": "3ed4c7a",
    "updated": "2026-11-24"
   },
   {
@@ -7904,7 +7907,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "e7d6d92",
+   "last_commit": "3ed4c7a",
    "updated": "2026-11-24"
   },
   {
@@ -7914,7 +7917,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "e7d6d92",
+   "last_commit": "3ed4c7a",
    "updated": "2026-11-24"
   },
   {
@@ -7934,7 +7937,7 @@
    "adr": [
     "ADR-002"
    ],
-   "last_commit": "e7d6d92",
+   "last_commit": "3ed4c7a",
    "updated": "2026-11-24"
   },
   {
@@ -7944,7 +7947,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "e7d6d92",
+   "last_commit": "3ed4c7a",
    "updated": "2026-11-24"
   },
   {
@@ -7954,7 +7957,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "e7d6d92",
+   "last_commit": "3ed4c7a",
    "updated": "2026-11-24"
   },
   {
@@ -7964,7 +7967,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "e7d6d92",
+   "last_commit": "3ed4c7a",
    "updated": "2026-11-24"
   },
   {
@@ -7986,7 +7989,7 @@
     "ADR-003",
     "ADR-010"
    ],
-   "last_commit": "e7d6d92",
+   "last_commit": "3ed4c7a",
    "updated": "2026-11-24"
   },
   {
@@ -7996,7 +7999,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "e7d6d92",
+   "last_commit": "3ed4c7a",
    "updated": "2026-11-24"
   },
   {
@@ -8006,7 +8009,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "e7d6d92",
+   "last_commit": "3ed4c7a",
    "updated": "2026-11-24"
   },
   {
@@ -8016,7 +8019,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "e7d6d92",
+   "last_commit": "3ed4c7a",
    "updated": "2026-11-24"
   },
   {
@@ -8026,7 +8029,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "e7d6d92",
+   "last_commit": "3ed4c7a",
    "updated": "2026-11-24"
   },
   {
@@ -8036,7 +8039,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "e7d6d92",
+   "last_commit": "3ed4c7a",
    "updated": "2026-11-24"
   },
   {
@@ -8212,7 +8215,7 @@
    "adr": [
     "ADR-003"
    ],
-   "last_commit": "e7d6d92",
+   "last_commit": "3ed4c7a",
    "updated": "2026-11-24"
   },
   {
@@ -9208,7 +9211,7 @@
    ],
    "evidence": [],
    "adr": [],
-   "last_commit": "81608aa",
+   "last_commit": "3ed4c7a",
    "updated": "2026-11-24"
   },
   {
@@ -9269,7 +9272,7 @@
    ],
    "evidence": [],
    "adr": [],
-   "last_commit": "81608aa",
+   "last_commit": "3ed4c7a",
    "updated": "2026-11-24"
   },
   {

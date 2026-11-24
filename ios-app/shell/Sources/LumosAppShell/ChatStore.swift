@@ -165,7 +165,8 @@ public final class ChatStore {
         guard !ChatStore.isNewMessage(event) else {
             try putMessage(ChatRecords.Message(messageID: id, matchID: matchID, outgoing: true,
                                                body: event.body ?? Data(), createdAtMillis: clock(),
-                                               sequence: try nextSequence(matchID), state: .queued))
+                                               sequence: try nextSequence(matchID), state: .queued,
+                                               replyTo: ChatStore.replyLink(event)))
             return
         }
         guard let target else { throw StoreError.engine("that message cannot be the target of this event") }
@@ -183,11 +184,16 @@ public final class ChatStore {
     }
 
     /// TEXT and REPLY (CR-009) are new messages; the other kinds change an
-    /// earlier one. A reply is stored as a text for now: the stored link to the
-    /// message it answers, and the quote drawn from it, arrive with the reply
-    /// screens.
+    /// earlier one. A reply keeps the id it answers; the quote is drawn from
+    /// that id when shown (the iOS screens arrive with CS3b), never from
+    /// anything sent.
     private static func isNewMessage(_ event: RemoteText.TextEvent) -> Bool {
         event.kind == .text || event.kind == .reply
+    }
+
+    /// The id a REPLY answers, or empty for a TEXT.
+    private static func replyLink(_ event: RemoteText.TextEvent) -> Data {
+        event.kind == .reply ? event.target ?? Data() : Data()
     }
 
     /// The next position in a conversation: one past the highest, assigned inside the write's transaction.
@@ -249,10 +255,12 @@ public final class ChatStore {
 
     private func applyPeer(_ matchID: Data, _ id: Data, _ event: RemoteText.TextEvent) throws -> Outcome {
         if ChatStore.isNewMessage(event) {
-            // A reply is the other person's words: it always shows, whatever its target (CR-009).
+            // A reply is the other person's words: it always shows, whatever its target. Its link is
+            // kept as sent; a quote may be drawn only from a message in this conversation (CR-009).
             try putMessage(ChatRecords.Message(messageID: id, matchID: matchID, outgoing: false,
                                                body: event.body ?? Data(), createdAtMillis: clock(),
-                                               sequence: try nextSequence(matchID), state: .delivered))
+                                               sequence: try nextSequence(matchID), state: .delivered,
+                                               replyTo: ChatStore.replyLink(event)))
             return .displayed
         }
         guard let target = try targetFor(matchID, event, mine: false) else { return .ignored }
