@@ -46,7 +46,7 @@ class HomeListsTest {
             final boolean deleted, final int unread) {
         final ChatRecords.Message m = new ChatRecords.Message(id(100 + n), id(n), mine,
                 text.getBytes(StandardCharsets.UTF_8), at, 1, mine ? DeliveryMachine.State.SENT
-                : DeliveryMachine.State.DELIVERED, false, deleted, new byte[0], new byte[0]);
+                : DeliveryMachine.State.DELIVERED, false, deleted, new byte[0], new byte[0], new byte[0]);
         return new ConversationList.Summary(id(n), Optional.of(m), unread);
     }
 

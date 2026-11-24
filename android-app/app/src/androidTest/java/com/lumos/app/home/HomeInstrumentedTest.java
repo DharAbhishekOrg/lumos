@@ -105,7 +105,7 @@ public final class HomeInstrumentedTest {
         final long now = System.currentTimeMillis();
         final ChatRecords.Message m = new ChatRecords.Message(ChatRecords.newMessageId(), CHAT, false,
                 text.getBytes(StandardCharsets.UTF_8), now, 1, DeliveryMachine.State.DELIVERED, false, false,
-                new byte[0], new byte[0]);
+                new byte[0], new byte[0], new byte[0]);
         return new ConversationList.Summary(CHAT, Optional.of(m), unread);
     }
 

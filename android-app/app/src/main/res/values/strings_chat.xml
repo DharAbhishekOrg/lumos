@@ -91,4 +91,14 @@
         <item quantity="other">%1$d unread messages.</item>
     </plurals>
 
+    <!-- Replies (CR-009). The quote is drawn on this phone; the words are never sent again. -->
+    <string name="action_reply">Reply</string>
+    <string name="reply_quote_you">You</string>
+    <string name="reply_quote_line">%1$s: %2$s</string>
+    <string name="reply_quote_deleted">Original message deleted</string>
+    <string name="reply_quote_unavailable">Original message not available</string>
+    <string name="reply_spoken">In reply to %1$s. %2$s</string>
+    <string name="reply_banner">Replying to %1$s</string>
+    <string name="reply_cancel">Cancel reply</string>
+
 </resources>

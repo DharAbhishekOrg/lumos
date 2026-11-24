@@ -15,6 +15,7 @@
 
 package com.lumos.app.conversation;
 
+import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -70,8 +71,9 @@ final class MessageAdapter extends ListAdapter<ConversationRows.Row, RecyclerVie
     /** Everything that changes how a row looks, as one comparable value. */
     private static Object describe(final ConversationRows.Row r) {
         if (r instanceof ConversationRows.Bubble b) {
+            final ConversationRows.Quote q = b.quote();
             return java.util.List.of(b.text(), b.deleted(), b.edited(), b.timeLabel(), b.state(), b.myReaction(),
-                    b.peerReaction(), b.position());
+                    b.peerReaction(), b.position(), q == null ? "" : q.kind() + "|" + q.fromMe() + "|" + q.text());
         }
         return r;
     }
@@ -138,12 +140,54 @@ final class MessageAdapter extends ListAdapter<ConversationRows.Row, RecyclerVie
                 : b.timeLabel());
         bindTick(meta, b);
 
-        row.setContentDescription(spoken(row, b, shown, reacts));
+        final String quoted = bindQuote(row, b);
+        final String sentence = spoken(row, b, shown, reacts);
+        row.setContentDescription(quoted.isEmpty() ? sentence
+                : row.getContext().getString(R.string.reply_spoken, quoted, sentence));
         row.setOnLongClickListener(v -> {
             listener.onAction(b, null);
             return true;
         });
         bindAccessibilityActions(row, b);
+    }
+
+    /**
+     * Shows a reply's quote above its bubble, drawn from this phone's own copy
+     * of the answered message (CR-009).
+     *
+     * @return the quote as shown, empty when there is none
+     */
+    private String bindQuote(final View row, final ConversationRows.Bubble b) {
+        final TextView quote = row.findViewById(R.id.message_quote);
+        final ConversationRows.Quote q = b.quote();
+        if (q == null) {
+            quote.setVisibility(View.GONE);
+            return "";
+        }
+        final Context c = row.getContext();
+        final String shown;
+        switch (q.kind()) {
+            case TEXT:
+                shown = c.getString(R.string.reply_quote_line, authorOf(c, q), q.text());
+                break;
+            case DELETED:
+                shown = c.getString(R.string.reply_quote_deleted);
+                break;
+            default:
+                shown = c.getString(R.string.reply_quote_unavailable);
+                break;
+        }
+        quote.setVisibility(View.VISIBLE);
+        quote.setText(shown);
+        return shown;
+    }
+
+    /** Who wrote a quoted message: "You", or the peer's name. */
+    String authorOf(final Context c, final ConversationRows.Quote q) {
+        if (q.fromMe()) {
+            return c.getString(R.string.reply_quote_you);
+        }
+        return peerName.isEmpty() ? c.getString(R.string.conversation_fallback_name) : peerName;
     }
 
     /** The tick rides the time as an end drawable: the shared glyph, in its token colour. */
@@ -202,6 +246,8 @@ final class MessageAdapter extends ListAdapter<ConversationRows.Row, RecyclerVie
      */
     static int labelOf(final ConversationPresenter.Action a) {
         switch (a) {
+            case REPLY:
+                return R.string.action_reply;
             case REACT:
                 return R.string.action_react;
             case COPY:

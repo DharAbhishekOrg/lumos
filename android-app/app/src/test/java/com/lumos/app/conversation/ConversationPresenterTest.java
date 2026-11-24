@@ -96,7 +96,7 @@ class ConversationPresenterTest {
     private static ConversationRows.Bubble bubble(final boolean mine, final DeliveryMachine.State state,
             final boolean deleted, final String text) {
         return new ConversationRows.Bubble("k", new byte[16], mine, text, deleted, false, "9:00", state, "", "",
-                ConversationRows.RunPosition.SINGLE);
+                ConversationRows.RunPosition.SINGLE, null);
     }
 
     @Test
@@ -135,8 +135,8 @@ class ConversationPresenterTest {
     void eachBubbleOffersOnlyWhatItCanDo() {
         assertEquals(EnumSet.allOf(ConversationPresenter.Action.class),
                 ConversationPresenter.actionsFor(bubble(true, DeliveryMachine.State.READ, false, "mine")));
-        assertEquals(EnumSet.of(ConversationPresenter.Action.REACT, ConversationPresenter.Action.COPY,
-                ConversationPresenter.Action.DELETE_FOR_ME),
+        assertEquals(EnumSet.of(ConversationPresenter.Action.REPLY, ConversationPresenter.Action.REACT,
+                ConversationPresenter.Action.COPY, ConversationPresenter.Action.DELETE_FOR_ME),
                 ConversationPresenter.actionsFor(bubble(false, DeliveryMachine.State.DELIVERED, false, "theirs")),
                 "never delete the other person's message for everyone");
         for (final DeliveryMachine.State waiting : List.of(DeliveryMachine.State.QUEUED, DeliveryMachine.State.SENDING)) {
@@ -188,5 +188,26 @@ class ConversationPresenterTest {
         assertEquals(List.of(ConversationSafety.Ending.BLOCK), s.ended, "exactly the confirmed choice, once");
         assertEquals(0, s.sent.size(), "nothing is sent to them: they are not told");
         assertFalse(p.load(0, ZoneId.of("UTC"), Locale.UK).open());
+    }
+
+    @Test
+    void aReplySendsOnlyTheAnsweredIdAndNeverAnswersADeletedMessage() {
+        final Scripted s = new Scripted();
+        final ConversationPresenter p = new ConversationPresenter(s, MATCH);
+        final ConversationRows.Bubble theirs = bubble(false, DeliveryMachine.State.DELIVERED, false, "Coffee on Saturday?");
+        assertTrue(ConversationPresenter.actionsFor(theirs).contains(ConversationPresenter.Action.REPLY));
+        assertEquals(ConversationPresenter.SendResult.SENT, p.sendReply("  Saturday!  ", theirs));
+        final RemoteText.TextEvent sent = s.sent.get(s.sent.size() - 1);
+        assertEquals(TextEventKind.REPLY, sent.kind());
+        assertArrayEquals(theirs.messageId(), sent.target());
+        assertEquals("Saturday!", new String(sent.body(), StandardCharsets.UTF_8),
+                "only the new words travel; the quoted words are never sent again");
+
+        final ConversationRows.Bubble gone = bubble(false, DeliveryMachine.State.DELIVERED, true, "");
+        assertFalse(ConversationPresenter.actionsFor(gone).contains(ConversationPresenter.Action.REPLY));
+        final int before = s.sent.size();
+        assertEquals(ConversationPresenter.SendResult.FAILED, p.sendReply("hi", gone));
+        assertEquals(ConversationPresenter.SendResult.EMPTY, p.sendReply("   ", theirs));
+        assertEquals(before, s.sent.size(), "nothing was sent");
     }
 }

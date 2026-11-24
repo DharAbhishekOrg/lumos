@@ -76,6 +76,7 @@ public final class ConversationActivity extends AppCompatActivity implements Mes
     private ImageButton send;
     private String shownName = "";
     private SafetySheet safetySheet;
+    private ConversationRows.Bubble replyingTo;
     private boolean visible;
 
     /**
@@ -145,6 +146,8 @@ public final class ConversationActivity extends AppCompatActivity implements Mes
         updateSendButton();
         send.setOnClickListener(v -> sendDraft());
         findViewById(R.id.conversation_back).setOnClickListener(v -> finish());
+        findViewById(R.id.conversation_reply_cancel).setOnClickListener(v -> stopReply());
+        SwipeToReply.attach(list, this::bubbleAt, this::startReply);
         findViewById(R.id.conversation_safety).setOnClickListener(
                 v -> safetySheet = SafetySheet.show(this, shownName, this::endConversation));
         ViewCompat.setAccessibilityHeading(findViewById(R.id.conversation_name), true);
@@ -253,10 +256,13 @@ public final class ConversationActivity extends AppCompatActivity implements Mes
         final String draft = composer.getText().toString();
         send.setEnabled(false);
         worker.execute(() -> {
-            final ConversationPresenter.SendResult r = presenter.sendText(draft);
+            final ConversationRows.Bubble answered = replyingTo;
+            final ConversationPresenter.SendResult r = answered == null ? presenter.sendText(draft)
+                    : presenter.sendReply(draft, answered);
             main.post(() -> {
                 if (r == ConversationPresenter.SendResult.SENT) {
                     composer.setText("");
+                    stopReply();
                     reload(false);
                 } else {
                     explain(r);
@@ -304,8 +310,45 @@ public final class ConversationActivity extends AppCompatActivity implements Mes
                 .show();
     }
 
+    /** Starts answering a message: the bar above the composer names it, and the keyboard opens. */
+    void startReply(final ConversationRows.Bubble bubble) {
+        replyingTo = bubble;
+        final ConversationRows.Quote asQuote = new ConversationRows.Quote(ConversationRows.QuoteKind.TEXT,
+                bubble.messageId(), bubble.outgoing(), bubble.text());
+        final TextView text = findViewById(R.id.conversation_reply_text);
+        text.setText(getString(R.string.reply_quote_line,
+                getString(R.string.reply_banner, adapter.authorOf(this, asQuote)), bubble.text()));
+        findViewById(R.id.conversation_reply_bar).setVisibility(View.VISIBLE);
+        composer.requestFocus();
+        final android.view.inputmethod.InputMethodManager ime = getSystemService(
+                android.view.inputmethod.InputMethodManager.class);
+        if (ime != null) {
+            ime.showSoftInput(composer, 0);
+        }
+    }
+
+    private void stopReply() {
+        replyingTo = null;
+        findViewById(R.id.conversation_reply_bar).setVisibility(View.GONE);
+    }
+
+    private ConversationRows.Bubble bubbleAt(final int position) {
+        if (position < 0 || position >= adapter.getItemCount()) {
+            return null;
+        }
+        return adapter.getCurrentList().get(position) instanceof ConversationRows.Bubble b ? b : null;
+    }
+
+    /** @return the message being answered, or null; for the instrumented test */
+    ConversationRows.Bubble replyingTo() {
+        return replyingTo;
+    }
+
     private void perform(final ConversationRows.Bubble bubble, final ConversationPresenter.Action action) {
         switch (action) {
+            case REPLY:
+                startReply(bubble);
+                break;
             case REACT:
                 final String[] reactions = ConversationPresenter.REACTIONS.toArray(new String[0]);
                 new MaterialAlertDialogBuilder(this).setTitle(R.string.action_react)
