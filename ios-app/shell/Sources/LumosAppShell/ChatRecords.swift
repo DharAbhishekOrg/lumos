@@ -192,11 +192,16 @@ public enum ChatRecords {
         public let myReaction: Data
         /// The peer's reaction, or empty.
         public let peerReaction: Data
+        /// The id of the message this one answers (CR-009 REPLY), or empty.
+        public let replyTo: Data
+
+        /// Whether this message is a reply (CR-009).
+        public var isReply: Bool { !replyTo.isEmpty }
 
         /// Creates the record.
         public init(messageID: Data, matchID: Data, outgoing: Bool, body: Data, createdAtMillis: Int64,
                     sequence: Int64, state: DeliveryMachine.State, edited: Bool = false, deleted: Bool = false,
-                    myReaction: Data = Data(), peerReaction: Data = Data()) {
+                    myReaction: Data = Data(), peerReaction: Data = Data(), replyTo: Data = Data()) {
             self.messageID = messageID
             self.matchID = matchID
             self.outgoing = outgoing
@@ -208,23 +213,24 @@ public enum ChatRecords {
             self.deleted = deleted
             self.myReaction = myReaction
             self.peerReaction = peerReaction
+            self.replyTo = replyTo
         }
 
         /// This message in another delivery state.
         public func with(state next: DeliveryMachine.State) -> Message {
             Message(messageID: messageID, matchID: matchID, outgoing: outgoing, body: body,
                     createdAtMillis: createdAtMillis, sequence: sequence, state: next, edited: edited,
-                    deleted: deleted, myReaction: myReaction, peerReaction: peerReaction)
+                    deleted: deleted, myReaction: myReaction, peerReaction: peerReaction, replyTo: replyTo)
         }
 
         /// This message, edited.
         public func with(edit newBody: Data) -> Message {
             Message(messageID: messageID, matchID: matchID, outgoing: outgoing, body: newBody,
                     createdAtMillis: createdAtMillis, sequence: sequence, state: state, edited: true,
-                    deleted: deleted, myReaction: myReaction, peerReaction: peerReaction)
+                    deleted: deleted, myReaction: myReaction, peerReaction: peerReaction, replyTo: replyTo)
         }
 
-        /// This message, deleted for everyone: the body is gone.
+        /// This message, deleted for everyone: the body is gone, and so is what it answered.
         public func deletedForEveryone() -> Message {
             Message(messageID: messageID, matchID: matchID, outgoing: outgoing, body: Data(),
                     createdAtMillis: createdAtMillis, sequence: sequence, state: state, edited: edited,
@@ -236,7 +242,7 @@ public enum ChatRecords {
             Message(messageID: messageID, matchID: matchID, outgoing: outgoing, body: body,
                     createdAtMillis: createdAtMillis, sequence: sequence, state: state, edited: edited,
                     deleted: deleted, myReaction: mine ? reaction : myReaction,
-                    peerReaction: mine ? peerReaction : reaction)
+                    peerReaction: mine ? peerReaction : reaction, replyTo: replyTo)
         }
 
         /// The state's index in the Android port's enum order, which the stored byte uses.
@@ -256,6 +262,10 @@ public enum ChatRecords {
             w.byte((edited ? 1 : 0) | (deleted ? 2 : 0))
             w.prefixed(myReaction)
             w.prefixed(peerReaction)
+            if !replyTo.isEmpty {
+                // Optional and last, so rows written before CR-009 still read (as answering nothing).
+                w.prefixed(replyTo)
+            }
             return w.data
         }
 
@@ -271,9 +281,15 @@ public enum ChatRecords {
             let stateIndex = Int(try r.byte())
             guard stateIndex < states.count else { throw ChatRecords.corrupt() }
             let flags = try r.byte()
+            let mine = try r.prefixed()
+            let peer = try r.prefixed()
+            let replyTo = r.remaining > 0 ? try r.prefixed() : Data()
+            guard r.remaining == 0, replyTo.isEmpty || replyTo.count == ChatRecords.idLen else {
+                throw ChatRecords.corrupt()
+            }
             return Message(messageID: id, matchID: match, outgoing: out, body: body, createdAtMillis: created,
                            sequence: sequence, state: states[stateIndex], edited: flags & 1 != 0,
-                           deleted: flags & 2 != 0, myReaction: try r.prefixed(), peerReaction: try r.prefixed())
+                           deleted: flags & 2 != 0, myReaction: mine, peerReaction: peer, replyTo: replyTo)
         }
     }
 

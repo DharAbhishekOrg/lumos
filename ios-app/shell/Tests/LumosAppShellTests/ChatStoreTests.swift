@@ -484,6 +484,32 @@ final class ChatStoreTests: XCTestCase {
             !$0.outgoing && $0.body == Data("Saturday works!".utf8)
         }, "Alice reads Bob's words")
         XCTAssertTrue(try bob.chat.messages(matchID: match).contains { $0.messageID == answer && $0.outgoing })
+        for d in [alice, bob] {
+            XCTAssertTrue(try d.chat.messages(matchID: match).contains { $0.replyTo == question },
+                          "both sides keep which message the reply answers")
+        }
+    }
+
+    func testARowWithoutTheReplyLinkReadsAsBeforeAndAReplyKeepsItsLink() throws {
+        let plain = ChatRecords.Message(messageID: ChatRecords.newMessageID(), matchID: match, outgoing: true,
+                                        body: Data("Saturday!".utf8), createdAtMillis: 1_700_000_000_000,
+                                        sequence: 3, state: .sent)
+        XCTAssertFalse(try ChatRecords.Message.decode(plain.encoded).isReply, "a pre-CR-009 row answers nothing")
+        let answered = ChatRecords.newMessageID()
+        let reply = ChatRecords.Message(messageID: plain.messageID, matchID: match, outgoing: true, body: plain.body,
+                                        createdAtMillis: plain.createdAtMillis, sequence: 3, state: .sent,
+                                        replyTo: answered)
+        XCTAssertEqual(reply.encoded.prefix(plain.encoded.count), plain.encoded,
+                       "the link only ever adds bytes after the fields older rows have")
+        let back = try ChatRecords.Message.decode(reply.encoded)
+        XCTAssertEqual(back.replyTo, answered)
+        XCTAssertEqual(back.with(state: .read).replyTo, answered, "state changes keep it")
+        XCTAssertEqual(back.with(reaction: Data("❤".utf8), mine: false).replyTo, answered)
+        XCTAssertFalse(back.deletedForEveryone().isReply, "a deleted reply keeps nothing, not even what it answered")
+
+        var cut = reply.encoded.dropLast()
+        cut[cut.endIndex - 16] = 15 // the length prefix now claims 15 bytes
+        XCTAssertThrowsError(try ChatRecords.Message.decode(Data(cut)), "a link that is not a whole id is a corrupt row")
     }
 
     func testAReplyToAMessageThisDeviceNeverHadStillShowsButSendingOneIsRefused() throws {
