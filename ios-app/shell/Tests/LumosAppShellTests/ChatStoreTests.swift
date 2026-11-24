@@ -459,4 +459,47 @@ final class ChatStoreTests: XCTestCase {
         XCTAssertNotNil(try d.store.get(kind: .messageDedup, id: newer))
         XCTAssertNotNil(try d.store.get(kind: .messageDedup, id: newest))
     }
+
+    func testAReplyIsANewMessageOnBothSidesAndNeverChangesTheMessageItAnswers() throws {
+        let (alice, bob) = try matchedPair()
+        let question = try alice.chat.send(matchID: match, event: try text("Coffee on Saturday?"))
+        _ = try deliver(alice, bob)
+
+        // Bob answers Alice's message: a reply may target either person's message (CR-009).
+        let answer = try bob.chat.send(matchID: match, event: try RemoteText.TextEvent(
+            kind: .reply, target: question, body: Data("Saturday works!".utf8)))
+        XCTAssertEqual(try bob.chat.messages(matchID: match).count, 2, "the reply is a new message on the sender's side")
+        XCTAssertEqual(try deliver(bob, alice).filter { $0 != .applied }.first, .displayed,
+                       "and shows on the receiver's")
+
+        for d in [alice, bob] {
+            let all = try d.chat.messages(matchID: match)
+            XCTAssertEqual(all.count, 2)
+            let asked = try XCTUnwrap(all.first { $0.messageID == question })
+            XCTAssertEqual(asked.body, Data("Coffee on Saturday?".utf8), "the answered message is untouched")
+            XCTAssertTrue(asked.myReaction.isEmpty && asked.peerReaction.isEmpty, "and never read as a reaction")
+            XCTAssertFalse(asked.edited)
+        }
+        XCTAssertTrue(try alice.chat.messages(matchID: match).contains {
+            !$0.outgoing && $0.body == Data("Saturday works!".utf8)
+        }, "Alice reads Bob's words")
+        XCTAssertTrue(try bob.chat.messages(matchID: match).contains { $0.messageID == answer && $0.outgoing })
+    }
+
+    func testAReplyToAMessageThisDeviceNeverHadStillShowsButSendingOneIsRefused() throws {
+        let (alice, bob) = try matchedPair()
+        XCTAssertThrowsError(try alice.chat.send(matchID: match, event: try RemoteText.TextEvent(
+            kind: .reply, target: randomBytes(16), body: Data("hm?".utf8))),
+                             "a reply must answer a message in this conversation")
+        try alice.chat.send(matchID: match, event: try text("Hi"))
+        _ = try deliver(alice, bob)
+        let bobsOwn = try bob.chat.send(matchID: match, event: try text("Hello"))
+        let reply = try bob.chat.send(matchID: match, event: try RemoteText.TextEvent(
+            kind: .reply, target: bobsOwn, body: Data("(that was me)".utf8)))
+        // Only the reply reaches Alice: she never had the message it answers.
+        let replyAt = try XCTUnwrap(try bob.chat.pendingOutbox().firstIndex { $0.messageID == reply })
+        XCTAssertEqual(try deliver(bob, alice, [replyAt]), [.displayed], "the reply still shows (CR-009)")
+        XCTAssertEqual(try alice.chat.messages(matchID: match).count, 2,
+                       "her Hi and Bob's reply; the missing target adds nothing")
+    }
 }

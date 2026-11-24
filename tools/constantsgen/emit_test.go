@@ -235,15 +235,15 @@ func TestMessageClassesMatchTRS92(t *testing.T) {
 		code int64
 		name string
 	}{
-		{0, "TEXT"}, {1, "EDIT"}, {2, "DELETE_FOR_EVERYONE"}, {3, "REACTION"},
+		{0, "TEXT"}, {1, "EDIT"}, {2, "DELETE_FOR_EVERYONE"}, {3, "REACTION"}, {4, "REPLY"},
 	}
 	if len(m.TextEventKind) != len(wantKinds) {
-		t.Fatalf("text event kind count = %d, AMD-005 defines %d", len(m.TextEventKind), len(wantKinds))
+		t.Fatalf("text event kind count = %d, AMD-005 and CR-009 define %d", len(m.TextEventKind), len(wantKinds))
 	}
 	for i, w := range wantKinds {
 		got := m.TextEventKind[i]
 		if got.Code != w.code || got.Name != w.name {
-			t.Errorf("kind[%d] = %d/%s, AMD-005 says %d/%s", i, got.Code, got.Name, w.code, w.name)
+			t.Errorf("kind[%d] = %d/%s, AMD-005/CR-009 say %d/%s", i, got.Code, got.Name, w.code, w.name)
 		}
 	}
 }

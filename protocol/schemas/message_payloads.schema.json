@@ -65,14 +65,14 @@
  ],
 
  "text_event": {
-  "$comment": "AMD-005 inner canonical event envelope carried by class 0x10 TEXT_MESSAGE. Edits, deletes and reactions are AUTHENTICATED EVENTS OVER THE ORIGINAL MESSAGE - they ride the same ratcheted session, so a relay cannot forge or replay one.",
+  "$comment": "AMD-005 inner canonical event envelope carried by class 0x10 TEXT_MESSAGE. Edits, deletes and reactions are AUTHENTICATED EVENTS OVER THE ORIGINAL MESSAGE - they ride the same ratcheted session, so a relay cannot forge or replay one. A REPLY (CR-009) is a new message whose target names the message it answers; the quoted words are never carried, each device draws them from its own copy.",
   "kind_enum_ref": "message_classes.text_event_kinds",
   "fields": [
    {"name": "event_kind", "type": "u8", "required": true, "enum_ref": "message_classes.text_event_kinds"},
    {"name": "target_message_id", "type": "bytes", "width_ref": "sessions_remote_text.MESSAGE_ID_LEN_BYTES",
-    "required_for": ["EDIT", "DELETE_FOR_EVERYONE", "REACTION"],
+    "required_for": ["EDIT", "DELETE_FOR_EVERYONE", "REACTION", "REPLY"],
     "prohibited_for": ["TEXT"]},
-   {"name": "body", "type": "bytes", "required_for": ["TEXT", "EDIT", "REACTION"], "prohibited_for": ["DELETE_FOR_EVERYONE"]}
+   {"name": "body", "type": "bytes", "required_for": ["TEXT", "EDIT", "REACTION", "REPLY"], "prohibited_for": ["DELETE_FOR_EVERYONE"]}
   ],
   "unknown_kind_handling": {
    "rule": "An unknown event_kind follows TRS-PROTO-006: skipped when non-critical, fail closed when the frame is marked critical.",

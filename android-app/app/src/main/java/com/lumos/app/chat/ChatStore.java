@@ -231,7 +231,7 @@ public final class ChatStore {
             return Optional.empty();
         }
         final Optional<ChatRecords.Message> t = message(event.target());
-        final boolean authorOnly = event.kind() != TextEventKind.REACTION;
+        final boolean authorOnly = event.kind() == TextEventKind.EDIT || event.kind() == TextEventKind.DELETE_FOR_EVERYONE;
         final boolean valid = t.isPresent() && Arrays.equals(t.get().matchId(), matchId) && !t.get().deleted()
                 && (!authorOnly || t.get().outgoing() == mine);
         if (!valid && mine) {
@@ -242,24 +242,12 @@ public final class ChatStore {
 
     private void applyOwn(final byte[] matchId, final byte[] id, final RemoteText.TextEvent event,
             final Optional<ChatRecords.Message> target) throws StoreException {
-        if (event.kind() == TextEventKind.TEXT) {
+        if (ChatEvents.isNewMessage(event)) {
             putMessage(new ChatRecords.Message(id, matchId, true, event.body(), clock.nowUtcMillis(), nextSequence(matchId),
                     DeliveryMachine.State.QUEUED, false, false, new byte[0], new byte[0]));
             return;
         }
-        putMessage(applied(target.orElseThrow(), event, true));
-    }
-
-    private static ChatRecords.Message applied(final ChatRecords.Message t, final RemoteText.TextEvent event,
-            final boolean mine) {
-        switch (event.kind()) {
-            case EDIT:
-                return t.withEdit(event.body());
-            case DELETE_FOR_EVERYONE:
-                return t.withDeleted();
-            default:
-                return t.withReaction(mine, event.body());
-        }
+        putMessage(ChatEvents.applied(target.orElseThrow(), event, true));
     }
 
     /** The next position in a conversation: one past the highest, assigned inside the write's transaction. */
@@ -345,7 +333,8 @@ public final class ChatStore {
 
     private Received applyPeer(final byte[] matchId, final byte[] id, final RemoteText.TextEvent event)
             throws StoreException {
-        if (event.kind() == TextEventKind.TEXT) {
+        if (ChatEvents.isNewMessage(event)) {
+            // A reply is the other person's words: it always shows, whatever its target (CR-009).
             putMessage(new ChatRecords.Message(id, matchId, false, event.body(), clock.nowUtcMillis(), nextSequence(matchId),
                     DeliveryMachine.State.DELIVERED, false, false, new byte[0], new byte[0]));
             return new Received(Outcome.DISPLAYED, "");
@@ -354,7 +343,7 @@ public final class ChatStore {
         if (target.isEmpty()) {
             return new Received(Outcome.IGNORED, "");
         }
-        putMessage(applied(target.get(), event, false));
+        putMessage(ChatEvents.applied(target.get(), event, false));
         return new Received(Outcome.APPLIED, "");
     }
 
