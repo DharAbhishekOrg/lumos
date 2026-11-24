@@ -1,6 +1,6 @@
 // Lumos - protocol/chat / The remote-text wire: AMD-005 text events, the ratchet plaintext and the relay envelope.
 // Author: dhar.abhishek.email@gmail.com
-// Implements: SRS-RMT-011, SRS-RMT-004, SRS-RMT-009, TRS-PROTO-007, TRS-CRY-001, TRS-CRY-002
+// Implements: SRS-RMT-011, SRS-RMT-004, SRS-RMT-009, SRS-UX-011, TRS-PROTO-007, TRS-CRY-001, TRS-CRY-002
 // ADRs: ADR-001, ADR-008
 // Threading: any
 // Notes: Three layers, innermost first, fixed here under the TRS Sec. 19 AI
@@ -9,8 +9,12 @@
 //
 // TextEvent (AMD-005, protocol/schemas/message_payloads.schema.json):
 //
-//	event_kind u8 | target_message_id [16] (EDIT, DELETE, REACTION only)
-//	              | body_len u32 BE | body (TEXT, EDIT, REACTION only)
+//	event_kind u8 | target_message_id [16] (EDIT, DELETE, REACTION, REPLY only)
+//	              | body_len u32 BE | body (TEXT, EDIT, REACTION, REPLY only)
+//
+// REPLY (CR-009) is a new text answering an earlier message: target is the
+// answered message's id and body the new words. The quote is never sent;
+// each device draws it from its own copy of the target.
 //
 // Plaintext, what the Double Ratchet encrypts:
 //
@@ -78,18 +82,18 @@ func malformed(detail string) error {
 // TextEvent is one AMD-005 inner event.
 type TextEvent struct {
 	Kind   lumosconstants.TextEventKind
-	Target MessageID // EDIT, DELETE_FOR_EVERYONE, REACTION
-	Body   []byte    // TEXT, EDIT, REACTION
+	Target MessageID // EDIT, DELETE_FOR_EVERYONE, REACTION, REPLY
+	Body   []byte    // TEXT, EDIT, REACTION, REPLY
 }
 
 func hasTarget(k lumosconstants.TextEventKind) bool {
 	return k == lumosconstants.TextEventKindEdit || k == lumosconstants.TextEventKindDeleteForEveryone ||
-		k == lumosconstants.TextEventKindReaction
+		k == lumosconstants.TextEventKindReaction || k == lumosconstants.TextEventKindReply
 }
 
 func hasBody(k lumosconstants.TextEventKind) bool {
 	return k == lumosconstants.TextEventKindText || k == lumosconstants.TextEventKindEdit ||
-		k == lumosconstants.TextEventKindReaction
+		k == lumosconstants.TextEventKindReaction || k == lumosconstants.TextEventKindReply
 }
 
 func knownKind(k lumosconstants.TextEventKind) bool { return hasTarget(k) || hasBody(k) }

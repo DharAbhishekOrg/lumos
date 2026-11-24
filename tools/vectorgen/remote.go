@@ -132,6 +132,7 @@ func buildTextEventCases() ([]textEventCase, error) {
 		{"edit", chat.TextEvent{Kind: lumosconstants.TextEventKindEdit, Target: target, Body: []byte("Hi! Lovely meeting you.")}},
 		{"delete_for_everyone", chat.TextEvent{Kind: lumosconstants.TextEventKindDeleteForEveryone, Target: target}},
 		{"reaction", chat.TextEvent{Kind: lumosconstants.TextEventKindReaction, Target: target, Body: []byte("❤️")}},
+		{"reply", chat.TextEvent{Kind: lumosconstants.TextEventKindReply, Target: target, Body: []byte("Sunday works for me!")}},
 	}
 	var out []textEventCase
 	for _, e := range events {
@@ -171,10 +172,13 @@ func checkedNegatives(decode func([]byte) error, cases []bytesNegative) ([]bytes
 func buildTextEventNegatives() ([]bytesNegative, error) {
 	target := vectorMessageID(0)
 	edit := []byte{byte(lumosconstants.TextEventKindEdit)}
+	reply := []byte{byte(lumosconstants.TextEventKindReply)}
 	return checkedNegatives(func(b []byte) error { _, err := chat.DecodeTextEvent(b); return err }, []bytesNegative{
 		{"empty", "", lumoserrors.ErrPayloadMalformed},
 		{"unknown_kind", "7f00000000", lumoserrors.ErrTextUnknownEventKind},
 		{"edit_without_target", hex.EncodeToString(append(edit, 1, 2, 3)), lumoserrors.ErrTextMissingTarget},
+		{"reply_without_target", hex.EncodeToString(append(reply, 1, 2, 3)), lumoserrors.ErrTextMissingTarget},
+		{"reply_without_body", hex.EncodeToString(append(append([]byte(nil), reply...), target[:]...)), lumoserrors.ErrPayloadMalformed},
 		{"body_length_exceeds_bytes", "000000000961", lumoserrors.ErrPayloadMalformed},
 		{"body_length_short_of_bytes", "00000000016161", lumoserrors.ErrPayloadMalformed},
 		{"body_length_huge", "00ffffffff", lumoserrors.ErrPayloadMalformed},
@@ -277,6 +281,7 @@ func sessionScript() []struct {
 		{"bob", mk(13, chat.TextEvent{Kind: lumosconstants.TextEventKindText, Body: []byte("Yes! 11am?")})},
 		{"alice", mk(14, chat.TextEvent{Kind: lumosconstants.TextEventKindEdit, Target: second, Body: []byte("Coffee on Sunday?")})},
 		{"alice", mk(15, chat.TextEvent{Kind: lumosconstants.TextEventKindDeleteForEveryone, Target: first})},
+		{"bob", mk(16, chat.TextEvent{Kind: lumosconstants.TextEventKindReply, Target: second, Body: []byte("Sunday works for me!")})},
 	}
 }
 
@@ -289,6 +294,7 @@ var remoteSteps = []remoteStep{
 	{"alice", "open", 3}, {"alice", "open", 2},
 	{"alice", "seal", 4}, {"alice", "seal", 5},
 	{"bob", "open", 4}, {"bob", "open", 5},
+	{"bob", "seal", 6}, {"alice", "open", 6},
 }
 
 // remotePlay is the reference running the script: both ratchets and what
@@ -366,6 +372,13 @@ func runRemoteSession(k *sessionKeys) error {
 			return err
 		}
 	}
+	for i, env := range r.envs {
+		if len(env) == 0 {
+			// A scripted message no step sealed would be written with an empty
+			// envelope_hex: refuse, so adding to the script forces its steps.
+			return fmt.Errorf("script message %d is never sealed by remoteSteps", i)
+		}
+	}
 	msgs := make([]remoteMessage, len(script))
 	for i, s := range script {
 		pt, err := s.p.Encode()
@@ -410,10 +423,10 @@ func buildRemoteTextVectors(constantsHash string) (*remoteTextFile, error) {
 		fileMeta: fileMeta{
 			SchemaVersion: 1, Generator: GeneratorName, ConstantsHash: constantsHash,
 			Implements: []string{"SRS-RMT-001", "SRS-RMT-004", "SRS-RMT-008", "SRS-RMT-009", "SRS-RMT-011",
-				"TRS-CRY-001", "TRS-CRY-002", "TRS-PROTO-007"},
+				"SRS-UX-011", "TRS-CRY-001", "TRS-CRY-002", "TRS-PROTO-007"},
 			KeyProvenance: KeyProvenance,
 			Notes: "The remote-text wire (protocol/chat/remote.go): text_event is event_kind u8 | " +
-				"target_message_id[16] (edit, delete, reaction) | body_len u32 BE | body (text, edit, reaction); " +
+				"target_message_id[16] (edit, delete, reaction, reply) | body_len u32 BE | body (text, edit, reaction, reply); " +
 				"the ratchet plaintext is message_id[16] | text_event; the relay envelope is 0x01 PREKEY | " +
 				"identity_dh[32] | identity_dh_sig[64] | ephemeral[32] | spk_id u32 | opk_id u32 | header[40] | " +
 				"ciphertext, or 0x02 NORMAL | header[40] | ciphertext.",

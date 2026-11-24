@@ -152,7 +152,7 @@ public final class ChatStore {
     private func targetFor(_ matchID: Data, _ event: RemoteText.TextEvent, mine: Bool) throws -> ChatRecords.Message? {
         guard event.kind != .text, let targetID = event.target else { return nil }
         let t = try message(targetID)
-        let authorOnly = event.kind != .reaction
+        let authorOnly = event.kind == .edit || event.kind == .deleteForEveryone
         let valid = t.map { $0.matchID == matchID && !$0.deleted && (!authorOnly || $0.outgoing == mine) } ?? false
         if !valid && mine {
             throw StoreError.engine("that message cannot be the target of this event")
@@ -162,7 +162,7 @@ public final class ChatStore {
 
     private func applyOwn(_ matchID: Data, _ id: Data, _ event: RemoteText.TextEvent,
                           _ target: ChatRecords.Message?) throws {
-        guard event.kind != .text else {
+        guard !ChatStore.isNewMessage(event) else {
             try putMessage(ChatRecords.Message(messageID: id, matchID: matchID, outgoing: true,
                                                body: event.body ?? Data(), createdAtMillis: clock(),
                                                sequence: try nextSequence(matchID), state: .queued))
@@ -177,8 +177,17 @@ public final class ChatStore {
         switch event.kind {
         case .edit: return t.with(edit: event.body ?? Data())
         case .deleteForEveryone: return t.deletedForEveryone()
-        default: return t.with(reaction: event.body ?? Data(), mine: mine)
+        case .reaction: return t.with(reaction: event.body ?? Data(), mine: mine)
+        default: return t // unreachable: TEXT and REPLY are new messages, never applied over another
         }
+    }
+
+    /// TEXT and REPLY (CR-009) are new messages; the other kinds change an
+    /// earlier one. A reply is stored as a text for now: the stored link to the
+    /// message it answers, and the quote drawn from it, arrive with the reply
+    /// screens.
+    private static func isNewMessage(_ event: RemoteText.TextEvent) -> Bool {
+        event.kind == .text || event.kind == .reply
     }
 
     /// The next position in a conversation: one past the highest, assigned inside the write's transaction.
@@ -239,7 +248,8 @@ public final class ChatStore {
     }
 
     private func applyPeer(_ matchID: Data, _ id: Data, _ event: RemoteText.TextEvent) throws -> Outcome {
-        if event.kind == .text {
+        if ChatStore.isNewMessage(event) {
+            // A reply is the other person's words: it always shows, whatever its target (CR-009).
             try putMessage(ChatRecords.Message(messageID: id, matchID: matchID, outgoing: false,
                                                body: event.body ?? Data(), createdAtMillis: clock(),
                                                sequence: try nextSequence(matchID), state: .delivered))

@@ -23,6 +23,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.lumos.protocol.TextEventKind;
 import com.lumos.protocol.chat.RemoteSession;
 import com.lumos.protocol.chat.RemoteText;
 import com.lumos.protocol.ratchet.DoubleRatchet;
@@ -145,7 +146,8 @@ public class RemoteTextConformanceTest {
             }
             assertArrayEquals(plaintext, got.encode(), "open must yield the Go plaintext");
         }
-        assertEquals(4, kinds.size(), "the session exercises all four event kinds");
+        assertEquals(TextEventKind.values().length, kinds.size(),
+                "the session exercises every event kind (REPLY since CR-009)");
     }
 
     @Test

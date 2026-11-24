@@ -6,7 +6,7 @@
 /// GENERATED - DO NOT EDIT. Generator: tools/constantsgen
 /// Source register: protocol/constants/lumos_constants.json
 /// Baseline: TRS v1.1 Sec. 23 / EDP v1.0 Sec. 4 (ADR-004)
-/// constants_hash: sha256:b7cebb50a545ddd203ddb2fdc86ccac1e0a4ecd9c3ed93355803516d7c1a7311
+/// constants_hash: sha256:e77b9d66fc4f41c09e3baa11539b1c9d9501a2267bb4ea5bfd436f62531853e2
 
 public enum LumosConstants {
 
@@ -14,7 +14,7 @@ public enum LumosConstants {
     public static let serviceUUID = "E853EB6A-775C-4A49-A6BF-320E6A5CC609"
 
     /// Binds generated code to the register that produced it (TRS-CONST-005).
-    public static let constantsHash = "sha256:b7cebb50a545ddd203ddb2fdc86ccac1e0a4ecd9c3ed93355803516d7c1a7311"
+    public static let constantsHash = "sha256:e77b9d66fc4f41c09e3baa11539b1c9d9501a2267bb4ea5bfd436f62531853e2"
 
     /// Register schema version.
     public static let schemaVersion = 1
@@ -1305,6 +1305,8 @@ public enum TextEventKind: UInt8, CaseIterable, Sendable {
     case deleteForEveryone = 0x02
     /// Authenticated reaction over the original message
     case reaction = 0x03
+    /// A new text answering an earlier message; its quote is drawn locally, never sent (CR-009)
+    case reply = 0x04
 
     /// The canonical name as written in the register.
     public var canonicalName: String {
@@ -1313,6 +1315,7 @@ public enum TextEventKind: UInt8, CaseIterable, Sendable {
         case .edit: return "EDIT"
         case .deleteForEveryone: return "DELETE_FOR_EVERYONE"
         case .reaction: return "REACTION"
+        case .reply: return "REPLY"
         }
     }
 }

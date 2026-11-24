@@ -1,19 +1,20 @@
 {
   "schema_version": 1,
   "generator": "tools/vectorgen",
-  "constants_hash": "sha256:b7cebb50a545ddd203ddb2fdc86ccac1e0a4ecd9c3ed93355803516d7c1a7311",
+  "constants_hash": "sha256:e77b9d66fc4f41c09e3baa11539b1c9d9501a2267bb4ea5bfd436f62531853e2",
   "implements": [
     "SRS-RMT-001",
     "SRS-RMT-004",
     "SRS-RMT-008",
     "SRS-RMT-009",
     "SRS-RMT-011",
+    "SRS-UX-011",
     "TRS-CRY-001",
     "TRS-CRY-002",
     "TRS-PROTO-007"
   ],
   "key_provenance": "TESTONLY-lumos-vectors-v1",
-  "notes": "The remote-text wire (protocol/chat/remote.go): text_event is event_kind u8 | target_message_id[16] (edit, delete, reaction) | body_len u32 BE | body (text, edit, reaction); the ratchet plaintext is message_id[16] | text_event; the relay envelope is 0x01 PREKEY | identity_dh[32] | identity_dh_sig[64] | ephemeral[32] | spk_id u32 | opk_id u32 | header[40] | ciphertext, or 0x02 NORMAL | header[40] | ciphertext.",
+  "notes": "The remote-text wire (protocol/chat/remote.go): text_event is event_kind u8 | target_message_id[16] (edit, delete, reaction, reply) | body_len u32 BE | body (text, edit, reaction, reply); the ratchet plaintext is message_id[16] | text_event; the relay envelope is 0x01 PREKEY | identity_dh[32] | identity_dh_sig[64] | ephemeral[32] | spk_id u32 | opk_id u32 | header[40] | ciphertext, or 0x02 NORMAL | header[40] | ciphertext.",
   "text_events": [
     {
       "name": "text",
@@ -51,6 +52,13 @@
       "target_message_id_hex": "22d3375b1ca4f8ce2eca432255f8bd61",
       "body_hex": "e29da4efb88f",
       "encoded_hex": "0322d3375b1ca4f8ce2eca432255f8bd6100000006e29da4efb88f"
+    },
+    {
+      "name": "reply",
+      "kind": 4,
+      "target_message_id_hex": "22d3375b1ca4f8ce2eca432255f8bd61",
+      "body_hex": "53756e64617920776f726b7320666f72206d6521",
+      "encoded_hex": "0422d3375b1ca4f8ce2eca432255f8bd610000001453756e64617920776f726b7320666f72206d6521"
     }
   ],
   "text_event_negatives": [
@@ -68,6 +76,16 @@
       "name": "edit_without_target",
       "encoded_hex": "01010203",
       "expected_error": "ERR_TEXT_MISSING_TARGET"
+    },
+    {
+      "name": "reply_without_target",
+      "encoded_hex": "04010203",
+      "expected_error": "ERR_TEXT_MISSING_TARGET"
+    },
+    {
+      "name": "reply_without_body",
+      "encoded_hex": "0422d3375b1ca4f8ce2eca432255f8bd61",
+      "expected_error": "ERR_PAYLOAD_MALFORMED"
     },
     {
       "name": "body_length_exceeds_bytes",
@@ -198,6 +216,13 @@
         "plaintext_hex": "585e12c54b0ca3f1c2f7721e9368805b02fc065e1952d8ba70d5cad57495a602fb",
         "prekey": false,
         "envelope_hex": "02c3cc053596c52ce702ca8c4c10e12c3e8e6fce020765840e723210faa178671c000000020000000107d946888a559a3970ba71b2eb62911c63c0d5ba04bee54bede581157ff7cdd55a3c9c8975a7539058d7ff9133e191eed0"
+      },
+      {
+        "from": "bob",
+        "message_id_hex": "8ba440a91f52b99b0dff6a8b94c16c68",
+        "plaintext_hex": "8ba440a91f52b99b0dff6a8b94c16c6804a135cfec60f1238e81e018a8a029426a0000001453756e64617920776f726b7320666f72206d6521",
+        "prekey": false,
+        "envelope_hex": "0278674b1a89fb3da3baa489c59611439401dd152bc9e097941b6349fb37abb33d0000000200000000bbcb16f4491ab09477620c92f277676f2e26b60e83fe6b6671cb529b2999391ba51e7002e67f4a9025d23a0868b3d8ca33724dd8a07879a28c7b938fe730ac503e0194c19cf76cdb52"
       }
     ],
     "steps": [
@@ -260,6 +285,16 @@
         "actor": "bob",
         "op": "open",
         "message": 5
+      },
+      {
+        "actor": "bob",
+        "op": "seal",
+        "message": 6
+      },
+      {
+        "actor": "alice",
+        "op": "open",
+        "message": 6
       }
     ]
   }

@@ -162,7 +162,8 @@ final class RemoteTextConformanceTests: XCTestCase {
             }
             XCTAssertEqual(got.encoded, plaintext, "open must yield the Go plaintext")
         }
-        XCTAssertEqual(kinds.count, 4, "the session exercises all four event kinds")
+        XCTAssertEqual(kinds.count, TextEventKind.allCases.count,
+                       "the session exercises every event kind (REPLY since CR-009)")
     }
 
     func testStoredPrekeyFieldsAreTheEnvelopesOwnBytes() throws {

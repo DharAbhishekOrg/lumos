@@ -5,7 +5,7 @@
  "$generator": "tools/constantsgen",
  "service_uuid": "E853EB6A-775C-4A49-A6BF-320E6A5CC609",
  "$service_uuid_provenance": "One fixed 128-bit GATT service UUID per ADR-002 / TRS Sec. 9.3, generated once from a CSPRNG as an RFC 4122 version-4 UUID in WP-01 slice S2 and frozen here. Advertised by both platforms and used for scan filtering. No 16-bit alias is registered for flagship. Regenerating this value is a breaking protocol change.",
- "constants_hash": "sha256:b7cebb50a545ddd203ddb2fdc86ccac1e0a4ecd9c3ed93355803516d7c1a7311",
+ "constants_hash": "sha256:e77b9d66fc4f41c09e3baa11539b1c9d9501a2267bb4ea5bfd436f62531853e2",
  "constants_hash_algorithm": {
   "digest": "SHA-256",
   "encoding": "lowercase hex, prefixed 'sha256:'",
@@ -654,8 +654,9 @@
    {"code": 0, "name": "TEXT",                 "purpose": "Original text event"},
    {"code": 1, "name": "EDIT",                 "purpose": "Authenticated edit over the original message"},
    {"code": 2, "name": "DELETE_FOR_EVERYONE",  "purpose": "Authenticated delete over the original message"},
-   {"code": 3, "name": "REACTION",             "purpose": "Authenticated reaction over the original message"}
+   {"code": 3, "name": "REACTION",             "purpose": "Authenticated reaction over the original message"},
+   {"code": 4, "name": "REPLY",                "purpose": "A new text answering an earlier message; its quote is drawn locally, never sent (CR-009)"}
   ],
-  "$text_event_notes": "AMD-005 / TRS Sec. 9.2 class 0x10. Kinds 1..3 carry target_message_id. Unknown event_kind values follow TRS-PROTO-006 (safe skip if non-critical, fail closed if critical). Codes 17 and 18 are reserved and must never become text event kinds: they are the DELIVERY_RECEIPT and READ_RECEIPT kinds a receipt plaintext carries in the same position (CR-005), so a receipt a relay passes off as text always decodes as an unknown kind and shows nothing."
+  "$text_event_notes": "AMD-005 / TRS Sec. 9.2 class 0x10. Kinds 1..4 carry target_message_id; kinds 0, 1, 3 and 4 carry a body (CR-009 added 4, REPLY). Unknown event_kind values follow TRS-PROTO-006 (safe skip if non-critical, fail closed if critical). Codes 17 and 18 are reserved and must never become text event kinds: they are the DELIVERY_RECEIPT and READ_RECEIPT kinds a receipt plaintext carries in the same position (CR-005), so a receipt a relay passes off as text always decodes as an unknown kind and shows nothing."
  }
 }

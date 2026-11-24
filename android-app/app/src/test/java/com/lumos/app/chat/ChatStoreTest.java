@@ -460,4 +460,57 @@ public class ChatStoreTest {
                 com.lumos.protocol.MessageClass.TEXT_MESSAGE), "within the class limit the relay enforces");
         assertEquals(ChatStore.Outcome.DISPLAYED, deliver(p[0], p[1]).get(0).outcome());
     }
+
+    @Test
+    void aReplyIsANewMessageOnBothSidesAndNeverChangesTheMessageItAnswers() throws Exception {
+        final Device[] p = matchedPair();
+        final Device alice = p[0];
+        final Device bob = p[1];
+        final byte[] question = alice.chat.send(MATCH, text("Coffee on Saturday?"));
+        deliver(alice, bob);
+
+        // Bob answers Alice's message: a reply may target either person's message (CR-009).
+        final byte[] answer = bob.chat.send(MATCH, new RemoteText.TextEvent(TextEventKind.REPLY, question,
+                utf8("Saturday works!")));
+        assertEquals(2, bob.chat.messages(MATCH).size(), "the reply is a new message on the sender's side");
+        final List<ChatStore.Received> got = deliver(bob, alice).stream()
+                .filter(r -> r.outcome() != ChatStore.Outcome.APPLIED).toList();
+        assertEquals(ChatStore.Outcome.DISPLAYED, got.get(0).outcome(), "and shows on the receiver's");
+
+        for (final Device d : p) {
+            final List<ChatRecords.Message> all = d.chat.messages(MATCH);
+            assertEquals(2, all.size());
+            final ChatRecords.Message asked = all.stream().filter(m -> Arrays.equals(m.messageId(), question))
+                    .findFirst().orElseThrow();
+            assertArrayEquals(utf8("Coffee on Saturday?"), asked.body(), "the answered message is untouched");
+            assertEquals(0, asked.myReaction().length + asked.peerReaction().length, "and never read as a reaction");
+            assertFalse(asked.edited());
+        }
+        assertTrue(alice.chat.messages(MATCH).stream().anyMatch(m -> !m.outgoing()
+                && Arrays.equals(m.body(), utf8("Saturday works!"))), "Alice reads Bob's words");
+        assertTrue(bob.chat.messages(MATCH).stream().anyMatch(m -> Arrays.equals(m.messageId(), answer)
+                && m.outgoing()));
+    }
+
+    @Test
+    void aReplyToAMessageThisDeviceNeverHadStillShowsButSendingOneIsRefused() throws Exception {
+        final Device[] p = matchedPair();
+        final Device alice = p[0];
+        final Device bob = p[1];
+        assertThrows(StoreException.class, () -> alice.chat.send(MATCH,
+                new RemoteText.TextEvent(TextEventKind.REPLY, random(16), utf8("hm?"))),
+                "a reply must answer a message in this conversation");
+        alice.chat.send(MATCH, text("Hi"));
+        deliver(alice, bob);
+        final byte[] bobsOwn = bob.chat.send(MATCH, text("Hello"));
+        final byte[] reply = bob.chat.send(MATCH, new RemoteText.TextEvent(TextEventKind.REPLY, bobsOwn,
+                utf8("(that was me)")));
+        // Only the reply reaches Alice: she never had the message it answers.
+        final List<ChatRecords.OutboxItem> items = bob.chat.pendingOutbox();
+        final int replyAt = java.util.stream.IntStream.range(0, items.size())
+                .filter(i -> Arrays.equals(items.get(i).messageId(), reply)).findFirst().orElseThrow();
+        final List<ChatStore.Received> got = deliver(bob, alice, replyAt);
+        assertEquals(ChatStore.Outcome.DISPLAYED, got.get(0).outcome(), "the reply still shows (CR-009)");
+        assertEquals(2, alice.chat.messages(MATCH).size(), "her Hi and Bob's reply; the missing target adds nothing");
+    }
 }

@@ -244,8 +244,9 @@ func TestTheCommittedSessionReplaysByteForByte(t *testing.T) {
 		p, _ := DecodePlaintext(unhex(t, m.PlaintextHex))
 		kinds[p.Event.Kind] = true
 	}
-	if len(kinds) != 4 {
-		t.Fatalf("the session must exercise all four event kinds, got %d", len(kinds))
+	if len(kinds) != len(lumosconstants.TextEventKindNames) {
+		t.Fatalf("the session must exercise every event kind (%d, REPLY since CR-009), got %d",
+			len(lumosconstants.TextEventKindNames), len(kinds))
 	}
 }
 
