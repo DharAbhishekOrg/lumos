@@ -50,6 +50,8 @@ public final class ConversationPresenter {
 
     /** What a bubble's long-press offers. */
     public enum Action {
+        /** Answer this message (CR-009). */
+        REPLY,
         /** Add a reaction. */
         REACT,
         /** Copy the text. */
@@ -158,6 +160,26 @@ public final class ConversationPresenter {
     }
 
     /**
+     * Sends a reply to a message (CR-009). Only the id of the answered
+     * message travels; its words are never sent again.
+     *
+     * @param draft the composer text
+     * @param answered the message being answered
+     * @return what happened
+     */
+    public SendResult sendReply(final String draft, final ConversationRows.Bubble answered) {
+        final SendResult ok = check(draft);
+        if (ok != SendResult.SENT) {
+            return ok;
+        }
+        if (!actionsFor(answered).contains(Action.REPLY)) {
+            return SendResult.FAILED;
+        }
+        return map(source.send(matchId, new RemoteText.TextEvent(TextEventKind.REPLY, answered.messageId(),
+                draft.strip().getBytes(StandardCharsets.UTF_8))));
+    }
+
+    /**
      * The actions a bubble offers.
      *
      * @param b the bubble
@@ -168,6 +190,7 @@ public final class ConversationPresenter {
         if (b.deleted()) {
             return out;
         }
+        out.add(Action.REPLY);
         out.add(Action.REACT);
         if (!b.text().isEmpty()) {
             out.add(Action.COPY);

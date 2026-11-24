@@ -27,8 +27,10 @@ import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 /** Builds the rows of one conversation. */
 public final class ConversationRows {
@@ -91,10 +93,11 @@ public final class ConversationRows {
      * @param myReaction this device's reaction, empty for none
      * @param peerReaction the peer's reaction, empty for none
      * @param position where it sits in its run
+     * @param quote what this bubble answers, or null when it answers nothing (CR-009)
      */
     public record Bubble(String key, byte[] messageId, boolean outgoing, String text, boolean deleted, boolean edited,
             String timeLabel, DeliveryMachine.State state, String myReaction, String peerReaction,
-            RunPosition position) implements Row {
+            RunPosition position, Quote quote) implements Row {
 
         /**
          * @param key see the record
@@ -108,6 +111,7 @@ public final class ConversationRows {
          * @param myReaction see the record
          * @param peerReaction see the record
          * @param position see the record
+         * @param quote see the record
          */
         public Bubble {
             messageId = messageId.clone();
@@ -122,6 +126,65 @@ public final class ConversationRows {
         public boolean showsMeta() {
             return position == RunPosition.SINGLE || position == RunPosition.LAST;
         }
+    }
+
+    /** What a quote can show (CR-009): it is drawn from this device's own copy, never from anything sent. */
+    public enum QuoteKind {
+        /** The answered message's words. */
+        TEXT,
+        /** The answered message was deleted for everyone. */
+        DELETED,
+        /** This device deleted it for itself, never had it, or it is not in this conversation. */
+        UNAVAILABLE
+    }
+
+    /**
+     * The quoted line above a reply.
+     *
+     * @param kind what it shows
+     * @param messageId the answered message's id
+     * @param fromMe true when this device wrote the answered message (meaningful for TEXT and DELETED)
+     * @param text the answered words, empty unless TEXT
+     */
+    public record Quote(QuoteKind kind, byte[] messageId, boolean fromMe, String text) {
+
+        /**
+         * Copies.
+         *
+         * @param kind see the record
+         * @param messageId see the record
+         * @param fromMe see the record
+         * @param text see the record
+         */
+        public Quote {
+            messageId = messageId.clone();
+        }
+
+        @Override
+        public byte[] messageId() {
+            return messageId.clone();
+        }
+    }
+
+    /**
+     * Draws a reply's quote from the conversation as this device holds it.
+     *
+     * @param m a message
+     * @param byId the conversation's messages by row id
+     * @return its quote, or null when it is not a reply or is itself deleted
+     */
+    static Quote quoteOf(final ChatRecords.Message m, final Map<String, ChatRecords.Message> byId) {
+        if (!m.isReply() || m.deleted()) {
+            return null;
+        }
+        final ChatRecords.Message t = byId.get(ChatRecords.rowId(m.replyTo()));
+        if (t == null) {
+            return new Quote(QuoteKind.UNAVAILABLE, m.replyTo(), false, "");
+        }
+        if (t.deleted()) {
+            return new Quote(QuoteKind.DELETED, m.replyTo(), t.outgoing(), "");
+        }
+        return new Quote(QuoteKind.TEXT, m.replyTo(), t.outgoing(), new String(t.body(), StandardCharsets.UTF_8));
     }
 
     /**
@@ -139,6 +202,10 @@ public final class ConversationRows {
         final DateTimeFormatter date = DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM).withLocale(locale);
         final LocalDate today = Instant.ofEpochMilli(nowMillis).atZone(zone).toLocalDate();
         final List<Row> rows = new ArrayList<>();
+        final Map<String, ChatRecords.Message> byId = new HashMap<>();
+        for (final ChatRecords.Message m : messages) {
+            byId.put(ChatRecords.rowId(m.messageId()), m);
+        }
         LocalDate shownDay = null;
         for (int i = 0; i < messages.size(); i++) {
             final ChatRecords.Message m = messages.get(i);
@@ -150,7 +217,7 @@ public final class ConversationRows {
             final String text = m.deleted() ? "" : new String(m.body(), StandardCharsets.UTF_8);
             rows.add(new Bubble(ChatRecords.rowId(m.messageId()), m.messageId(), m.outgoing(), text, m.deleted(),
                     m.edited(), time.format(at), m.state(), utf8(m.myReaction()), utf8(m.peerReaction()),
-                    position(messages, i, zone)));
+                    position(messages, i, zone), quoteOf(m, byId)));
         }
         return rows;
     }

@@ -243,8 +243,7 @@ public final class ChatStore {
     private void applyOwn(final byte[] matchId, final byte[] id, final RemoteText.TextEvent event,
             final Optional<ChatRecords.Message> target) throws StoreException {
         if (ChatEvents.isNewMessage(event)) {
-            putMessage(new ChatRecords.Message(id, matchId, true, event.body(), clock.nowUtcMillis(), nextSequence(matchId),
-                    DeliveryMachine.State.QUEUED, false, false, new byte[0], new byte[0]));
+            putMessage(ChatEvents.newMessage(id, matchId, true, event, clock.nowUtcMillis(), nextSequence(matchId)));
             return;
         }
         putMessage(ChatEvents.applied(target.orElseThrow(), event, true));
@@ -334,9 +333,9 @@ public final class ChatStore {
     private Received applyPeer(final byte[] matchId, final byte[] id, final RemoteText.TextEvent event)
             throws StoreException {
         if (ChatEvents.isNewMessage(event)) {
-            // A reply is the other person's words: it always shows, whatever its target (CR-009).
-            putMessage(new ChatRecords.Message(id, matchId, false, event.body(), clock.nowUtcMillis(), nextSequence(matchId),
-                    DeliveryMachine.State.DELIVERED, false, false, new byte[0], new byte[0]));
+            // A reply is the other person's words: it always shows, whatever its target. Its link is
+            // kept as sent; the quote is drawn only from a message in this conversation (CR-009).
+            putMessage(ChatEvents.newMessage(id, matchId, false, event, clock.nowUtcMillis(), nextSequence(matchId)));
             return new Received(Outcome.DISPLAYED, "");
         }
         final Optional<ChatRecords.Message> target = targetFor(matchId, event, false);

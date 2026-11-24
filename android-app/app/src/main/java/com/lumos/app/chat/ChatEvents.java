@@ -8,14 +8,15 @@
  * and REACTION change the message they target. Each kind is named
  * explicitly: before CR-009 the last branch was a bare default that read
  * every other kind as a reaction, so a reply would have been applied to the
- * message it answers. A reply is stored as a text for now; the stored link
- * to the message it answers, and the quote drawn from it, arrive with the
- * reply screens. Kept out of ChatStore for the TRS-CODE-004 class budget.
+ * message it answers. A reply is stored as a new message carrying the id it
+ * answers (replyTo); the quote is drawn from that id when shown, never from
+ * anything sent. Kept out of ChatStore for the TRS-CODE-004 class budget.
  */
 
 package com.lumos.app.chat;
 
 import com.lumos.protocol.TextEventKind;
+import com.lumos.protocol.chat.DeliveryMachine;
 import com.lumos.protocol.chat.RemoteText;
 
 /** The text-event rules ChatStore applies. */
@@ -31,6 +32,25 @@ final class ChatEvents {
      */
     static boolean isNewMessage(final RemoteText.TextEvent event) {
         return event.kind() == TextEventKind.TEXT || event.kind() == TextEventKind.REPLY;
+    }
+
+    /**
+     * The message a TEXT or REPLY adds.
+     *
+     * @param id its id
+     * @param matchId the conversation
+     * @param mine true when this device sent it
+     * @param event the TEXT or REPLY
+     * @param createdAtMillis now
+     * @param sequence its position in the conversation
+     * @return the new message, QUEUED when mine and DELIVERED when the peer's
+     */
+    static ChatRecords.Message newMessage(final byte[] id, final byte[] matchId, final boolean mine,
+            final RemoteText.TextEvent event, final long createdAtMillis, final long sequence) {
+        final byte[] replyTo = event.kind() == TextEventKind.REPLY ? event.target() : new byte[0];
+        return new ChatRecords.Message(id, matchId, mine, event.body(), createdAtMillis, sequence,
+                mine ? DeliveryMachine.State.QUEUED : DeliveryMachine.State.DELIVERED, false, false, new byte[0],
+                new byte[0], replyTo);
     }
 
     /**

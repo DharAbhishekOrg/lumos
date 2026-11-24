@@ -490,6 +490,10 @@ public class ChatStoreTest {
                 && Arrays.equals(m.body(), utf8("Saturday works!"))), "Alice reads Bob's words");
         assertTrue(bob.chat.messages(MATCH).stream().anyMatch(m -> Arrays.equals(m.messageId(), answer)
                 && m.outgoing()));
+        for (final Device d : p) {
+            assertTrue(d.chat.messages(MATCH).stream().anyMatch(m -> Arrays.equals(m.replyTo(), question)),
+                    "both sides keep which message the reply answers");
+        }
     }
 
     @Test

@@ -38,7 +38,7 @@ class ConversationRowsTest {
     private static ChatRecords.Message msg(final boolean mine, final String text, final long when, final long seq) {
         return new ChatRecords.Message(ChatRecords.newMessageId(), MATCH, mine, text.getBytes(StandardCharsets.UTF_8),
                 when, seq, mine ? DeliveryMachine.State.READ : DeliveryMachine.State.DELIVERED, false, false,
-                new byte[0], new byte[0]);
+                new byte[0], new byte[0], new byte[0]);
     }
 
     private static List<ConversationRows.Bubble> bubbles(final List<ConversationRows.Row> rows) {
@@ -112,5 +112,42 @@ class ConversationRowsTest {
     @Test
     void anEmptyConversationHasNoRows() {
         assertTrue(ConversationRows.build(List.of(), NOW, KOLKATA, Locale.UK).isEmpty());
+    }
+
+    private static ChatRecords.Message reply(final boolean mine, final String text, final byte[] to, final long seq) {
+        return new ChatRecords.Message(ChatRecords.newMessageId(), MATCH, mine, text.getBytes(StandardCharsets.UTF_8),
+                at(24, 10, (int) seq), seq, DeliveryMachine.State.DELIVERED, false, false, new byte[0], new byte[0], to);
+    }
+
+    @Test
+    void aQuoteIsDrawnFromThisPhonesOwnCopyOfTheAnsweredMessage() {
+        final ChatRecords.Message theirs = msg(false, "Coffee on Saturday?", at(24, 10, 0), 1);
+        final ChatRecords.Message mine = msg(true, "Or Sunday?", at(24, 10, 1), 2);
+        final ChatRecords.Message gone = msg(true, "", at(24, 10, 2), 3).withDeleted();
+        final List<ConversationRows.Bubble> b = bubbles(ConversationRows.build(List.of(theirs, mine, gone,
+                reply(true, "Saturday!", theirs.messageId(), 4),
+                reply(false, "Sunday is better", mine.messageId(), 5),
+                reply(false, "what did you say?", gone.messageId(), 6),
+                reply(false, "about that...", ChatRecords.newMessageId(), 7)), NOW, KOLKATA, Locale.UK));
+
+        assertEquals(null, b.get(0).quote(), "a message that answers nothing has no quote");
+        final ConversationRows.Quote toTheirs = b.get(3).quote();
+        assertEquals(ConversationRows.QuoteKind.TEXT, toTheirs.kind());
+        assertEquals("Coffee on Saturday?", toTheirs.text());
+        assertFalse(toTheirs.fromMe());
+        assertTrue(b.get(4).quote().fromMe(), "the peer answering my message quotes me");
+        assertEquals(ConversationRows.QuoteKind.DELETED, b.get(5).quote().kind(),
+                "deleted for everyone: the quote says so, and keeps none of the words");
+        assertEquals("", b.get(5).quote().text());
+        assertEquals(ConversationRows.QuoteKind.UNAVAILABLE, b.get(6).quote().kind(),
+                "never had it, deleted it for myself, or it belongs to another chat");
+    }
+
+    @Test
+    void aDeletedReplyShowsNoQuote() {
+        final ChatRecords.Message asked = msg(false, "Hi", at(24, 9, 0), 1);
+        final ChatRecords.Message answered = reply(true, "Hey", asked.messageId(), 2).withDeleted();
+        assertEquals(null, bubbles(ConversationRows.build(List.of(asked, answered), NOW, KOLKATA, Locale.UK)).get(1)
+                .quote());
     }
 }

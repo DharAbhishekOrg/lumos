@@ -223,9 +223,11 @@ public final class ChatRecords {
      * @param deleted whether it was deleted for everyone
      * @param myReaction this device's reaction, or empty
      * @param peerReaction the peer's reaction, or empty
+     * @param replyTo the id of the message this one answers (CR-009 REPLY), or empty
      */
     public record Message(byte[] messageId, byte[] matchId, boolean outgoing, byte[] body, long createdAtMillis,
-            long sequence, DeliveryMachine.State state, boolean edited, boolean deleted, byte[] myReaction, byte[] peerReaction) {
+            long sequence, DeliveryMachine.State state, boolean edited, boolean deleted, byte[] myReaction, byte[] peerReaction,
+            byte[] replyTo) {
 
         /**
          * Copies.
@@ -241,6 +243,7 @@ public final class ChatRecords {
          * @param deleted see the record
          * @param myReaction see the record
          * @param peerReaction see the record
+         * @param replyTo see the record
          */
         public Message {
             messageId = messageId.clone();
@@ -248,6 +251,18 @@ public final class ChatRecords {
             body = body.clone();
             myReaction = myReaction.clone();
             peerReaction = peerReaction.clone();
+            replyTo = replyTo.clone();
+        }
+
+        /** @return a copy of the id this message answers, empty when it answers nothing */
+        @Override
+        public byte[] replyTo() {
+            return replyTo.clone();
+        }
+
+        /** @return true when this message is a reply (CR-009) */
+        public boolean isReply() {
+            return replyTo.length > 0;
         }
 
         /** @return a copy of the message id */
@@ -286,7 +301,7 @@ public final class ChatRecords {
          */
         public Message withState(final DeliveryMachine.State next) {
             return new Message(messageId, matchId, outgoing, body, createdAtMillis, sequence, next, edited, deleted,
-                    myReaction, peerReaction);
+                    myReaction, peerReaction, replyTo);
         }
 
         /**
@@ -295,13 +310,13 @@ public final class ChatRecords {
          */
         public Message withEdit(final byte[] newBody) {
             return new Message(messageId, matchId, outgoing, newBody, createdAtMillis, sequence, state, true, deleted,
-                    myReaction, peerReaction);
+                    myReaction, peerReaction, replyTo);
         }
 
         /** @return this message, deleted for everyone: the body is gone */
         public Message withDeleted() {
             return new Message(messageId, matchId, outgoing, new byte[0], createdAtMillis, sequence, state, edited, true,
-                    myReaction, peerReaction);
+                    myReaction, peerReaction, new byte[0]);
         }
 
         /**
@@ -311,7 +326,7 @@ public final class ChatRecords {
          */
         public Message withReaction(final boolean mine, final byte[] reaction) {
             return new Message(messageId, matchId, outgoing, body, createdAtMillis, sequence, state, edited, deleted,
-                    mine ? reaction : myReaction, mine ? peerReaction : reaction);
+                    mine ? reaction : myReaction, mine ? peerReaction : reaction, replyTo);
         }
 
         /** @return the record bytes */
@@ -327,6 +342,10 @@ public final class ChatRecords {
             out.write((edited ? 1 : 0) | (deleted ? 2 : 0));
             writeLengthPrefixed(out, myReaction);
             writeLengthPrefixed(out, peerReaction);
+            if (replyTo.length > 0) {
+                // Optional and last, so rows written before CR-009 still read (as answering nothing).
+                writeLengthPrefixed(out, replyTo);
+            }
             return out.toByteArray();
         }
 
@@ -350,8 +369,14 @@ public final class ChatRecords {
                     throw corrupt();
                 }
                 final int flags = in.get();
+                final byte[] mine = readBytes(in);
+                final byte[] peer = readBytes(in);
+                final byte[] replyTo = in.hasRemaining() ? readBytes(in) : new byte[0];
+                if (in.hasRemaining() || replyTo.length != 0 && replyTo.length != ID_LEN) {
+                    throw corrupt();
+                }
                 return new Message(id, match, out, body, created, sequence, states[stateIndex], (flags & 1) != 0,
-                        (flags & 2) != 0, readBytes(in), readBytes(in));
+                        (flags & 2) != 0, mine, peer, replyTo);
             } catch (final BufferUnderflowException e) {
                 throw corrupt();
             }

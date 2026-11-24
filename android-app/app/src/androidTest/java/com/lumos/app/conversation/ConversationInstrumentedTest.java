@@ -18,6 +18,7 @@
 
 package com.lumos.app.conversation;
 
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -109,7 +110,7 @@ public final class ConversationInstrumentedTest {
     private static ChatRecords.Message message(final boolean mine, final String text, final long at,
             final DeliveryMachine.State state) {
         return new ChatRecords.Message(ChatRecords.newMessageId(), MATCH, mine, text.getBytes(StandardCharsets.UTF_8),
-                at, at, state, false, false, new byte[0], new byte[0]);
+                at, at, state, false, false, new byte[0], new byte[0], new byte[0]);
     }
 
     private static void waitFor(final BooleanSupplier condition) throws InterruptedException {
@@ -251,6 +252,66 @@ public final class ConversationInstrumentedTest {
             sc.moveToState(Lifecycle.State.STARTED);
             sc.onActivity(a -> assertTrue("the thumbnail taken on the way out is blank",
                     (a.getWindow().getAttributes().flags & WindowManager.LayoutParams.FLAG_SECURE) != 0));
+        }
+    }
+
+    @Test
+    @SuppressLint("SetTextI18n") // the test types a message, as a person would; it is not UI copy
+    public void aReplyShowsItsQuoteAndReplyingSendsOnlyTheAnsweredId() throws Exception {
+        final Scripted s = new Scripted();
+        final long now = System.currentTimeMillis();
+        final ChatRecords.Message asked = message(false, "Coffee on Saturday?", now - 120_000,
+                DeliveryMachine.State.DELIVERED);
+        s.messages.add(asked);
+        s.messages.add(new ChatRecords.Message(ChatRecords.newMessageId(), MATCH, true,
+                "Saturday!".getBytes(StandardCharsets.UTF_8), now - 60_000, now - 60_000, DeliveryMachine.State.READ,
+                false, false, new byte[0], new byte[0], asked.messageId()));
+        ConversationActivity.setSource(s);
+        try (ActivityScenario<ConversationActivity> sc = ActivityScenario.launch(ConversationActivity.intent(
+                InstrumentationRegistry.getInstrumentation().getTargetContext(), MATCH))) {
+            waitFor(() -> {
+                final boolean[] ready = new boolean[1];
+                sc.onActivity(a -> {
+                    final RecyclerView rv = a.findViewById(R.id.conversation_messages);
+                    ready[0] = rv.getAdapter() != null && rv.getChildCount() == 3;
+                });
+                return ready[0];
+            });
+            sc.onActivity(a -> {
+                final RecyclerView rv = a.findViewById(R.id.conversation_messages);
+                final TextView quote = rv.getChildAt(2).findViewById(R.id.message_quote);
+                assertEquals(View.VISIBLE, quote.getVisibility());
+                assertEquals("Aanya: Coffee on Saturday?", quote.getText().toString());
+                final String spoken = rv.getChildAt(2).getContentDescription().toString();
+                assertTrue(spoken, spoken.startsWith("In reply to Aanya: Coffee on Saturday?. You, "));
+                assertEquals("a message that answers nothing has no quote", View.GONE,
+                        rv.getChildAt(1).findViewById(R.id.message_quote).getVisibility());
+
+                // Reply from the screen reader's action list, as the long-press menu does.
+                final View theirs = rv.getChildAt(1);
+                final AccessibilityNodeInfo node = theirs.createAccessibilityNodeInfo();
+                for (final AccessibilityNodeInfo.AccessibilityAction act : node.getActionList()) {
+                    if (act.getLabel() != null && a.getString(R.string.action_reply).contentEquals(act.getLabel())) {
+                        theirs.performAccessibilityAction(act.getId(), null);
+                    }
+                }
+                assertEquals(View.VISIBLE, a.findViewById(R.id.conversation_reply_bar).getVisibility());
+                assertEquals("Replying to Aanya: Coffee on Saturday?",
+                        ((TextView) a.findViewById(R.id.conversation_reply_text)).getText().toString());
+                ((EditText) a.findViewById(R.id.composer_text)).setText("Make it Sunday");
+                a.findViewById(R.id.composer_send).performClick();
+            });
+            waitFor(() -> !s.sent.isEmpty());
+            final RemoteText.TextEvent sent = s.sent.get(0);
+            assertEquals(TextEventKind.REPLY, sent.kind());
+            assertArrayEquals(asked.messageId(), sent.target());
+            assertEquals("Make it Sunday", new String(sent.body(), StandardCharsets.UTF_8));
+            waitFor(() -> {
+                final boolean[] closed = new boolean[1];
+                sc.onActivity(a -> closed[0] = a.findViewById(R.id.conversation_reply_bar).getVisibility() == View.GONE
+                        && a.replyingTo() == null);
+                return closed[0];
+            });
         }
     }
 }
