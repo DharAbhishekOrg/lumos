@@ -19,7 +19,7 @@ Google account. Changing any of it is owner-executed.
 | App Store Connect API key (CI uploads) | Owner-created, App Manager role, held only in GitHub Actions secrets `ASC_KEY_ID`, `ASC_ISSUER_ID`, `ASC_KEY_P8`. Enough for cloud-managed distribution signing (first upload, build 0.1.0 (3), 2026-11-25) |
 | TestFlight uploads | `.github/workflows/testflight.yml`, started by hand on `main` (Actions → testflight → Run workflow). Build number = the workflow's run number; internal testers only |
 | TestFlight testers | Internal group "Owner" (the account holder), automatic distribution on, so every uploaded build reaches the owner's phone |
-| Export compliance (encryption) | Answered by the owner per build in App Store Connect: standard encryption algorithms; **not** distributed in France. France needs a French encryption declaration (ANSSI) filed and approved before launch there; then answer "Yes" on that release |
+| Export compliance (encryption) | Owner's declaration: standard encryption algorithms only; **not** distributed in France. Since 2026-11-25 (owner's choice "A") it is carried by every build as `ITSAppUsesNonExemptEncryption = false` in `ios-app/app/project.yml`, so App Store Connect no longer asks per build. **Before** a release that adds France (needs the French ANSSI declaration approved first) or any non-standard cryptography, that key must be changed and the questions answered again. Get the export position checked once before public launch |
 
 `com.lumos.app` is registered to another Apple developer and the store name
 "Lumos" is taken, so the iOS app uses the identifiers above (owner ruling of
