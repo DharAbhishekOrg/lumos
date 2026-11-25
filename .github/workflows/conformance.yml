@@ -438,7 +438,7 @@ jobs:
       # The zero-warning claim for Swift therefore rests on the host build
       # above, which compiles the same sources - including LumosAppShell - with
       # -warnings-as-errors. What that does not cover is an iOS-ONLY diagnostic,
-      # such as an availability warning for an API newer than iOS 17. Since
+      # such as an availability warning for an API newer than iOS 15. Since
       # WP-05 S7f2b the shell has iOS-only code (RelayBackground, behind
       # #if os(iOS): BackgroundTasks and Network), so this step is now the only
       # compile of it: its ERRORS fail here, its warnings do not. Closing that
@@ -447,7 +447,9 @@ jobs:
         run: |
           set -euo pipefail
           sdk="$(xcrun --sdk iphoneos --show-sdk-path)"
-          target="arm64-apple-ios17.0"
+          # The approved floor (SRS-NFR-CMP-008, TRS-IOS-002): an API newer
+          # than iOS 15 used without an availability check is an error here.
+          target="arm64-apple-ios15.0"
           swift build --package-path . --target LumosAppShell \
             --scratch-path "$RUNNER_TEMP/ios-build" \
             -Xswiftc -sdk -Xswiftc "$sdk" \

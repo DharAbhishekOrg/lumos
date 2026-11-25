@@ -499,8 +499,8 @@
     "ADR-008",
     "ADR-010"
    ],
-   "last_commit": "3ed4c7a",
-   "updated": "2026-11-24"
+   "last_commit": "ceb6db5",
+   "updated": "2026-11-25"
   },
   {
    "req_id": "SRS-IDN-002",
@@ -3219,8 +3219,8 @@
     "ADR-003",
     "ADR-010"
    ],
-   "last_commit": "3ed4c7a",
-   "updated": "2026-11-24"
+   "last_commit": "ceb6db5",
+   "updated": "2026-11-25"
   },
   {
    "req_id": "SRS-NFR-SEC-004",
@@ -6736,8 +6736,8 @@
     "ci:conformance#31528127667"
    ],
    "adr": [],
-   "last_commit": "cc37662",
-   "updated": "2026-11-23"
+   "last_commit": "ceb6db5",
+   "updated": "2026-11-25"
   },
   {
    "req_id": "TRS-CICD-002",
@@ -6824,8 +6824,8 @@
    ],
    "evidence": [],
    "adr": [],
-   "last_commit": "b19540a",
-   "updated": "2026-11-23"
+   "last_commit": "ceb6db5",
+   "updated": "2026-11-25"
   },
   {
    "req_id": "TRS-CICD-008",
@@ -7907,8 +7907,8 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "3ed4c7a",
-   "updated": "2026-11-24"
+   "last_commit": "ceb6db5",
+   "updated": "2026-11-25"
   },
   {
    "req_id": "TRS-IOS-002",
@@ -7917,8 +7917,8 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "3ed4c7a",
-   "updated": "2026-11-24"
+   "last_commit": "ceb6db5",
+   "updated": "2026-11-25"
   },
   {
    "req_id": "TRS-IOS-003",
@@ -7937,8 +7937,8 @@
    "adr": [
     "ADR-002"
    ],
-   "last_commit": "3ed4c7a",
-   "updated": "2026-11-24"
+   "last_commit": "ceb6db5",
+   "updated": "2026-11-25"
   },
   {
    "req_id": "TRS-IOS-004",
@@ -7947,8 +7947,8 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "3ed4c7a",
-   "updated": "2026-11-24"
+   "last_commit": "ceb6db5",
+   "updated": "2026-11-25"
   },
   {
    "req_id": "TRS-IOS-005",
@@ -7957,8 +7957,8 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "3ed4c7a",
-   "updated": "2026-11-24"
+   "last_commit": "ceb6db5",
+   "updated": "2026-11-25"
   },
   {
    "req_id": "TRS-IOS-006",
@@ -7967,8 +7967,8 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "3ed4c7a",
-   "updated": "2026-11-24"
+   "last_commit": "ceb6db5",
+   "updated": "2026-11-25"
   },
   {
    "req_id": "TRS-IOS-007",
@@ -7989,8 +7989,8 @@
     "ADR-003",
     "ADR-010"
    ],
-   "last_commit": "3ed4c7a",
-   "updated": "2026-11-24"
+   "last_commit": "ceb6db5",
+   "updated": "2026-11-25"
   },
   {
    "req_id": "TRS-IOS-008",
@@ -7999,8 +7999,8 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "3ed4c7a",
-   "updated": "2026-11-24"
+   "last_commit": "ceb6db5",
+   "updated": "2026-11-25"
   },
   {
    "req_id": "TRS-IOS-009",
@@ -8009,8 +8009,8 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "3ed4c7a",
-   "updated": "2026-11-24"
+   "last_commit": "ceb6db5",
+   "updated": "2026-11-25"
   },
   {
    "req_id": "TRS-IOS-010",
@@ -8019,8 +8019,8 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "3ed4c7a",
-   "updated": "2026-11-24"
+   "last_commit": "ceb6db5",
+   "updated": "2026-11-25"
   },
   {
    "req_id": "TRS-IOS-011",
@@ -8029,8 +8029,8 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "3ed4c7a",
-   "updated": "2026-11-24"
+   "last_commit": "ceb6db5",
+   "updated": "2026-11-25"
   },
   {
    "req_id": "TRS-IOS-012",
@@ -8039,8 +8039,8 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "3ed4c7a",
-   "updated": "2026-11-24"
+   "last_commit": "ceb6db5",
+   "updated": "2026-11-25"
   },
   {
    "req_id": "TRS-LOC-001",
@@ -8215,8 +8215,8 @@
    "adr": [
     "ADR-003"
    ],
-   "last_commit": "3ed4c7a",
-   "updated": "2026-11-24"
+   "last_commit": "ceb6db5",
+   "updated": "2026-11-25"
   },
   {
    "req_id": "TRS-LOC-010",
@@ -9211,8 +9211,8 @@
    ],
    "evidence": [],
    "adr": [],
-   "last_commit": "3ed4c7a",
-   "updated": "2026-11-24"
+   "last_commit": "ceb6db5",
+   "updated": "2026-11-25"
   },
   {
    "req_id": "TRS-REP-005",
@@ -9272,8 +9272,8 @@
    ],
    "evidence": [],
    "adr": [],
-   "last_commit": "3ed4c7a",
-   "updated": "2026-11-24"
+   "last_commit": "ceb6db5",
+   "updated": "2026-11-25"
   },
   {
    "req_id": "TRS-REP-008",
