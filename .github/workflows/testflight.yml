@@ -1,0 +1,144 @@
+# Lumos - CI / Builds the iOS app for the App Store and uploads it to TestFlight.
+# Author: dhar.abhishek.email@gmail.com
+# Implements: TRS-IOS-002, TRS-IOS-011, TRS-REP-005
+# ADRs: ADR-012
+# Threading: n/a
+# Notes: Run by hand (Actions -> "testflight" -> Run workflow), never on a pull
+# request, so the App Store Connect key is only ever used on main's code. The
+# key lives only in the repository's encrypted secrets (ASC_KEY_ID,
+# ASC_ISSUER_ID, ASC_KEY_P8; owner-created, App Manager role). It is written to
+# the runner's temporary directory with owner-only permissions for the two
+# xcodebuild calls that need it, is never printed, and is deleted in an
+# `always()` step. Signing is Xcode's automatic signing with Apple's
+# cloud-managed distribution certificate, so no certificate or profile exists
+# in the repository, the secrets or the logs (TRS-REP-005). The runner is
+# discarded after the job.
+#
+# The build is the Production configuration (in.dharabhishek.lumos, the App
+# Store Connect app "Lumos: Meet Nearby"). The build number is this workflow's
+# run number, so every upload is higher than the last. The relay origin is
+# empty until the staging deploy: a TestFlight build runs nearby only.
+#
+# Apple's export-compliance (encryption) question is NOT answered here: the
+# Info.plist carries no ITSAppUsesNonExemptEncryption key, so App Store Connect
+# asks the owner on the first build. That answer is a legal declaration and is
+# the owner's to make.
+
+name: testflight
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: testflight
+  cancel-in-progress: false
+
+jobs:
+  upload:
+    name: upload to TestFlight
+    runs-on: macos-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: install xcodegen (pinned)
+        env:
+          XCODEGEN_VERSION: "2.46.0"
+          XCODEGEN_SHA256: 4d9e34b62172d645eed6457cac13fc222569974098ef4ee9c3368bedf0196806
+        run: |
+          set -euo pipefail
+          curl -sSfL -o "$RUNNER_TEMP/xcodegen.zip" \
+            "https://github.com/yonaskolb/XcodeGen/releases/download/${XCODEGEN_VERSION}/xcodegen.zip"
+          echo "${XCODEGEN_SHA256}  $RUNNER_TEMP/xcodegen.zip" | shasum -a 256 -c -
+          unzip -q -o "$RUNNER_TEMP/xcodegen.zip" -d "$RUNNER_TEMP"
+          echo "$RUNNER_TEMP/xcodegen/bin" >> "$GITHUB_PATH"
+
+      - name: generate the project
+        run: |
+          set -euo pipefail
+          xcodebuild -version
+          xcodegen generate --spec ios-app/app/project.yml
+
+      - name: write the App Store Connect key (never printed)
+        env:
+          ASC_KEY_P8: ${{ secrets.ASC_KEY_P8 }}
+          ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
+          ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
+        run: |
+          set -euo pipefail
+          if [ -z "$ASC_KEY_P8" ] || [ -z "$ASC_KEY_ID" ] || [ -z "$ASC_ISSUER_ID" ]; then
+            echo "::error::the App Store Connect secrets are not set"
+            exit 1
+          fi
+          umask 077
+          mkdir -p "$RUNNER_TEMP/asc"
+          printf '%s\n' "$ASC_KEY_P8" > "$RUNNER_TEMP/asc/AuthKey.p8"
+          grep -q "BEGIN PRIVATE KEY" "$RUNNER_TEMP/asc/AuthKey.p8" \
+            || { echo "::error::ASC_KEY_P8 is not a .p8 private key"; exit 1; }
+
+      - name: archive (Production, automatic signing)
+        env:
+          ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
+          ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
+          BUILD_NUMBER: ${{ github.run_number }}
+        run: |
+          set -euo pipefail
+          log="$RUNNER_TEMP/archive.log"
+          if ! xcodebuild -project ios-app/app/Lumos.xcodeproj -scheme Lumos -configuration Production \
+                 -destination 'generic/platform=iOS' \
+                 -archivePath "$RUNNER_TEMP/Lumos.xcarchive" \
+                 -derivedDataPath "$RUNNER_TEMP/dd" \
+                 -allowProvisioningUpdates \
+                 -authenticationKeyPath "$RUNNER_TEMP/asc/AuthKey.p8" \
+                 -authenticationKeyID "$ASC_KEY_ID" \
+                 -authenticationKeyIssuerID "$ASC_ISSUER_ID" \
+                 CODE_SIGN_STYLE=Automatic DEVELOPMENT_TEAM=XK3S9863DB \
+                 CURRENT_PROJECT_VERSION="$BUILD_NUMBER" \
+                 archive > "$log" 2>&1; then
+            grep -E "error:|warning:" "$log" | sort -u | head -100 || true
+            tail -n 60 "$log"
+            exit 1
+          fi
+          tail -n 5 "$log"
+
+      - name: export and upload to App Store Connect
+        env:
+          ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
+          ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
+        run: |
+          set -euo pipefail
+          # PlistBuddy writes the file itself, so no hand-written XML header
+          # can pick up the YAML block's indentation.
+          opts="$RUNNER_TEMP/ExportOptions.plist"
+          pb=/usr/libexec/PlistBuddy
+          $pb -c "Add :method string app-store-connect" "$opts"
+          $pb -c "Add :destination string upload" "$opts"
+          $pb -c "Add :teamID string XK3S9863DB" "$opts"
+          $pb -c "Add :signingStyle string automatic" "$opts"
+          $pb -c "Add :manageAppVersionAndBuildNumber bool false" "$opts"
+          $pb -c "Add :uploadSymbols bool true" "$opts"
+          # Internal testers only: nothing reaches anyone outside the team
+          # without a deliberate change here.
+          $pb -c "Add :testFlightInternalTestingOnly bool true" "$opts"
+          log="$RUNNER_TEMP/export.log"
+          if ! xcodebuild -exportArchive \
+                 -archivePath "$RUNNER_TEMP/Lumos.xcarchive" \
+                 -exportOptionsPlist "$opts" \
+                 -exportPath "$RUNNER_TEMP/export" \
+                 -allowProvisioningUpdates \
+                 -authenticationKeyPath "$RUNNER_TEMP/asc/AuthKey.p8" \
+                 -authenticationKeyID "$ASC_KEY_ID" \
+                 -authenticationKeyIssuerID "$ASC_ISSUER_ID" > "$log" 2>&1; then
+            grep -E "error|Error" "$log" | sort -u | head -60 || true
+            tail -n 60 "$log"
+            exit 1
+          fi
+          tail -n 10 "$log"
+          echo "uploaded build ${{ github.run_number }} of version $(/usr/libexec/PlistBuddy -c 'Print :ApplicationProperties:CFBundleShortVersionString' "$RUNNER_TEMP/Lumos.xcarchive/Info.plist")"
+
+      - name: delete the key
+        if: always()
+        run: rm -f "$RUNNER_TEMP/asc/AuthKey.p8"

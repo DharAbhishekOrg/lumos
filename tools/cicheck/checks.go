@@ -38,6 +38,7 @@ const RegisterPath = "docs/ci/required-checks.md"
 var WorkflowPaths = map[string]string{
 	"conformance": ".github/workflows/conformance.yml",
 	"pipeline":    ".github/workflows/pipeline.yml",
+	"testflight":  ".github/workflows/testflight.yml",
 }
 
 // Job is one job as the workflow declares it.
