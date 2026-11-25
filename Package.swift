@@ -18,10 +18,11 @@ let package = Package(
     name: "LumosProtocolConformance",
     platforms: [
         // CryptoKit needs macOS 10.15+; 13 is the floor the CI image provides.
-        // iOS 17 is declared so the app shell is compiled against the platform
-        // it actually ships to, not merely against the host.
+        // iOS 15 is the approved deployment floor (SRS-NFR-CMP-008,
+        // TRS-IOS-002), declared so the app shell is compiled against the
+        // oldest platform it ships to, not merely against the host.
         .macOS(.v13),
-        .iOS(.v17)
+        .iOS(.v15)
     ],
     dependencies: [
         // swift-sodium (ISC), owner-approved 2026-08-18, pinned EXACTLY rather
