@@ -6736,7 +6736,7 @@
     "ci:conformance#31528127667"
    ],
    "adr": [],
-   "last_commit": "4bc2849",
+   "last_commit": "7c788fe",
    "updated": "2026-11-25"
   },
   {
@@ -6824,7 +6824,7 @@
    ],
    "evidence": [],
    "adr": [],
-   "last_commit": "4bc2849",
+   "last_commit": "7c788fe",
    "updated": "2026-11-25"
   },
   {
