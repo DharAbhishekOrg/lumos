@@ -1,0 +1,114 @@
+# Lumos - ios-app/app / The iOS app target, as an XcodeGen spec.
+# Author: dhar.abhishek.email@gmail.com
+# Implements: TRS-IOS-001, TRS-IOS-002, SRS-NFR-CMP-008
+# ADRs: ADR-012
+# Threading: n/a
+# Notes: The Xcode project is generated from this file (XcodeGen 2.46.0, MIT,
+# build-time only, never shipped; owner ruling 2026-11-24) and is never
+# committed. CI generates it and builds the app unsigned for the simulator, so
+# no Mac and no signing material is needed (TRS-REP-005). Signing for
+# TestFlight is a later change and uses the App Store Connect key held only in
+# GitHub's encrypted secrets.
+#
+# Two configurations, one per environment in docs/ops/environments.md:
+# Staging (debug) and Production (release), each with its own bundle
+# identifier. The relay origin is a build setting and is empty in both until
+# the staging deploy, which means "nearby only" (ADR-012).
+
+name: Lumos
+
+options:
+  bundleIdPrefix: in.dharabhishek
+  deploymentTarget:
+    iOS: "15.0"
+  createIntermediateGroups: true
+
+configs:
+  Staging: debug
+  Production: release
+
+packages:
+  # The repository root's Package.swift: the shell, the protocol and the
+  # generated constants are the same sources the conformance job tests.
+  LumosPackage:
+    path: ../..
+
+settings:
+  base:
+    SWIFT_VERSION: "6.0"
+    SWIFT_TREAT_WARNINGS_AS_ERRORS: YES
+    GCC_TREAT_WARNINGS_AS_ERRORS: YES
+    MARKETING_VERSION: "0.1.0"
+    CURRENT_PROJECT_VERSION: "1"
+    DEVELOPMENT_TEAM: XK3S9863DB
+    TARGETED_DEVICE_FAMILY: "1,2"
+    ENABLE_USER_SCRIPT_SANDBOXING: YES
+
+targets:
+  Lumos:
+    type: application
+    platform: iOS
+    sources:
+      - path: Lumos
+      # The four documents onboarding shows, shipped from docs/legal so the
+      # version accepted is the version in the repository (SRS-ONB-002).
+      - path: ../../docs/legal/terms-of-use.md
+        buildPhase: resources
+      - path: ../../docs/legal/privacy-notice.md
+        buildPhase: resources
+      - path: ../../docs/legal/community-rules.md
+        buildPhase: resources
+      - path: ../../docs/legal/local-radio-disclosure.md
+        buildPhase: resources
+    dependencies:
+      - package: LumosPackage
+        product: LumosAppShell
+    settings:
+      base:
+        LUMOS_RELAY_BASE_URL: ""
+      configs:
+        Staging:
+          PRODUCT_BUNDLE_IDENTIFIER: in.dharabhishek.lumos.staging
+        Production:
+          PRODUCT_BUNDLE_IDENTIFIER: in.dharabhishek.lumos
+    info:
+      path: Lumos/Info.plist
+      properties:
+        CFBundleDisplayName: Lumos
+        CFBundleShortVersionString: $(MARKETING_VERSION)
+        CFBundleVersion: $(CURRENT_PROJECT_VERSION)
+        UILaunchScreen: {}
+        UIApplicationSupportsIndirectInputEvents: true
+        UISupportedInterfaceOrientations:
+          - UIInterfaceOrientationPortrait
+          - UIInterfaceOrientationLandscapeLeft
+          - UIInterfaceOrientationLandscapeRight
+        UISupportedInterfaceOrientations~ipad:
+          - UIInterfaceOrientationPortrait
+          - UIInterfaceOrientationPortraitUpsideDown
+          - UIInterfaceOrientationLandscapeLeft
+          - UIInterfaceOrientationLandscapeRight
+        # Read by the app at launch; empty means the relay is not configured.
+        LumosRelayBaseURL: $(LUMOS_RELAY_BASE_URL)
+        # The shell links CoreBluetooth for nearby discovery. The prompt only
+        # appears when discovery is first turned on (SRS-ONB-004), never at
+        # launch or during onboarding.
+        NSBluetoothAlwaysUsageDescription: >-
+          Lumos uses Bluetooth to find people near you who are also using
+          Lumos, and only while you have Visible Nearby turned on.
+
+schemes:
+  Lumos:
+    build:
+      targets:
+        Lumos: all
+    run:
+      config: Staging
+    test:
+      config: Staging
+    profile:
+      config: Production
+    analyze:
+      config: Staging
+    archive:
+      config: Production

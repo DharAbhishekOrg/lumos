@@ -198,6 +198,24 @@ final class AppBootTests: XCTestCase {
         }
     }
 
+    func testTheOnboardingServiceWritesWhatTheBootReads() throws {
+        let relay = FakeRelay(clock: clock)
+        let vault = MemoryVault()
+        let unconfigured = config(vault, relay, base: "")
+        XCTAssertFalse(try AppBoot.isOnboarded(unconfigured))
+        XCTAssertFalse(FileManager.default.fileExists(atPath: file.path), "asking does not create a database")
+
+        let clock = self.clock
+        let onboarding = OnboardingService(clock: { clock.now() })
+        onboarding.declareAge(dateOfBirth: Date(timeIntervalSince1970: 0), today: Date(timeIntervalSince1970: 1_764_028_800))
+        onboarding.acceptDocuments(try LegalDocuments.load { _ in "Document version: 2026-08-19.1\n" })
+        XCTAssertFalse(try AppBoot.isOnboarded(unconfigured), "accepting the documents is not onboarding")
+        _ = try onboarding.createIdentity(vault: vault, preferHardware: false) { try AppBoot.openStore($0, unconfigured) }
+
+        XCTAssertTrue(try AppBoot.isOnboarded(unconfigured), "a relaunch with no relay still knows it has onboarded")
+        XCTAssertNotNil(try AppBoot.boot(config(vault, relay)), "and with a relay, the chat boots on that identity")
+    }
+
     func testAnOnboardedInstallBootsChatsAndBootsAgainAfterAKill() throws {
         let relay = FakeRelay(clock: clock)
         let vault = MemoryVault()

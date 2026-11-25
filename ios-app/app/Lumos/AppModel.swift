@@ -1,0 +1,94 @@
+/// Lumos - ios-app/app / What the app is showing, and the onboarding steps behind it.
+/// Author: dhar.abhishek.email@gmail.com
+/// Implements: SRS-ONB-001, SRS-ONB-002, SRS-ONB-006, SRS-ONB-008
+/// ADRs: ADR-008, ADR-012
+/// Threading: main-actor
+/// Notes: A thin bridge from SwiftUI to the shell's OnboardingService, which
+/// owns the rules and is tested on every CI run. This file decides only what
+/// is on screen. A failure is shown as one plain notice: no error text, path
+/// or identifier is put on screen or in a log (TRS-OBS-002).
+
+import Foundation
+import LumosAppShell
+
+/// The app's one source of what to show.
+@MainActor
+final class AppModel: ObservableObject {
+
+    /// What the root view shows.
+    enum Phase: Equatable {
+        /// Working out whether this install has onboarded.
+        case starting
+        /// An onboarding step.
+        case onboarding(OnboardingState)
+        /// Onboarding is done.
+        case ready
+        /// Something went wrong that the person cannot fix from here.
+        case failed
+    }
+
+    @Published private(set) var phase: Phase = .starting
+
+    private let config: BootConfig
+    private let onboarding: OnboardingService
+    private var documents: LegalDocuments?
+    private var started = false
+
+    init(config: BootConfig) {
+        self.config = config
+        self.onboarding = OnboardingService(clock: config.clock)
+    }
+
+    /// Decides the first screen, once per launch.
+    func start() {
+        guard !started else { return }
+        started = true
+        do {
+            phase = try AppBoot.isOnboarded(config) ? .ready : .onboarding(onboarding.machine.state)
+        } catch {
+            phase = .failed
+        }
+    }
+
+    /// The age gate's answer. The date is judged and dropped: nothing keeps it.
+    func declareAge(dateOfBirth: Date) {
+        phase = .onboarding(onboarding.declareAge(dateOfBirth: dateOfBirth, today: Date()))
+    }
+
+    /// The text of one shipped document, for reading before accepting.
+    func text(of document: LegalDocument) -> String {
+        (try? Self.read(document)) ?? ""
+    }
+
+    /// Accepts the documents exactly as shipped in this build.
+    func acceptDocuments() {
+        do {
+            let shown = try documents ?? LegalDocuments.load(read: Self.read)
+            documents = shown
+            phase = .onboarding(onboarding.acceptDocuments(shown))
+        } catch {
+            phase = .failed
+        }
+    }
+
+    /// Creates the key root, the store and the identity, on this phone.
+    func createIdentity() {
+        guard onboarding.machine.state == .identityCreation else { return }
+        let config = self.config
+        do {
+            _ = try onboarding.createIdentity(vault: config.vault) { try AppBoot.openStore($0, config) }
+            phase = onboarding.machine.state == .complete ? .ready : .onboarding(onboarding.machine.state)
+        } catch {
+            phase = .failed
+        }
+    }
+
+    /// Reads a document from the app bundle.
+    private static func read(_ document: LegalDocument) throws -> String {
+        let name = (document.assetName as NSString).deletingPathExtension
+        guard let url = Bundle.main.url(forResource: name, withExtension: "md") else {
+            throw LegalDocumentError.unreadable(document.assetName)
+        }
+        return try String(contentsOf: url, encoding: .utf8)
+    }
+}
