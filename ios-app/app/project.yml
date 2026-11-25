@@ -88,6 +88,13 @@ targets:
           - UIInterfaceOrientationPortraitUpsideDown
           - UIInterfaceOrientationLandscapeLeft
           - UIInterfaceOrientationLandscapeRight
+        # Export compliance, the owner's declaration (2026-11-25, "A"): the
+        # app uses only standard encryption algorithms and is not distributed
+        # in France, so App Store Connect needs no documentation and stops
+        # asking per build. CHANGE THIS before a release that adds France
+        # (the ANSSI declaration must be approved first) or any non-standard
+        # cryptography; see docs/ops/environments.md, Apple.
+        ITSAppUsesNonExemptEncryption: false
         # Read by the app at launch; empty means the relay is not configured.
         LumosRelayBaseURL: $(LUMOS_RELAY_BASE_URL)
         # The shell links CoreBluetooth for nearby discovery. The prompt only

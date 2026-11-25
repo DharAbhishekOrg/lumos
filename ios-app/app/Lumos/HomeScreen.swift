@@ -14,8 +14,7 @@
 /// runtime exists only once the relay is configured (ADR-012); until the
 /// staging deploy there is none, and both lists are honestly empty. Nearby on
 /// iPhone - the Bluetooth half - is not wired into the app yet, and its tab
-/// says so rather than pretending to look. Rows open their conversation in
-/// the next change.
+/// says so rather than pretending to look. A row opens its conversation.
 
 import Combine
 import LumosAppShell
@@ -27,9 +26,18 @@ final class HomeModel: ObservableObject {
 
     @Published private(set) var lists = HomeLists.Lists.empty
     private let runtime: ChatRuntime?
+    /// The conversation screens' source; nil without a runtime, and then
+    /// there are no rows to open either.
+    let conversations: RuntimeConversationSource?
 
     init(runtime: ChatRuntime?) {
         self.runtime = runtime
+        self.conversations = runtime.map { RuntimeConversationSource(runtime: $0) }
+    }
+
+    /// The model for one conversation screen.
+    func conversation(_ matchID: Data, source: RuntimeConversationSource) -> ConversationModel {
+        ConversationModel(presenter: ConversationPresenter(source: source, matchID: matchID))
     }
 
     /// The total unread across chats, for the tab badge.
@@ -54,10 +62,10 @@ struct HomeScreen: View {
             NavigationView { NearbyTab() }
                 .navigationViewStyle(.stack)
                 .tabItem { Label("Nearby", systemImage: "dot.radiowaves.left.and.right") }
-            NavigationView { MatchesTab(rows: model.lists.matches) }
+            NavigationView { MatchesTab(rows: model.lists.matches, home: model) }
                 .navigationViewStyle(.stack)
                 .tabItem { Label("Matches", systemImage: "heart") }
-            NavigationView { ChatsTab(rows: model.lists.chats) }
+            NavigationView { ChatsTab(rows: model.lists.chats, home: model) }
                 .navigationViewStyle(.stack)
                 .tabItem { Label("Chats", systemImage: "bubble.left.and.bubble.right") }
                 .badge(model.unreadTotal)
@@ -110,6 +118,7 @@ private struct EmptyListNote: View {
 /// Matches: new matches, nothing said yet.
 struct MatchesTab: View {
     let rows: [HomeLists.MatchRow]
+    let home: HomeModel
 
     var body: some View {
         Group {
@@ -118,13 +127,15 @@ struct MatchesTab: View {
                     No matches yet. When you and someone nearby are both interested, they show here.
                     """)
             } else {
-                List(rows) { _ in
-                    VStack(alignment: .leading, spacing: 4) {
-                        Text("Your match").font(.headline)
-                        Text("New match. Say hi.").font(.subheadline).foregroundColor(.secondary)
+                List(rows) { row in
+                    OpensConversation(home: home, matchID: row.matchID) {
+                        VStack(alignment: .leading, spacing: 4) {
+                            Text("Your match").font(.headline)
+                            Text("New match. Say hi.").font(.subheadline).foregroundColor(.secondary)
+                        }
+                        .padding(.vertical, 4)
+                        .accessibilityElement(children: .combine)
                     }
-                    .padding(.vertical, 4)
-                    .accessibilityElement(children: .combine)
                 }
             }
         }
@@ -135,16 +146,36 @@ struct MatchesTab: View {
 /// Chats: newest first, each with its last message, time and unread badge.
 struct ChatsTab: View {
     let rows: [HomeLists.ChatRow]
+    let home: HomeModel
 
     var body: some View {
         Group {
             if rows.isEmpty {
                 EmptyListNote(text: "No chats yet. Say hi to a match and the chat shows here.")
             } else {
-                List(rows) { ChatRowView(row: $0) }
+                List(rows) { row in
+                    OpensConversation(home: home, matchID: row.matchID) { ChatRowView(row: row) }
+                }
             }
         }
         .navigationTitle("Chats")
+    }
+}
+
+/// A row that opens its conversation.
+struct OpensConversation<Content: View>: View {
+    let home: HomeModel
+    let matchID: Data
+    @ViewBuilder let label: Content
+
+    var body: some View {
+        if let source = home.conversations {
+            NavigationLink(destination: ConversationScreen(makeModel: { home.conversation(matchID, source: source) })) {
+                label
+            }
+        } else {
+            label
+        }
     }
 }
 
