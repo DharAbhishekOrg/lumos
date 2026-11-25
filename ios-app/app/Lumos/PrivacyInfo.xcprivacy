@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!--
+  Lumos - ios-app/app / Apple privacy manifest (TRS-IOS-011).
+  Author: dhar.abhishek.email@gmail.com
+  Notes: No tracking, no tracking domains, and no data collected by the
+  developer: chats leave the phone only end-to-end encrypted, and nothing about
+  the person is sent to us (privacy notice). One required-reason API is used:
+  the free-space check before database writes (LocalStore FileSystemCapacity),
+  declared as E174.1. Review this file whenever a required-reason API or a
+  data flow is added.
+-->
+<plist version="1.0">
+<dict>
+	<key>NSPrivacyTracking</key>
+	<false/>
+	<key>NSPrivacyTrackingDomains</key>
+	<array/>
+	<key>NSPrivacyCollectedDataTypes</key>
+	<array/>
+	<key>NSPrivacyAccessedAPITypes</key>
+	<array>
+		<dict>
+			<key>NSPrivacyAccessedAPIType</key>
+			<string>NSPrivacyAccessedAPICategoryDiskSpace</string>
+			<key>NSPrivacyAccessedAPITypeReasons</key>
+			<array>
+				<string>E174.1</string>
+			</array>
+		</dict>
+	</array>
+</dict>
+</plist>

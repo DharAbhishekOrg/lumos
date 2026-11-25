@@ -52,7 +52,8 @@ un-requires it until the ruleset is edited too. Names of required checks say
 ## 3. The checks
 
 `conformance` is `.github/workflows/conformance.yml`; `pipeline` is
-`.github/workflows/pipeline.yml`.
+`.github/workflows/pipeline.yml`; `testflight` is
+`.github/workflows/testflight.yml`.
 
 ### Required — the ruleset must list exactly these
 
@@ -86,6 +87,15 @@ gate`. Requiring them individually as well is harmless and redundant.
 | `shell build - Go backend` | pipeline | `shell-backend` | no | the backend shell compiles |
 | `shell build - TypeScript admin console` | pipeline | `shell-admin` | no | the admin shell compiles |
 | `shell build - Android` | pipeline | `shell-android` | no | the Android shell assembles and Android Lint passes |
+
+### Manual only
+
+Run by hand from the Actions tab, never on a pull request, so it posts no
+check a ruleset could wait for. It must never be required.
+
+| Check name | Workflow | Job | Required | What it gates |
+| --- | --- | --- | --- | --- |
+| `upload to TestFlight` | testflight | `upload` | no | signs the Production app with Apple's cloud-managed certificate and uploads it for internal TestFlight testers |
 
 ## 4. Configuring and verifying the ruleset
 
