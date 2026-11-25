@@ -455,6 +455,51 @@ jobs:
             -Xswiftc -sdk -Xswiftc "$sdk" \
             -Xswiftc -target -Xswiftc "$target"
 
+      # CS3b: the iOS app itself. The Xcode project is generated from
+      # ios-app/app/project.yml by XcodeGen (2.46.0, MIT, build-time only,
+      # never shipped; owner ruling 2026-11-24) and built unsigned for the
+      # simulator, so no signing material exists here (TRS-REP-005). The zip's
+      # SHA-256 is pinned: a release asset replaced upstream fails this step
+      # instead of running unreviewed code on the runner.
+      - name: install xcodegen (pinned)
+        env:
+          XCODEGEN_VERSION: "2.46.0"
+          XCODEGEN_SHA256: 4d9e34b62172d645eed6457cac13fc222569974098ef4ee9c3368bedf0196806
+        run: |
+          set -euo pipefail
+          curl -sSfL -o "$RUNNER_TEMP/xcodegen.zip" \
+            "https://github.com/yonaskolb/XcodeGen/releases/download/${XCODEGEN_VERSION}/xcodegen.zip"
+          echo "${XCODEGEN_SHA256}  $RUNNER_TEMP/xcodegen.zip" | shasum -a 256 -c -
+          unzip -q -o "$RUNNER_TEMP/xcodegen.zip" -d "$RUNNER_TEMP"
+          echo "$RUNNER_TEMP/xcodegen/bin" >> "$GITHUB_PATH"
+
+      # The app target compiles in Swift 6 with warnings as errors (set in
+      # project.yml), against the iOS 15 floor. Unlike the SwiftPM step above,
+      # this is a real Xcode build of an app bundle, so an iOS-only warning in
+      # the app or the shell fails here.
+      - name: build the iOS app (simulator, unsigned)
+        run: |
+          set -euo pipefail
+          xcodegen version
+          xcodegen generate --spec ios-app/app/project.yml
+          log="$RUNNER_TEMP/ios-app-build.log"
+          if ! xcodebuild -project ios-app/app/Lumos.xcodeproj -scheme Lumos -configuration Staging \
+                 -destination 'generic/platform=iOS Simulator' \
+                 -derivedDataPath "$RUNNER_TEMP/ios-app-dd" \
+                 CODE_SIGNING_ALLOWED=NO build > "$log" 2>&1; then
+            grep -E "error:|warning:" "$log" | sort -u | head -100 || true
+            tail -n 60 "$log"
+            exit 1
+          fi
+          tail -n 5 "$log"
+          app="$(find "$RUNNER_TEMP/ios-app-dd/Build/Products/Staging-iphonesimulator" -maxdepth 1 -name 'Lumos.app')"
+          test -n "$app"
+          for doc in terms-of-use privacy-notice community-rules local-radio-disclosure; do
+            test -f "$app/$doc.md" || { echo "::error::$doc.md is not in the app bundle"; exit 1; }
+          done
+          echo "bundle id: $(/usr/libexec/PlistBuddy -c 'Print :CFBundleIdentifier' "$app/Info.plist")"
+          echo "minimum OS: $(/usr/libexec/PlistBuddy -c 'Print :MinimumOSVersion' "$app/Info.plist")"
+
       # Two filtered runs rather than one, so each test target's results carry
       # its own module label into the traceability matrix. The build is shared,
       # so the second run costs compile time only for the test target itself.

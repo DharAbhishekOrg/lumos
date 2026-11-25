@@ -60,7 +60,7 @@ un-requires it until the ruleset is edited too. Names of required checks say
 | --- | --- | --- | --- | --- |
 | `go conformance` | conformance | `go` | yes | gofmt, vet, the constants gate, the vector gate, the whole Go suite |
 | `java conformance` | conformance | `java` | yes | the pure-JVM conformance runner (TRS Sec. 18.4) |
-| `swift conformance` | conformance | `swift` | yes | SwiftLint, the zero-warning build, both Swift test targets, the iOS build |
+| `swift conformance` | conformance | `swift` | yes | SwiftLint, the zero-warning build, both Swift test targets, the iOS build, the iOS app (XcodeGen, simulator, unsigned) |
 | `android unit tests` | conformance | `android` | yes | the four-variant unit suites (TRS-REP-004) |
 | `android instrumented tests` | conformance | `android-instrumented` | yes | Room and the recovery record on a real Android runtime |
 | `admin console tests` | conformance | `ts` | yes | the admin console suite |

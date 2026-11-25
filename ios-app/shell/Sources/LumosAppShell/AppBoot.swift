@@ -64,6 +64,22 @@ public enum AppBoot {
             throw BadRelayBase()
         }
         guard let root = try KeyRoot.open(from: config.vault) else { return nil }
+        let store = try openStore(root, config)
+        guard let record = try IdentityRepository(store: store).load() else { return nil }
+        let identity = try ChatIdentity.unlock(record: record, kek: root.kek)
+        return ChatRuntime.assemble(store: store, identity: identity, transport: try config.transport(base),
+                                    clock: config.clock)
+    }
+
+    /// Opens the store under a key root, and excludes the database family
+    /// from OS backups (SRS-DAT-012). The one place the app's store is opened,
+    /// so onboarding writes to the same file the boot later reads.
+    /// - Parameters:
+    ///   - root: the install's key root
+    ///   - config: the database location, backup exclusion and clock
+    /// - Returns: the opened store
+    /// - Throws: ``StoreError``, a KEK error, or the exclusion's error
+    public static func openStore(_ root: KeyRoot, _ config: BootConfig) throws -> LocalStore {
         let clock = config.clock
         let store = try LocalStore.open(database: try Sqlite3Database(path: config.databaseURL.path),
                                         databaseDomainKey: try root.hierarchy.deriveKey(for: .database),
@@ -71,10 +87,18 @@ public enum AppBoot {
                                             path: config.databaseURL.deletingLastPathComponent().path),
                                         now: { clock() })
         try config.excludeFromBackup(config.databaseURL)
-        guard let record = try IdentityRepository(store: store).load() else { return nil }
-        let identity = try ChatIdentity.unlock(record: record, kek: root.kek)
-        return ChatRuntime.assemble(store: store, identity: identity, transport: try config.transport(base),
-                                    clock: clock)
+        return store
+    }
+
+    /// Whether this install has finished onboarding: a key root, and an
+    /// identity in the store it opens. Asks nothing of the relay, so it
+    /// answers the same with the relay unconfigured.
+    /// - Parameter config: the install's configuration
+    /// - Returns: true when onboarding has completed on this install
+    /// - Throws: ``KeyRoot/Unreadable``, ``StoreError`` or a KEK error
+    public static func isOnboarded(_ config: BootConfig) throws -> Bool {
+        guard let root = try KeyRoot.open(from: config.vault) else { return false }
+        return try IdentityRepository(store: try openStore(root, config)).exists()
     }
 }
 
@@ -133,7 +157,7 @@ import Network
 public final class RelayBackground: @unchecked Sendable {
 
     /// The refresh task identifier.
-    public static let taskIdentifier = "com.lumos.app.relay-sync"
+    public static let taskIdentifier = "in.dharabhishek.lumos.relay-sync"
 
     private let queue = DispatchQueue(label: "com.lumos.relay")
     private let runtime: () -> ChatRuntime?

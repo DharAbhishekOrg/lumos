@@ -53,3 +53,8 @@ desktop.ini
 *.mobileprovision
 
 # Gradle / SwiftPM build output
+
+# The iOS app project is generated from ios-app/app/project.yml by XcodeGen
+# (CI does it on every run); the generated project and Info.plist are not sources.
+ios-app/app/Lumos.xcodeproj/
+ios-app/app/Lumos/Info.plist
