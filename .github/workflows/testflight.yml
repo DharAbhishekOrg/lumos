@@ -79,14 +79,15 @@ jobs:
           grep -q "BEGIN PRIVATE KEY" "$RUNNER_TEMP/asc/AuthKey.p8" \
             || { echo "::error::ASC_KEY_P8 is not a .p8 private key"; exit 1; }
 
-      # The archive is signed for distribution directly. Automatic signing's
-      # default for an archive is a DEVELOPMENT profile, which Apple only
-      # issues for a team with registered devices; the first run failed on
-      # exactly that. An App Store profile needs no devices.
-      - name: archive (Production, automatic signing)
+      # The archive is built UNSIGNED and the export step signs it. Two runs
+      # showed why: automatic signing archives with a development profile,
+      # which Apple issues only to a team with registered devices (run 1), and
+      # naming "Apple Distribution" while signing automatically is refused as
+      # a conflict (run 2). Export with automatic signing uses Apple's
+      # cloud-managed distribution certificate and an App Store profile,
+      # neither of which needs a device or puts a key on this runner.
+      - name: archive (Production, unsigned)
         env:
-          ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
-          ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
           BUILD_NUMBER: ${{ github.run_number }}
         run: |
           set -euo pipefail
@@ -95,12 +96,7 @@ jobs:
                  -destination 'generic/platform=iOS' \
                  -archivePath "$RUNNER_TEMP/Lumos.xcarchive" \
                  -derivedDataPath "$RUNNER_TEMP/dd" \
-                 -allowProvisioningUpdates \
-                 -authenticationKeyPath "$RUNNER_TEMP/asc/AuthKey.p8" \
-                 -authenticationKeyID "$ASC_KEY_ID" \
-                 -authenticationKeyIssuerID "$ASC_ISSUER_ID" \
-                 CODE_SIGN_STYLE=Automatic DEVELOPMENT_TEAM=XK3S9863DB \
-                 CODE_SIGN_IDENTITY="Apple Distribution" \
+                 CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO CODE_SIGN_IDENTITY="" \
                  CURRENT_PROJECT_VERSION="$BUILD_NUMBER" \
                  archive > "$log" 2>&1; then
             grep -E "error:|warning:" "$log" | sort -u | head -100 || true
@@ -109,7 +105,7 @@ jobs:
           fi
           tail -n 5 "$log"
 
-      - name: export and upload to App Store Connect
+      - name: sign, export and upload to App Store Connect
         env:
           ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
           ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
