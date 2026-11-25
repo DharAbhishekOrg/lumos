@@ -209,23 +209,6 @@ struct IdentityScreen: View {
     }
 }
 
-/// After onboarding. Visible Nearby is off and stays off until the person
-/// turns it on (SRS-ONB-008); the home screens replace this in CS3b part 4.
-struct ReadyScreen: View {
-    var body: some View {
-        StepLayout {
-            Heading(text: "You're set up")
-            Text("""
-                Your account lives on this phone. Nobody can see you nearby until you turn on Visible \
-                Nearby yourself.
-                """)
-                .font(.body)
-        } action: {
-            EmptyView()
-        }
-    }
-}
-
 /// A failure the person cannot fix from inside the app.
 struct FailureScreen: View {
     var body: some View {

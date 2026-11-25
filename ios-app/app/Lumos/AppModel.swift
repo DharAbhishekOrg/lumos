@@ -29,6 +29,9 @@ final class AppModel: ObservableObject {
 
     @Published private(set) var phase: Phase = .starting
 
+    /// The home tabs' model, made once onboarding is done.
+    private(set) var home: HomeModel?
+
     private let config: BootConfig
     private let onboarding: OnboardingService
     private var documents: LegalDocuments?
@@ -44,7 +47,11 @@ final class AppModel: ObservableObject {
         guard !started else { return }
         started = true
         do {
-            phase = try AppBoot.isOnboarded(config) ? .ready : .onboarding(onboarding.machine.state)
+            if try AppBoot.isOnboarded(config) {
+                becomeReady()
+            } else {
+                phase = .onboarding(onboarding.machine.state)
+            }
         } catch {
             phase = .failed
         }
@@ -77,10 +84,28 @@ final class AppModel: ObservableObject {
         let config = self.config
         do {
             _ = try onboarding.createIdentity(vault: config.vault) { try AppBoot.openStore($0, config) }
-            phase = onboarding.machine.state == .complete ? .ready : .onboarding(onboarding.machine.state)
+            if onboarding.machine.state == .complete {
+                becomeReady()
+            } else {
+                phase = .onboarding(onboarding.machine.state)
+            }
         } catch {
             phase = .failed
         }
+    }
+
+    /// Opens the home tabs. The chat runtime boots only when this build has a
+    /// relay (ADR-012); without one the tabs run with no runtime and say so.
+    private func becomeReady() {
+        let runtime: ChatRuntime?
+        do {
+            runtime = try AppBoot.boot(config)
+        } catch {
+            phase = .failed
+            return
+        }
+        home = HomeModel(runtime: runtime)
+        phase = .ready
     }
 
     /// Reads a document from the app bundle.

@@ -16,7 +16,10 @@ Google account. Changing any of it is owner-executed.
 | iOS bundle id, production | `in.dharabhishek.lumos` (App ID "Lumos"; Push Notifications, In-App Purchase) |
 | iOS bundle id, staging | `in.dharabhishek.lumos.staging` (App ID "Lumos Staging"; Push Notifications, In-App Purchase) |
 | App Store Connect app | "Lumos: Meet Nearby", Apple ID `6838887651`, SKU `lumos-ios`, primary language English (U.S.), bundle `in.dharabhishek.lumos` |
-| App Store Connect API key (CI uploads) | Owner-created, App Manager role, held only in GitHub Actions secrets `ASC_KEY_ID`, `ASC_ISSUER_ID`, `ASC_KEY_P8` |
+| App Store Connect API key (CI uploads) | Owner-created, App Manager role, held only in GitHub Actions secrets `ASC_KEY_ID`, `ASC_ISSUER_ID`, `ASC_KEY_P8`. Enough for cloud-managed distribution signing (first upload, build 0.1.0 (3), 2026-11-25) |
+| TestFlight uploads | `.github/workflows/testflight.yml`, started by hand on `main` (Actions → testflight → Run workflow). Build number = the workflow's run number; internal testers only |
+| TestFlight testers | Internal group "Owner" (the account holder), automatic distribution on, so every uploaded build reaches the owner's phone |
+| Export compliance (encryption) | Answered by the owner per build in App Store Connect: standard encryption algorithms; **not** distributed in France. France needs a French encryption declaration (ANSSI) filed and approved before launch there; then answer "Yes" on that release |
 
 `com.lumos.app` is registered to another Apple developer and the store name
 "Lumos" is taken, so the iOS app uses the identifiers above (owner ruling of
@@ -90,3 +93,6 @@ Production key before launch, so a leaked test key can never reach real users.
 2026-11-25, Apple section: Apple approved the enrolment; the App IDs and the
 App Store Connect app were created in the owner's signed-in browser session,
 with the owner accepting Apple's terms himself.
+2026-11-25, TestFlight: build 0.1.0 (3) uploaded by CI and installed on the
+owner's iPhone SE (iOS 15.8); onboarding completed and survived a reboot. The
+encryption answers were saved at the owner's direction ("France: No").

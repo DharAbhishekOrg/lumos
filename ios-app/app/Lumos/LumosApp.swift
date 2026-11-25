@@ -3,8 +3,8 @@
 /// Implements: TRS-IOS-001, SRS-ONB-001
 /// ADRs: ADR-012
 /// Threading: main-actor
-/// Notes: The app shows exactly one of three things: onboarding, the screen
-/// after it, or a failure notice. Until onboarding completes nothing else is
+/// Notes: The app shows exactly one of three things: onboarding, the home
+/// tabs, or a failure notice. Until onboarding completes nothing else is
 /// reachable (SRS-ONB-001, threat model LT-30), because the root view has no
 /// other branch to take. Nothing here touches Bluetooth, notifications or the
 /// network at launch (SRS-ONB-004).
@@ -39,7 +39,11 @@ struct RootView: View {
             case .onboarding(let state):
                 OnboardingFlow(model: model, state: state)
             case .ready:
-                ReadyScreen()
+                if let home = model.home {
+                    HomeScreen(model: home)
+                } else {
+                    FailureScreen()
+                }
             case .failed:
                 FailureScreen()
             }

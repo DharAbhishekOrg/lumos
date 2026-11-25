@@ -113,11 +113,14 @@ public final class ChatRuntime {
     public let exchange: RouteExchange
     /// Unmatch and block, for a conversation's safety sheet.
     public let safety: ConversationSafety
+    /// Every conversation, for the Matches and Chats tabs.
+    public let conversations: ConversationList
     private let sessions: RelaySessions
 
     private init(chat: ChatStore, sync: RelaySync, exchange: RouteExchange, safety: ConversationSafety,
-                 sessions: RelaySessions) {
+                 conversations: ConversationList, sessions: RelaySessions) {
         self.chat = chat
+        self.conversations = conversations
         self.sync = sync
         self.exchange = exchange
         self.safety = safety
@@ -145,6 +148,7 @@ public final class ChatRuntime {
                                            anonymous: anonymous, clock: clock),
                            exchange: RouteExchange(routes: routes, account: account),
                            safety: ConversationSafety(store: store, chat: chat, routes: routes, clock: clock),
+                           conversations: ConversationList(store: store, chat: chat),
                            sessions: RelaySessions(chat: chat, routes: routes, account: account, anonymous: anonymous,
                                                    random: random))
     }
