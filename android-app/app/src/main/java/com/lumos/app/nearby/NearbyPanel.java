@@ -73,6 +73,8 @@ public final class NearbyPanel {
                 return R.string.nearby_state_radio_unavailable;
             case RADIO_BUSY:
                 return R.string.nearby_state_radio_busy;
+            case NOT_YET:
+                return R.string.nearby_state_not_yet;
             case SCANNING_EMPTY:
             default:
                 return R.string.nearby_state_empty;

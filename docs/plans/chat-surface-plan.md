@@ -150,6 +150,19 @@
   wait on the owner's app-target decision: the shell is a library and never
   imports SwiftUI.
 
+### CS2d (Android): the app opens on a phone
+- **Part 1 done (2026-11-26, #89):** `OnboardingService` in the production
+  order, as on iOS: consent held in memory, then KEK, key root file, store,
+  and consent with identity in one transaction.
+- **Part 2 (2026-11-26):** `OnboardingActivity` is the launcher (the app had
+  no icon or entry before): age gate, the four documents, identity, then the
+  home tabs; an onboarded install goes straight home. `DeviceInstallation`
+  and `AppBoot.openStore` / `openOnboarded` share one store path;
+  `AppHost` is the composition root's `NearbyHost` (entry only after
+  onboarding; the feed says live discovery is not wired yet, NB-1). An
+  adaptive launcher icon carries the iPhone mark. Visible Nearby's control
+  on Android is the next Android slice.
+
 ### CS3c (iOS): Visible Nearby on iPhone
 - **Done (2026-11-26):** `DiscoveryVisibility` ported to the Android format
   (lumos-visibility/2: an hour or a custom 15 minutes to 8 hours, ending by

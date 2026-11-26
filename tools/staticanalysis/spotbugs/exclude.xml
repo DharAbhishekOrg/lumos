@@ -303,4 +303,24 @@
     <Method name="&lt;init&gt;"/>
     <Bug pattern="EI_EXPOSE_REP2"/>
   </Match>
+  <!--
+    CS2d: OnboardingActivity is a lifecycle class like NearbyActivity: fields
+    are set in onCreate, and findViewById's and getApplication()'s generic
+    returns read as unconfirmed casts. LumosApplication.host() hands out the
+    process's one AppHost on purpose: it is the composition root's shared
+    host, as NearbyActivity.setHost already stores it.
+  -->
+  <Match>
+    <Class name="com.lumos.app.onboarding.OnboardingActivity"/>
+    <Bug pattern="UWF_FIELD_NOT_INITIALIZED_IN_CONSTRUCTOR"/>
+  </Match>
+  <Match>
+    <Class name="com.lumos.app.onboarding.OnboardingActivity"/>
+    <Bug pattern="BC_UNCONFIRMED_CAST_OF_RETURN_VALUE"/>
+  </Match>
+  <Match>
+    <Class name="com.lumos.app.LumosApplication"/>
+    <Method name="host"/>
+    <Bug pattern="EI_EXPOSE_REP"/>
+  </Match>
 </FindBugsFilter>

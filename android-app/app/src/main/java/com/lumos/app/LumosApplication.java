@@ -21,6 +21,10 @@ package com.lumos.app;
 import android.app.Application;
 import androidx.appcompat.app.AppCompatDelegate;
 import com.lumos.app.crypto.LibsodiumCryptoBackend;
+import com.lumos.app.identity.LibsodiumIdentityCrypto;
+import com.lumos.app.nearby.NearbyActivity;
+import com.lumos.app.onboarding.OnboardingMachine;
+import com.lumos.app.onboarding.OnboardingService;
 import com.lumos.app.relay.ChatRuntime;
 import com.lumos.app.relay.RelayJobs;
 import com.lumos.protocol.wire.LumosCrypto;
@@ -36,6 +40,8 @@ public final class LumosApplication extends Application {
     public static final int DEFAULT_NIGHT_MODE = AppCompatDelegate.MODE_NIGHT_YES;
 
     private final ExecutorService relayExecutor = Executors.newSingleThreadExecutor();
+    private final AppHost host = new AppHost();
+    private OnboardingService onboarding;
     private ChatRuntime runtime;
     private boolean booted;
 
@@ -44,12 +50,45 @@ public final class LumosApplication extends Application {
         super.onCreate();
         AppCompatDelegate.setDefaultNightMode(DEFAULT_NIGHT_MODE);
         LumosCrypto.install(LibsodiumCryptoBackend.load());
+        // The composition root's host: entry stays closed until the launcher
+        // (OnboardingActivity) has read this install's state off the main
+        // thread, or onboarding has just completed (SRS-ONB-001).
+        NearbyActivity.setHost(host);
         if (!BuildConfig.RELAY_BASE_URL.isEmpty()) {
             RelayJobs.ensurePeriodic(this);
         }
     }
 
     /** @return the one serial executor relay passes run on */
+    /**
+     * This process's onboarding, kept across the launcher's configuration
+     * changes so a rotation never sends someone back to the age gate.
+     *
+     * @return the onboarding in progress
+     */
+    public synchronized OnboardingService onboarding() {
+        if (onboarding == null) {
+            onboarding = new OnboardingService(new OnboardingMachine(), LibsodiumIdentityCrypto.load(),
+                    System::currentTimeMillis);
+        }
+        return onboarding;
+    }
+
+    /** Records that onboarding completed: entry opens, and the finished flow is dropped. */
+    public synchronized void onboardingCompleted() {
+        onboarding = null;
+        host.setOnboarded(true);
+    }
+
+    /**
+     * The running app as the surfaces see it.
+     *
+     * @return the host
+     */
+    public AppHost host() {
+        return host;
+    }
+
     public ExecutorService relayExecutor() {
         return relayExecutor;
     }

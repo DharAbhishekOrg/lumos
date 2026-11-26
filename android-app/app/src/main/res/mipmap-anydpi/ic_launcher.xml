@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Lumos - android-app/app / The launcher icon (adaptive; API 26 is the minimum SDK, so no legacy bitmap).
+  Author: dhar.abhishek.email@gmail.com
+  Implements: -
+  ADRs: -
+  Threading: n/a
+  Notes: An original mark, the same as the iPhone icon: a warm point of light
+  with soft "nearby" rings on a night gradient. The monochrome layer is the
+  same foreground, for Android 13+ themed icons. A placeholder until a
+  designed icon replaces both.
+-->
+<adaptive-icon xmlns:android="http://schemas.android.com/apk/res/android">
+    <background android:drawable="@drawable/ic_launcher_background" />
+    <foreground android:drawable="@mipmap/ic_launcher_foreground" />
+    <monochrome android:drawable="@mipmap/ic_launcher_foreground" />
+</adaptive-icon>
