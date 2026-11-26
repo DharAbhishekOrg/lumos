@@ -12,9 +12,9 @@
 ///
 /// Names are not stored before CS4, so every row says "Your match". The chat
 /// runtime exists only once the relay is configured (ADR-012); until the
-/// staging deploy there is none, and both lists are honestly empty. Nearby on
-/// iPhone - the Bluetooth half - is not wired into the app yet, and its tab
-/// says so rather than pretending to look. A row opens its conversation.
+/// staging deploy there is none, and both lists are honestly empty. The
+/// Nearby tab (NearbyTab.swift) holds Visible Nearby. A row opens its
+/// conversation.
 
 import Combine
 import LumosAppShell
@@ -55,11 +55,12 @@ final class HomeModel: ObservableObject {
 struct HomeScreen: View {
 
     @ObservedObject var model: HomeModel
+    let nearby: VisibilityModel
     private let ticks = Timer.publish(every: 5, on: .main, in: .common).autoconnect()
 
     var body: some View {
         TabView {
-            NavigationView { NearbyTab() }
+            NavigationView { NearbyTab(model: nearby) }
                 .navigationViewStyle(.stack)
                 .tabItem { Label("Nearby", systemImage: "dot.radiowaves.left.and.right") }
             NavigationView { MatchesTab(rows: model.lists.matches, home: model) }
@@ -72,33 +73,6 @@ struct HomeScreen: View {
         }
         .onAppear { model.refresh() }
         .onReceive(ticks) { _ in model.refresh() }
-    }
-}
-
-/// Nearby: Visible Nearby is off, and the iPhone radio half is still to come.
-struct NearbyTab: View {
-    var body: some View {
-        List {
-            Section {
-                Label("Visible Nearby is off", systemImage: "eye.slash")
-                    .font(.headline)
-                Text("""
-                    While this is on, people near you can see your preview. You choose for how long — an hour, \
-                    a custom time, or until you leave the venue — and it turns itself off when that ends. It \
-                    never turns itself on.
-                    """)
-                    .font(.body)
-            }
-            Section {
-                Text("""
-                    Finding people nearby on iPhone arrives in a coming update. Nothing is being sent or \
-                    looked for right now.
-                    """)
-                    .font(.callout)
-                    .foregroundColor(.secondary)
-            }
-        }
-        .navigationTitle("Nearby")
     }
 }
 

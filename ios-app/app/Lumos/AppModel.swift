@@ -31,6 +31,8 @@ final class AppModel: ObservableObject {
 
     /// The home tabs' model, made once onboarding is done.
     private(set) var home: HomeModel?
+    /// Visible Nearby, made with the home tabs.
+    private(set) var nearby: VisibilityModel?
 
     private let config: BootConfig
     private let onboarding: OnboardingService
@@ -105,6 +107,11 @@ final class AppModel: ObservableObject {
             return
         }
         home = HomeModel(runtime: runtime)
+        let visibility = (try? KeyRoot.open(from: config.vault))
+            .flatMap { try? AppBoot.openStore($0, config) }
+            .map { DiscoveryVisibility(store: $0) }
+        nearby = VisibilityModel(visibility: visibility,
+                                 advertiser: CoreBluetoothAdvertiser(queue: DispatchQueue(label: "lumos.ble.advertise")))
         phase = .ready
     }
 

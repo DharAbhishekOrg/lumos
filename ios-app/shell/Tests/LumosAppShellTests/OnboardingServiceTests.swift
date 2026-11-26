@@ -106,7 +106,7 @@ final class OnboardingServiceTests: XCTestCase {
         let identity = try XCTUnwrap(try IdentityRepository(store: reopened).load())
         XCTAssertNoThrow(try ChatIdentity.unlock(record: identity, kek: root.kek),
                          "the identity opens under the root it was made with")
-        XCTAssertFalse(try DiscoveryVisibility(store: reopened).isVisibleNearby(),
+        XCTAssertFalse(try DiscoveryVisibility(store: reopened).isVisibleNearby(nowMillis: Int64.max - 1),
                        "finishing onboarding does not turn Visible Nearby on")
     }
 

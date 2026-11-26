@@ -150,6 +150,23 @@
   wait on the owner's app-target decision: the shell is a library and never
   imports SwiftUI.
 
+### CS3c (iOS): Visible Nearby on iPhone
+- **Done (2026-11-26):** `DiscoveryVisibility` ported to the Android format
+  (lumos-visibility/2: an hour or a custom 15 minutes to 8 hours, ending by
+  evaluation; a version-1 record reads as off). `VisibleNearbyController`
+  drives the CoreBluetooth advertiser from the same evaluation: on only by
+  the person's tap (which is when Bluetooth permission is asked), off the
+  moment the window ends, they turn it off or the app leaves the screen;
+  Bluetooth not allowed or unsupported turns visibility off and says why.
+  The Nearby tab draws it. "Until you leave the venue" is not offered on
+  iPhone until there is venue-exit detection, so no window can be endless.
+- **Honest limit, both apps:** the HELLO exchange over a live GATT link is
+  not wired on either platform yet (the advertisers, scanners, presence
+  table, feed and interest machines exist and are tested, but nothing
+  connects them on real radios). Until that slice (**NB-1**, Android then
+  iOS), two phones cannot find each other; the Nearby tab says so. Real-radio
+  behaviour is the owner's G-01 field campaign.
+
 ### CS4 (Android) and CS5 (iOS): from Nearby to a match
 - **Profile preview, Interested / Not now, and the match moment,** with the
   verification code (SRS-MAT-008) and the three-moment motion and haptics
