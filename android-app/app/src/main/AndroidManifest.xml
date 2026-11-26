@@ -74,6 +74,7 @@
         android:allowBackup="false"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
+        android:icon="@mipmap/ic_launcher"
         android:label="Lumos"
         android:supportsRtl="true"
         android:theme="@style/Theme.Lumos">
@@ -88,17 +89,26 @@
             android:exported="false"
             android:foregroundServiceType="connectedDevice" />
 
-        <!-- Not exported and no launcher filter yet: the app opens through
-             the onboarding flow, whose UI is a later slice, and NearbyActivity
-             itself refuses to create unless the onboarding machine has made
-             this surface reachable (SRS-ONB-001 / AT-001). -->
+        <!-- The launcher (CS2d): onboarding, or straight to the home tabs
+             once this install has finished it (SRS-ONB-001). -->
+        <activity
+            android:name="com.lumos.app.onboarding.OnboardingActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <!-- Not exported: the app opens through OnboardingActivity, and
+             NearbyActivity itself refuses to create unless onboarding has
+             made this surface reachable (SRS-ONB-001 / AT-001). -->
         <activity
             android:name="com.lumos.app.nearby.NearbyActivity"
             android:exported="false" />
 
         <!-- The home shell (CS2c): Nearby, Matches and Chats under one tab
-             bar. Gated like Nearby, and not the launcher yet for the same
-             reason: the app opens through onboarding, a later slice. -->
+             bar. Gated like Nearby; OnboardingActivity opens it. -->
         <activity
             android:name="com.lumos.app.home.HomeActivity"
             android:exported="false" />

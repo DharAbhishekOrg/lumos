@@ -38,7 +38,9 @@ public final class FeedState {
         /** Scanning runs and nothing has authenticated yet: skeletons. */
         SCANNING_EMPTY,
         /** Authenticated, filtered presence cards. */
-        CARDS
+        CARDS,
+        /** Live discovery is not wired in this build yet (NB-1): nothing is sent or looked for. */
+        NOT_YET
     }
 
     private final Kind kind;
@@ -80,6 +82,15 @@ public final class FeedState {
      *
      * @return the skeleton state
      */
+    /**
+     * Live discovery is not wired in this build yet (NB-1).
+     *
+     * @return the state that says so
+     */
+    public static FeedState notYet() {
+        return new FeedState(Kind.NOT_YET, List.of());
+    }
+
     public static FeedState scanningEmpty() {
         return new FeedState(Kind.SCANNING_EMPTY, List.of());
     }

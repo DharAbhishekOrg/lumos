@@ -78,9 +78,7 @@ public final class AppBoot {
         final KekStore kek = AndroidKekStore.open(KEK_ALIAS, root.get().protection());
         final DataKeyHierarchy keys = DataKeyHierarchy.restore(kek, root.get().wrappedRoot());
         final LocalStore.Clock clock = System::currentTimeMillis;
-        final File dir = context.getFilesDir();
-        final LocalStore store = LocalStore.open(RoomSqlDatabase.wrapping(LumosRoomDatabase.open(context)),
-                keys.deriveKey(DataKeyHierarchy.DataDomain.DATABASE), dir::getUsableSpace, clock);
+        final LocalStore store = openStore(context, keys, clock);
         final Optional<IdentityKeyRecord> record = new IdentityRepository(store).load();
         if (!record.isPresent()) {
             return null;
@@ -89,5 +87,45 @@ public final class AppBoot {
         final ChatIdentity identity = ChatIdentity.unlock(record.get(), kek, crypto);
         return ChatRuntime.assemble(store, identity, crypto, UrlConnectionTransport.to(new URL(base)), clock,
                 new SecureRandom());
+    }
+
+    /**
+     * Opens the install's store under a data-key hierarchy. The one place the
+     * app's store is opened, so onboarding writes the database the boot reads.
+     *
+     * @param context any context of the app
+     * @param keys the data-key hierarchy
+     * @param clock the UTC clock
+     * @return the opened store
+     * @throws StoreException if the store cannot open
+     * @throws GeneralSecurityException if the database key cannot be derived
+     */
+    public static LocalStore openStore(final Context context, final DataKeyHierarchy keys,
+            final LocalStore.Clock clock) throws StoreException, GeneralSecurityException {
+        final File dir = context.getFilesDir();
+        return LocalStore.open(RoomSqlDatabase.wrapping(LumosRoomDatabase.open(context)),
+                keys.deriveKey(DataKeyHierarchy.DataDomain.DATABASE), dir::getUsableSpace, clock);
+    }
+
+    /**
+     * Opens the onboarded install's store, whatever the relay: the key root,
+     * the KEK, the store, and an identity in it.
+     *
+     * @param context any context of the app
+     * @return the store, or empty when this install has not finished onboarding
+     * @throws IOException if the key root file cannot be read
+     * @throws StoreException if the store cannot open
+     * @throws GeneralSecurityException if the KEK or the data key fails
+     */
+    public static Optional<LocalStore> openOnboarded(final Context context)
+            throws IOException, StoreException, GeneralSecurityException {
+        final Optional<KeyRootFile.Root> root = KeyRootFile.read(keyRootFile(context));
+        if (!root.isPresent()) {
+            return Optional.empty();
+        }
+        final KekStore kek = AndroidKekStore.open(KEK_ALIAS, root.get().protection());
+        final LocalStore store = openStore(context, DataKeyHierarchy.restore(kek, root.get().wrappedRoot()),
+                System::currentTimeMillis);
+        return new IdentityRepository(store).exists() ? Optional.of(store) : Optional.empty();
     }
 }

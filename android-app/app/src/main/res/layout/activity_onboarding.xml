@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Lumos - android-app/app / Onboarding: age, documents, identity, in one scrolling step at a time.
+  Author: dhar.abhishek.email@gmail.com
+  Implements: SRS-ONB-001, SRS-ONB-002, SRS-ONB-006, TRS-AND-010, SRS-NFR-A11Y-003
+  ADRs: -
+  Threading: n/a
+  Notes: Exactly one step is visible. Each step's text scrolls, so the
+  largest font sizes still reach its button, which sits below the scroll
+  (SRS-NFR-A11Y-003). The words are the shared strings the iPhone app also
+  uses. Edge to edge (TRS-AND-010): the activity pads the root by the system
+  bars.
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/onboarding_root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:fillViewport="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="@dimen/lumos_space_4">
+
+            <TextView
+                android:id="@+id/onboarding_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingBottom="@dimen/lumos_space_3"
+                android:textAppearance="?attr/textAppearanceHeadlineLarge"
+                android:textColor="@color/lumos_ink" />
+
+            <TextView
+                android:id="@+id/onboarding_body"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingBottom="@dimen/lumos_space_3"
+                android:textAppearance="?attr/textAppearanceBodyLarge"
+                android:textColor="@color/lumos_ink" />
+
+            <!-- Age: a spinner date picker; Continue stays off until a date is chosen. -->
+            <DatePicker
+                android:id="@+id/age_picker"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:calendarViewShown="false"
+                android:contentDescription="@string/age_gate_field_label"
+                android:datePickerMode="spinner"
+                android:visibility="gone" />
+
+            <!-- Documents: each opens in full. -->
+            <LinearLayout
+                android:id="@+id/consent_documents"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/doc_terms"
+                    style="@style/Widget.Material3.Button.TextButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="start|center_vertical"
+                    android:minHeight="@dimen/lumos_space_12"
+                    android:text="@string/consent_doc_terms" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/doc_privacy"
+                    style="@style/Widget.Material3.Button.TextButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="start|center_vertical"
+                    android:minHeight="@dimen/lumos_space_12"
+                    android:text="@string/consent_doc_privacy" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/doc_community"
+                    style="@style/Widget.Material3.Button.TextButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="start|center_vertical"
+                    android:minHeight="@dimen/lumos_space_12"
+                    android:text="@string/consent_doc_community" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/doc_radio"
+                    style="@style/Widget.Material3.Button.TextButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="start|center_vertical"
+                    android:minHeight="@dimen/lumos_space_12"
+                    android:text="@string/consent_doc_radio" />
+            </LinearLayout>
+
+            <!-- Identity: the two notes under the body. -->
+            <LinearLayout
+                android:id="@+id/identity_notes"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingBottom="@dimen/lumos_space_3"
+                    android:text="@string/identity_no_account_note"
+                    android:textAppearance="?attr/textAppearanceBodyMedium"
+                    android:textColor="@color/lumos_ink_muted" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/identity_offline_note"
+                    android:textAppearance="?attr/textAppearanceBodyMedium"
+                    android:textColor="@color/lumos_ink_muted" />
+            </LinearLayout>
+        </LinearLayout>
+    </ScrollView>
+
+    <ProgressBar
+        android:id="@+id/onboarding_progress"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:contentDescription="@string/identity_title"
+        android:indeterminate="true"
+        android:visibility="gone" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/onboarding_action"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/lumos_space_4"
+        android:minHeight="@dimen/lumos_space_12" />
+</LinearLayout>

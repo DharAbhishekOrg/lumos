@@ -60,6 +60,10 @@
         number, your email address or a login from anywhere else, and nothing about you is sent
         to us.</string>
     <string name="identity_offline_note">This works with no internet connection.</string>
+    <string name="identity_start">Set up Lumos on this phone</string>
+    <string name="identity_failed">Lumos could not finish setting up on this phone. Nothing was
+        sent anywhere. Try again.</string>
+    <string name="identity_retry">Try again</string>
 
     <!-- Visible Nearby (SRS-ONB-008) -->
     <string name="visibility_title">Visible Nearby</string>
@@ -207,6 +211,8 @@
         now.</string>
     <string name="nearby_state_radio_busy">The radio is catching its breath. Nearby will
         continue in a moment.</string>
+    <string name="nearby_state_not_yet">Finding people nearby arrives in a coming update.
+        Nothing is being sent or looked for right now.</string>
     <string name="nearby_state_empty">Looking around. No one nearby yet — people appear here
         the moment Lumos is sure they are real.</string>
     <string name="nearby_card_title">Someone nearby</string>
