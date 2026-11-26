@@ -83,7 +83,7 @@ public final class LumosApplication extends Application {
      */
     public synchronized void onboardingCompleted(final LocalStore store) {
         onboarding = null;
-        host.attach(this, store);
+        host.attach(this, store, relayExecutor);
         host.setOnboarded(true);
     }
 

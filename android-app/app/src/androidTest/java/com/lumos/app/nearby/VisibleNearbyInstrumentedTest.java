@@ -32,6 +32,9 @@ import com.lumos.app.onboarding.DiscoveryVisibility;
 import com.lumos.app.store.LocalStore;
 import com.lumos.app.store.room.LumosRoomDatabase;
 import com.lumos.app.store.room.RoomSqlDatabase;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 import org.junit.After;
 import org.junit.Before;
@@ -103,6 +106,7 @@ public final class VisibleNearbyInstrumentedTest {
 
     private final Context context = ApplicationProvider.getApplicationContext();
     private final ScriptedAdvertiser radio = new ScriptedAdvertiser();
+    private final ExecutorService storage = Executors.newSingleThreadExecutor();
     private LumosRoomDatabase room;
 
     @Before
@@ -112,13 +116,19 @@ public final class VisibleNearbyInstrumentedTest {
         final LocalStore store = LocalStore.open(RoomSqlDatabase.wrapping(room),
                 DataKeyHierarchy.create(SoftwareKekStore.create()).deriveKey(DataKeyHierarchy.DataDomain.DATABASE),
                 () -> Long.MAX_VALUE, System::currentTimeMillis);
-        NearbyActivity.setHost(new Host(new VisibleNearbyController(new DiscoveryVisibility(store), radio,
-                System::currentTimeMillis, failure -> { })));
+        // The store is touched only on this single-thread executor, as in the
+        // app: Room refuses the main thread, which is where the taps land.
+        final VisibleNearbyController controller = new VisibleNearbyController(new DiscoveryVisibility(store), radio,
+                System::currentTimeMillis, failure -> { }, storage);
+        controller.load();
+        NearbyActivity.setHost(new Host(controller));
     }
 
     @After
-    public void close() {
+    public void close() throws InterruptedException {
         NearbyActivity.setHost(null);
+        storage.shutdown();
+        storage.awaitTermination(5, TimeUnit.SECONDS);
         room.close();
         context.deleteDatabase(LumosRoomDatabase.DATABASE_FILE);
     }

@@ -86,6 +86,13 @@ public final class DiscoveryVisibility {
         }
 
         /**
+         * @return the mode chosen
+         */
+        public Mode mode() {
+            return mode;
+        }
+
+        /**
          * @return the chosen window in seconds; 0 for until venue exit
          */
         public int durationSeconds() {

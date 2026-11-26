@@ -64,7 +64,9 @@ final class VisibleNearbyControllerTest {
     @BeforeEach
     void open() throws Exception {
         stack = Fixtures.openInMemory(clock);
-        controller = new VisibleNearbyController(new DiscoveryVisibility(stack.store()), radio, clock, f -> { });
+        controller = new VisibleNearbyController(new DiscoveryVisibility(stack.store()), radio, clock, f -> { },
+                Runnable::run);
+        controller.load();
     }
 
     @AfterEach
@@ -77,11 +79,30 @@ final class VisibleNearbyControllerTest {
         controller.refresh();
         controller.setForeground(true);
         assertEquals(0, radio.starts, "no launch, refresh or foregrounding starts the radio");
-        assertTrue(controller.turnOn(DiscoveryVisibility.Selection.defaultSession()));
+        controller.turnOn(DiscoveryVisibility.Selection.defaultSession());
         assertTrue(radio.running, "the person's own tap starts it");
         assertFalse(radio.hint, "UUID only in this step: nothing about the person");
         assertTrue(controller.visible());
         assertEquals(NOW + HOUR, controller.expiresAtMillis());
+    }
+
+    @Test
+    void theChoiceIsStoredAndARelaunchResumesItUntilItsEnd() throws Exception {
+        final DiscoveryVisibility stored = new DiscoveryVisibility(stack.store());
+        controller.turnOn(DiscoveryVisibility.Selection.defaultSession());
+        assertTrue(stored.isVisibleNearby(NOW), "the write landed (the storage executor ran it)");
+        clock.advance(HOUR / 2);
+        final ScriptedAdvertiser fresh = new ScriptedAdvertiser();
+        final VisibleNearbyController relaunched = new VisibleNearbyController(stored, fresh, clock, f -> { },
+                Runnable::run);
+        relaunched.load();
+        assertEquals(0, fresh.starts, "loading starts nothing");
+        relaunched.refresh();
+        assertTrue(relaunched.visible(), "half an hour left");
+        assertTrue(fresh.running, "back on screen inside the window");
+        assertEquals(NOW + HOUR, relaunched.expiresAtMillis(), "the same end; nothing renewed");
+        relaunched.turnOff();
+        assertFalse(stored.isVisibleNearby(clock.nowUtcMillis()), "off is stored too");
     }
 
     @Test

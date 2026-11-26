@@ -31,12 +31,14 @@ import com.lumos.app.nearby.NearbyHost;
 import com.lumos.app.nearby.VisibleNearbyController;
 import com.lumos.app.onboarding.DiscoveryVisibility;
 import com.lumos.app.store.LocalStore;
+import java.util.concurrent.Executor;
 
 /** The app as a NearbyHost. */
 public final class AppHost implements NearbyHost {
 
     private volatile boolean onboarded;
     private volatile VisibleNearbyController visibleNearby;
+    private boolean attached;
     private volatile Runnable visibilityChanged;
     private final Handler main = new Handler(Looper.getMainLooper());
 
@@ -50,29 +52,44 @@ public final class AppHost implements NearbyHost {
     }
 
     /**
-     * Attaches Visible Nearby to the onboarded install's store. Idempotent.
+     * Attaches Visible Nearby to the onboarded install's store: the stored
+     * state is read on the storage executor, then the controller is published
+     * on the main thread. Idempotent.
      *
      * @param context any context of the app
      * @param store the install's open store
+     * @param storage runs the store's reads and writes off the main thread, in order
      */
-    public synchronized void attach(final Context context, final LocalStore store) {
-        if (visibleNearby != null) {
+    public synchronized void attach(final Context context, final LocalStore store, final Executor storage) {
+        if (attached) {
             return;
         }
+        attached = true;
         final BluetoothManager bluetooth = context.getSystemService(BluetoothManager.class);
-        visibleNearby = new VisibleNearbyController(new DiscoveryVisibility(store),
+        final VisibleNearbyController controller = new VisibleNearbyController(new DiscoveryVisibility(store),
                 new AndroidBleAdvertiser(bluetooth == null ? null : bluetooth.getAdapter()),
                 System::currentTimeMillis,
                 failure -> main.post(() -> {
-                    final VisibleNearbyController controller = visibleNearby;
-                    if (controller != null) {
-                        controller.radioFailed(failure);
-                        final Runnable listener = visibilityChanged;
-                        if (listener != null) {
-                            listener.run();
-                        }
+                    final VisibleNearbyController current = visibleNearby;
+                    if (current != null) {
+                        current.radioFailed(failure);
+                        changed();
                     }
-                }));
+                }), storage);
+        storage.execute(() -> {
+            controller.load();
+            main.post(() -> {
+                visibleNearby = controller;
+                changed();
+            });
+        });
+    }
+
+    private void changed() {
+        final Runnable listener = visibilityChanged;
+        if (listener != null) {
+            listener.run();
+        }
     }
 
     @Override
