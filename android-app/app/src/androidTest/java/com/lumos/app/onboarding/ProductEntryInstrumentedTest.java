@@ -22,13 +22,12 @@ import static org.junit.Assert.assertTrue;
 import android.content.Context;
 import androidx.test.core.app.ApplicationProvider;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
-import com.lumos.app.data.DataKeyHierarchy;
-import com.lumos.app.identity.IdentityRepository;
+import com.lumos.app.data.KeyRootFile;
 import com.lumos.app.identity.LibsodiumIdentityCrypto;
 import com.lumos.app.keystore.AndroidKekStore;
 import com.lumos.app.store.LocalStore;
 import com.lumos.app.store.room.LumosRoomDatabase;
-import com.lumos.app.store.room.RoomSqlDatabase;
+import java.io.File;
 import java.security.GeneralSecurityException;
 import java.time.LocalDate;
 import org.junit.After;
@@ -68,12 +67,11 @@ public class ProductEntryInstrumentedTest {
 
     @Test
     public void at001AFreshInstallBlocksEveryProductSurfaceUntilConsent() throws Exception {
-        kek = AndroidKekStore.create(KEK_ALIAS);
-        final LocalStore store = LocalStore.open(RoomSqlDatabase.wrapping(room),
-                DataKeyHierarchy.create(kek).deriveKey(DataKeyHierarchy.DataDomain.DATABASE),
-                () -> Long.MAX_VALUE, () -> NOW);
+        final Context app = ApplicationProvider.getApplicationContext();
+        final File rootFile = new File(app.getCacheDir(), "at001-" + KeyRootFile.NAME);
+        rootFile.delete();
+        final TestInstallation install = new TestInstallation(KEK_ALIAS, room, rootFile, NOW);
         final OnboardingService service = new OnboardingService(new OnboardingMachine(),
-                new ConsentRepository(store), new IdentityRepository(store), kek,
                 LibsodiumIdentityCrypto.load(), () -> NOW);
 
         // Fresh install: every surface that is not onboarding itself is
@@ -98,10 +96,10 @@ public class ProductEntryInstrumentedTest {
 
         // Accepting the CURRENT legal documents - the shipped bytes from the
         // APK's own assets - and creating the identity completes entry.
-        final Context app = ApplicationProvider.getApplicationContext();
         service.acceptDocuments(LegalDocuments.load(document ->
                 app.getAssets().open(document.assetName())));
-        service.createIdentity();
+        final LocalStore store = service.createIdentity(install);
+        kek = install.kek();
 
         for (final AppSurface surface : AppSurface.values()) {
             assertTrue("after onboarding, " + surface + " is reachable",

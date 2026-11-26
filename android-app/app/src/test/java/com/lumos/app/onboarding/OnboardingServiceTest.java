@@ -16,25 +16,37 @@
 
 package com.lumos.app.onboarding;
 
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import com.lumos.app.identity.JcaIdentityCrypto;
-import com.lumos.app.Fixtures;
+import com.lumos.app.data.DataKeyHierarchy;
+import com.lumos.app.data.KeyRootFile;
 import com.lumos.app.identity.IdentityKeyGenerator;
 import com.lumos.app.identity.IdentityKeyRecord;
 import com.lumos.app.identity.IdentityRepository;
+import com.lumos.app.identity.JcaIdentityCrypto;
+import com.lumos.app.keystore.KekStore;
+import com.lumos.app.keystore.SoftwareKekStore;
+import com.lumos.app.store.JdbcSqlDatabase;
+import com.lumos.app.store.LocalStore;
+import com.lumos.app.store.StoreException;
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.security.GeneralSecurityException;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Locale;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
 /** Onboarding, run for real. */
 final class OnboardingServiceTest {
@@ -44,98 +56,155 @@ final class OnboardingServiceTest {
     private static final LocalDate CHILD = LocalDate.of(2015, 4, 7);
     private static final long NOW = 1_755_561_600_000L;
 
-    private static OnboardingService serviceOver(final Fixtures.Stack stack) {
-        return new OnboardingService(new OnboardingMachine(),
-                new ConsentRepository(stack.store()),
-                new IdentityRepository(stack.store()),
-                stack.kek(), new JcaIdentityCrypto(), () -> NOW);
+    @TempDir
+    Path dir;
+
+    private JdbcSqlDatabase database;
+    private SoftwareKekStore kek;
+    private boolean failOpen;
+
+    /** The device's installation, with the software KEK in the Keystore's place. */
+    private final OnboardingService.Installation install = new OnboardingService.Installation() {
+        @Override
+        public KekStore createKek() throws GeneralSecurityException {
+            kek = SoftwareKekStore.create();
+            return kek;
+        }
+
+        @Override
+        public void persistRoot(final KeyRootFile.Root root) throws IOException {
+            KeyRootFile.write(rootFile().toFile(), root);
+        }
+
+        @Override
+        public LocalStore openStore(final DataKeyHierarchy keys) throws StoreException, GeneralSecurityException {
+            if (failOpen) {
+                throw new StoreException(StoreException.Reason.ENGINE, "scripted");
+            }
+            return LocalStore.open(database, keys.deriveKey(DataKeyHierarchy.DataDomain.DATABASE),
+                    () -> Long.MAX_VALUE, () -> NOW);
+        }
+    };
+
+    @BeforeEach
+    void openDatabase() throws StoreException {
+        database = JdbcSqlDatabase.inMemory();
+    }
+
+    @AfterEach
+    void closeDatabase() throws StoreException {
+        database.close();
+    }
+
+    private Path rootFile() {
+        return dir.resolve(KeyRootFile.NAME);
+    }
+
+    private static OnboardingService service() {
+        return new OnboardingService(new OnboardingMachine(), new JcaIdentityCrypto(), () -> NOW);
+    }
+
+    /** Reopens the store the way a boot does: from the key root file and the KEK. */
+    private LocalStore relaunch() throws Exception {
+        final KeyRootFile.Root root = KeyRootFile.read(rootFile().toFile()).orElseThrow();
+        return LocalStore.open(database, DataKeyHierarchy.restore(kek, root.wrappedRoot())
+                .deriveKey(DataKeyHierarchy.DataDomain.DATABASE), () -> Long.MAX_VALUE, () -> NOW);
     }
 
     @Test
-    void anAdultOnboardsWithNoAccountAndEndsWithAnIdentity() throws Exception {
-        try (Fixtures.Stack stack = Fixtures.openInMemory()) {
-            final OnboardingService service = serviceOver(stack);
-            final IdentityRepository identities = new IdentityRepository(stack.store());
-            assertFalse(identities.exists(), "nothing exists before onboarding");
+    void anAdultOnboardsWithNoAccountAndARelaunchFindsTheIdentityAndTheConsent() throws Exception {
+        final OnboardingService service = service();
+        assertSame(OnboardingState.LEGAL_CONSENT, service.declareAge(ADULT, TODAY));
+        final LegalDocuments shipped = LegalDocuments.load(RepoFiles.shippedDocuments());
+        assertSame(OnboardingState.IDENTITY_CREATION, service.acceptDocuments(shipped));
+        assertFalse(Files.exists(rootFile()), "nothing is written before the last step");
 
-            assertSame(OnboardingState.LEGAL_CONSENT, service.declareAge(ADULT, TODAY));
-            final LegalDocuments shipped = LegalDocuments.load(RepoFiles.shippedDocuments());
-            assertSame(OnboardingState.IDENTITY_CREATION, service.acceptDocuments(shipped));
+        service.createIdentity(install);
+        assertSame(OnboardingState.COMPLETE, service.machine().state());
 
-            final byte[] wrappedRoot = service.createIdentity();
-            assertSame(OnboardingState.COMPLETE, service.machine().state());
-            assertNotNull(wrappedRoot);
-            assertTrue(wrappedRoot.length > 0);
-
-            final IdentityKeyRecord identity = identities.load().orElseThrow();
-            assertEquals(32, identity.ed25519Public().length);
-            assertEquals(32, identity.x25519Public().length);
-            assertTrue(IdentityKeyGenerator.verifyBinding(new JcaIdentityCrypto(), identity.ed25519Public(),
-                    identity.x25519Public(), identity.bindingSignature()),
-                    "the ADR-008 binding must verify on the identity onboarding created");
-        }
+        final LocalStore store = relaunch();
+        final IdentityKeyRecord identity = new IdentityRepository(store).load().orElseThrow();
+        assertEquals(32, identity.ed25519Public().length);
+        assertTrue(IdentityKeyGenerator.verifyBinding(new JcaIdentityCrypto(), identity.ed25519Public(),
+                identity.x25519Public(), identity.bindingSignature()),
+                "the ADR-008 binding must verify on the identity onboarding created");
+        final ConsentRecord consent = new ConsentRepository(store).load().orElseThrow();
+        assertEquals(shipped.versions(), consent.acceptedVersions(), "what is recorded is what was displayed");
+        assertEquals(NOW, consent.affirmedAtUtcMillis());
+        assertEquals(AgeGate.minimumAgeYears(), consent.minimumAgeYears());
+        assertFalse(new ConsentRepository(store).needsConsent(shipped));
+        assertEquals(kek.protection(), KeyRootFile.read(rootFile().toFile()).orElseThrow().protection());
     }
 
     @Test
-    void theAcceptedVersionsRecordedAreTheOnesActuallyShipped() throws Exception {
-        try (Fixtures.Stack stack = Fixtures.openInMemory()) {
-            final OnboardingService service = serviceOver(stack);
-            final ConsentRepository consent = new ConsentRepository(stack.store());
-            final LegalDocuments shipped = LegalDocuments.load(RepoFiles.shippedDocuments());
-
-            service.declareAge(ADULT, TODAY);
-            service.acceptDocuments(shipped);
-
-            final ConsentRecord stored = consent.load().orElseThrow();
-            assertEquals(shipped.versions(), stored.acceptedVersions(),
-                    "what is recorded must be what was displayed");
-            assertEquals(NOW, stored.affirmedAtUtcMillis());
-            assertEquals(AgeGate.minimumAgeYears(), stored.minimumAgeYears());
-            assertFalse(consent.needsConsent(shipped));
-        }
+    void aRefusedUserGetsNoKeyNoRootAndNoStore() throws Exception {
+        final OnboardingService service = service();
+        assertSame(OnboardingState.BLOCKED_UNDER_AGE, service.declareAge(CHILD, TODAY));
+        assertSame(OnboardingState.BLOCKED_UNDER_AGE,
+                service.acceptDocuments(LegalDocuments.load(RepoFiles.shippedDocuments())),
+                "the documents cannot rescue a refused user");
+        assertThrows(IllegalStateException.class, () -> service.createIdentity(install),
+                "no key material is generated for someone the gate refused");
+        assertNull(kek, "no KEK was made");
+        assertFalse(Files.exists(rootFile()), "no key root was written");
     }
 
     @Test
-    void aRefusedUserGetsNoIdentityAndNoConsentRecord() throws Exception {
-        try (Fixtures.Stack stack = Fixtures.openInMemory()) {
-            final OnboardingService service = serviceOver(stack);
-            assertSame(OnboardingState.BLOCKED_UNDER_AGE, service.declareAge(CHILD, TODAY));
-
-            final LegalDocuments shipped = LegalDocuments.load(RepoFiles.shippedDocuments());
-            service.acceptDocuments(shipped);
-            assertSame(OnboardingState.BLOCKED_UNDER_AGE, service.machine().state(),
-                    "the documents cannot rescue a refused user");
-
-            assertThrows(IllegalStateException.class, service::createIdentity,
-                    "no key material is generated for someone the gate refused");
-            assertFalse(new IdentityRepository(stack.store()).exists());
-        }
+    void identityCreationRefusesToRunBeforeTheGateAndTheDocuments() throws Exception {
+        final OnboardingService service = service();
+        assertThrows(IllegalStateException.class, () -> service.createIdentity(install));
+        service.declareAge(ADULT, TODAY);
+        assertThrows(IllegalStateException.class, () -> service.createIdentity(install), "and before the documents");
+        assertNull(kek);
     }
 
     @Test
-    void identityCreationRefusesToRunBeforeTheGate() throws Exception {
-        try (Fixtures.Stack stack = Fixtures.openInMemory()) {
-            final OnboardingService service = serviceOver(stack);
-            assertThrows(IllegalStateException.class, service::createIdentity);
-            service.declareAge(ADULT, TODAY);
-            assertThrows(IllegalStateException.class, service::createIdentity,
-                    "and before the documents");
-        }
+    void aFailedLastStepChangesNothingAndCanBeRetried() throws Exception {
+        final OnboardingService service = service();
+        service.declareAge(ADULT, TODAY);
+        service.acceptDocuments(LegalDocuments.load(RepoFiles.shippedDocuments()));
+        failOpen = true;
+        assertThrows(StoreException.class, () -> service.createIdentity(install));
+        assertSame(OnboardingState.IDENTITY_CREATION, service.machine().state(), "a failure does not complete it");
+        failOpen = false;
+        service.createIdentity(install);
+        assertSame(OnboardingState.COMPLETE, service.machine().state());
+        assertTrue(new ConsentRepository(relaunch()).load().isPresent(), "the held consent survives the failed try");
+    }
+
+    @Test
+    void goingBackToTheGateDropsTheHeldConsent() throws Exception {
+        final OnboardingService service = service();
+        service.declareAge(ADULT, TODAY);
+        service.acceptDocuments(LegalDocuments.load(RepoFiles.shippedDocuments()));
+        service.machine().on(new OnboardingEvent.RestartRequested());
+        assertThrows(IllegalStateException.class, () -> service.createIdentity(install));
+        assertSame(OnboardingState.BLOCKED_UNDER_AGE, service.declareAge(CHILD, TODAY));
+        assertThrows(IllegalStateException.class, () -> service.createIdentity(install),
+                "a minor re-entry gets no key");
+        assertNull(kek);
+    }
+
+    @Test
+    void onboardingCannotRunTwice() throws Exception {
+        final OnboardingService service = service();
+        service.declareAge(ADULT, TODAY);
+        service.acceptDocuments(LegalDocuments.load(RepoFiles.shippedDocuments()));
+        service.createIdentity(install);
+        final byte[] first = Files.readAllBytes(rootFile());
+        assertThrows(IllegalStateException.class, () -> service.createIdentity(install));
+        assertArrayEquals(first, Files.readAllBytes(rootFile()), "the key root is not replaced");
     }
 
     @Test
     void completingOnboardingLeavesTheUserInvisible() throws Exception {
-        try (Fixtures.Stack stack = Fixtures.openInMemory()) {
-            final OnboardingService service = serviceOver(stack);
-            service.declareAge(ADULT, TODAY);
-            service.acceptDocuments(LegalDocuments.load(RepoFiles.shippedDocuments()));
-            service.createIdentity();
-
-            assertSame(OnboardingState.COMPLETE, service.machine().state());
-            assertFalse(new DiscoveryVisibility(stack.store()).isVisibleNearby(NOW),
-                    "SRS-ONB-008: finishing onboarding is an installation, and an "
-                            + "installation does not make anybody discoverable");
-        }
+        final OnboardingService service = service();
+        service.declareAge(ADULT, TODAY);
+        service.acceptDocuments(LegalDocuments.load(RepoFiles.shippedDocuments()));
+        final LocalStore store = service.createIdentity(install);
+        assertFalse(new DiscoveryVisibility(store).isVisibleNearby(NOW),
+                "SRS-ONB-008: finishing onboarding is an installation, and an "
+                        + "installation does not make anybody discoverable");
     }
 
     @Test
