@@ -27,6 +27,7 @@ import com.lumos.app.onboarding.OnboardingMachine;
 import com.lumos.app.onboarding.OnboardingService;
 import com.lumos.app.relay.ChatRuntime;
 import com.lumos.app.relay.RelayJobs;
+import com.lumos.app.store.LocalStore;
 import com.lumos.protocol.wire.LumosCrypto;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
@@ -74,9 +75,15 @@ public final class LumosApplication extends Application {
         return onboarding;
     }
 
-    /** Records that onboarding completed: entry opens, and the finished flow is dropped. */
-    public synchronized void onboardingCompleted() {
+    /**
+     * Records that onboarding completed: entry opens, Visible Nearby attaches
+     * to the store, and the finished flow is dropped.
+     *
+     * @param store the install's open store
+     */
+    public synchronized void onboardingCompleted(final LocalStore store) {
         onboarding = null;
+        host.attach(this, store, relayExecutor);
         host.setOnboarded(true);
     }
 

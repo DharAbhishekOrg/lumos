@@ -70,7 +70,7 @@ public final class NearbyActivity extends AppCompatActivity {
         super.onResume();
         RecentsRedaction.leaving(this, AppSurface.NEARBY_DISCOVERY, false);
         if (panel != null) {
-            panel.render();
+            panel.setForeground(true);
         }
     }
 
@@ -78,6 +78,9 @@ public final class NearbyActivity extends AppCompatActivity {
     protected void onPause() {
         RecentsRedaction.leaving(this, AppSurface.NEARBY_DISCOVERY, true);
         super.onPause();
+        if (panel != null) {
+            panel.setForeground(false);
+        }
     }
 
     /** Renders the host's current state; also called by the state demo. */

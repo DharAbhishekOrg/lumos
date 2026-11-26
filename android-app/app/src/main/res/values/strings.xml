@@ -188,6 +188,16 @@
     <string name="visible_nearby_indicator_on">You are visible to people nearby</string>
     <string name="visible_nearby_indicator_until">Visible until %1$s</string>
     <string name="visible_nearby_indicator_venue">Visible until you leave the venue</string>
+    <string name="visible_nearby_problem_bluetooth_off">Bluetooth is off. Nobody can see you
+        until you turn it on.</string>
+    <string name="visible_nearby_problem_not_allowed">Lumos is not allowed to use Bluetooth, so
+        Visible Nearby is off. You can allow it in Settings, Apps, Lumos.</string>
+    <string name="visible_nearby_problem_unsupported">This phone cannot be visible over
+        Bluetooth, so Visible Nearby is off.</string>
+    <string name="visible_nearby_problem_refused">Bluetooth did not start, so Visible Nearby is
+        off. Try again in a moment.</string>
+    <string name="visible_nearby_custom_value">%1$d h %2$02d min</string>
+    <string name="visible_nearby_custom_note">It turns itself off when this time is up.</string>
     <string name="visible_nearby_expired">Visible Nearby turned itself off. Turn it on again
         any time.</string>
 

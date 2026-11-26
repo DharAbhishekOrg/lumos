@@ -23,6 +23,8 @@ import android.os.Handler;
 import android.os.Looper;
 import android.view.View;
 import android.widget.TextView;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
@@ -44,6 +46,7 @@ import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Locale;
 import java.util.concurrent.Executor;
+import java.util.function.Consumer;
 
 /** The home shell. */
 public final class HomeActivity extends AppCompatActivity {
@@ -59,6 +62,8 @@ public final class HomeActivity extends AppCompatActivity {
     private HomeSource source;
     private Executor worker;
     private NearbyPanel nearby;
+    private ActivityResultLauncher<String[]> permissions;
+    private Consumer<Boolean> pendingPermission;
     private HomeAdapters.Matches matches;
     private HomeAdapters.Chats chats;
     private BottomNavigationView tabs;
@@ -88,6 +93,19 @@ public final class HomeActivity extends AppCompatActivity {
         setContentView(R.layout.activity_home);
         applyInsets();
         nearby = new NearbyPanel(findViewById(R.id.nearby_panel), host);
+        // SRS-ONB-004: the Bluetooth permission is asked when the person turns
+        // Visible Nearby on, and only then.
+        permissions = registerForActivityResult(new ActivityResultContracts.RequestMultiplePermissions(), result -> {
+            final Consumer<Boolean> answer = pendingPermission;
+            pendingPermission = null;
+            if (answer != null) {
+                answer.accept(!result.isEmpty() && !result.containsValue(Boolean.FALSE));
+            }
+        });
+        nearby.setPermissionAsker((names, granted) -> {
+            pendingPermission = granted;
+            permissions.launch(names);
+        });
         matches = new HomeAdapters.Matches(this::open);
         chats = new HomeAdapters.Chats(this::open);
         bindList(R.id.matches_list, matches);
@@ -154,7 +172,7 @@ public final class HomeActivity extends AppCompatActivity {
             return;
         }
         visible = true;
-        nearby.render();
+        nearby.setForeground(true);
         reload();
         main.postDelayed(refresh, REFRESH.toMillis());
     }
@@ -165,6 +183,9 @@ public final class HomeActivity extends AppCompatActivity {
         super.onPause();
         visible = false;
         main.removeCallbacks(refresh);
+        if (nearby != null) {
+            nearby.setForeground(false);
+        }
     }
 
     private void refreshLoop() {

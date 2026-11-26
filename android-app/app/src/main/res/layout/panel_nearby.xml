@@ -43,6 +43,74 @@
             android:text="@string/nearby_stop_everything" />
     </LinearLayout>
 
+    <!-- Visible Nearby (SRS-NBY-001/002/003, NB-1 step 1): the choice of a
+         while, the end time while visible, and why the radio is silent when
+         it is. Hidden when the host has no Visible Nearby (the state demo). -->
+    <LinearLayout
+        android:id="@+id/visible_nearby_section"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:visibility="gone">
+
+        <TextView
+            android:id="@+id/vn_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/visible_nearby_title"
+            android:textAppearance="?attr/textAppearanceTitleMedium" />
+
+        <TextView
+            android:id="@+id/vn_status"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="4dp"
+            android:textAppearance="?attr/textAppearanceBodyLarge" />
+
+        <TextView
+            android:id="@+id/vn_problem"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="4dp"
+            android:textAppearance="?attr/textAppearanceBodyMedium"
+            android:textColor="?attr/colorError"
+            android:visibility="gone" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/vn_hour"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:minHeight="48dp"
+            android:text="@string/visible_nearby_duration_default" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/vn_custom"
+            style="?attr/materialButtonOutlinedStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minHeight="48dp"
+            android:text="@string/visible_nearby_duration_custom" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/vn_off"
+            style="?attr/materialButtonOutlinedStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:minHeight="48dp"
+            android:text="@string/visibility_turn_off" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="8dp"
+            android:text="@string/visibility_never_automatic"
+            android:textAppearance="?attr/textAppearanceBodySmall" />
+    </LinearLayout>
+
     <TextView
         android:id="@+id/state_message"
         android:layout_width="match_parent"
