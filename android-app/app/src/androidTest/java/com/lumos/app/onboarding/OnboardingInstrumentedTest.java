@@ -28,7 +28,7 @@ import android.content.Context;
 import androidx.test.core.app.ApplicationProvider;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.platform.app.InstrumentationRegistry;
-import com.lumos.app.data.DataKeyHierarchy;
+import com.lumos.app.data.KeyRootFile;
 import com.lumos.app.identity.IdentityKeyGenerator;
 import com.lumos.app.identity.IdentityKeyRecord;
 import com.lumos.app.identity.IdentityRepository;
@@ -36,7 +36,7 @@ import com.lumos.app.identity.LibsodiumIdentityCrypto;
 import com.lumos.app.keystore.AndroidKekStore;
 import com.lumos.app.store.LocalStore;
 import com.lumos.app.store.room.LumosRoomDatabase;
-import com.lumos.app.store.room.RoomSqlDatabase;
+import java.io.File;
 import java.security.GeneralSecurityException;
 import java.time.LocalDate;
 import org.junit.After;
@@ -77,31 +77,31 @@ public class OnboardingInstrumentedTest {
 
     @Test
     public void at002OnboardingCompletesOfflineAndCreatesALocalIdentity() throws Exception {
-        kek = AndroidKekStore.create(KEK_ALIAS);
         final LibsodiumIdentityCrypto crypto = LibsodiumIdentityCrypto.load();
-        final LocalStore store = LocalStore.open(RoomSqlDatabase.wrapping(room),
-                DataKeyHierarchy.create(kek).deriveKey(DataKeyHierarchy.DataDomain.DATABASE),
-                () -> Long.MAX_VALUE, () -> NOW);
-        final IdentityRepository identities = new IdentityRepository(store);
-        final OnboardingService service = new OnboardingService(new OnboardingMachine(),
-                new ConsentRepository(store), identities, kek, crypto, () -> NOW);
+        final Context app = ApplicationProvider.getApplicationContext();
+        final File rootFile = new File(app.getCacheDir(), "at002-" + KeyRootFile.NAME);
+        rootFile.delete();
+        final TestInstallation install = new TestInstallation(KEK_ALIAS, room, rootFile, NOW);
+        final OnboardingService service = new OnboardingService(new OnboardingMachine(), crypto, () -> NOW);
 
         // The adult gate first, before any product surface (SRS-ONB-001).
         assertSame(OnboardingState.LEGAL_CONSENT, service.declareAge(ADULT, TODAY));
 
         // The four shipped documents, read from the APK's own assets - the
         // same bytes a user would be shown (SRS-ONB-002).
-        final Context app = ApplicationProvider.getApplicationContext();
         final LegalDocuments shipped = LegalDocuments.load(document ->
                 app.getAssets().open(document.assetName()));
         assertSame(OnboardingState.IDENTITY_CREATION, service.acceptDocuments(shipped));
 
-        // Identity creation - the step WP-02 could not run on any Android
-        // runtime, now executing through the libsodium backend (SRS-ONB-006).
-        final byte[] wrappedRoot = service.createIdentity();
+        // Identity creation through the libsodium backend and the real
+        // Keystore, in the production order: KEK, key root file, store, then
+        // consent and identity in one transaction (SRS-ONB-006, ADR-012).
+        final LocalStore store = service.createIdentity(install);
+        kek = install.kek();
         assertSame(OnboardingState.COMPLETE, service.machine().state());
-        assertNotNull(wrappedRoot);
-        assertTrue(wrappedRoot.length > 0);
+        assertTrue("the key root file is written", KeyRootFile.read(rootFile).isPresent());
+        final IdentityRepository identities = new IdentityRepository(store);
+        assertTrue("consent is stored with the identity", new ConsentRepository(store).load().isPresent());
 
         final IdentityKeyRecord identity = identities.load().orElseThrow();
         assertEquals(32, identity.ed25519Public().length);
