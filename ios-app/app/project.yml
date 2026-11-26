@@ -100,6 +100,13 @@ targets:
         # The shell links CoreBluetooth for nearby discovery. The prompt only
         # appears when discovery is first turned on (SRS-ONB-004), never at
         # launch or during onboarding.
+        # The advertiser declares a CoreBluetooth restoration identifier
+        # (TRS-IOS-003/009), which iOS only permits with this background
+        # mode. The app itself stops advertising when it leaves the screen
+        # until a later slice can also end a window on time while suspended
+        # (SRS-NBY-002).
+        UIBackgroundModes:
+          - bluetooth-peripheral
         NSBluetoothAlwaysUsageDescription: >-
           Lumos uses Bluetooth to find people near you who are also using
           Lumos, and only while you have Visible Nearby turned on.

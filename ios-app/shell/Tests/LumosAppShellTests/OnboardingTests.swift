@@ -217,7 +217,7 @@ final class OnboardingTests: XCTestCase {
         let store = stack.store
         let database = stack.database
         defer { database.close() }
-        XCTAssertFalse(try DiscoveryVisibility(store: store).isVisibleNearby(),
+        XCTAssertFalse(try DiscoveryVisibility(store: store).isVisibleNearby(nowMillis: affirmedAt),
                        "a device that has never been told otherwise is not discoverable")
     }
 
@@ -227,10 +227,10 @@ final class OnboardingTests: XCTestCase {
         let database = stack.database
         defer { database.close() }
         let visibility = DiscoveryVisibility(store: store)
-        try visibility.enableAfterExplicitUserRequest(atUtcMillis: affirmedAt)
-        XCTAssertTrue(try visibility.isVisibleNearby())
-        try visibility.disable(atUtcMillis: affirmedAt + 1)
-        XCTAssertFalse(try visibility.isVisibleNearby())
+        try visibility.enableAfterExplicitUserRequest(.defaultSession, nowMillis: affirmedAt)
+        XCTAssertTrue(try visibility.isVisibleNearby(nowMillis: affirmedAt))
+        try visibility.disable(nowMillis: affirmedAt + 1)
+        XCTAssertFalse(try visibility.isVisibleNearby(nowMillis: affirmedAt + 1))
     }
 
     func testAnUnreadableVisibilityRecordReadsAsOff() throws {
@@ -240,7 +240,7 @@ final class OnboardingTests: XCTestCase {
         defer { database.close() }
         try store.put(kind: .discoveryVisibility, id: DiscoveryVisibility.visibilityId,
                       plaintext: Data("lumos-visibility/99\non\n0\n".utf8))
-        XCTAssertFalse(try DiscoveryVisibility(store: store).isVisibleNearby(),
+        XCTAssertFalse(try DiscoveryVisibility(store: store).isVisibleNearby(nowMillis: affirmedAt),
                        "a record from a format this build does not know fails towards off")
     }
 

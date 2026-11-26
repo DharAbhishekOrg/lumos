@@ -39,8 +39,8 @@ struct RootView: View {
             case .onboarding(let state):
                 OnboardingFlow(model: model, state: state)
             case .ready:
-                if let home = model.home {
-                    HomeScreen(model: home)
+                if let home = model.home, let nearby = model.nearby {
+                    HomeScreen(model: home, nearby: nearby)
                 } else {
                     FailureScreen()
                 }
