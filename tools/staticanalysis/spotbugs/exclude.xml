@@ -323,4 +323,39 @@
     <Method name="host"/>
     <Bug pattern="EI_EXPOSE_REP"/>
   </Match>
+  <!--
+    NB-1 step 1: NearbyHost gained default methods (Visible Nearby), which
+    makes SpotBugs read it as a mutable type. The host is the composition
+    root's shared, long-lived object by design: NearbyActivity's static seam
+    stores and returns it (the state demo and HomeActivity use the same one),
+    the card adapter keeps the host it renders for, AppHost hands out its one
+    Visible Nearby controller, and the controller keeps its injected
+    collaborators - the constructor-injection rationale used throughout.
+  -->
+  <Match>
+    <Class name="com.lumos.app.nearby.NearbyActivity"/>
+    <Or>
+      <Method name="setHost"/>
+      <Method name="host"/>
+    </Or>
+    <Or>
+      <Bug pattern="EI_EXPOSE_STATIC_REP2"/>
+      <Bug pattern="MS_EXPOSE_REP"/>
+    </Or>
+  </Match>
+  <Match>
+    <Class name="com.lumos.app.nearby.NearbyCardAdapter"/>
+    <Method name="&lt;init&gt;"/>
+    <Bug pattern="EI_EXPOSE_REP2"/>
+  </Match>
+  <Match>
+    <Class name="com.lumos.app.AppHost"/>
+    <Method name="visibleNearby"/>
+    <Bug pattern="EI_EXPOSE_REP"/>
+  </Match>
+  <Match>
+    <Class name="com.lumos.app.nearby.VisibleNearbyController"/>
+    <Method name="&lt;init&gt;"/>
+    <Bug pattern="EI_EXPOSE_REP2"/>
+  </Match>
 </FindBugsFilter>

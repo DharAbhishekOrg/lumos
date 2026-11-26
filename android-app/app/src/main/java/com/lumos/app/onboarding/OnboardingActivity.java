@@ -36,6 +36,7 @@ import com.lumos.app.DeviceInstallation;
 import com.lumos.app.LumosApplication;
 import com.lumos.app.R;
 import com.lumos.app.home.HomeActivity;
+import com.lumos.app.store.LocalStore;
 import com.lumos.app.store.StoreException;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -77,22 +78,22 @@ public final class OnboardingActivity extends AppCompatActivity {
         findViewById(R.id.onboarding_action).setOnClickListener(view -> act());
         showWorking();
         worker.execute(() -> {
-            boolean onboarded;
+            LocalStore onboarded;
             try {
-                onboarded = AppBoot.openOnboarded(this).isPresent();
+                onboarded = AppBoot.openOnboarded(this).orElse(null);
             } catch (IOException | GeneralSecurityException
                      | StoreException unreadable) {
                 // An install that cannot be read is not an onboarded one: the
                 // steps run again and make a fresh root (ADR-012).
-                onboarded = false;
+                onboarded = null;
             }
-            final boolean done = onboarded;
+            final LocalStore done = onboarded;
             runOnUiThread(() -> {
                 if (isFinishing() || isDestroyed()) {
                     return;
                 }
-                if (done) {
-                    app.onboardingCompleted();
+                if (done != null) {
+                    app.onboardingCompleted(done);
                     openHome();
                 } else {
                     render();
@@ -162,18 +163,17 @@ public final class OnboardingActivity extends AppCompatActivity {
         failed = false;
         showWorking();
         worker.execute(() -> {
-            boolean ok;
+            LocalStore made;
             try {
-                service.createIdentity(new DeviceInstallation(this));
-                ok = true;
+                made = service.createIdentity(new DeviceInstallation(this));
             } catch (IOException | GeneralSecurityException
                      | StoreException | IllegalStateException notDone) {
-                ok = false;
+                made = null;
             }
-            final boolean done = ok;
+            final LocalStore done = made;
             runOnUiThread(() -> {
-                if (done) {
-                    app.onboardingCompleted();
+                if (done != null) {
+                    app.onboardingCompleted(done);
                     openHome();
                 } else if (!isFinishing() && !isDestroyed()) {
                     failed = true;

@@ -180,6 +180,14 @@
   iOS), two phones cannot find each other; the Nearby tab says so. Real-radio
   behaviour is the owner's G-01 field campaign.
 
+### NB-1: two phones find each other (owner: "start NB-1", 2026-11-26)
+| Step | What | State |
+|---|---|---|
+| 1 | Visible Nearby on Android: `VisibleNearbyController` (the iOS rules in Java), the panel's choice of a while, permission asked on the tap, UUID-only advertising | Done (2026-11-26) |
+| 2 | Android: scan, connect over GATT, run HELLO, presence cards; advertising moves to the rotating hint | Next |
+| 3 | iOS: the same | — |
+| 4 | Owner's two-phone test (OnePlus 9 and iPhone side by side); radio truth stays G-01 | — |
+
 ### CS4 (Android) and CS5 (iOS): from Nearby to a match
 - **Profile preview, Interested / Not now, and the match moment,** with the
   verification code (SRS-MAT-008) and the three-moment motion and haptics

@@ -57,4 +57,22 @@ public interface NearbyHost {
      * presence cleared. The screen offers nothing softer.
      */
     void stopNearby();
+
+    /**
+     * Visible Nearby's controller, when this host has one.
+     *
+     * @return the controller, or null (the state demo, and before onboarding)
+     */
+    default VisibleNearbyController visibleNearby() {
+        return null;
+    }
+
+    /**
+     * Asks to be told when Visible Nearby changes off the main flow (a radio failure).
+     *
+     * @param listener run on the main thread; null to stop
+     */
+    default void setOnVisibilityChanged(final Runnable listener) {
+        // Hosts without Visible Nearby never change.
+    }
 }

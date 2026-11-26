@@ -86,6 +86,27 @@ public final class DiscoveryVisibility {
         }
 
         /**
+         * @return the chosen window in seconds; 0 for until venue exit
+         */
+        public int durationSeconds() {
+            return durationSeconds;
+        }
+
+        /**
+         * @return the longest custom window, from the register (8 hours)
+         */
+        public static int maximumSeconds() {
+            return LumosConstants.VISIBLE_NEARBY_DURATION_SEC_MAX;
+        }
+
+        /**
+         * @return the shortest custom window, from the register (15 minutes)
+         */
+        public static int minimumSeconds() {
+            return LumosConstants.VISIBLE_NEARBY_DURATION_SEC_MIN;
+        }
+
+        /**
          * A custom duration, held to the register bounds.
          *
          * @param seconds the chosen duration
