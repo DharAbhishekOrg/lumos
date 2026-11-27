@@ -108,10 +108,11 @@
     (CR-007; evidence retention per SRS-MAT-010 comes with it), and the
     other contexts SRS-SAF-001 lists (profile, request, venue room).
   - **Still to land elsewhere:** the match ledger is not composed in
-    production, so ending the match record joins CS4; the nearby Hello
-    responder must refuse a blocked identity when the GATT exchange is wired
-    (SRS-SAF-002), and only then may the block copy say "and you won't
-    appear in theirs".
+    production, so ending the match record joins CS4. The nearby Hello
+    refusal of a blocked identity is built (NB-1 step 2e, both apps), so a
+    blocked person gets no card; but until ADR-014 is decided they could
+    still tell the person is near, so the block copy must NOT yet say "and
+    you won't appear in theirs".
 - **CS2c done (2026-11-24): the Android home shell.**
   - **`HomeActivity`:** Nearby, Matches and Chats under one Material tab bar.
     It is gated exactly like Nearby (no onboarding, nothing opens). The
@@ -204,8 +205,10 @@
   carries its identity key) when the link opens, before it knows who the
   other side is. A blocked person running modified software could still
   see that key and so tell that the person is near, though they never get
-  a card. Closing that needs a protocol change (ADR-002 order of HELLOs);
-  it is raised, not decided. Until it is, the block copy keeps saying only
+  a card. ADR-014 (proposed) sets out the options and recommends that the
+  peripheral speak last, which closes the case where the blocked person
+  connects; the case where this phone connects first stays open. It is
+  raised, not decided. Until it is, the block copy keeps saying only
   what is true ("They can no longer message you or appear in your
   Nearby.").
 - **Still to do after CR-010:** the GATT client and server adapters, the
