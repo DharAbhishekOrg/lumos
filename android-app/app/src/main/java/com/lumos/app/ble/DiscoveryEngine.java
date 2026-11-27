@@ -81,7 +81,7 @@ public final class DiscoveryEngine {
     private final LinkSession.Nonces nonces;
     private final long handshakeTimeoutMillis;
     private final DiscoveryTriage triage = new DiscoveryTriage();
-    private final PresenceTable presence = new PresenceTable();
+    private final PresenceTable presence;
     private final Map<String, LinkSession> links = new LinkedHashMap<>();
     private final Map<String, String> peerByCandidate = new HashMap<>();
     private final Map<String, String> candidateByLink = new HashMap<>();
@@ -96,10 +96,27 @@ public final class DiscoveryEngine {
      */
     public DiscoveryEngine(final Radio radio, final Identity identity, final LinkSession.Nonces nonces,
             final long handshakeTimeoutMillis) {
+        this(radio, identity, nonces, handshakeTimeoutMillis, new PresenceTable());
+    }
+
+    /**
+     * An engine that writes into a presence table it shares with the Nearby
+     * feed, so the screen's vetoes (hidden, blocked, interest) apply to what
+     * discovery finds; the engine is still the table's only writer.
+     *
+     * @param radio the radio seam
+     * @param identity this device's identity
+     * @param nonces fresh HELLO nonces
+     * @param handshakeTimeoutMillis how long a link may take (CR-010's register value on a device)
+     * @param presence the presence table the feed reads
+     */
+    public DiscoveryEngine(final Radio radio, final Identity identity, final LinkSession.Nonces nonces,
+            final long handshakeTimeoutMillis, final PresenceTable presence) {
         this.radio = radio;
         this.identity = identity;
         this.nonces = nonces;
         this.handshakeTimeoutMillis = handshakeTimeoutMillis;
+        this.presence = presence;
     }
 
     /** Starts discovery: sightings count and links may open. */
