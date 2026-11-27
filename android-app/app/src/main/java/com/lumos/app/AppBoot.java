@@ -1,7 +1,7 @@
 /*
  * Lumos - android-app/app / Opening an onboarded install: key root, KEK, data keys, store, identity, runtime.
  * Author: dhar.abhishek.email@gmail.com
- * Implements: SRS-RMT-001, TRS-LOC-002, TRS-AND-007, SRS-DAT-002
+ * Implements: SRS-RMT-001, TRS-LOC-002, TRS-AND-007, SRS-DAT-002, SRS-NBY-005
  * ADRs: ADR-001, ADR-003, ADR-010, ADR-012
  * Threading: background (never the main thread: it opens the database and the keystore)
  * Notes: ADR-012's boot order. The key root file names the KEK's protection
@@ -17,6 +17,7 @@
 package com.lumos.app;
 
 import android.content.Context;
+import com.lumos.app.ble.NearbyIdentity;
 import com.lumos.app.data.DataKeyHierarchy;
 import com.lumos.app.data.KeyRootFile;
 import com.lumos.app.identity.ChatIdentity;
@@ -127,5 +128,29 @@ public final class AppBoot {
         final LocalStore store = openStore(context, DataKeyHierarchy.restore(kek, root.get().wrappedRoot()),
                 System::currentTimeMillis);
         return new IdentityRepository(store).exists() ? Optional.of(store) : Optional.empty();
+    }
+
+    /**
+     * Unlocks this install's identity for nearby discovery, whatever the
+     * relay: the key root, the KEK, the stored identity, then the signer.
+     * The unlocked identity lives as long as the process, like the chat's.
+     *
+     * @param context any context of the app
+     * @param store the install's open store
+     * @return the HELLO identity, or empty when this install has not finished onboarding
+     * @throws IOException if the key root file cannot be read
+     * @throws StoreException if the identity cannot be read
+     * @throws GeneralSecurityException if the KEK or the identity does not unwrap
+     */
+    public static Optional<NearbyIdentity> nearbyIdentity(final Context context, final LocalStore store)
+            throws IOException, StoreException, GeneralSecurityException {
+        final Optional<KeyRootFile.Root> root = KeyRootFile.read(keyRootFile(context));
+        final Optional<IdentityKeyRecord> record = new IdentityRepository(store).load();
+        if (!root.isPresent() || !record.isPresent()) {
+            return Optional.empty();
+        }
+        final KekStore kek = AndroidKekStore.open(KEK_ALIAS, root.get().protection());
+        final ChatIdentity identity = ChatIdentity.unlock(record.get(), kek, LibsodiumIdentityCrypto.load());
+        return Optional.of(new NearbyIdentity(record.get(), identity::sign));
     }
 }

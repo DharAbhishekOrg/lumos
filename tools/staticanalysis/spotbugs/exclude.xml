@@ -402,4 +402,21 @@
     <Method name="bind"/>
     <Bug pattern="EI_EXPOSE_REP2"/>
   </Match>
+  <!--
+    NB-1 step 3c: PresenceTable gained clear(), so SpotBugs now reads it as
+    mutable. DiscoveryEngine and NearbyFeedController take the one presence
+    table they share with their caller on purpose (the engine's "already
+    found" table; the feed's table, written on the store's executor), and
+    NearbyDiscovery holds the app's one open store, like every other
+    store-backed service (the S4c rationale).
+  -->
+  <Match>
+    <Or>
+      <Class name="com.lumos.app.ble.DiscoveryEngine"/>
+      <Class name="com.lumos.app.nearby.NearbyFeedController"/>
+      <Class name="com.lumos.app.nearby.NearbyDiscovery"/>
+    </Or>
+    <Method name="&lt;init&gt;"/>
+    <Bug pattern="EI_EXPOSE_REP2"/>
+  </Match>
 </FindBugsFilter>

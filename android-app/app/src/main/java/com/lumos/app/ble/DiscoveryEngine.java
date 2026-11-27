@@ -80,6 +80,15 @@ public final class DiscoveryEngine {
         HelloExchange freshExchange();
     }
 
+    /** Hears about every peer a link verified, on the engine's executor. */
+    public interface Found {
+        /**
+         * @param peer the authenticated peer
+         * @param nowMillis when its link finished
+         */
+        void found(HelloExchange.Peer peer, long nowMillis);
+    }
+
     /** Links kept free for peers that connect to us. */
     static final int INBOUND_RESERVE = 1;
 
@@ -94,6 +103,7 @@ public final class DiscoveryEngine {
     private final Map<String, String> candidateByLink = new HashMap<>();
     private final Map<String, Long> refusedUntil = new HashMap<>();
     private final LinkSession.Refusals refusals;
+    private Found onFound;
     private boolean running;
     private long nextHandle;
 
@@ -142,6 +152,16 @@ public final class DiscoveryEngine {
         this.nonces = nonces;
         this.handshakeTimeoutMillis = handshakeTimeoutMillis;
         this.presence = presence;
+    }
+
+    /**
+     * Sets who hears about verified peers (the app's feed, on its own
+     * executor). Call before start, on the engine's executor.
+     *
+     * @param listener the listener, or null for none
+     */
+    public void setOnFound(final Found listener) {
+        this.onFound = listener;
     }
 
     /** Starts discovery: sightings count and links may open. */
@@ -310,6 +330,9 @@ public final class DiscoveryEngine {
     private void settle(final String handle, final LinkSession link, final long nowMillis) {
         if (link.state() == LinkSession.State.DONE) {
             final PresenceTable.Card card = presence.record(link.peer(), nowMillis);
+            if (onFound != null) {
+                onFound.found(link.peer(), nowMillis);
+            }
             final String candidate = candidateByLink.get(handle);
             if (candidate != null) {
                 peerByCandidate.put(candidate, card.peerKey());
