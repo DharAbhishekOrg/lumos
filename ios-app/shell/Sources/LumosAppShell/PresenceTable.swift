@@ -75,6 +75,11 @@ public final class PresenceTable {
         return before - cards.count
     }
 
+    /// Forgets every card at once (discovery stopped: nothing stale may linger).
+    public func clear() {
+        cards.removeAll()
+    }
+
     /// Every live card, most recently confirmed first.
     /// - Returns: the sorted cards
     public func all() -> [Card] {

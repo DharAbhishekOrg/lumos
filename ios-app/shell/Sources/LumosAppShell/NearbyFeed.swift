@@ -31,6 +31,10 @@ public enum FeedState {
     case scanningEmpty
     /// Authenticated, filtered presence cards, newest confirmation first.
     case cards([PresenceTable.Card])
+    /// The person is not visible, so nothing is looked for either: people
+    /// see others only while they can be seen themselves (owner ruling,
+    /// 2026-11-28).
+    case notVisible
 
     /// Folds a typed scan failure to the state the user should see.
     /// - Parameter failure: the typed CoreBluetooth state
