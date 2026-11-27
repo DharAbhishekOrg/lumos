@@ -9,8 +9,8 @@
  * means the conversation does not open; a send that cannot seal is FAILED
  * and the composer keeps the text. After anything that queues an envelope
  * or a receipt it asks for a relay pass at once, so a message does not wait
- * for the periodic poll. Read receipts are on until the settings slice gives
- * the person the switch (SRS-RMT-014); delivery receipts never depend on it.
+ * for the periodic poll. Read receipts follow the person's stored choice
+ * (ChatSettings, SRS-RMT-014); delivery receipts never depend on it.
  * The peer's name is not stored yet (CS4), so displayName is empty. Ending
  * a conversation asks for a pass too: that pass revokes the peer's
  * capability at the relay.
@@ -39,9 +39,6 @@ import java.util.Optional;
 
 /** The chat stack behind one conversation screen. */
 public final class RuntimeConversationSource implements ConversationSource {
-
-    /** Read receipts until the settings slice adds the switch (SRS-RMT-014). */
-    static final boolean READ_RECEIPTS_DEFAULT = true;
 
     private final LumosApplication app;
 
@@ -128,7 +125,7 @@ public final class RuntimeConversationSource implements ConversationSource {
     public void markRead(final byte[] matchId) {
         try {
             final Optional<ChatRuntime> rt = runtime();
-            if (rt.isPresent() && rt.get().chat().markRead(matchId, READ_RECEIPTS_DEFAULT) > 0) {
+            if (rt.isPresent() && rt.get().chat().markRead(matchId, rt.get().settings().readReceipts()) > 0) {
                 kick(app);
             }
         } catch (final StoreException e) {

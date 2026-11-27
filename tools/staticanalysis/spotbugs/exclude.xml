@@ -358,4 +358,27 @@
     <Method name="&lt;init&gt;"/>
     <Bug pattern="EI_EXPOSE_REP2"/>
   </Match>
+  <!--
+    CS6 chat settings. ChatSettings stores the injected LocalStore (the
+    long-lived-service rationale of the S4c block). ChatRuntime.settings()
+    hands out the runtime's one ChatSettings on purpose, like chat(): the
+    switch and markRead must read the same choice. Holding it makes the
+    runtime itself read as mutable, so LumosApplication.runtime() - the
+    composition root handing out its one runtime, like host() - is listed too.
+  -->
+  <Match>
+    <Class name="com.lumos.app.chat.ChatSettings"/>
+    <Method name="&lt;init&gt;"/>
+    <Bug pattern="EI_EXPOSE_REP2"/>
+  </Match>
+  <Match>
+    <Class name="com.lumos.app.relay.ChatRuntime"/>
+    <Method name="settings"/>
+    <Bug pattern="EI_EXPOSE_REP"/>
+  </Match>
+  <Match>
+    <Class name="com.lumos.app.LumosApplication"/>
+    <Method name="runtime"/>
+    <Bug pattern="EI_EXPOSE_REP"/>
+  </Match>
 </FindBugsFilter>

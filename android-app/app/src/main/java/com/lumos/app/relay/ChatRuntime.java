@@ -20,6 +20,7 @@
 
 package com.lumos.app.relay;
 
+import com.lumos.app.chat.ChatSettings;
 import com.lumos.app.chat.ChatStore;
 import com.lumos.app.chat.ConversationList;
 import com.lumos.app.identity.ChatIdentity;
@@ -41,15 +42,18 @@ public final class ChatRuntime {
     private final RouteExchange exchange;
     private final ConversationSafety safety;
     private final ConversationList list;
+    private final ChatSettings settings;
 
     private ChatRuntime(final ChatStore chat, final RelaySync sync, final RelaySessions sessions,
-            final RouteExchange exchange, final ConversationSafety safety, final ConversationList list) {
+            final RouteExchange exchange, final ConversationSafety safety, final ConversationList list,
+            final ChatSettings settings) {
         this.chat = chat;
         this.sync = sync;
         this.sessions = sessions;
         this.exchange = exchange;
         this.safety = safety;
         this.list = list;
+        this.settings = settings;
     }
 
     /**
@@ -76,7 +80,8 @@ public final class ChatRuntime {
         final RelayClient anonymous = RelayClient.anonymous(transport);
         return new ChatRuntime(chat, RelaySync.over(chat, routes, account, prekeys, anonymous, clock),
                 RelaySessions.over(chat, routes, account, anonymous, random), RouteExchange.over(routes, account),
-                ConversationSafety.over(store, chat, routes, clock), ConversationList.over(store, chat));
+                ConversationSafety.over(store, chat, routes, clock), ConversationList.over(store, chat),
+                new ChatSettings(store));
     }
 
     /** @return the one chat store, shared with the UI by design (see the SpotBugs filter) */
@@ -97,6 +102,11 @@ public final class ChatRuntime {
     /** @return unmatch and block, for a conversation's safety sheet */
     public ConversationSafety safety() {
         return safety;
+    }
+
+    /** @return the person's chat settings (read receipts) */
+    public ChatSettings settings() {
+        return settings;
     }
 
     /** @return the RELAY_ROUTE exchange, for the nearby sessions */

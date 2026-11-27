@@ -146,4 +146,8 @@ public class SealedRecordEntity {
     /** One conversation's relay route. Schema version 7. */
     @Entity(tableName = "relay_route")
     public static class RelayRouteRow extends SealedRecordEntity { }
+
+    /** The person's chat settings. Schema version 8. */
+    @Entity(tableName = "chat_settings")
+    public static class ChatSettingsRow extends SealedRecordEntity { }
 }

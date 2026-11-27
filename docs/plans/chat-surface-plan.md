@@ -223,6 +223,14 @@
 ### CS6 (Android) and CS7 (iOS): settings and the last gaps
 - **Read receipts and typing indicators,** opt-in and ephemeral
   (SRS-RMT-012, SRS-RMT-014's settings half).
+  - Done (2026-11-27), storage half, both apps: `ChatSettings` in a new
+    sealed `chat_settings` row (schema version 8); markRead now follows the
+    stored choice. No row means the default (on, as before; an owner
+    question below); a row that cannot be read means off. The switch on
+    screen is next; typing indicators do not exist yet, so there is nothing
+    to switch off for them.
+  - **Owner question:** should read receipts default to off (privacy by
+    default) or stay on? The code keeps today's behaviour until decided.
 - **An untrusted-certificate test** on both transports (SRS-NFR-SEC-009).
   Done (2026-11-27): a loopback TLS server with a per-run self-signed
   certificate; both transports fail before any request byte or credential
