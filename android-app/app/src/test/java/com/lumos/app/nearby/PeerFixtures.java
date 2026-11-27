@@ -57,7 +57,12 @@ public final class PeerFixtures {
                     new byte[Hello.NONCE_LEN]);
         }
 
-        HelloExchange freshExchange() {
+        /**
+         * A fresh exchange for one link, as a device makes per connection.
+         *
+         * @return the exchange
+         */
+        public HelloExchange freshExchange() {
             return new HelloExchange(this::sign, fields);
         }
 
