@@ -204,8 +204,10 @@
   carries its identity key) when the link opens, before it knows who the
   other side is. A blocked person running modified software could still
   see that key and so tell that the person is near, though they never get
-  a card. Closing that needs a protocol change (ADR-002 order of HELLOs);
-  it is raised, not decided. Until it is, the block copy keeps saying only
+  a card. ADR-014 (proposed) sets out the options and recommends that the
+  peripheral speak last, which closes the case where the blocked person
+  connects; the case where this phone connects first stays open. It is
+  raised, not decided. Until it is, the block copy keeps saying only
   what is true ("They can no longer message you or appear in your
   Nearby.").
 - **Still to do after CR-010:** the GATT client and server adapters, the
