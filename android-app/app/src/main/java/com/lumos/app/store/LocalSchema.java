@@ -37,7 +37,7 @@ import java.util.List;
 public final class LocalSchema {
 
     /** The schema version this build writes and expects. */
-    public static final int VERSION = 7;
+    public static final int VERSION = 8;
 
     /** The version of an absent or empty database, before any migration runs. */
     public static final int VERSION_EMPTY = 0;
@@ -148,6 +148,9 @@ public final class LocalSchema {
     /** The record kinds version 7 added (WP-05 S7c). */
     private static final List<RecordKind> VERSION_7_KINDS = List.of(RecordKind.RELAY_ACCOUNT, RecordKind.RELAY_ROUTE);
 
+    /** The record kinds version 8 added (CS6). */
+    private static final List<RecordKind> VERSION_8_KINDS = List.of(RecordKind.CHAT_SETTINGS);
+
     /**
      * The complete statement list taking an empty database to version 1.
      *
@@ -240,6 +243,17 @@ public final class LocalSchema {
     }
 
     /**
+     * The statements taking a version-7 database to version 8.
+     *
+     * <p>One new table, the chat settings, and nothing else.
+     *
+     * @return the ordered statements of migration 7 to 8
+     */
+    public static List<String> migrationToVersion8() {
+        return Collections.unmodifiableList(createTablesFor(VERSION_8_KINDS));
+    }
+
+    /**
      * The create-table and create-index pair for each of the given kinds.
      *
      * @param kinds the kinds a migration step introduces
@@ -274,6 +288,7 @@ public final class LocalSchema {
         ladder.add(new Migration(4, 5, migrationToVersion5()));
         ladder.add(new Migration(5, 6, migrationToVersion6()));
         ladder.add(new Migration(6, 7, migrationToVersion7()));
+        ladder.add(new Migration(7, 8, migrationToVersion8()));
         return Collections.unmodifiableList(ladder);
     }
 }

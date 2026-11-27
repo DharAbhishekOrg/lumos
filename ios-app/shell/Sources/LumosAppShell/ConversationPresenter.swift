@@ -175,9 +175,6 @@ public final class ConversationPresenter {
 /// The real source: the booted chat runtime.
 public final class RuntimeConversationSource: ConversationSource {
 
-    /// Read receipts until the settings screen exists (CS6), as on Android.
-    static let readReceiptsDefault = true
-
     private let runtime: ChatRuntime
     private let kick: () -> Void
 
@@ -217,7 +214,9 @@ public final class RuntimeConversationSource: ConversationSource {
     }
 
     public func markRead(_ matchID: Data) {
-        if ((try? runtime.chat.markRead(matchID: matchID, readReceiptsEnabled: Self.readReceiptsDefault)) ?? 0) > 0 {
+        // An unreadable choice shares nothing (the safe direction).
+        let share = (try? runtime.settings.readReceipts()) ?? false
+        if ((try? runtime.chat.markRead(matchID: matchID, readReceiptsEnabled: share)) ?? 0) > 0 {
             kick()
         }
     }

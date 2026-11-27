@@ -78,11 +78,12 @@ func TestExtractionActuallyFoundSomething(t *testing.T) {
 // joined at WP-04 S3 with schema version 5; conversation, chat_message,
 // outbox_item, ratchet_session, message_dedup and prekey_secret joined at
 // WP-05 S7b with schema version 6; relay_account and relay_route joined at
-// WP-05 S7c with schema version 7.
+// WP-05 S7c with schema version 7; chat_settings joined at CS6 with schema
+// version 8.
 func TestTheWpTwoKindsArePresent(t *testing.T) {
 	java, swift := load(t)
 	want := []string{
-		"app_lock", "block_entry", "chat_message", "consent_record", "conversation",
+		"app_lock", "block_entry", "chat_message", "chat_settings", "consent_record", "conversation",
 		"diagnostic_event", "discovery_visibility", "hidden_peer", "identity_key_record",
 		"interest_budget", "interest_record", "local_profile", "match_record",
 		"message_dedup", "outbox_item", "prekey_secret", "profile_field_policy",

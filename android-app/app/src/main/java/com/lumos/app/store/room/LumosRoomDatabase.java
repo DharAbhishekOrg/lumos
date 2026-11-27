@@ -58,6 +58,7 @@ import com.lumos.app.store.LocalSchema;
             SealedRecordEntity.MessageDedupRow.class,
             SealedRecordEntity.PrekeySecretRow.class,
             SealedRecordEntity.RelayAccountRow.class,
+            SealedRecordEntity.ChatSettingsRow.class,
             SealedRecordEntity.RelayRouteRow.class,
         },
         version = LocalSchema.VERSION,
@@ -180,6 +181,22 @@ public abstract class LumosRoomDatabase extends RoomDatabase {
     };
 
     /**
+     * Room's version of the canonical 7-to-8 step (CS6): the chat settings
+     * table, then the canonical version in the meta table.
+     */
+    public static final Migration MIGRATION_7_8 = new Migration(7, 8) {
+        @Override
+        public void migrate(@NonNull final SupportSQLiteDatabase database) {
+            for (final String sql : LocalSchema.migrationToVersion8()) {
+                database.execSQL(sql);
+            }
+            database.execSQL("INSERT OR REPLACE INTO " + LocalSchema.TABLE_META + " ("
+                    + LocalSchema.META_KEY + ", " + LocalSchema.META_VALUE + ") VALUES (?, ?)",
+                    new Object[] {LocalSchema.META_SCHEMA_VERSION, String.valueOf(8)});
+        }
+    };
+
+    /**
      * Opens the database in the application's private storage.
      *
      * @param context the application context
@@ -188,7 +205,7 @@ public abstract class LumosRoomDatabase extends RoomDatabase {
     public static LumosRoomDatabase open(final Context context) {
         return Room.databaseBuilder(context, LumosRoomDatabase.class, DATABASE_FILE)
                 .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5, MIGRATION_5_6,
-                        MIGRATION_6_7)
+                        MIGRATION_6_7, MIGRATION_7_8)
                 .addCallback(new Callback() {
                     @Override
                     public void onCreate(@NonNull final SupportSQLiteDatabase database) {

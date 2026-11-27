@@ -196,7 +196,17 @@ public enum RecordKind {
      *
      * <p>Added at schema version 7 (WP-05 S7c).
      */
-    RELAY_ROUTE(true);
+    RELAY_ROUTE(true),
+
+    /**
+     * The person's chat settings, one sealed row: today whether read receipts
+     * go to the people they talk to (SRS-RMT-014). Absence reads as the
+     * product default; a row this build cannot read reads as off, so a
+     * choice to stop sharing is never turned back on by a format change.
+     *
+     * <p>Added at schema version 8 (CS6).
+     */
+    CHAT_SETTINGS(false);
 
     private final boolean lookupByTag;
 

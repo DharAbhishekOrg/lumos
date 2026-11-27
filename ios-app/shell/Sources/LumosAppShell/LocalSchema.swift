@@ -79,6 +79,9 @@ public enum RecordKind: String, CaseIterable, Sendable {
     /// One conversation's relay route, keyed by the match id's blind index.
     /// Added at version 7.
     case relayRoute = "relay_route"
+    /// The person's chat settings (read receipts, SRS-RMT-014), one sealed
+    /// row. Added at version 8 (CS6).
+    case chatSettings = "chat_settings"
 
     /// The table name for this kind.
     public var table: String { rawValue }
@@ -110,7 +113,7 @@ public struct Migration: Sendable {
 public enum LocalSchema {
 
     /// The schema version this build writes and expects.
-    public static let version = 7
+    public static let version = 8
 
     /// The version of an absent or empty database, before any migration runs.
     public static let versionEmpty = 0
@@ -198,6 +201,9 @@ public enum LocalSchema {
     /// The record kinds version 7 added (WP-05 S7c).
     private static let version7Kinds: [RecordKind] = [.relayAccount, .relayRoute]
 
+    /// The record kinds version 8 added (CS6).
+    private static let version8Kinds: [RecordKind] = [.chatSettings]
+
     /// The complete statement list taking an empty database to version 1.
     public static var migrationToVersion1: [String] {
         ["CREATE TABLE \(tableMeta) ("
@@ -232,6 +238,10 @@ public enum LocalSchema {
     /// account and relay route tables and nothing else.
     public static var migrationToVersion7: [String] { createTables(for: version7Kinds) }
 
+    /// The statements taking a version-7 database to version 8: the chat
+    /// settings table and nothing else.
+    public static var migrationToVersion8: [String] { createTables(for: version8Kinds) }
+
     /// The create-table and create-index pair for each of the given kinds.
     /// - Parameter kinds: the kinds a migration step introduces
     /// - Returns: the ordered statements
@@ -252,6 +262,7 @@ public enum LocalSchema {
          Migration(fromVersion: 3, toVersion: 4, statements: migrationToVersion4),
          Migration(fromVersion: 4, toVersion: 5, statements: migrationToVersion5),
          Migration(fromVersion: 5, toVersion: 6, statements: migrationToVersion6),
-         Migration(fromVersion: 6, toVersion: 7, statements: migrationToVersion7)]
+         Migration(fromVersion: 6, toVersion: 7, statements: migrationToVersion7),
+         Migration(fromVersion: 7, toVersion: 8, statements: migrationToVersion8)]
     }
 }
