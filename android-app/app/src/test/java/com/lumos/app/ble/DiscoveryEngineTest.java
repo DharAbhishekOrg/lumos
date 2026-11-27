@@ -65,7 +65,7 @@ final class DiscoveryEngineTest {
             for (final Phone scanner : byToken.values()) {
                 for (final Phone advertiser : byToken.values()) {
                     if (scanner != advertiser && advertiser.advertising) {
-                        scanner.engine.onSighting(new ScanSighting(advertiser.token, null, null, -50, now));
+                        scanner.engine.onSighting(new ScanSighting(advertiser.token, null, null, advertiser.rssi, now));
                     }
                 }
             }
@@ -80,6 +80,7 @@ final class DiscoveryEngineTest {
         final Hello.Fields identity;
         boolean advertising = true;
         boolean silent;
+        int rssi = -50;
 
         Phone(final Air air, final String token, final int index) throws Exception {
             this.air = air;
@@ -181,6 +182,22 @@ final class DiscoveryEngineTest {
         }
         assertTrue(air.maxLinksSeen <= LumosConstants.MAX_CONCURRENT_GATT_LINKS_DEFAULT,
                 "no phone ever held more links than the register budget: " + air.maxLinksSeen);
+    }
+
+    @Test
+    void knownStrongPeersDoNotStarveTheOnesStillToBeFound() throws Exception {
+        final Air air = new Air();
+        final Phone me = new Phone(air, "me", 1);
+        for (int i = 0; i < 3; i++) {
+            new Phone(air, "near" + i, 2 + i).rssi = -40;
+            new Phone(air, "far" + i, 5 + i).rssi = -80;
+        }
+        for (int wave = 1; wave <= 2; wave++) {
+            air.scan();
+            me.engine.tick(now);
+            air.flush();
+            assertEquals(3 * wave, me.engine.cards().size(), "each wave finds three new peers");
+        }
     }
 
     @Test
