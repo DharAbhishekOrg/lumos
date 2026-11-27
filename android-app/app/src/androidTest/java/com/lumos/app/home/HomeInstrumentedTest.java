@@ -1,7 +1,8 @@
 /*
  * Lumos - android-app/app / The home shell, on a device, against a scripted host and chat stack.
  * Author: dhar.abhishek.email@gmail.com
- * Implements: SRS-UX-008, SRS-UX-007, SRS-ONB-001, SRS-RMT-005, SRS-NFR-A11Y-001, SRS-NFR-SEC-013
+ * Implements: SRS-UX-008, SRS-UX-007, SRS-ONB-001, SRS-RMT-005, SRS-RMT-014, SRS-NFR-A11Y-001,
+ *             SRS-NFR-SEC-013
  * ADRs: ADR-011
  * Threading: test-only
  * Notes: The real activity, layouts, tab bar and adapters. Proves the gate
@@ -9,7 +10,9 @@
  * shows its own page under its own title, that a chat row is one spoken
  * sentence with its unread count and the Chats tab carries the unread badge,
  * that a new match row speaks as one, that empty lists are sentences, and
- * that tapping a row opens that conversation, and that leaving the screen
+ * that tapping a row opens that conversation, that the Chats page's
+ * read-receipt switch shows the stored choice, saves a tap and puts itself
+ * back when a save fails (SRS-RMT-014), and that leaving the screen
  * blanks its app-switcher thumbnail (ADR-011).
  */
 
@@ -34,6 +37,7 @@ import androidx.test.core.app.ActivityScenario;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.platform.app.InstrumentationRegistry;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.materialswitch.MaterialSwitch;
 import com.lumos.app.R;
 import com.lumos.app.chat.ChatRecords;
 import com.lumos.app.chat.ConversationList;
@@ -46,6 +50,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.BooleanSupplier;
 import org.junit.After;
 import org.junit.Assume;
@@ -98,6 +103,33 @@ public final class HomeInstrumentedTest {
         @Override
         public List<ConversationList.Summary> conversations() {
             return summaries;
+        }
+    }
+
+    /** A chat stack with a read-receipt choice, recording every save. */
+    private static final class WithSettings implements HomeSource {
+        final AtomicReference<Boolean> choice = new AtomicReference<>(Boolean.TRUE);
+        final List<Boolean> saves = new CopyOnWriteArrayList<>();
+        volatile boolean failSaves;
+
+        @Override
+        public List<ConversationList.Summary> conversations() {
+            return List.of();
+        }
+
+        @Override
+        public Optional<Boolean> readReceipts() {
+            return Optional.of(choice.get());
+        }
+
+        @Override
+        public boolean setReadReceipts(final boolean enabled) {
+            saves.add(enabled);
+            if (failSaves) {
+                return false;
+            }
+            choice.set(enabled);
+            return true;
         }
     }
 
@@ -220,6 +252,51 @@ public final class HomeInstrumentedTest {
             } finally {
                 InstrumentationRegistry.getInstrumentation().removeMonitor(monitor);
             }
+        }
+    }
+
+    @Test
+    public void theReadReceiptSwitchShowsTheStoredChoiceAndSavesATap() throws Exception {
+        final WithSettings s = new WithSettings();
+        NearbyActivity.setHost(new OpenHost());
+        HomeActivity.setSource(s);
+        try (ActivityScenario<HomeActivity> sc = ActivityScenario.launch(HomeActivity.class)) {
+            sc.onActivity(a -> ((BottomNavigationView) a.findViewById(R.id.home_tabs)).setSelectedItemId(R.id.tab_chats));
+            waitFor(() -> onActivity(sc, a -> a.findViewById(R.id.chats_read_receipts).getVisibility() == View.VISIBLE));
+            sc.onActivity(a -> {
+                final MaterialSwitch toggle = a.findViewById(R.id.chats_read_receipts);
+                assertTrue("shows the stored choice", toggle.isChecked());
+                assertEquals(a.getString(R.string.read_receipts_switch), toggle.getText().toString());
+                assertEquals(View.VISIBLE, a.findViewById(R.id.chats_read_receipts_detail).getVisibility());
+                assertTrue("a touch target of at least 48dp (SRS-NFR-A11Y-001)",
+                        toggle.getHeight() >= 48 * a.getResources().getDisplayMetrics().density - 1);
+                toggle.performClick();
+            });
+            waitFor(() -> s.saves.contains(Boolean.FALSE));
+            waitFor(() -> !s.choice.get());
+            sc.onActivity(a -> assertTrue("the switch stays off once stored",
+                    !((MaterialSwitch) a.findViewById(R.id.chats_read_receipts)).isChecked()));
+
+            s.failSaves = true;
+            sc.onActivity(a -> ((MaterialSwitch) a.findViewById(R.id.chats_read_receipts)).performClick());
+            waitFor(() -> s.saves.size() == 2);
+            waitFor(() -> onActivity(sc, a -> !((MaterialSwitch) a.findViewById(R.id.chats_read_receipts))
+                    .isChecked()));
+            assertTrue("a save that failed left the stored choice alone", !s.choice.get());
+        }
+    }
+
+    @Test
+    public void withNoChatStackTheSwitchIsNotShown() throws Exception {
+        NearbyActivity.setHost(new OpenHost());
+        HomeActivity.setSource(new Scripted());
+        try (ActivityScenario<HomeActivity> sc = ActivityScenario.launch(HomeActivity.class)) {
+            sc.onActivity(a -> ((BottomNavigationView) a.findViewById(R.id.home_tabs)).setSelectedItemId(R.id.tab_chats));
+            waitFor(() -> onActivity(sc, a -> a.findViewById(R.id.chats_empty).getVisibility() == View.VISIBLE));
+            sc.onActivity(a -> {
+                assertEquals(View.GONE, a.findViewById(R.id.chats_read_receipts).getVisibility());
+                assertEquals(View.GONE, a.findViewById(R.id.chats_read_receipts_detail).getVisibility());
+            });
         }
     }
 

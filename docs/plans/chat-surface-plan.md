@@ -226,9 +226,12 @@
   - Done (2026-11-27), storage half, both apps: `ChatSettings` in a new
     sealed `chat_settings` row (schema version 8); markRead now follows the
     stored choice. No row means the default (on, as before; an owner
-    question below); a row that cannot be read means off. The switch on
-    screen is next; typing indicators do not exist yet, so there is nothing
-    to switch off for them.
+    question below); a row that cannot be read means off. Typing
+    indicators do not exist yet, so there is nothing to switch off for them.
+  - Done (2026-11-27), the switch on Android: at the top of the Chats tab
+    until a settings place exists (Profile joins the tab bar later). Shown
+    only once the choice is read; a save that fails puts the switch back.
+    The iPhone switch is the next iOS slice.
   - **Owner question:** should read receipts default to off (privacy by
     default) or stay on? The code keeps today's behaviour until decided.
 - **An untrusted-certificate test** on both transports (SRS-NFR-SEC-009).

@@ -1,7 +1,8 @@
 /*
  * Lumos - android-app/app / The home shell: Nearby, Matches and Chats under one tab bar.
  * Author: dhar.abhishek.email@gmail.com
- * Implements: SRS-UX-008, SRS-UX-012, SRS-RMT-001, SRS-ONB-001, TRS-UX-011, TRS-AND-003, TRS-AND-010
+ * Implements: SRS-UX-008, SRS-UX-012, SRS-RMT-001, SRS-RMT-014, SRS-ONB-001, TRS-UX-011, TRS-AND-003,
+ *             TRS-AND-010
  * ADRs: ADR-011, ADR-012
  * Threading: main
  * Notes: Thin, like the other screens. Entry is gated exactly as Nearby's is:
@@ -13,7 +14,10 @@
  * Chats tab carries a badge with the total unread. A row opens its
  * conversation. The selected tab survives rotation. Kept out of the app
  * switcher's thumbnails like every screen (ADR-011). Discover and Profile
- * join the bar when they exist (CR-008's five tabs).
+ * join the bar when they exist (CR-008's five tabs). Until a settings place
+ * exists, the Chats page starts with the read-receipt switch (SRS-RMT-014):
+ * read with the lists on the worker, shown only once the choice is known,
+ * and written on the worker; a write that fails puts the switch back.
  */
 
 package com.lumos.app.home;
@@ -22,6 +26,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.view.View;
+import android.widget.CompoundButton;
 import android.widget.TextView;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
@@ -33,6 +38,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.badge.BadgeDrawable;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.materialswitch.MaterialSwitch;
 import com.lumos.app.LumosApplication;
 import com.lumos.app.R;
 import com.lumos.app.conversation.ConversationActivity;
@@ -45,6 +51,7 @@ import java.time.Duration;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Locale;
+import java.util.Optional;
 import java.util.concurrent.Executor;
 import java.util.function.Consumer;
 
@@ -67,6 +74,9 @@ public final class HomeActivity extends AppCompatActivity {
     private HomeAdapters.Matches matches;
     private HomeAdapters.Chats chats;
     private BottomNavigationView tabs;
+    private MaterialSwitch readReceipts;
+    private int savesInFlight;
+    private final CompoundButton.OnCheckedChangeListener onReadReceipts = (button, on) -> saveReadReceipts(on);
     private boolean visible;
 
     /**
@@ -110,6 +120,8 @@ public final class HomeActivity extends AppCompatActivity {
         chats = new HomeAdapters.Chats(this::open);
         bindList(R.id.matches_list, matches);
         bindList(R.id.chats_list, chats);
+        readReceipts = findViewById(R.id.chats_read_receipts);
+        readReceipts.setOnCheckedChangeListener(onReadReceipts);
         ViewCompat.setAccessibilityHeading(findViewById(R.id.home_title), true);
         tabs = findViewById(R.id.home_tabs);
         tabs.setOnItemSelectedListener(item -> {
@@ -202,7 +214,14 @@ public final class HomeActivity extends AppCompatActivity {
         worker.execute(() -> {
             final HomeLists.Lists lists = HomeLists.build(source.conversations(), System.currentTimeMillis(),
                     ZoneId.systemDefault(), locale);
-            main.post(() -> draw(lists));
+            final Optional<Boolean> receipts = source.readReceipts();
+            main.post(() -> {
+                draw(lists);
+                if (savesInFlight == 0) {
+                    // A read that raced a save would show the old choice.
+                    drawReadReceipts(receipts);
+                }
+            });
         });
     }
 
@@ -225,6 +244,34 @@ public final class HomeActivity extends AppCompatActivity {
         } else {
             tabs.removeBadge(R.id.tab_chats);
         }
+    }
+
+    private void drawReadReceipts(final Optional<Boolean> choice) {
+        if (isFinishing() || isDestroyed()) {
+            return;
+        }
+        final int shown = choice.isPresent() ? View.VISIBLE : View.GONE;
+        readReceipts.setVisibility(shown);
+        findViewById(R.id.chats_read_receipts_detail).setVisibility(shown);
+        if (choice.isPresent() && readReceipts.isChecked() != choice.get()) {
+            readReceipts.setOnCheckedChangeListener(null);
+            readReceipts.setChecked(choice.get());
+            readReceipts.setOnCheckedChangeListener(onReadReceipts);
+        }
+    }
+
+    private void saveReadReceipts(final boolean on) {
+        savesInFlight++;
+        worker.execute(() -> {
+            final boolean stored = source.setReadReceipts(on);
+            main.post(() -> {
+                savesInFlight--;
+                if (!stored) {
+                    // Not stored: show what is true, not what was tapped.
+                    drawReadReceipts(Optional.of(!on));
+                }
+            });
+        });
     }
 
     private void open(final byte[] matchId) {

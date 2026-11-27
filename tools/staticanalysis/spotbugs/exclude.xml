@@ -381,4 +381,15 @@
     <Method name="runtime"/>
     <Bug pattern="EI_EXPOSE_REP"/>
   </Match>
+  <!--
+    CS6 read-receipt switch: HomeSource gained default methods, which makes
+    SpotBugs read it as a mutable type (the NB-1 NearbyHost case). setSource
+    is the instrumented test's static seam and stores the scripted source on
+    purpose, exactly as NearbyActivity.setHost stores its host.
+  -->
+  <Match>
+    <Class name="com.lumos.app.home.HomeActivity"/>
+    <Method name="setSource"/>
+    <Bug pattern="EI_EXPOSE_STATIC_REP2"/>
+  </Match>
 </FindBugsFilter>

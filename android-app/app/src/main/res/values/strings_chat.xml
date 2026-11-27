@@ -79,6 +79,8 @@
     <string name="matches_empty">No matches yet. When you and someone nearby are both interested, they show here.</string>
     <string name="matches_row_subtitle">New match. Say hi.</string>
     <string name="matches_spoken">%1$s. New match. Say hi.</string>
+    <string name="read_receipts_switch">Read receipts</string>
+    <string name="read_receipts_detail">When this is on, people you chat with can see when you have read their messages. Delivered ticks are always sent.</string>
     <string name="chats_empty">No chats yet. Say hi to a match and the chat shows here.</string>
     <string name="chats_preview_mine">You: %1$s</string>
     <string name="chats_preview_deleted">Message deleted</string>
