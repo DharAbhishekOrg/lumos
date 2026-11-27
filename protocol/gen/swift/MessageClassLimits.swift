@@ -6,7 +6,7 @@
 /// GENERATED - DO NOT EDIT. Generator: tools/constantsgen
 /// Source register: protocol/constants/lumos_constants.json
 /// Baseline: TRS v1.1 Sec. 23 / EDP v1.0 Sec. 4 (ADR-004)
-/// constants_hash: sha256:e77b9d66fc4f41c09e3baa11539b1c9d9501a2267bb4ea5bfd436f62531853e2
+/// constants_hash: sha256:94e199020c6e7b5264ed423fe8eacdb535f5eb512a620938e0d05e9c9fa13627
 
 /// Per-class payload bounds resolved from the constants register (TRS-PROTO-007).
 public enum MessageClassLimits {

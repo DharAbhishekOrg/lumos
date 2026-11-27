@@ -17,8 +17,8 @@ onward are raised during implementation per TRS-AI-006 and captured here.
 | [010](ADR-010-keystore-authentication-policy.md) | **Accepted** | No key-level auth gating (background decrypt requires it); App Lock + action-level device auth for wipe, export, reset; StrongBox/SE capability-probed |
 | [011](ADR-011-screenshot-policy.md) | **Accepted** | Recents snapshots always redacted; detect-and-warn in chat where the platform permits; no global FLAG_SECURE (SRS-SAF-004 evidence capture) |
 | [012](ADR-012-app-boot-and-key-root.md) | **Accepted** | App boot order; the wrapped data root lives in a no-backup file with the KEK tier, outside the database it unlocks |
-| [013](ADR-013-gatt-link-layout.md) | Proposed | The GATT link: LINK_IN (write) and LINK_OUT (notify) under the Lumos service; both sides say HELLO; bounded handshake (needs CR-010) |
-| [014](ADR-014-hello-disclosure-order.md) | Proposed | Who says HELLO first: recommend the peripheral speaks last, so a blocked person who connects learns nothing (amends ADR-013 decision 4; needs the owner) |
+| [013](ADR-013-gatt-link-layout.md) | **Accepted** | The GATT link: LINK_IN (write) and LINK_OUT (notify) under the Lumos service; both sides say HELLO; bounded handshake (CR-010) |
+| [014](ADR-014-hello-disclosure-order.md) | **Decided (A)** | Who says HELLO first: the owner kept both sides speaking on open; the residual "blocked person can tell she is near" risk is recorded |
 
 **ADR-008 was ratified** with two binding conditions (Ed25519 as sole root of
 trust; signature verification fails closed before any DH), both enforced by test.

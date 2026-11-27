@@ -5,7 +5,7 @@
  "$generator": "tools/constantsgen",
  "service_uuid": "E853EB6A-775C-4A49-A6BF-320E6A5CC609",
  "$service_uuid_provenance": "One fixed 128-bit GATT service UUID per ADR-002 / TRS Sec. 9.3, generated once from a CSPRNG as an RFC 4122 version-4 UUID in WP-01 slice S2 and frozen here. Advertised by both platforms and used for scan filtering. No 16-bit alias is registered for flagship. Regenerating this value is a breaking protocol change.",
- "constants_hash": "sha256:e77b9d66fc4f41c09e3baa11539b1c9d9501a2267bb4ea5bfd436f62531853e2",
+ "constants_hash": "sha256:94e199020c6e7b5264ed423fe8eacdb535f5eb512a620938e0d05e9c9fa13627",
  "constants_hash_algorithm": {
   "digest": "SHA-256",
   "encoding": "lowercase hex, prefixed 'sha256:'",
@@ -19,6 +19,21 @@
   "EID_ROTATION_SEC": {
    "default": 600, "min": 300, "max": 900, "overridable": true,
    "anchors": ["SRS-IDN-004", "AT-003"], "source": "TRS 23.1"
+  },
+  "GATT_LINK_IN_CHAR_UUID": {
+   "value": "3F8886C9-0258-4A09-B2C6-75461BE6D3C3", "overridable": false,
+   "notes": "The characteristic the peripheral receives on, under the service UUID: Write and Write Without Response. The central writes HELLO and every later frame here, fragmented at the negotiated MTU. Generated once from a CSPRNG as an RFC 4122 version-4 UUID and frozen, like the service UUID. CR-010.",
+   "anchors": ["TRS-PROTO-017", "TRS-TRN-002", "TRS-TRN-003", "SRS-NBY-005"], "adr": ["ADR-013"], "source": "CR-010"
+  },
+  "GATT_LINK_OUT_CHAR_UUID": {
+   "value": "9076B088-D799-41D4-8786-B403D3B309AD", "overridable": false,
+   "notes": "The characteristic the peripheral sends on, under the service UUID: Notify, with the standard 0x2902 descriptor. The peripheral notifies its HELLO, its HELLO_ACK and every later frame here. Generated once and frozen. CR-010.",
+   "anchors": ["TRS-PROTO-017", "TRS-TRN-002", "TRS-TRN-003", "SRS-NBY-005"], "adr": ["ADR-013"], "source": "CR-010"
+  },
+  "HELLO_HANDSHAKE_TIMEOUT_SEC": {
+   "default": 10, "min": 5, "max": 30, "overridable": true,
+   "notes": "Seconds a discovery link may take, from opening, to finish both HELLOs before it is dropped with nothing granted. Keeps the connect budget (MAX_CONCURRENT_GATT_LINKS) from being held by a silent or hostile peer. CR-010.",
+   "anchors": ["TRS-ENV-001", "TRS-ENV-002", "TRS-PROTO-017", "SRS-NBY-005"], "adr": ["ADR-013"], "source": "CR-010"
   },
   "ADV_AUTH_TAG_LEN": {
    "default": 4, "overridable": false,

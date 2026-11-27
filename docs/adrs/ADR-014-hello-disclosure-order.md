@@ -1,6 +1,6 @@
 # ADR-014: Who says HELLO first, and what a blocked person can learn
 
-- **Status:** Proposed (agent, 2026-11-27, raised while building NB-1 step 2e). Needs the owner's decision. It amends decision 4 of ADR-013, which is itself still Proposed, so nothing shipped depends on the current order.
+- **Status:** **Decided: option A** (owner, 2026-11-28). Both sides keep saying HELLO on open (ADR-013 decision 4 unchanged). The recommendation below (B) was not taken. The residual risk in "Context" is accepted and stays written down; the block copy keeps promising only what is true.
 - **Relates to:** ADR-002 (trust only at the authenticated HELLO), ADR-013 (GATT link layout), SRS-SAF-002 (blocking applies to local discovery), SRS-NBY-013, TRS-PROTO-017, G-07 (cryptographic review)
 
 ## Context

@@ -40,6 +40,12 @@
    "maximum": 10,
    "description": "media.FULL_IMAGE_MAX_MB.default (register default 2)"
   },
+  "HELLO_HANDSHAKE_TIMEOUT_SEC": {
+   "type": "integer",
+   "minimum": 5,
+   "maximum": 30,
+   "description": "identity_discovery.HELLO_HANDSHAKE_TIMEOUT_SEC.default (register default 10)"
+  },
   "INTEREST_COOLDOWN_SEC": {
    "type": "integer",
    "minimum": 60,
@@ -287,7 +293,7 @@
  },
  "title": "Lumos signed-configuration overrides",
  "type": "object",
- "x-constants-hash": "sha256:e77b9d66fc4f41c09e3baa11539b1c9d9501a2267bb4ea5bfd436f62531853e2",
+ "x-constants-hash": "sha256:94e199020c6e7b5264ed423fe8eacdb535f5eb512a620938e0d05e9c9fa13627",
  "x-cross-field-constraints": [
   {
    "constant": "SCAN_WINDOW_FG_MS",
@@ -313,13 +319,14 @@
    "rule": "on / (on + off) * 100 must fall within the stated duty-cycle range"
   }
  ],
- "x-overridable-count": 36,
+ "x-overridable-count": 37,
  "x-overridable-names": [
   "CONFIG_REFRESH_INTERVAL_HOURS",
   "DEDUP_CACHE",
   "EID_ROTATION_SEC",
   "FILE_MAX_MB",
   "FULL_IMAGE_MAX_MB",
+  "HELLO_HANDSHAKE_TIMEOUT_SEC",
   "INTEREST_COOLDOWN_SEC",
   "INTEREST_RATE_LIMIT_PER_HOUR",
   "MAX_CONCURRENT_GATT_LINKS",
