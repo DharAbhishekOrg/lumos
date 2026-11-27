@@ -108,10 +108,11 @@
     (CR-007; evidence retention per SRS-MAT-010 comes with it), and the
     other contexts SRS-SAF-001 lists (profile, request, venue room).
   - **Still to land elsewhere:** the match ledger is not composed in
-    production, so ending the match record joins CS4; the nearby Hello
-    responder must refuse a blocked identity when the GATT exchange is wired
-    (SRS-SAF-002), and only then may the block copy say "and you won't
-    appear in theirs".
+    production, so ending the match record joins CS4. The nearby Hello
+    refusal of a blocked identity is built (NB-1 step 2e, both apps), so a
+    blocked person gets no card; but until ADR-014 is decided they could
+    still tell the person is near, so the block copy must NOT yet say "and
+    you won't appear in theirs".
 - **CS2c done (2026-11-24): the Android home shell.**
   - **`HomeActivity`:** Nearby, Matches and Chats under one Material tab bar.
     It is gated exactly like Nearby (no onboarding, nothing opens). The
