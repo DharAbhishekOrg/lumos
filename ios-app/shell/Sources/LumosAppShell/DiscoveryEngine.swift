@@ -41,7 +41,7 @@ public final class DiscoveryEngine {
     private let nonces: () -> Data
     private let handshakeTimeoutMillis: Int64
     private let triage = DiscoveryTriage()
-    private let presence = PresenceTable()
+    private let presence: PresenceTable
     private var links: [String: LinkSession] = [:]
     private var order: [String] = []
     private var peerByCandidate: [String: String] = [:]
@@ -55,12 +55,17 @@ public final class DiscoveryEngine {
     ///   - freshExchange: this device's identity, as a fresh exchange per link
     ///   - nonces: fresh HELLO nonces
     ///   - handshakeTimeoutMillis: how long a link may take (CR-010's register value on a device)
+    ///   - presence: the presence table the Nearby feed reads, so the feed's
+    ///     vetoes (hidden, blocked, interest) apply to what discovery finds;
+    ///     the engine is still its only writer
     public init(radio: DiscoveryRadio, freshExchange: @escaping () -> HelloExchange,
-                nonces: @escaping () -> Data, handshakeTimeoutMillis: Int64) {
+                nonces: @escaping () -> Data, handshakeTimeoutMillis: Int64,
+                presence: PresenceTable = PresenceTable()) {
         self.radio = radio
         self.freshExchange = freshExchange
         self.nonces = nonces
         self.handshakeTimeoutMillis = handshakeTimeoutMillis
+        self.presence = presence
     }
 
     /// The links open now, in either role.
