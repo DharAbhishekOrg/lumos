@@ -1,6 +1,6 @@
 /// Lumos - ios-app/shell / What discovery finds, through the feed's vetoes, on iOS.
 /// Author: dhar.abhishek.email@gmail.com
-/// Implements: SRS-NBY-005, SRS-NBY-012, SRS-NBY-013, TRS-ENV-001
+/// Implements: SRS-NBY-005, SRS-NBY-012, SRS-NBY-013, SRS-SAF-002, TRS-ENV-001
 /// ADRs: ADR-002, ADR-013
 /// Threading: test-only
 /// Notes: The Android DiscoveryFeedTest, assertion for assertion: two
@@ -23,6 +23,7 @@ private final class End: DiscoveryRadio {
     let token: String
     var now: Int64
     let air: Air
+    var connects = 0
 
     init(token: String, now: Int64, air: Air) {
         self.token = token
@@ -35,6 +36,7 @@ private final class End: DiscoveryRadio {
     }
 
     func connect(handle: String, linkToken: String) {
+        connects += 1
         air.queue.append { [unowned self] in
             other?.engine.onCentralSubscribed(handle: "in-" + handle, nowMillis: now)
             engine.onLinkReady(handle: handle, nowMillis: now)
@@ -92,7 +94,7 @@ final class DiscoveryFeedTests: XCTestCase {
         Data((0..<Hello.nonceLen).map { _ in UInt8.random(in: 0...255) })
     }
 
-    private func pair(_ mine: PresenceTable) throws -> End {
+    private func pair(_ mine: PresenceTable, refuses: @escaping (String) -> Bool = { _ in false }) throws -> End {
         let me = End(token: "me", now: Self.now, air: air)
         let them = End(token: "them", now: Self.now, air: air)
         me.other = them
@@ -100,7 +102,7 @@ final class DiscoveryFeedTests: XCTestCase {
         let myIdentity = try Identity(index: 1)
         let theirIdentity = try Identity(index: 2)
         me.engine = DiscoveryEngine(radio: me, freshExchange: myIdentity.freshExchange, nonces: nonce,
-                                    handshakeTimeoutMillis: 10_000, presence: mine)
+                                    handshakeTimeoutMillis: 10_000, presence: mine, refuses: refuses)
         them.engine = DiscoveryEngine(radio: them, freshExchange: theirIdentity.freshExchange, nonces: nonce,
                                       handshakeTimeoutMillis: 10_000)
         me.engine.start()
@@ -147,6 +149,32 @@ final class DiscoveryFeedTests: XCTestCase {
         let cards = try screen.state(nowMillis: Self.now).cardList
         XCTAssertEqual(cards.count, 1, "discovery feeds the screen")
         XCTAssertEqual(cards.first?.peerKey, me.engine.cards.first?.peerKey)
+    }
+
+    func testABlockedPeerIsNotAnsweredAndNotDialledAgain() throws {
+        let store = try openInMemory()
+        let blocked = BlockedPeers(store: store)
+        let presence = PresenceTable()
+        let me = try pair(presence, refuses: { key in (try? blocked.isBlocked(peerKey: key)) ?? true })
+        find(me, Self.now)
+        let key = try XCTUnwrap(me.engine.cards.first?.peerKey)
+        try blocked.block(peerKey: key, atUtcMillis: Self.now)
+
+        let later = Self.now + Self.ageOut + 1
+        me.engine.tick(nowMillis: later)
+        me.other?.engine.tick(nowMillis: later)
+        let before = me.connects
+        find(me, later)
+        XCTAssertEqual(me.connects, before + 1, "one link, to learn who it is")
+        XCTAssertTrue(me.engine.cards.isEmpty, "a blocked identity is never recorded")
+        XCTAssertEqual(me.other?.engine.cards.count, 0, "and gets no ACK, so no card of this person (SRS-SAF-002)")
+        XCTAssertEqual(me.engine.activeLinks, 0, "the refused link is closed at once")
+
+        find(me, later + 1000)
+        XCTAssertEqual(me.connects, before + 1, "not dialled again while the refusal stands")
+        find(me, later + Self.ageOut + 1)
+        XCTAssertEqual(me.connects, before + 2, "the refusal memory ages out like presence")
+        XCTAssertEqual(me.other?.engine.cards.count, 0)
     }
 
     func testAHiddenOrBlockedPeerFoundAgainStaysOffTheFeed() throws {

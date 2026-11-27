@@ -1,6 +1,6 @@
 /// Lumos - LumosAppShell / One discovery link: both HELLOs, bounded, over frames.
 /// Author: dhar.abhishek.email@gmail.com
-/// Implements: TRS-PROTO-017, TRS-ENV-002, SRS-IDN-002, SRS-NBY-005
+/// Implements: TRS-PROTO-017, TRS-ENV-002, SRS-IDN-002, SRS-NBY-005, SRS-SAF-002
 /// ADRs: ADR-002, ADR-008, ADR-013
 /// Threading: serial-executor (the link's)
 /// Notes: The Swift twin of the Android LinkSession, so both apps run one
@@ -11,7 +11,9 @@
 /// decode, a class other than HELLO or HELLO_ACK, a second HELLO or ACK
 /// (replay), an unverifiable or mirrored ACK, or the handshake timer turns the
 /// link FAILED with nothing granted, keeping only the stable code (or that it
-/// timed out), never the peer's bytes.
+/// timed out), never the peer's bytes. A HELLO or ACK from an identity the
+/// person blocked (SRS-SAF-002) ends the link with nothing sent and no code
+/// kept, so the blocked side gets no ACK to its own HELLO and never a card.
 
 import Foundation
 import LumosProtocol
@@ -48,11 +50,15 @@ public final class LinkSession {
     public private(set) var failure: String?
     /// True when the link ended because the handshake timer ran out.
     public private(set) var timedOut = false
+    /// True when the link ended because the peer is one this side refuses
+    /// (the block list, SRS-SAF-002): nothing was sent and no code is kept.
+    public private(set) var refused = false
 
     private let exchange: HelloExchange
     private let outbox: (Data) -> Void
     private let nonces: () -> Data
     private let timeoutMillis: Int64
+    private let refuses: (String) -> Bool
     private var openedAtMillis: Int64 = 0
     private var answered = false
     private var verified: HelloExchange.Peer?
@@ -64,13 +70,16 @@ public final class LinkSession {
     ///   - outbox: sends one encoded frame on the link
     ///   - nonces: fresh HELLO nonces
     ///   - timeoutMillis: how long the handshake may take once opened
+    ///   - refuses: identities (card keys) never answered or recorded - the block list
     public init(role: Role, exchange: HelloExchange, outbox: @escaping (Data) -> Void,
-                nonces: @escaping () -> Data, timeoutMillis: Int64) {
+                nonces: @escaping () -> Data, timeoutMillis: Int64,
+                refuses: @escaping (String) -> Bool = { _ in false }) {
         self.role = role
         self.exchange = exchange
         self.outbox = outbox
         self.nonces = nonces
         self.timeoutMillis = timeoutMillis
+        self.refuses = refuses
     }
 
     /// The verified peer once DONE.
@@ -144,6 +153,10 @@ public final class LinkSession {
             return
         }
         do {
+            if refuses(PresenceTable.keyFor(peerId: Hello.peerId(try Hello.parseHello(hello).ed25519Public))) {
+                refuse()
+                return
+            }
             send(.helloAck, try exchange.onHello(hello))
             answered = true
         } catch let error as LumosCrypto.WireError {
@@ -170,7 +183,16 @@ public final class LinkSession {
             fail(LumosErrors.errHelloSignatureInvalid)
             return
         }
+        if let peer = verified, refuses(PresenceTable.keyFor(peerId: peer.id)) {
+            refuse()
+            return
+        }
         finishIfDone()
+    }
+
+    private func refuse() {
+        refused = true
+        fail(nil)
     }
 
     private func finishIfDone() {

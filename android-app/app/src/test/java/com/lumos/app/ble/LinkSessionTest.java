@@ -15,6 +15,7 @@ package com.lumos.app.ble;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -103,6 +104,46 @@ final class LinkSessionTest {
             assertArrayEquals(Hello.peerId(aliceEd()), p.peer().id(), "and the peripheral found the central");
             assertEquals(3, c.peer().fields().capabilityBits(), "authenticated capabilities, not hinted ones");
         }
+    }
+
+    @Test
+    void aBlockedIdentityIsNeverAnsweredInEitherRole() throws Exception {
+        final String aliceKey = PresenceTable.keyFor(Hello.peerId(aliceEd()));
+        final String bobKey = PresenceTable.keyFor(Hello.peerId(bobEd()));
+
+        // Bob (peripheral) blocked Alice: her HELLO gets no ACK.
+        final LinkSession c = central(alice);
+        final LinkSession p = new LinkSession(LinkSession.Role.PERIPHERAL, bob.freshExchange(), toCentral::add,
+                nonces(), TIMEOUT, aliceKey::equals);
+        c.open(T0);
+        pump(c, p, T0);
+        assertEquals(LinkSession.State.FAILED, p.state());
+        assertTrue(p.refused(), "refused, not broken");
+        assertNull(p.failure(), "a refusal has no wire code to leak");
+        assertNull(p.peer());
+        assertNotEquals(LinkSession.State.DONE, c.state(), "the blocked side never gets an ACK, so never a card");
+        c.tick(T0 + TIMEOUT);
+        assertTrue(c.timedOut());
+
+        // Alice (central) blocked Bob: his HELLO and his ACK both end the link.
+        final LinkSession c2 = new LinkSession(LinkSession.Role.CENTRAL, alice.freshExchange(), toPeripheral::add,
+                nonces(), TIMEOUT, bobKey::equals);
+        final LinkSession p2 = peripheral(bob);
+        p2.open(T0);
+        c2.open(T0);
+        pump(c2, p2, T0);
+        assertTrue(c2.refused());
+        assertNull(c2.peer());
+        assertNotEquals(LinkSession.State.DONE, p2.state());
+
+        // Nobody else is refused.
+        final LinkSession c3 = new LinkSession(LinkSession.Role.CENTRAL, alice.freshExchange(), toPeripheral::add,
+                nonces(), TIMEOUT, "someone-else"::equals);
+        final LinkSession p3 = peripheral(bob);
+        c3.open(T0);
+        pump(c3, p3, T0);
+        assertEquals(LinkSession.State.DONE, c3.state());
+        assertFalse(c3.refused());
     }
 
     private byte[] aliceEd() {

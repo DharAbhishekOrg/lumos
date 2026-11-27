@@ -184,9 +184,34 @@
 | Step | What | State |
 |---|---|---|
 | 1 | Visible Nearby on Android: `VisibleNearbyController` (the iOS rules in Java), the panel's choice of a while, permission asked on the tap, UUID-only advertising | Done (2026-11-26) |
-| 2 | Android: scan, connect over GATT, run HELLO, presence cards; advertising moves to the rotating hint | Next |
+| 2 | Android: scan, connect over GATT, run HELLO, presence cards; advertising moves to the rotating hint | In progress: the radio-free half is done on both apps (below); the GATT adapters wait for CR-010 |
 | 3 | iOS: the same | — |
 | 4 | Owner's two-phone test (OnePlus 9 and iPhone side by side); radio truth stays G-01 | — |
+
+**Step 2, radio-free half (2026-11-27), both apps:**
+- ADR-013 (proposed) and CR-010 (awaiting the owner) name the GATT link
+  layout: LINK_IN (write) and LINK_OUT (notify) and a HELLO timeout.
+- `LinkSession`: one link's two HELLOs, bounded by the timeout; replays,
+  forgeries, mirrors and non-handshake frames end it with nothing granted.
+- `DiscoveryEngine`: sightings to cards over budgeted links (one slot kept
+  for inbound), writing into the presence table the Nearby feed reads, so
+  hide and block apply to what discovery finds. Known peers do not spend
+  the budget (a starvation bug the iOS port exposed, fixed on both).
+- Blocking applies to discovery (SRS-SAF-002): a blocked identity's HELLO
+  or ACK is never answered or recorded, so they get no card of the person,
+  and their sighting is not dialled again until the age-out bound passes.
+- **Open point for the owner:** each side sends its own HELLO (which
+  carries its identity key) when the link opens, before it knows who the
+  other side is. A blocked person running modified software could still
+  see that key and so tell that the person is near, though they never get
+  a card. Closing that needs a protocol change (ADR-002 order of HELLOs);
+  it is raised, not decided. Until it is, the block copy keeps saying only
+  what is true ("They can no longer message you or appear in your
+  Nearby.").
+- **Still to do after CR-010:** the GATT client and server adapters, the
+  rotating-hint advertisement, wiring the engine into the app with the
+  block list as its refusals (read off the main thread), then the same on
+  iOS, then the owner's two-phone test.
 
 ### CS4 (Android) and CS5 (iOS): from Nearby to a match
 - **Profile preview, Interested / Not now, and the match moment,** with the
