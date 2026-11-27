@@ -166,11 +166,19 @@ public final class DiscoveryEngine {
         // Without it, a room where every phone fills its budget with its own
         // outgoing connects at the same moment refuses every incoming link,
         // and nobody finds anybody (the venue test's deadlock).
-        for (final DiscoveryTriage.Candidate candidate : triage.nextConnects(links.size() + INBOUND_RESERVE)) {
+        // A peer already on a card is dropped from rotation without spending
+        // budget; otherwise the same strongest few, all known, would fill
+        // every wave and starve the peers still to be found.
+        int budget = LumosConstants.MAX_CONCURRENT_GATT_LINKS_DEFAULT - links.size() - INBOUND_RESERVE;
+        for (final DiscoveryTriage.Candidate candidate : triage.candidates()) {
+            if (budget <= 0) {
+                break;
+            }
             triage.remove(candidate.key());
             if (alreadyPresent(candidate.key())) {
                 continue;
             }
+            budget--;
             final String handle = "c" + (++nextHandle);
             links.put(handle, session(LinkSession.Role.CENTRAL, handle));
             candidateByLink.put(handle, candidate.key());
