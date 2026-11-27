@@ -57,6 +57,11 @@ public final class PeerFixtures {
                     new byte[Hello.NONCE_LEN]);
         }
 
+        /** @return this party's Ed25519 identity public key */
+        public byte[] ed25519Public() {
+            return fields.ed25519Public().clone();
+        }
+
         /**
          * A fresh exchange for one link, as a device makes per connection.
          *

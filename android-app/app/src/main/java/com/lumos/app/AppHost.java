@@ -1,7 +1,7 @@
 /*
  * Lumos - android-app/app / The running app as the Nearby and home surfaces see it.
  * Author: dhar.abhishek.email@gmail.com
- * Implements: SRS-ONB-001, SRS-NBY-010
+ * Implements: SRS-ONB-001, SRS-NBY-003, SRS-NBY-005, SRS-NBY-010, SRS-NBY-017
  * ADRs: ADR-012
  * Threading: main-safe (the entry answer is cached; the disk is read off the main thread)
  * Notes: The composition root's NearbyHost, installed at process start. Entry
@@ -14,30 +14,51 @@
  * on a binder thread is hopped to the main thread before the controller sees
  * it. The one-action stop (SRS-NBY-017) turns Visible Nearby off.
  *
- * The live discovery link (HELLO over GATT) is not wired yet, so the feed is
- * NOT_YET: the screen says finding people arrives in a coming update rather
- * than claiming to scan. There are no cards to hide.
+ * Live discovery (NB-1 step 3c) rides on Visible Nearby's radio: the
+ * advertiser handed to the controller is a DiscoveringAdvertiser, so
+ * scanning, connecting and answering run exactly while the person is visible
+ * and the app is open (owner ruling, 2026-11-28). The HELLO identity is
+ * unlocked on the storage executor after the controller loads; until then,
+ * or on an install whose identity cannot be unlocked, the feed says NOT_YET
+ * while visible rather than claiming to look. Feed changes arrive on the
+ * storage executor and are hopped to the main thread.
  */
 
 package com.lumos.app;
 
+import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothManager;
 import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
 import com.lumos.app.ble.AndroidBleAdvertiser;
+import com.lumos.app.ble.AndroidBleScanner;
+import com.lumos.app.ble.AndroidGattLink;
+import com.lumos.app.ble.NearbyIdentity;
+import com.lumos.app.ble.TaskScheduler;
+import com.lumos.app.nearby.DiscoveringAdvertiser;
 import com.lumos.app.nearby.FeedState;
+import com.lumos.app.nearby.NearbyDiscovery;
 import com.lumos.app.nearby.NearbyHost;
 import com.lumos.app.nearby.VisibleNearbyController;
 import com.lumos.app.onboarding.DiscoveryVisibility;
 import com.lumos.app.store.LocalStore;
+import com.lumos.app.store.StoreException;
+import java.io.IOException;
+import java.security.GeneralSecurityException;
+import java.util.Optional;
 import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
 
 /** The app as a NearbyHost. */
 public final class AppHost implements NearbyHost {
 
     private volatile boolean onboarded;
     private volatile VisibleNearbyController visibleNearby;
+    private volatile NearbyDiscovery discovery;
     private boolean attached;
     private volatile Runnable visibilityChanged;
     private final Handler main = new Handler(Looper.getMainLooper());
@@ -66,8 +87,10 @@ public final class AppHost implements NearbyHost {
         }
         attached = true;
         final BluetoothManager bluetooth = context.getSystemService(BluetoothManager.class);
+        final BluetoothAdapter adapter = bluetooth == null ? null : bluetooth.getAdapter();
+        final DiscoveringAdvertiser radio = new DiscoveringAdvertiser(new AndroidBleAdvertiser(adapter));
         final VisibleNearbyController controller = new VisibleNearbyController(new DiscoveryVisibility(store),
-                new AndroidBleAdvertiser(bluetooth == null ? null : bluetooth.getAdapter()),
+                radio,
                 System::currentTimeMillis,
                 failure -> main.post(() -> {
                     final VisibleNearbyController current = visibleNearby;
@@ -82,6 +105,23 @@ public final class AppHost implements NearbyHost {
                 visibleNearby = controller;
                 changed();
             });
+            final Optional<NearbyIdentity> identity = unlock(context, store);
+            if (identity.isPresent()) {
+                final ScheduledExecutorService links = Executors.newSingleThreadScheduledExecutor();
+                final TaskScheduler retries = (task, delayMillis) -> {
+                    final ScheduledFuture<?> pending = links.schedule(task, delayMillis, TimeUnit.MILLISECONDS);
+                    return () -> pending.cancel(false);
+                };
+                final NearbyDiscovery live = new NearbyDiscovery(
+                        new AndroidGattLink(context, bluetooth, links, retries, System::currentTimeMillis),
+                        new AndroidBleScanner(adapter, System::currentTimeMillis), identity.get(), store, links,
+                        storage, System::currentTimeMillis, () -> main.post(this::changed));
+                main.post(() -> {
+                    discovery = live;
+                    radio.attach(live);
+                    changed();
+                });
+            }
         });
     }
 
@@ -107,9 +147,21 @@ public final class AppHost implements NearbyHost {
         return onboarded;
     }
 
+    private static Optional<NearbyIdentity> unlock(final Context context, final LocalStore store) {
+        try {
+            return AppBoot.nearbyIdentity(context, store);
+        } catch (final IOException | StoreException | GeneralSecurityException locked) {
+            return Optional.empty();
+        }
+    }
+
     @Override
     public FeedState currentState() {
-        return FeedState.notYet();
+        final NearbyDiscovery live = discovery;
+        if (live != null) {
+            return live.state();
+        }
+        return advertisingActive() ? FeedState.notYet() : FeedState.notVisible();
     }
 
     @Override
@@ -120,7 +172,10 @@ public final class AppHost implements NearbyHost {
 
     @Override
     public void hideCard(final String peerKey) {
-        // No cards exist until NB-1; nothing to hide.
+        final NearbyDiscovery live = discovery;
+        if (live != null) {
+            live.hideCard(peerKey);
+        }
     }
 
     @Override
@@ -128,6 +183,10 @@ public final class AppHost implements NearbyHost {
         final VisibleNearbyController controller = visibleNearby;
         if (controller != null) {
             controller.turnOff();
+        }
+        final NearbyDiscovery live = discovery;
+        if (live != null) {
+            live.stop();
         }
     }
 }

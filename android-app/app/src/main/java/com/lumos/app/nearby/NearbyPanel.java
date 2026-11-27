@@ -13,7 +13,6 @@
 
 package com.lumos.app.nearby;
 
-import android.Manifest;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.os.Build;
@@ -27,6 +26,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.slider.Slider;
 import com.lumos.app.R;
+import com.lumos.app.ble.BlePermissions;
 import com.lumos.app.onboarding.DiscoveryVisibility;
 import java.util.ArrayList;
 import java.util.Date;
@@ -116,11 +116,13 @@ public final class NearbyPanel {
             return;
         }
         final Context context = root.getContext();
+        // Being visible now also means looking and connecting (scan, connect,
+        // advertise on 31+; fine location below), so ask for all of them at once.
         final List<String> missing = new ArrayList<>();
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
-                && ContextCompat.checkSelfPermission(context, Manifest.permission.BLUETOOTH_ADVERTISE)
-                        != PackageManager.PERMISSION_GRANTED) {
-            missing.add(Manifest.permission.BLUETOOTH_ADVERTISE);
+        for (final String permission : BlePermissions.requiredRuntimePermissions(Build.VERSION.SDK_INT)) {
+            if (ContextCompat.checkSelfPermission(context, permission) != PackageManager.PERMISSION_GRANTED) {
+                missing.add(permission);
+            }
         }
         if (missing.isEmpty() || asker == null) {
             vn.turnOn(selection);
@@ -243,6 +245,8 @@ public final class NearbyPanel {
                 return R.string.nearby_state_radio_busy;
             case NOT_YET:
                 return R.string.nearby_state_not_yet;
+            case NOT_VISIBLE:
+                return R.string.nearby_state_not_visible;
             case SCANNING_EMPTY:
             default:
                 return R.string.nearby_state_empty;

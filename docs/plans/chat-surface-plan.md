@@ -210,10 +210,23 @@
   recorded. The block copy keeps saying only what is true ("They can no
   longer message you or appear in your Nearby.").
 - **CR-010 accepted (owner, 2026-11-28)** and applied (step 2f).
-- **Still to do:** the GATT client and server adapters, the
-  rotating-hint advertisement, wiring the engine into the app with the
-  block list as its refusals (read off the main thread), then the same on
-  iOS, then the owner's two-phone test.
+- **Owner ruling (2026-11-28): you see others only while you are visible
+  yourself and the app is open.** Scanning, connecting and answering run
+  only while Visible Nearby's radio runs, because connecting sends your
+  HELLO and a HELLO is what puts your card on someone else's screen. This
+  keeps "Nobody can see you nearby until you turn on Visible Nearby
+  yourself" true both ways.
+- **Step 3, Android (2026-11-28):** 3a the phone's own HELLO from its
+  stored identity; 3b the GATT client and server (`AndroidGattLink`);
+  3c the wiring: `NearbyDiscovery` starts and stops with the Visible
+  Nearby radio, the feed shows real cards through the hide and block
+  vetoes, the block list is the engine's refusals (checked on the store's
+  thread, failing closed), and when not visible the tab says so. Turning
+  Visible Nearby on now asks for every Bluetooth permission discovery
+  needs. Evidence on real radios: the owner's two-phone test.
+- **Still to do:** the same on iOS (CoreBluetooth link, HELLO identity,
+  wiring), then the owner's two-phone test; the rotating-hint
+  advertisement after that.
 
 ### CS4 (Android) and CS5 (iOS): from Nearby to a match
 - **Profile preview, Interested / Not now, and the match moment,** with the

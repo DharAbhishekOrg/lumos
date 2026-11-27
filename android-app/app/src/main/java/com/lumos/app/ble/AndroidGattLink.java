@@ -54,7 +54,7 @@ import java.util.concurrent.Executor;
 import java.util.function.LongSupplier;
 
 /** DiscoveryEngine.Radio over Android's GATT client and server. */
-public final class AndroidGattLink implements DiscoveryEngine.Radio {
+public final class AndroidGattLink implements LinkRadio {
 
     /** Prefix of the handles this class gives links that peers open to us. */
     static final String PERIPHERAL_PREFIX = "p";
@@ -115,6 +115,7 @@ public final class AndroidGattLink implements DiscoveryEngine.Radio {
      *
      * @param discovery the engine
      */
+    @Override
     public void bind(final DiscoveryEngine discovery) {
         this.engine = discovery;
     }
@@ -124,6 +125,7 @@ public final class AndroidGattLink implements DiscoveryEngine.Radio {
      *
      * @return false when there is no adapter or the permission is missing
      */
+    @Override
     public boolean openServer() {
         if (server != null) {
             return true;
@@ -147,6 +149,7 @@ public final class AndroidGattLink implements DiscoveryEngine.Radio {
     }
 
     /** Closes the GATT server and every link in either role. Call on the link executor. */
+    @Override
     public void close() {
         for (final String handle : links.keySet().toArray(new String[0])) {
             disconnect(handle);

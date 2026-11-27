@@ -223,6 +223,8 @@
         continue in a moment.</string>
     <string name="nearby_state_not_yet">Finding people nearby arrives in a coming update.
         Nothing is being sent or looked for right now.</string>
+    <string name="nearby_state_not_visible">You see people nearby only while they can see you
+        too. Turn on Visible Nearby above to start.</string>
     <string name="nearby_state_empty">Looking around. No one nearby yet — people appear here
         the moment Lumos is sure they are real.</string>
     <string name="nearby_card_title">Someone nearby</string>

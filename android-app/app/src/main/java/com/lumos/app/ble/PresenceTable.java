@@ -98,6 +98,11 @@ public final class PresenceTable {
         return before - cards.size();
     }
 
+    /** Forgets every card at once (discovery stopped: nothing stale may linger). */
+    public void clear() {
+        cards.clear();
+    }
+
     /** @return every live card, most recently confirmed first */
     public List<Card> cards() {
         final List<Card> out = new ArrayList<>(cards.values());

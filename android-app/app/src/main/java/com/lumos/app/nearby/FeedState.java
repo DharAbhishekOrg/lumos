@@ -40,7 +40,13 @@ public final class FeedState {
         /** Authenticated, filtered presence cards. */
         CARDS,
         /** Live discovery is not wired in this build yet (NB-1): nothing is sent or looked for. */
-        NOT_YET
+        NOT_YET,
+        /**
+         * The person is not visible, so nothing is looked for either: people
+         * see others only while they can be seen themselves (owner ruling,
+         * 2026-11-28; the SRS-NBY-003 promise holds both ways).
+         */
+        NOT_VISIBLE
     }
 
     private final Kind kind;
@@ -89,6 +95,15 @@ public final class FeedState {
      */
     public static FeedState notYet() {
         return new FeedState(Kind.NOT_YET, List.of());
+    }
+
+    /**
+     * Discovery is off because the person is not visible.
+     *
+     * @return the state that says so
+     */
+    public static FeedState notVisible() {
+        return new FeedState(Kind.NOT_VISIBLE, List.of());
     }
 
     public static FeedState scanningEmpty() {
