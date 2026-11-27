@@ -224,6 +224,10 @@
 - **Read receipts and typing indicators,** opt-in and ephemeral
   (SRS-RMT-012, SRS-RMT-014's settings half).
 - **An untrusted-certificate test** on both transports (SRS-NFR-SEC-009).
+  Done (2026-11-27): a loopback TLS server with a per-run self-signed
+  certificate; both transports fail before any request byte or credential
+  reaches it, and a control client that trusts exactly that certificate
+  gets through.
 - **Onboarding's last step writes the ADR-012 key root,** so a real install
   turns the relay on.
 
