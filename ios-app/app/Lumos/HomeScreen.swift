@@ -1,6 +1,6 @@
 /// Lumos - ios-app/app / The home shell: Nearby, Matches and Chats under one tab bar.
 /// Author: dhar.abhishek.email@gmail.com
-/// Implements: SRS-UX-008, SRS-UX-012, SRS-RMT-001, SRS-RMT-005, TRS-IOS-010
+/// Implements: SRS-UX-008, SRS-UX-012, SRS-RMT-001, SRS-RMT-005, SRS-RMT-014, TRS-IOS-010
 /// ADRs: ADR-012
 /// Threading: main-actor
 /// Notes: The SwiftUI half of the Android HomeActivity. Matches and Chats are
@@ -14,7 +14,10 @@
 /// runtime exists only once the relay is configured (ADR-012); until the
 /// staging deploy there is none, and both lists are honestly empty. The
 /// Nearby tab (NearbyTab.swift) holds Visible Nearby. A row opens its
-/// conversation.
+/// conversation. Until a settings place exists, the Chats tab starts with
+/// the read-receipt switch (SRS-RMT-014), as on Android: shown only once the
+/// stored choice is read (so not at all without a runtime), and a save that
+/// fails shows the stored choice again.
 
 import Combine
 import LumosAppShell
@@ -25,6 +28,18 @@ import SwiftUI
 final class HomeModel: ObservableObject {
 
     @Published private(set) var lists = HomeLists.Lists.empty
+    /// Whether there is a stored read-receipt choice to show (not without a runtime).
+    @Published private(set) var readReceiptsKnown = false
+    /// The read-receipt switch. Set by the person through the switch, it is
+    /// stored at once; set from the store, it is only shown.
+    @Published var readReceiptsOn = false {
+        didSet {
+            if !showingStored && readReceiptsOn != oldValue {
+                save(readReceipts: readReceiptsOn)
+            }
+        }
+    }
+    private var showingStored = false
     private let runtime: ChatRuntime?
     /// The conversation screens' source; nil without a runtime, and then
     /// there are no rows to open either.
@@ -45,9 +60,28 @@ final class HomeModel: ObservableObject {
 
     /// Re-reads the conversations. A read that fails leaves the last lists.
     func refresh() {
+        showStoredReadReceipts()
         guard let runtime, let summaries = try? runtime.conversations.all() else { return }
         lists = HomeLists.build(summaries, nowMillis: Int64(Date().timeIntervalSince1970 * 1000),
                                 zone: .current, locale: .current)
+    }
+
+    /// Shows the stored choice without storing it again.
+    private func showStoredReadReceipts() {
+        let stored = try? runtime?.settings.readReceipts()
+        showingStored = true
+        readReceiptsKnown = stored != nil
+        readReceiptsOn = stored ?? false
+        showingStored = false
+    }
+
+    /// Stores the person's choice; afterwards the switch shows what is
+    /// stored, so a save that failed puts it back.
+    private func save(readReceipts enabled: Bool) {
+        if let runtime {
+            try? runtime.settings.setReadReceipts(enabled, atUtcMillis: Int64(Date().timeIntervalSince1970 * 1000))
+        }
+        showStoredReadReceipts()
     }
 }
 
@@ -120,10 +154,13 @@ struct MatchesTab: View {
 /// Chats: newest first, each with its last message, time and unread badge.
 struct ChatsTab: View {
     let rows: [HomeLists.ChatRow]
-    let home: HomeModel
+    @ObservedObject var home: HomeModel
 
     var body: some View {
-        Group {
+        VStack(spacing: 0) {
+            if home.readReceiptsKnown {
+                ReadReceiptsSwitch(isOn: $home.readReceiptsOn)
+            }
             if rows.isEmpty {
                 EmptyListNote(text: "No chats yet. Say hi to a match and the chat shows here.")
             } else {
@@ -133,6 +170,28 @@ struct ChatsTab: View {
             }
         }
         .navigationTitle("Chats")
+    }
+}
+
+/// The read-receipt switch and its one line (SRS-RMT-014), the Android copy.
+struct ReadReceiptsSwitch: View {
+    @Binding var isOn: Bool
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 4) {
+            Toggle("Read receipts", isOn: $isOn)
+                .font(.body)
+                .frame(minHeight: 44)
+            Text("""
+                When this is on, people you chat with can see when you have read their messages. \
+                Delivered ticks are always sent.
+                """)
+                .font(.footnote)
+                .foregroundColor(.secondary)
+                .fixedSize(horizontal: false, vertical: true)
+        }
+        .padding(.horizontal, 16)
+        .padding(.vertical, 8)
     }
 }
 

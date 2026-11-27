@@ -231,7 +231,9 @@
   - Done (2026-11-27), the switch on Android: at the top of the Chats tab
     until a settings place exists (Profile joins the tab bar later). Shown
     only once the choice is read; a save that fails puts the switch back.
-    The iPhone switch is the next iOS slice.
+  - Done (2026-11-27), the switch on iPhone: the same place, copy and
+    behaviour. It shows only once a chat runtime exists, which on iPhone
+    is after the relay is configured (ADR-012, the staging deploy).
   - **Owner question:** should read receipts default to off (privacy by
     default) or stay on? The code keeps today's behaviour until decided.
 - **An untrusted-certificate test** on both transports (SRS-NFR-SEC-009).
