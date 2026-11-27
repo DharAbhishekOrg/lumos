@@ -46,13 +46,21 @@ public final class PresenceTable {
     /// - Returns: the card, new or refreshed
     @discardableResult
     public func record(_ peer: HelloExchange.Peer, nowMillis: Int64) -> Card {
-        let key = peer.id.map { String(format: "%02x", $0) }.joined()
+        let key = Self.keyFor(peerId: peer.id)
         let card = Card(peerKey: key,
                         capabilityBits: peer.fields.capabilityBits,
                         venueHint: peer.fields.venueHint,
                         confirmedAtMillis: nowMillis)
         cards[key] = card
         return card
+    }
+
+    /// The card key for a peer identifier - the one hidden and blocked lists
+    /// are keyed by, so a refusal can be decided before a card exists.
+    /// - Parameter peerId: the peer identifier (Hello.peerId of its signing key)
+    /// - Returns: the key, hex
+    public static func keyFor(peerId: Data) -> String {
+        peerId.map { String(format: "%02x", $0) }.joined()
     }
 
     /// Drops cards not re-confirmed within the register age-out bound

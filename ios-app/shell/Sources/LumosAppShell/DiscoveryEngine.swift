@@ -1,6 +1,7 @@
 /// Lumos - LumosAppShell / Sightings to cards: triage, budgeted links, both HELLOs, presence.
 /// Author: dhar.abhishek.email@gmail.com
-/// Implements: TRS-ENV-001, TRS-ENV-002, TRS-PROTO-017, SRS-NBY-005, SRS-NBY-006, SRS-NBY-007, SRS-NBY-017
+/// Implements: TRS-ENV-001, TRS-ENV-002, TRS-PROTO-017, SRS-NBY-005, SRS-NBY-006, SRS-NBY-007, SRS-NBY-017,
+///             SRS-SAF-002
 /// ADRs: ADR-002, ADR-013
 /// Threading: serial-executor (one queue drives every call)
 /// Notes: The Swift twin of the Android DiscoveryEngine: sightings go into
@@ -46,6 +47,8 @@ public final class DiscoveryEngine {
     private var order: [String] = []
     private var peerByCandidate: [String: String] = [:]
     private var candidateByLink: [String: String] = [:]
+    private var refusedUntil: [String: Int64] = [:]
+    private let refuses: (String) -> Bool
     private var nextHandle = 0
     /// True between start and stop.
     public private(set) var running = false
@@ -58,9 +61,14 @@ public final class DiscoveryEngine {
     ///   - presence: the presence table the Nearby feed reads, so the feed's
     ///     vetoes (hidden, blocked, interest) apply to what discovery finds;
     ///     the engine is still its only writer
+    ///   - refuses: identities never answered or recorded - the block list
+    ///     (SRS-SAF-002); a refused sighting is not dialled again until the
+    ///     presence age-out bound passes
     public init(radio: DiscoveryRadio, freshExchange: @escaping () -> HelloExchange,
                 nonces: @escaping () -> Data, handshakeTimeoutMillis: Int64,
-                presence: PresenceTable = PresenceTable()) {
+                presence: PresenceTable = PresenceTable(),
+                refuses: @escaping (String) -> Bool = { _ in false }) {
+        self.refuses = refuses
         self.radio = radio
         self.freshExchange = freshExchange
         self.nonces = nonces
@@ -88,6 +96,7 @@ public final class DiscoveryEngine {
         links.removeAll()
         order.removeAll()
         candidateByLink.removeAll()
+        refusedUntil.removeAll()
         for candidate in triage.candidates() {
             _ = triage.remove(key: candidate.key)
         }
@@ -109,6 +118,7 @@ public final class DiscoveryEngine {
         }
         _ = triage.prune(nowMillis: nowMillis)
         _ = presence.prune(nowMillis: nowMillis)
+        refusedUntil = refusedUntil.filter { $0.value > nowMillis }
         guard running else { return }
         // A peer already on a card is dropped from rotation without spending
         // budget; otherwise the same strongest few, all known, would fill
@@ -116,7 +126,7 @@ public final class DiscoveryEngine {
         var budget = LumosConstants.maxConcurrentGATTLinksDefault - links.count - Self.inboundReserve
         for candidate in triage.candidates() where budget > 0 {
             _ = triage.remove(key: candidate.key)
-            if alreadyPresent(candidate.key) {
+            if alreadyPresent(candidate.key) || refusedUntil[candidate.key] != nil {
                 continue
             }
             budget -= 1
@@ -140,7 +150,7 @@ public final class DiscoveryEngine {
     private func session(_ role: LinkSession.Role, _ handle: String) -> LinkSession {
         LinkSession(role: role, exchange: freshExchange(),
                     outbox: { [weak radio] frame in radio?.send(handle: handle, frame: frame) },
-                    nonces: nonces, timeoutMillis: handshakeTimeoutMillis)
+                    nonces: nonces, timeoutMillis: handshakeTimeoutMillis, refuses: refuses)
     }
 
     private func add(_ handle: String, _ link: LinkSession) {
@@ -188,6 +198,9 @@ public final class DiscoveryEngine {
             }
             close(handle)
         } else if link.state == .failed {
+            if link.refused, let candidate = candidateByLink[handle] {
+                refusedUntil[candidate] = nowMillis + Int64(LumosConstants.presenceAgeoutSecDefault) * 1000
+            }
             close(handle)
         }
     }

@@ -1,14 +1,17 @@
 /*
  * Lumos - android-app/app / What discovery finds, through the feed's vetoes.
  * Author: dhar.abhishek.email@gmail.com
- * Implements: SRS-NBY-005, SRS-NBY-012, SRS-NBY-013, TRS-ENV-001
+ * Implements: SRS-NBY-005, SRS-NBY-012, SRS-NBY-013, SRS-SAF-002, TRS-ENV-001
  * ADRs: ADR-002, ADR-013
  * Threading: test-only
  * Notes: Two DiscoveryEngines on a back-to-back radio, the first writing into
  * the presence table its Nearby feed reads. A peer found over a real HELLO
  * exchange is a card; a hidden or blocked identity found again over a fresh
  * exchange (new nonces, the rotation path) is not - the engine finds, the
- * feed decides what the person sees.
+ * feed decides what the person sees. With the block list wired into the
+ * engine as its refusals, a blocked person is not even answered: neither
+ * phone gets a card, and this phone does not dial them again until the
+ * age-out bound passes.
  */
 
 package com.lumos.app.nearby;
@@ -18,11 +21,13 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import com.lumos.app.Fixtures;
 import com.lumos.app.ble.DiscoveryEngine;
 import com.lumos.app.ble.DiscoverySuccessMetric;
+import com.lumos.app.ble.LinkSession;
 import com.lumos.app.ble.PresenceTable;
 import com.lumos.app.ble.RescanLadder;
 import com.lumos.app.ble.ScanSighting;
 import com.lumos.app.store.LocalStore;
 import com.lumos.app.store.RecordKind;
+import com.lumos.app.store.StoreException;
 import com.lumos.protocol.LumosConstants;
 import com.lumos.protocol.hello.Hello;
 import java.nio.charset.StandardCharsets;
@@ -50,9 +55,11 @@ final class DiscoveryFeedTest {
         DiscoveryEngine engine;
         String token;
         long now = NOW;
+        int connects;
 
         @Override
         public void connect(final String handle, final String linkToken) {
+            connects++;
             air.add(() -> {
                 other.engine.onCentralSubscribed("in-" + handle, now);
                 engine.onLinkReady(handle, now);
@@ -86,13 +93,17 @@ final class DiscoveryFeedTest {
     }
 
     private End[] pair(final PresenceTable mine) throws Exception {
+        return pair(mine, LinkSession.Refusals.NONE);
+    }
+
+    private End[] pair(final PresenceTable mine, final LinkSession.Refusals refusals) throws Exception {
         final End me = new End();
         final End them = new End();
         me.other = them;
         them.other = me;
         me.token = "me";
         them.token = "them";
-        me.engine = new DiscoveryEngine(me, identity(1), this::nonce, TIMEOUT, mine);
+        me.engine = new DiscoveryEngine(me, identity(1), this::nonce, TIMEOUT, mine, refusals);
         them.engine = new DiscoveryEngine(them, identity(2), this::nonce, TIMEOUT);
         me.engine.start();
         them.engine.start();
@@ -127,6 +138,44 @@ final class DiscoveryFeedTest {
             assertEquals(FeedState.Kind.CARDS, state.kind(), "discovery feeds the screen");
             assertEquals(1, state.cards().size());
             assertEquals(me.engine.cards().get(0).peerKey(), state.cards().get(0).peerKey());
+        }
+    }
+
+    @Test
+    void aBlockedPeerIsNotAnsweredAndNotDialledAgain() throws Exception {
+        try (Fixtures.Stack stack = Fixtures.openInMemory()) {
+            final BlockedPeers blocked = new BlockedPeers(stack.store());
+            final LinkSession.Refusals refusals = key -> {
+                try {
+                    return blocked.isBlocked(key);
+                } catch (StoreException unreadable) {
+                    return true;
+                }
+            };
+            final PresenceTable presence = new PresenceTable();
+            final End me = pair(presence, refusals)[0];
+            find(me, NOW);
+            final String key = me.engine.cards().get(0).peerKey();
+            stack.store().put(RecordKind.BLOCK_ENTRY, null,
+                    "blocked".getBytes(StandardCharsets.UTF_8), HiddenPeers.naturalKey(key));
+
+            // Both cards age out; then the two phones meet again.
+            final long later = NOW + AGE_OUT + 1;
+            me.engine.tick(later);
+            me.other.engine.tick(later);
+            final int before = me.connects;
+            find(me, later);
+            assertEquals(before + 1, me.connects, "one link, to learn who it is");
+            assertEquals(0, me.engine.cards().size(), "a blocked identity is never recorded");
+            assertEquals(0, me.other.engine.cards().size(),
+                    "and gets no ACK, so no card of this person (SRS-SAF-002)");
+            assertEquals(0, me.engine.activeLinks(), "the refused link is closed at once");
+
+            find(me, later + 1_000);
+            assertEquals(before + 1, me.connects, "not dialled again while the refusal stands");
+            find(me, later + AGE_OUT + 1);
+            assertEquals(before + 2, me.connects, "the refusal memory ages out like presence");
+            assertEquals(0, me.other.engine.cards().size());
         }
     }
 

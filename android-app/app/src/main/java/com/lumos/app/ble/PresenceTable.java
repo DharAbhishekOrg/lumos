@@ -77,7 +77,7 @@ public final class PresenceTable {
      * @return the card, new or refreshed
      */
     public Card record(final HelloExchange.Peer peer, final long nowMillis) {
-        final String key = hex(peer.id());
+        final String key = keyFor(peer.id());
         final Card card = new Card(key, peer.fields().capabilityBits(),
                 peer.fields().venueHint(), nowMillis);
         cards.put(key, card);
@@ -108,6 +108,17 @@ public final class PresenceTable {
     /** @return how many peers are currently present */
     public int size() {
         return cards.size();
+    }
+
+    /**
+     * The card key for a peer identifier - the one hidden and blocked lists
+     * are keyed by, so a refusal can be decided before a card exists.
+     *
+     * @param peerId the peer identifier (Hello.peerId of its signing key)
+     * @return the key, hex
+     */
+    public static String keyFor(final byte[] peerId) {
+        return hex(peerId);
     }
 
     private static String hex(final byte[] b) {

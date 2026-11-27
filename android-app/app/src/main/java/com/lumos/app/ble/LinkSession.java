@@ -1,7 +1,7 @@
 /*
  * Lumos - android-app/app / One discovery link: both HELLOs, bounded, over frames.
  * Author: dhar.abhishek.email@gmail.com
- * Implements: TRS-PROTO-017, TRS-ENV-002, SRS-IDN-002, SRS-NBY-005
+ * Implements: TRS-PROTO-017, TRS-ENV-002, SRS-IDN-002, SRS-NBY-005, SRS-SAF-002
  * ADRs: ADR-002, ADR-008, ADR-013
  * Threading: serial-executor (the link's)
  * Notes: The protocol half of ADR-013's link, with no radio in it: what to send
@@ -15,7 +15,12 @@
  * HELLO_ACK, a second HELLO, an ACK that does not verify (a replay, a forgery, a
  * mirror of our own identity) or the handshake timer ending turns the link
  * FAILED, grants nothing, and keeps only the stable error code (or that it
- * timed out) - never the peer's bytes or identity. The radio adapters (GATT client and server) carry
+ * timed out) - never the peer's bytes or identity.
+ *
+ * Blocking applies here (SRS-SAF-002, local discovery): a HELLO or ACK from an
+ * identity the person blocked is never answered or recorded. The link ends
+ * REFUSED-and-FAILED with no wire code and nothing sent, so the blocked side
+ * gets no ACK to its own HELLO and therefore never a card. The radio adapters (GATT client and server) carry
  * blobs in and out of this class through the Outbox, once CR-010 has given
  * the characteristics their identifiers; tests carry them between two
  * sessions directly.
@@ -25,6 +30,7 @@ package com.lumos.app.ble;
 
 import com.lumos.protocol.LumosErrors;
 import com.lumos.protocol.MessageClass;
+import com.lumos.protocol.hello.Hello;
 import com.lumos.protocol.hello.HelloExchange;
 import com.lumos.protocol.wire.Frame;
 import java.security.GeneralSecurityException;
@@ -60,6 +66,18 @@ public final class LinkSession {
         void send(byte[] frame);
     }
 
+    /** Identities this side will not complete a handshake with. */
+    public interface Refusals {
+        /** Refuses nobody. */
+        Refusals NONE = peerKey -> false;
+
+        /**
+         * @param peerKey the claimed peer's card key (PresenceTable.keyFor)
+         * @return true to end the link without answering
+         */
+        boolean refuses(String peerKey);
+    }
+
     /** Fresh HELLO nonces. */
     public interface Nonces {
         /**
@@ -73,12 +91,14 @@ public final class LinkSession {
     private final Outbox outbox;
     private final Nonces nonces;
     private final long timeoutMillis;
+    private final Refusals refusals;
     private State state = State.WAITING;
     private long openedAtMillis;
     private boolean answered;
     private HelloExchange.Peer peer;
     private String failure;
     private boolean timedOut;
+    private boolean refused;
     private long sequence;
 
     /**
@@ -90,11 +110,25 @@ public final class LinkSession {
      */
     public LinkSession(final Role role, final HelloExchange exchange, final Outbox outbox, final Nonces nonces,
             final long timeoutMillis) {
+        this(role, exchange, outbox, nonces, timeoutMillis, Refusals.NONE);
+    }
+
+    /**
+     * @param role this side's end of the connection
+     * @param exchange this side's HELLO exchange (own identity and signer)
+     * @param outbox where frames go
+     * @param nonces fresh nonces
+     * @param timeoutMillis how long the handshake may take once opened
+     * @param refusals identities never answered (the block list)
+     */
+    public LinkSession(final Role role, final HelloExchange exchange, final Outbox outbox, final Nonces nonces,
+            final long timeoutMillis, final Refusals refusals) {
         this.role = role;
         this.exchange = exchange;
         this.outbox = outbox;
         this.nonces = nonces;
         this.timeoutMillis = timeoutMillis;
+        this.refusals = refusals;
     }
 
     /** @return this side's role */
@@ -115,6 +149,11 @@ public final class LinkSession {
     /** @return the stable wire error code a refused link ended with, else null */
     public String failure() {
         return failure;
+    }
+
+    /** @return true when the link ended because the peer is one this side refuses */
+    public boolean refused() {
+        return refused;
     }
 
     /** @return true when the link ended because the handshake timer ran out */
@@ -198,6 +237,10 @@ public final class LinkSession {
             return;
         }
         try {
+            if (refusals.refuses(PresenceTable.keyFor(Hello.peerId(Hello.parseHello(hello).ed25519Public())))) {
+                refuse();
+                return;
+            }
             send(MessageClass.HELLO_ACK, exchange.onHello(hello));
             answered = true;
         } catch (Frame.WireException bad) {
@@ -221,6 +264,10 @@ public final class LinkSession {
             fail(unverified.code());
             return;
         }
+        if (refusals.refuses(PresenceTable.keyFor(peer.id()))) {
+            refuse();
+            return;
+        }
         finishIfDone();
     }
 
@@ -228,6 +275,11 @@ public final class LinkSession {
         if (state == State.EXCHANGING && answered && peer != null) {
             state = State.DONE;
         }
+    }
+
+    private void refuse() {
+        refused = true;
+        fail(null);
     }
 
     private void fail(final String code) {

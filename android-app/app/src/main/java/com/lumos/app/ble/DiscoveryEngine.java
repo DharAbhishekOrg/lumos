@@ -1,7 +1,8 @@
 /*
  * Lumos - android-app/app / Sightings to cards: triage, budgeted links, both HELLOs, presence.
  * Author: dhar.abhishek.email@gmail.com
- * Implements: TRS-ENV-001, TRS-ENV-002, TRS-PROTO-017, SRS-NBY-005, SRS-NBY-006, SRS-NBY-007, SRS-NBY-017
+ * Implements: TRS-ENV-001, TRS-ENV-002, TRS-PROTO-017, SRS-NBY-005, SRS-NBY-006, SRS-NBY-007, SRS-NBY-017,
+ *             SRS-SAF-002
  * ADRs: ADR-002, ADR-013
  * Threading: serial-executor (one thread drives every call)
  * Notes: The composition the venue path test proved layer by layer, as the
@@ -15,6 +16,12 @@
  * (ADR-013 §6); presence and triage both age out on the register bound. One
  * slot of the budget is never spent on outgoing connects, so a room of
  * phones all connecting at once can still accept each other.
+ *
+ * Blocking (SRS-SAF-002): every link carries the person's refusals, so a
+ * blocked identity is never answered or recorded, in either role. A sighting
+ * whose link was refused is not connected again until the presence age-out
+ * bound passes, so this phone does not keep opening links (and saying HELLO)
+ * to someone the person blocked.
  *
  * The radio is the Radio seam: the GATT client and server adapters on a
  * device (once CR-010 names the characteristics), an in-memory air in the
@@ -85,6 +92,8 @@ public final class DiscoveryEngine {
     private final Map<String, LinkSession> links = new LinkedHashMap<>();
     private final Map<String, String> peerByCandidate = new HashMap<>();
     private final Map<String, String> candidateByLink = new HashMap<>();
+    private final Map<String, Long> refusedUntil = new HashMap<>();
+    private final LinkSession.Refusals refusals;
     private boolean running;
     private long nextHandle;
 
@@ -112,6 +121,22 @@ public final class DiscoveryEngine {
      */
     public DiscoveryEngine(final Radio radio, final Identity identity, final LinkSession.Nonces nonces,
             final long handshakeTimeoutMillis, final PresenceTable presence) {
+        this(radio, identity, nonces, handshakeTimeoutMillis, presence, LinkSession.Refusals.NONE);
+    }
+
+    /**
+     * The device engine: shared presence, and the person's block list.
+     *
+     * @param radio the radio seam
+     * @param identity this device's identity
+     * @param nonces fresh HELLO nonces
+     * @param handshakeTimeoutMillis how long a link may take (CR-010's register value on a device)
+     * @param presence the presence table the feed reads
+     * @param refusals identities never answered or recorded (the block list)
+     */
+    public DiscoveryEngine(final Radio radio, final Identity identity, final LinkSession.Nonces nonces,
+            final long handshakeTimeoutMillis, final PresenceTable presence, final LinkSession.Refusals refusals) {
+        this.refusals = refusals;
         this.radio = radio;
         this.identity = identity;
         this.nonces = nonces;
@@ -132,6 +157,7 @@ public final class DiscoveryEngine {
         }
         links.clear();
         candidateByLink.clear();
+        refusedUntil.clear();
         for (final DiscoveryTriage.Candidate c : triage.candidates()) {
             triage.remove(c.key());
         }
@@ -176,6 +202,7 @@ public final class DiscoveryEngine {
         }
         triage.prune(nowMillis);
         presence.prune(nowMillis);
+        refusedUntil.values().removeIf(until -> until <= nowMillis);
         if (!running) {
             return;
         }
@@ -192,7 +219,7 @@ public final class DiscoveryEngine {
                 break;
             }
             triage.remove(candidate.key());
-            if (alreadyPresent(candidate.key())) {
+            if (alreadyPresent(candidate.key()) || refusedUntil.containsKey(candidate.key())) {
                 continue;
             }
             budget--;
@@ -219,7 +246,7 @@ public final class DiscoveryEngine {
 
     private LinkSession session(final LinkSession.Role role, final String handle) {
         return new LinkSession(role, identity.freshExchange(), frame -> radio.send(handle, frame), nonces,
-                handshakeTimeoutMillis);
+                handshakeTimeoutMillis, refusals);
     }
 
     /**
@@ -289,6 +316,10 @@ public final class DiscoveryEngine {
             }
             close(handle);
         } else if (link.state() == LinkSession.State.FAILED) {
+            final String candidate = candidateByLink.get(handle);
+            if (link.refused() && candidate != null) {
+                refusedUntil.put(candidate, nowMillis + (long) LumosConstants.PRESENCE_AGEOUT_SEC_DEFAULT * 1000);
+            }
             close(handle);
         }
     }

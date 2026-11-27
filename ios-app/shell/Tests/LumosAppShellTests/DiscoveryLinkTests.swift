@@ -132,6 +132,46 @@ final class LinkSessionTests: XCTestCase {
         XCTAssertEqual(garbled.state, .failed)
     }
 
+    func testABlockedIdentityIsNeverAnsweredInEitherRole() throws {
+        let alice = try Party(index: 1)
+        let bob = try Party(index: 2)
+        let aliceKey = PresenceTable.keyFor(peerId: Hello.peerId(alice.fields.ed25519Public))
+        let bobKey = PresenceTable.keyFor(peerId: Hello.peerId(bob.fields.ed25519Public))
+
+        let c = central(alice)
+        let p = LinkSession(role: .peripheral, exchange: bob.freshExchange(),
+                            outbox: { [unowned self] in toCentral.append($0) }, nonces: freshNonce,
+                            timeoutMillis: timeout, refuses: { $0 == aliceKey })
+        c.open(nowMillis: t0)
+        pump(c, p)
+        XCTAssertEqual(p.state, .failed)
+        XCTAssertTrue(p.refused, "refused, not broken")
+        XCTAssertNil(p.failure, "a refusal has no wire code to leak")
+        XCTAssertNotEqual(c.state, .done, "the blocked side never gets an ACK, so never a card")
+        c.tick(nowMillis: t0 + timeout)
+        XCTAssertTrue(c.timedOut)
+
+        let c2 = LinkSession(role: .central, exchange: alice.freshExchange(),
+                             outbox: { [unowned self] in toPeripheral.append($0) }, nonces: freshNonce,
+                             timeoutMillis: timeout, refuses: { $0 == bobKey })
+        let p2 = peripheral(bob)
+        p2.open(nowMillis: t0)
+        c2.open(nowMillis: t0)
+        pump(c2, p2)
+        XCTAssertTrue(c2.refused)
+        XCTAssertNil(c2.peer)
+        XCTAssertNotEqual(p2.state, .done)
+
+        let c3 = LinkSession(role: .central, exchange: alice.freshExchange(),
+                             outbox: { [unowned self] in toPeripheral.append($0) }, nonces: freshNonce,
+                             timeoutMillis: timeout, refuses: { $0 == "someone-else" })
+        let p3 = peripheral(bob)
+        c3.open(nowMillis: t0)
+        pump(c3, p3)
+        XCTAssertEqual(c3.state, .done)
+        XCTAssertFalse(c3.refused)
+    }
+
     func testAMirrorOfOurOwnIdentityIsNotAPeer() throws {
         let alice = try Party(index: 1)
         let c = central(alice)
