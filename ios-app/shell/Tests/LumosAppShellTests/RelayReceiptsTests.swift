@@ -192,7 +192,11 @@ final class RelayReceiptsTests: XCTestCase {
                            "none taken before a match: \(s)")
         }
         XCTAssertNil(try unregistered.exchange.offer(matchID: m, state: .matched), "nothing to offer without a routing id")
-        XCTAssertEqual(try alice.exchange.take(matchID: m, state: .matched, payload: randomBytes(49)), .malformed,
+        // Random bytes, version byte forced wrong: fully random 49 bytes is a
+        // valid route about one time in 256 (first byte 0x01).
+        var junk = randomBytes(49)
+        junk[0] = 0xFF
+        XCTAssertEqual(try alice.exchange.take(matchID: m, state: .matched, payload: junk), .malformed,
                        "random bytes are not a route")
         XCTAssertEqual(try alice.exchange.take(matchID: m, state: .matched, payload: Data()), .malformed)
     }

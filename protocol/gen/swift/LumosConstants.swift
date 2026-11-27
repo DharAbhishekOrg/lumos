@@ -6,7 +6,7 @@
 /// GENERATED - DO NOT EDIT. Generator: tools/constantsgen
 /// Source register: protocol/constants/lumos_constants.json
 /// Baseline: TRS v1.1 Sec. 23 / EDP v1.0 Sec. 4 (ADR-004)
-/// constants_hash: sha256:e77b9d66fc4f41c09e3baa11539b1c9d9501a2267bb4ea5bfd436f62531853e2
+/// constants_hash: sha256:94e199020c6e7b5264ed423fe8eacdb535f5eb512a620938e0d05e9c9fa13627
 
 public enum LumosConstants {
 
@@ -14,7 +14,7 @@ public enum LumosConstants {
     public static let serviceUUID = "E853EB6A-775C-4A49-A6BF-320E6A5CC609"
 
     /// Binds generated code to the register that produced it (TRS-CONST-005).
-    public static let constantsHash = "sha256:e77b9d66fc4f41c09e3baa11539b1c9d9501a2267bb4ea5bfd436f62531853e2"
+    public static let constantsHash = "sha256:94e199020c6e7b5264ed423fe8eacdb535f5eb512a620938e0d05e9c9fa13627"
 
     /// Register schema version.
     public static let schemaVersion = 1
@@ -417,6 +417,30 @@ public enum LumosConstants {
 
     /// identity_discovery.EID_ROTATION_SEC.overridable
     public static let eidRotationSecOverridable = true
+
+    /// identity_discovery.GATT_LINK_IN_CHAR_UUID.overridable
+    public static let gattLinkInCharUUIDOverridable = false
+
+    /// identity_discovery.GATT_LINK_IN_CHAR_UUID.value
+    public static let gattLinkInCharUUIDValue = "3F8886C9-0258-4A09-B2C6-75461BE6D3C3"
+
+    /// identity_discovery.GATT_LINK_OUT_CHAR_UUID.overridable
+    public static let gattLinkOutCharUUIDOverridable = false
+
+    /// identity_discovery.GATT_LINK_OUT_CHAR_UUID.value
+    public static let gattLinkOutCharUUIDValue = "9076B088-D799-41D4-8786-B403D3B309AD"
+
+    /// identity_discovery.HELLO_HANDSHAKE_TIMEOUT_SEC.default
+    public static let helloHandshakeTimeoutSecDefault = 10
+
+    /// identity_discovery.HELLO_HANDSHAKE_TIMEOUT_SEC.max
+    public static let helloHandshakeTimeoutSecMax = 30
+
+    /// identity_discovery.HELLO_HANDSHAKE_TIMEOUT_SEC.min
+    public static let helloHandshakeTimeoutSecMin = 5
+
+    /// identity_discovery.HELLO_HANDSHAKE_TIMEOUT_SEC.overridable
+    public static let helloHandshakeTimeoutSecOverridable = true
 
     /// identity_discovery.INTEREST_COOLDOWN_SEC.default
     public static let interestCooldownSecDefault = 900

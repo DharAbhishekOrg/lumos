@@ -96,7 +96,13 @@ var expectedRegister = map[string][]string{
 		// INTEREST_COOLDOWN_SEC: the TRS states the SRS-MAT-011 limit and its
 		// messaging but not how long the cooldown holds, so the hold is
 		// frozen in the register (WP-04 S2, TRS Sec. 19).
-		"EID_ROTATION_SEC", "INTEREST_COOLDOWN_SEC", "INTEREST_RATE_LIMIT_PER_HOUR",
+		"EID_ROTATION_SEC",
+		// GATT_LINK_IN_CHAR_UUID, GATT_LINK_OUT_CHAR_UUID and
+		// HELLO_HANDSHAKE_TIMEOUT_SEC: ADR-002 fixes the service UUID but no
+		// characteristics or handshake bound; added by CR-010
+		// (owner-accepted 2026-11-28), design in ADR-013.
+		"GATT_LINK_IN_CHAR_UUID", "GATT_LINK_OUT_CHAR_UUID", "HELLO_HANDSHAKE_TIMEOUT_SEC",
+		"INTEREST_COOLDOWN_SEC", "INTEREST_RATE_LIMIT_PER_HOUR",
 		"MAX_CONCURRENT_GATT_LINKS", "NEARBY_SYNTHETIC_LOAD_TARGET",
 		"PRESENCE_AGEOUT_SEC", "RESCAN_LADDER", "RSSI_BANDS_DBM",
 		"SCAN_WINDOW_FG_MS", "SCAN_WINDOW_VENUE_MS",
@@ -184,12 +190,16 @@ var goldenValues = map[string]int64{
 	"sessions_remote_text.CLOCK_SKEW_TOLERANCE_SEC.default":      300,
 	"sessions_remote_text.SAFETY_NUMBER_FORMAT.digits":           60,
 	// CR-004, as accepted by the owner.
-	"sessions_remote_text.RELAY_SEND_RATE_PER_MIN.default":     120,
-	"sessions_remote_text.RELAY_SEND_RATE_PER_MIN.min":         30,
-	"sessions_remote_text.RELAY_SEND_RATE_PER_MIN.max":         600,
-	"sessions_remote_text.RECEIPT_IDS_PER_ENVELOPE.default":    32,
-	"sessions_remote_text.RECEIPT_IDS_PER_ENVELOPE.min":        1,
-	"sessions_remote_text.RECEIPT_IDS_PER_ENVELOPE.max":        64,
+	"sessions_remote_text.RELAY_SEND_RATE_PER_MIN.default":  120,
+	"sessions_remote_text.RELAY_SEND_RATE_PER_MIN.min":      30,
+	"sessions_remote_text.RELAY_SEND_RATE_PER_MIN.max":      600,
+	"sessions_remote_text.RECEIPT_IDS_PER_ENVELOPE.default": 32,
+	"sessions_remote_text.RECEIPT_IDS_PER_ENVELOPE.min":     1,
+	"sessions_remote_text.RECEIPT_IDS_PER_ENVELOPE.max":     64,
+	// CR-010, as accepted by the owner.
+	"identity_discovery.HELLO_HANDSHAKE_TIMEOUT_SEC.default":   10,
+	"identity_discovery.HELLO_HANDSHAKE_TIMEOUT_SEC.min":       5,
+	"identity_discovery.HELLO_HANDSHAKE_TIMEOUT_SEC.max":       30,
 	"mesh_store_forward.MESH_HOP_DEFAULT.default":              3,
 	"mesh_store_forward.MESH_HOP_ABSOLUTE_CEILING.default":     5,
 	"transport.BLE_TARGET_ATT_MTU.default":                     251,

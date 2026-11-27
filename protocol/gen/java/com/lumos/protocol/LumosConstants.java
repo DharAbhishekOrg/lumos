@@ -7,7 +7,7 @@
  * GENERATED - DO NOT EDIT. Generator: tools/constantsgen
  * Source register: protocol/constants/lumos_constants.json
  * Baseline: TRS v1.1 Sec. 23 / EDP v1.0 Sec. 4 (ADR-004)
- * constants_hash: sha256:e77b9d66fc4f41c09e3baa11539b1c9d9501a2267bb4ea5bfd436f62531853e2
+ * constants_hash: sha256:94e199020c6e7b5264ed423fe8eacdb535f5eb512a620938e0d05e9c9fa13627
  */
 package com.lumos.protocol;
 
@@ -24,7 +24,7 @@ public final class LumosConstants {
     public static final String SERVICE_UUID = "E853EB6A-775C-4A49-A6BF-320E6A5CC609";
 
     /** Binds generated code to the register that produced it (TRS-CONST-005). */
-    public static final String CONSTANTS_HASH = "sha256:e77b9d66fc4f41c09e3baa11539b1c9d9501a2267bb4ea5bfd436f62531853e2";
+    public static final String CONSTANTS_HASH = "sha256:94e199020c6e7b5264ed423fe8eacdb535f5eb512a620938e0d05e9c9fa13627";
 
     /** Register schema version. */
     public static final int SCHEMA_VERSION = 1;
@@ -427,6 +427,30 @@ public final class LumosConstants {
 
     /** identity_discovery.EID_ROTATION_SEC.overridable */
     public static final boolean EID_ROTATION_SEC_OVERRIDABLE = true;
+
+    /** identity_discovery.GATT_LINK_IN_CHAR_UUID.overridable */
+    public static final boolean GATT_LINK_IN_CHAR_UUID_OVERRIDABLE = false;
+
+    /** identity_discovery.GATT_LINK_IN_CHAR_UUID.value */
+    public static final String GATT_LINK_IN_CHAR_UUID_VALUE = "3F8886C9-0258-4A09-B2C6-75461BE6D3C3";
+
+    /** identity_discovery.GATT_LINK_OUT_CHAR_UUID.overridable */
+    public static final boolean GATT_LINK_OUT_CHAR_UUID_OVERRIDABLE = false;
+
+    /** identity_discovery.GATT_LINK_OUT_CHAR_UUID.value */
+    public static final String GATT_LINK_OUT_CHAR_UUID_VALUE = "9076B088-D799-41D4-8786-B403D3B309AD";
+
+    /** identity_discovery.HELLO_HANDSHAKE_TIMEOUT_SEC.default */
+    public static final int HELLO_HANDSHAKE_TIMEOUT_SEC_DEFAULT = 10;
+
+    /** identity_discovery.HELLO_HANDSHAKE_TIMEOUT_SEC.max */
+    public static final int HELLO_HANDSHAKE_TIMEOUT_SEC_MAX = 30;
+
+    /** identity_discovery.HELLO_HANDSHAKE_TIMEOUT_SEC.min */
+    public static final int HELLO_HANDSHAKE_TIMEOUT_SEC_MIN = 5;
+
+    /** identity_discovery.HELLO_HANDSHAKE_TIMEOUT_SEC.overridable */
+    public static final boolean HELLO_HANDSHAKE_TIMEOUT_SEC_OVERRIDABLE = true;
 
     /** identity_discovery.INTEREST_COOLDOWN_SEC.default */
     public static final int INTEREST_COOLDOWN_SEC_DEFAULT = 900;

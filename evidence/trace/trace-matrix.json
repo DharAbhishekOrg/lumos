@@ -5916,7 +5916,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "717d0b4",
+   "last_commit": "a8adb53",
    "updated": "2026-11-27"
   },
   {
@@ -5926,7 +5926,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "717d0b4",
+   "last_commit": "a8adb53",
    "updated": "2026-11-27"
   },
   {
@@ -5936,7 +5936,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "717d0b4",
+   "last_commit": "a8adb53",
    "updated": "2026-11-27"
   },
   {
@@ -5960,7 +5960,7 @@
    "adr": [
     "ADR-003"
    ],
-   "last_commit": "717d0b4",
+   "last_commit": "a8adb53",
    "updated": "2026-11-27"
   },
   {
@@ -5982,7 +5982,7 @@
    "adr": [
     "ADR-002"
    ],
-   "last_commit": "717d0b4",
+   "last_commit": "a8adb53",
    "updated": "2026-11-27"
   },
   {
@@ -6001,7 +6001,7 @@
    "adr": [
     "ADR-002"
    ],
-   "last_commit": "717d0b4",
+   "last_commit": "a8adb53",
    "updated": "2026-11-27"
   },
   {
@@ -6011,7 +6011,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "717d0b4",
+   "last_commit": "a8adb53",
    "updated": "2026-11-27"
   },
   {
@@ -6021,7 +6021,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "717d0b4",
+   "last_commit": "a8adb53",
    "updated": "2026-11-27"
   },
   {
@@ -6031,7 +6031,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "717d0b4",
+   "last_commit": "a8adb53",
    "updated": "2026-11-27"
   },
   {
@@ -6041,7 +6041,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "717d0b4",
+   "last_commit": "a8adb53",
    "updated": "2026-11-27"
   },
   {
@@ -6051,7 +6051,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "717d0b4",
+   "last_commit": "a8adb53",
    "updated": "2026-11-27"
   },
   {
@@ -6061,7 +6061,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "717d0b4",
+   "last_commit": "a8adb53",
    "updated": "2026-11-27"
   },
   {
@@ -6565,8 +6565,8 @@
    "adr": [
     "ADR-004"
    ],
-   "last_commit": "e7d6d92",
-   "updated": "2026-11-24"
+   "last_commit": "a8adb53",
+   "updated": "2026-11-27"
   },
   {
    "req_id": "TRS-CFG-002",
@@ -6575,8 +6575,8 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "e7d6d92",
-   "updated": "2026-11-24"
+   "last_commit": "a8adb53",
+   "updated": "2026-11-27"
   },
   {
    "req_id": "TRS-CFG-003",
@@ -6585,8 +6585,8 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "e7d6d92",
-   "updated": "2026-11-24"
+   "last_commit": "a8adb53",
+   "updated": "2026-11-27"
   },
   {
    "req_id": "TRS-CFG-004",
@@ -6595,8 +6595,8 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "e7d6d92",
-   "updated": "2026-11-24"
+   "last_commit": "a8adb53",
+   "updated": "2026-11-27"
   },
   {
    "req_id": "TRS-CFG-005",
@@ -6605,8 +6605,8 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "e7d6d92",
-   "updated": "2026-11-24"
+   "last_commit": "a8adb53",
+   "updated": "2026-11-27"
   },
   {
    "req_id": "TRS-CFG-006",
@@ -6615,8 +6615,8 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "e7d6d92",
-   "updated": "2026-11-24"
+   "last_commit": "a8adb53",
+   "updated": "2026-11-27"
   },
   {
    "req_id": "TRS-CFG-007",
@@ -6625,8 +6625,8 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "e7d6d92",
-   "updated": "2026-11-24"
+   "last_commit": "a8adb53",
+   "updated": "2026-11-27"
   },
   {
    "req_id": "TRS-CFG-008",
@@ -6635,8 +6635,8 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "e7d6d92",
-   "updated": "2026-11-24"
+   "last_commit": "a8adb53",
+   "updated": "2026-11-27"
   },
   {
    "req_id": "TRS-CFG-009",
@@ -6658,8 +6658,8 @@
     "ci:conformance#31528127667"
    ],
    "adr": [],
-   "last_commit": "e7d6d92",
-   "updated": "2026-11-24"
+   "last_commit": "a8adb53",
+   "updated": "2026-11-27"
   },
   {
    "req_id": "TRS-CFG-010",
@@ -6668,8 +6668,8 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "e7d6d92",
-   "updated": "2026-11-24"
+   "last_commit": "a8adb53",
+   "updated": "2026-11-27"
   },
   {
    "req_id": "TRS-CFG-011",
@@ -6678,8 +6678,8 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "e7d6d92",
-   "updated": "2026-11-24"
+   "last_commit": "a8adb53",
+   "updated": "2026-11-27"
   },
   {
    "req_id": "TRS-CFG-012",
@@ -6688,8 +6688,8 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "e7d6d92",
-   "updated": "2026-11-24"
+   "last_commit": "a8adb53",
+   "updated": "2026-11-27"
   },
   {
    "req_id": "TRS-CFG-013",
@@ -6698,8 +6698,8 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "e7d6d92",
-   "updated": "2026-11-24"
+   "last_commit": "a8adb53",
+   "updated": "2026-11-27"
   },
   {
    "req_id": "TRS-CFG-014",
@@ -6708,8 +6708,8 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "e7d6d92",
-   "updated": "2026-11-24"
+   "last_commit": "a8adb53",
+   "updated": "2026-11-27"
   },
   {
    "req_id": "TRS-CICD-001",
@@ -6787,8 +6787,8 @@
    "adr": [
     "ADR-004"
    ],
-   "last_commit": "e7d6d92",
-   "updated": "2026-11-24"
+   "last_commit": "a8adb53",
+   "updated": "2026-11-27"
   },
   {
    "req_id": "TRS-CICD-006",
@@ -7086,8 +7086,8 @@
     "ADR-005",
     "ADR-006"
    ],
-   "last_commit": "e7d6d92",
-   "updated": "2026-11-24"
+   "last_commit": "a8adb53",
+   "updated": "2026-11-27"
   },
   {
    "req_id": "TRS-CONST-002",
@@ -7110,8 +7110,8 @@
     "ADR-004",
     "ADR-006"
    ],
-   "last_commit": "e7d6d92",
-   "updated": "2026-11-24"
+   "last_commit": "a8adb53",
+   "updated": "2026-11-27"
   },
   {
    "req_id": "TRS-CONST-003",
@@ -7133,8 +7133,8 @@
    "adr": [
     "ADR-004"
    ],
-   "last_commit": "e7d6d92",
-   "updated": "2026-11-24"
+   "last_commit": "a8adb53",
+   "updated": "2026-11-27"
   },
   {
    "req_id": "TRS-CONST-004",
@@ -7143,8 +7143,8 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "e7d6d92",
-   "updated": "2026-11-24"
+   "last_commit": "a8adb53",
+   "updated": "2026-11-27"
   },
   {
    "req_id": "TRS-CONST-005",
@@ -7171,8 +7171,8 @@
    "adr": [
     "ADR-004"
    ],
-   "last_commit": "e7d6d92",
-   "updated": "2026-11-24"
+   "last_commit": "a8adb53",
+   "updated": "2026-11-27"
   },
   {
    "req_id": "TRS-CONST-006",
@@ -7181,8 +7181,8 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "e7d6d92",
-   "updated": "2026-11-24"
+   "last_commit": "a8adb53",
+   "updated": "2026-11-27"
   },
   {
    "req_id": "TRS-CRY-001",
@@ -7690,8 +7690,8 @@
    "adr": [
     "ADR-001"
    ],
-   "last_commit": "e7d6d92",
-   "updated": "2026-11-24"
+   "last_commit": "a8adb53",
+   "updated": "2026-11-27"
   },
   {
    "req_id": "TRS-CRY-016",
@@ -7907,7 +7907,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "66d9df2",
+   "last_commit": "a8adb53",
    "updated": "2026-11-27"
   },
   {
@@ -7917,7 +7917,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "66d9df2",
+   "last_commit": "a8adb53",
    "updated": "2026-11-27"
   },
   {
@@ -7937,7 +7937,7 @@
    "adr": [
     "ADR-002"
    ],
-   "last_commit": "66d9df2",
+   "last_commit": "a8adb53",
    "updated": "2026-11-27"
   },
   {
@@ -7947,7 +7947,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "66d9df2",
+   "last_commit": "a8adb53",
    "updated": "2026-11-27"
   },
   {
@@ -7957,7 +7957,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "66d9df2",
+   "last_commit": "a8adb53",
    "updated": "2026-11-27"
   },
   {
@@ -7967,7 +7967,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "66d9df2",
+   "last_commit": "a8adb53",
    "updated": "2026-11-27"
   },
   {
@@ -7989,7 +7989,7 @@
     "ADR-003",
     "ADR-010"
    ],
-   "last_commit": "66d9df2",
+   "last_commit": "a8adb53",
    "updated": "2026-11-27"
   },
   {
@@ -7999,7 +7999,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "66d9df2",
+   "last_commit": "a8adb53",
    "updated": "2026-11-27"
   },
   {
@@ -8009,7 +8009,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "66d9df2",
+   "last_commit": "a8adb53",
    "updated": "2026-11-27"
   },
   {
@@ -8019,7 +8019,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "66d9df2",
+   "last_commit": "a8adb53",
    "updated": "2026-11-27"
   },
   {
@@ -8029,7 +8029,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "66d9df2",
+   "last_commit": "a8adb53",
    "updated": "2026-11-27"
   },
   {
@@ -8039,7 +8039,7 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "66d9df2",
+   "last_commit": "a8adb53",
    "updated": "2026-11-27"
   },
   {
@@ -8627,8 +8627,8 @@
    "adr": [
     "ADR-007"
    ],
-   "last_commit": "e7d6d92",
-   "updated": "2026-11-24"
+   "last_commit": "a8adb53",
+   "updated": "2026-11-27"
   },
   {
    "req_id": "TRS-PROTO-002",
@@ -8666,8 +8666,8 @@
    "adr": [
     "ADR-007"
    ],
-   "last_commit": "e7d6d92",
-   "updated": "2026-11-24"
+   "last_commit": "a8adb53",
+   "updated": "2026-11-27"
   },
   {
    "req_id": "TRS-PROTO-003",
@@ -8691,8 +8691,8 @@
     "ci:conformance#31528127667"
    ],
    "adr": [],
-   "last_commit": "e7d6d92",
-   "updated": "2026-11-24"
+   "last_commit": "a8adb53",
+   "updated": "2026-11-27"
   },
   {
    "req_id": "TRS-PROTO-004",
@@ -8722,8 +8722,8 @@
     "ci:conformance#31528127667"
    ],
    "adr": [],
-   "last_commit": "e7d6d92",
-   "updated": "2026-11-24"
+   "last_commit": "a8adb53",
+   "updated": "2026-11-27"
   },
   {
    "req_id": "TRS-PROTO-005",
@@ -8761,8 +8761,8 @@
     "ci:conformance#31528127667"
    ],
    "adr": [],
-   "last_commit": "e7d6d92",
-   "updated": "2026-11-24"
+   "last_commit": "a8adb53",
+   "updated": "2026-11-27"
   },
   {
    "req_id": "TRS-PROTO-006",
@@ -8801,8 +8801,8 @@
    "adr": [
     "ADR-007"
    ],
-   "last_commit": "e7d6d92",
-   "updated": "2026-11-24"
+   "last_commit": "a8adb53",
+   "updated": "2026-11-27"
   },
   {
    "req_id": "TRS-PROTO-007",
@@ -8858,8 +8858,8 @@
     "ci:conformance#31528127667"
    ],
    "adr": [],
-   "last_commit": "e7d6d92",
-   "updated": "2026-11-24"
+   "last_commit": "a8adb53",
+   "updated": "2026-11-27"
   },
   {
    "req_id": "TRS-PROTO-008",
@@ -8868,8 +8868,8 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "e7d6d92",
-   "updated": "2026-11-24"
+   "last_commit": "a8adb53",
+   "updated": "2026-11-27"
   },
   {
    "req_id": "TRS-PROTO-009",
@@ -8901,8 +8901,8 @@
    "adr": [
     "ADR-002"
    ],
-   "last_commit": "e7d6d92",
-   "updated": "2026-11-24"
+   "last_commit": "a8adb53",
+   "updated": "2026-11-27"
   },
   {
    "req_id": "TRS-PROTO-010",
@@ -8930,8 +8930,8 @@
    "adr": [
     "ADR-004"
    ],
-   "last_commit": "e7d6d92",
-   "updated": "2026-11-24"
+   "last_commit": "a8adb53",
+   "updated": "2026-11-27"
   },
   {
    "req_id": "TRS-PROTO-011",
@@ -8947,8 +8947,8 @@
    ],
    "evidence": [],
    "adr": [],
-   "last_commit": "e7d6d92",
-   "updated": "2026-11-24"
+   "last_commit": "a8adb53",
+   "updated": "2026-11-27"
   },
   {
    "req_id": "TRS-PROTO-012",
@@ -8957,8 +8957,8 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "e7d6d92",
-   "updated": "2026-11-24"
+   "last_commit": "a8adb53",
+   "updated": "2026-11-27"
   },
   {
    "req_id": "TRS-PROTO-013",
@@ -8983,8 +8983,8 @@
     "ci:conformance#31528127667"
    ],
    "adr": [],
-   "last_commit": "e7d6d92",
-   "updated": "2026-11-24"
+   "last_commit": "a8adb53",
+   "updated": "2026-11-27"
   },
   {
    "req_id": "TRS-PROTO-014",
@@ -9003,8 +9003,8 @@
    ],
    "evidence": [],
    "adr": [],
-   "last_commit": "e7d6d92",
-   "updated": "2026-11-24"
+   "last_commit": "a8adb53",
+   "updated": "2026-11-27"
   },
   {
    "req_id": "TRS-PROTO-015",
@@ -9033,8 +9033,8 @@
     "ci:conformance#31528127667"
    ],
    "adr": [],
-   "last_commit": "e7d6d92",
-   "updated": "2026-11-24"
+   "last_commit": "a8adb53",
+   "updated": "2026-11-27"
   },
   {
    "req_id": "TRS-PROTO-016",
@@ -9043,8 +9043,8 @@
    "tests": [],
    "evidence": [],
    "adr": [],
-   "last_commit": "e7d6d92",
-   "updated": "2026-11-24"
+   "last_commit": "a8adb53",
+   "updated": "2026-11-27"
   },
   {
    "req_id": "TRS-PROTO-017",
@@ -9072,8 +9072,8 @@
     "ADR-002",
     "ADR-008"
    ],
-   "last_commit": "e7d6d92",
-   "updated": "2026-11-24"
+   "last_commit": "a8adb53",
+   "updated": "2026-11-27"
   },
   {
    "req_id": "TRS-PROTO-018",
@@ -9094,8 +9094,8 @@
    "adr": [
     "ADR-002"
    ],
-   "last_commit": "e7d6d92",
-   "updated": "2026-11-24"
+   "last_commit": "a8adb53",
+   "updated": "2026-11-27"
   },
   {
    "req_id": "TRS-REP-001",
@@ -9147,8 +9147,8 @@
    "adr": [
     "ADR-004"
    ],
-   "last_commit": "e7d6d92",
-   "updated": "2026-11-24"
+   "last_commit": "a8adb53",
+   "updated": "2026-11-27"
   },
   {
    "req_id": "TRS-REP-003",
@@ -9211,7 +9211,7 @@
    ],
    "evidence": [],
    "adr": [],
-   "last_commit": "717d0b4",
+   "last_commit": "a8adb53",
    "updated": "2026-11-27"
   },
   {
@@ -9272,7 +9272,7 @@
    ],
    "evidence": [],
    "adr": [],
-   "last_commit": "717d0b4",
+   "last_commit": "a8adb53",
    "updated": "2026-11-27"
   },
   {
@@ -9295,7 +9295,7 @@
     "ADR-010",
     "ADR-011"
    ],
-   "last_commit": "880fe99",
+   "last_commit": "a8adb53",
    "updated": "2026-11-27"
   },
   {
@@ -9568,8 +9568,8 @@
    "adr": [
     "ADR-004"
    ],
-   "last_commit": "e7d6d92",
-   "updated": "2026-11-24"
+   "last_commit": "a8adb53",
+   "updated": "2026-11-27"
   },
   {
    "req_id": "TRS-TST-002",

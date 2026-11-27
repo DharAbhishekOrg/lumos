@@ -110,9 +110,9 @@
   - **Still to land elsewhere:** the match ledger is not composed in
     production, so ending the match record joins CS4. The nearby Hello
     refusal of a blocked identity is built (NB-1 step 2e, both apps), so a
-    blocked person gets no card; but until ADR-014 is decided they could
-    still tell the person is near, so the block copy must NOT yet say "and
-    you won't appear in theirs".
+    blocked person gets no card; but under ADR-014's option A (owner,
+    2026-11-28) they could still tell the person is near, so the block copy
+    must NOT say "and you won't appear in theirs".
 - **CS2c done (2026-11-24): the Android home shell.**
   - **`HomeActivity`:** Nearby, Matches and Chats under one Material tab bar.
     It is gated exactly like Nearby (no onboarding, nothing opens). The
@@ -185,7 +185,7 @@
 | Step | What | State |
 |---|---|---|
 | 1 | Visible Nearby on Android: `VisibleNearbyController` (the iOS rules in Java), the panel's choice of a while, permission asked on the tap, UUID-only advertising | Done (2026-11-26) |
-| 2 | Android: scan, connect over GATT, run HELLO, presence cards; advertising moves to the rotating hint | In progress: the radio-free half is done on both apps (below); the GATT adapters wait for CR-010 |
+| 2 | Android: scan, connect over GATT, run HELLO, presence cards; advertising moves to the rotating hint | In progress: the radio-free half is done on both apps and CR-010 is applied (below); the GATT adapters are next |
 | 3 | iOS: the same | — |
 | 4 | Owner's two-phone test (OnePlus 9 and iPhone side by side); radio truth stays G-01 | — |
 
@@ -201,17 +201,16 @@
 - Blocking applies to discovery (SRS-SAF-002): a blocked identity's HELLO
   or ACK is never answered or recorded, so they get no card of the person,
   and their sighting is not dialled again until the age-out bound passes.
-- **Open point for the owner:** each side sends its own HELLO (which
+- **Owner ruling (2026-11-28), was an open point:** each side sends its own HELLO (which
   carries its identity key) when the link opens, before it knows who the
   other side is. A blocked person running modified software could still
   see that key and so tell that the person is near, though they never get
-  a card. ADR-014 (proposed) sets out the options and recommends that the
-  peripheral speak last, which closes the case where the blocked person
-  connects; the case where this phone connects first stays open. It is
-  raised, not decided. Until it is, the block copy keeps saying only
-  what is true ("They can no longer message you or appear in your
-  Nearby.").
-- **Still to do after CR-010:** the GATT client and server adapters, the
+  a card. ADR-014 set out the options; the owner chose option A (keep
+  both sides speaking on open), so this residual risk is accepted and
+  recorded. The block copy keeps saying only what is true ("They can no
+  longer message you or appear in your Nearby.").
+- **CR-010 accepted (owner, 2026-11-28)** and applied (step 2f).
+- **Still to do:** the GATT client and server adapters, the
   rotating-hint advertisement, wiring the engine into the app with the
   block list as its refusals (read off the main thread), then the same on
   iOS, then the owner's two-phone test.
@@ -237,8 +236,8 @@
   - Done (2026-11-27), the switch on iPhone: the same place, copy and
     behaviour. It shows only once a chat runtime exists, which on iPhone
     is after the relay is configured (ADR-012, the staging deploy).
-  - **Owner question:** should read receipts default to off (privacy by
-    default) or stay on? The code keeps today's behaviour until decided.
+  - **Owner ruling (2026-11-28):** read receipts stay on by default; the
+    person turns them off with the switch.
 - **An untrusted-certificate test** on both transports (SRS-NFR-SEC-009).
   Done (2026-11-27): a loopback TLS server with a per-run self-signed
   certificate; both transports fail before any request byte or credential

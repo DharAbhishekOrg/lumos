@@ -159,7 +159,11 @@ public class RelayReceiptsTest {
             }
         }
         assertFalse(unregistered.exchange.offer(m, MATCHED).isPresent(), "nothing to offer without a routing id");
-        assertEquals(RouteExchange.Taken.MALFORMED, alice.exchange.take(m, MATCHED, random(49)),
+        // Random bytes, with the version byte forced wrong: a fully random
+        // 49 bytes is a valid route about one time in 256 (first byte 0x01).
+        final byte[] junk = random(49);
+        junk[0] = (byte) 0xFF;
+        assertEquals(RouteExchange.Taken.MALFORMED, alice.exchange.take(m, MATCHED, junk),
                 "random bytes are not a route");
         assertEquals(RouteExchange.Taken.MALFORMED, alice.exchange.take(m, MATCHED, new byte[0]));
     }
