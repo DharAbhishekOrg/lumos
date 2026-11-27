@@ -23,25 +23,38 @@ final class UntrustedCertificateTests: XCTestCase {
     private var server: Process?
     private var serverLog: URL!
 
+    private struct NoOpenSSL: Error {}
+
+    /// OpenSSL 3 first (Homebrew on the macOS runners, the system one on
+    /// Linux), the system LibreSSL last. A host with none fails the test:
+    /// a skipped security test would read as a passed one.
     private func openssl() throws -> URL {
-        for path in ["/usr/bin/openssl", "/opt/homebrew/bin/openssl", "/usr/local/bin/openssl"]
+        for path in ["/opt/homebrew/opt/openssl@3/bin/openssl", "/usr/local/opt/openssl@3/bin/openssl",
+                     "/usr/bin/openssl"]
             where FileManager.default.isExecutableFile(atPath: path) {
             return URL(fileURLWithPath: path)
         }
-        throw XCTSkip("no openssl binary on this host; the Android twin still runs")
+        XCTFail("no openssl binary on this host")
+        throw NoOpenSSL()
     }
 
+    /// Runs openssl to completion; returns its exit status and combined output.
     @discardableResult
-    private func run(_ arguments: [String], stdin: FileHandle? = nil) throws -> Int32 {
+    private func run(_ arguments: [String]) throws -> (status: Int32, output: String) {
         let process = Process()
         process.executableURL = try openssl()
         process.arguments = arguments
-        process.standardInput = stdin ?? FileHandle.nullDevice
-        process.standardOutput = FileHandle.nullDevice
-        process.standardError = FileHandle.nullDevice
+        process.standardInput = FileHandle.nullDevice
+        let log = dir.appendingPathComponent("run-\(UUID().uuidString).log")
+        FileManager.default.createFile(atPath: log.path, contents: nil)
+        let sink = try FileHandle(forWritingTo: log)
+        process.standardOutput = sink
+        process.standardError = sink
         try process.run()
         process.waitUntilExit()
-        return process.terminationStatus
+        try? sink.close()
+        let output = (try? String(contentsOf: log, encoding: .utf8)) ?? ""
+        return (process.terminationStatus, output)
     }
 
     override func setUpWithError() throws {
@@ -56,13 +69,16 @@ final class UntrustedCertificateTests: XCTestCase {
             CN = 127.0.0.1
             [v3]
             subjectAltName = IP:127.0.0.1
+            basicConstraints = critical,CA:TRUE
+            keyUsage = critical,digitalSignature,keyEncipherment,keyCertSign
+            extendedKeyUsage = serverAuth
             """
         try config.write(to: dir.appendingPathComponent("req.cnf"), atomically: true, encoding: .utf8)
         let made = try run(["req", "-x509", "-newkey", "rsa:2048", "-nodes", "-days", "2",
                             "-config", dir.appendingPathComponent("req.cnf").path,
                             "-keyout", dir.appendingPathComponent("key.pem").path,
                             "-out", dir.appendingPathComponent("cert.pem").path])
-        XCTAssertEqual(made, 0, "openssl made the test certificate")
+        XCTAssertEqual(made.status, 0, "openssl made the test certificate: \(made.output)")
     }
 
     override func tearDownWithError() throws {
@@ -87,16 +103,20 @@ final class UntrustedCertificateTests: XCTestCase {
                              "-key", dir.appendingPathComponent("key.pem").path]
         process.standardInput = Pipe()
         process.standardOutput = try FileHandle(forWritingTo: serverLog)
-        process.standardError = FileHandle.nullDevice
+        process.standardError = try FileHandle(forWritingTo: serverLog)
         try process.run()
         server = process
-        var trusted: Int32 = -1
-        for _ in 0..<100 where trusted != 0 {
-            Thread.sleep(forTimeInterval: 0.1)
+        var trusted: (status: Int32, output: String) = (-1, "")
+        for _ in 0..<50 where trusted.status != 0 {
+            Thread.sleep(forTimeInterval: 0.2)
             trusted = try run(["s_client", "-connect", "127.0.0.1:\(port)", "-verify_return_error",
                                "-CAfile", dir.appendingPathComponent("cert.pem").path])
         }
-        XCTAssertEqual(trusted, 0, "control: a client that trusts exactly this certificate completes the handshake")
+        XCTAssertEqual(trusted.status, 0, """
+            control: a client that trusts exactly this certificate completes the handshake
+            client: \(trusted.output.suffix(800))
+            server: \(((try? String(contentsOf: serverLog, encoding: .utf8)) ?? "").suffix(400))
+            """)
         return port
     }
 
