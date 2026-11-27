@@ -224,9 +224,13 @@
   thread, failing closed), and when not visible the tab says so. Turning
   Visible Nearby on now asks for every Bluetooth permission discovery
   needs. Evidence on real radios: the owner's two-phone test.
-- **Still to do:** the same on iOS (CoreBluetooth link, HELLO identity,
-  wiring), then the owner's two-phone test; the rotating-hint
-  advertisement after that.
+- **Step 4, iPhone (2026-11-28):** 4a the core (HELLO identity,
+  NearbyDiscovery, the same tests as Android); 4b the CoreBluetooth
+  central and peripheral; 4c the wiring: discovery rides on Visible
+  Nearby's radio, Bluetooth is asked for only when the person turns it
+  on, and the Nearby tab shows "People nearby" with a silent Hide.
+- **Still to do:** the owner's two-phone test (OnePlus 9 + iPhone); the
+  rotating-hint advertisement after that.
 
 ### CS4 (Android) and CS5 (iOS): from Nearby to a match
 - **Profile preview, Interested / Not now, and the match moment,** with the

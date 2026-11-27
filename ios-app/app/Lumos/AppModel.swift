@@ -107,11 +107,31 @@ final class AppModel: ObservableObject {
             return
         }
         home = HomeModel(runtime: runtime)
-        let visibility = (try? KeyRoot.open(from: config.vault))
-            .flatMap { try? AppBoot.openStore($0, config) }
-            .map { DiscoveryVisibility(store: $0) }
-        nearby = VisibilityModel(visibility: visibility,
-                                 advertiser: CoreBluetoothAdvertiser(queue: DispatchQueue(label: "lumos.ble.advertise")))
+        let root = try? KeyRoot.open(from: config.vault)
+        let store = root.flatMap { try? AppBoot.openStore($0, config) }
+        let relay = FeedRelay()
+        var discovery: NearbyDiscovery?
+        if let root, let store, let identity = try? AppBoot.nearbyIdentity(root, store: store) {
+            // Discovery runs only while Visible Nearby's radio runs (owner
+            // ruling, 2026-11-28); its store side is this main queue, where
+            // the store already lives.
+            let links = DispatchQueue(label: "lumos.ble.link")
+            discovery = NearbyDiscovery(
+                link: CoreBluetoothGattLink(queue: links, clock: { Int64(Date().timeIntervalSince1970 * 1000) }),
+                scanner: CoreBluetoothScanner(queue: links, millisClock: { Int64(Date().timeIntervalSince1970 * 1000) },
+                                              onRestore: { _ in }),
+                identity: identity, store: store, linkQueue: links, storage: .main,
+                clock: { Int64(Date().timeIntervalSince1970 * 1000) },
+                changed: { Task { @MainActor in relay.model?.feedChanged() } })
+        }
+        let model = VisibilityModel(
+            visibility: store.map { DiscoveryVisibility(store: $0) },
+            advertiser: DiscoveringAdvertiser(
+                advertiser: CoreBluetoothAdvertiser(queue: DispatchQueue(label: "lumos.ble.advertise")),
+                discovery: discovery),
+            discovery: discovery)
+        relay.model = model
+        nearby = model
         phase = .ready
     }
 
@@ -123,4 +143,11 @@ final class AppModel: ObservableObject {
         }
         return try String(contentsOf: url, encoding: .utf8)
     }
+}
+
+/// Carries "the feed changed" from the store's queue to the Nearby model on
+/// the main actor. Only ever read on the main actor, which is the
+/// @unchecked Sendable contract.
+final class FeedRelay: @unchecked Sendable {
+    weak var model: VisibilityModel?
 }

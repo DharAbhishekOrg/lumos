@@ -71,6 +71,20 @@ public enum AppBoot {
                                     clock: config.clock)
     }
 
+    /// Unlocks this install's identity for nearby discovery, whatever the
+    /// relay: the stored record, unwrapped under the key root's KEK. The
+    /// unlocked identity lives as long as the discovery that signs with it.
+    /// - Parameters:
+    ///   - root: the install's key root
+    ///   - store: the install's open store
+    /// - Returns: the HELLO identity, or nil when no identity is stored
+    /// - Throws: ``StoreError``, a KEK error or ``IdentityError``
+    public static func nearbyIdentity(_ root: KeyRoot, store: LocalStore) throws -> NearbyIdentity? {
+        guard let record = try IdentityRepository(store: store).load() else { return nil }
+        let identity = try ChatIdentity.unlock(record: record, kek: root.kek)
+        return NearbyIdentity(record: record, signer: { try identity.sign($0) })
+    }
+
     /// Opens the store under a key root, and excludes the database family
     /// from OS backups (SRS-DAT-012). The one place the app's store is opened,
     /// so onboarding writes to the same file the boot later reads.

@@ -1,6 +1,7 @@
 /// Lumos - ios-app/app / The Nearby tab: Visible Nearby, chosen for a while, and the radio behind it.
 /// Author: dhar.abhishek.email@gmail.com
-/// Implements: SRS-ONB-004, SRS-ONB-008, SRS-NBY-001, SRS-NBY-002, SRS-NBY-003, TRS-IOS-003
+/// Implements: SRS-ONB-004, SRS-ONB-008, SRS-NBY-001, SRS-NBY-002, SRS-NBY-003, SRS-NBY-005, SRS-NBY-010,
+///             SRS-NBY-012, TRS-IOS-003
 /// ADRs: ADR-002
 /// Threading: main-actor
 /// Notes: The shell's DiscoveryVisibility and VisibleNearbyController own the
@@ -21,6 +22,11 @@
 /// - If Bluetooth is not allowed or not supported, visibility turns off and
 ///   the tab says why; if Bluetooth is merely off, the window keeps running
 ///   and the tab says nobody can see you until it is on.
+/// - People nearby (NB-1): while visible and open, the phone also looks for
+///   and connects to other Lumos phones (owner ruling, 2026-11-28: you see
+///   others only while they can see you). Each card is a person whose HELLO
+///   verified, after the hide and block vetoes; Hide removes one silently.
+///   The copy matches Android's word for word.
 
 import Combine
 import LumosAppShell
@@ -34,12 +40,17 @@ final class VisibilityModel: ObservableObject {
     @Published private(set) var problem: VisibleNearbyController.RadioProblem?
     @Published private(set) var endedOnItsOwn = false
 
+    @Published private(set) var feed = FeedState.notVisible
+
     private var controller: VisibleNearbyController?
+    private let discovery: NearbyDiscovery?
 
     /// - Parameters:
     ///   - visibility: the persisted state; nil when the store did not open
     ///   - advertiser: the radio
-    init(visibility: DiscoveryVisibility?, advertiser: BleAdvertising) {
+    ///   - discovery: live discovery, or nil when the identity could not be unlocked
+    init(visibility: DiscoveryVisibility?, advertiser: BleAdvertising, discovery: NearbyDiscovery?) {
+        self.discovery = discovery
         guard let visibility else { return }
         // The failure arrives on the radio's queue: a Sendable, non-isolated
         // closure hops it to the main actor, where the controller lives.
@@ -63,8 +74,11 @@ final class VisibilityModel: ObservableObject {
     func turnOn(_ selection: DiscoveryVisibility.Selection) { controller?.turnOn(selection); publish() }
     func turnOff() { controller?.turnOff(); publish() }
     func setForeground(_ active: Bool) { controller?.setForeground(active); publish() }
+    func hide(_ peerKey: String) { discovery?.hideCard(peerKey: peerKey) }
+    func feedChanged() { feed = discovery?.state ?? .notVisible }
 
     private func publish() {
+        feedChanged()
         guard let controller else { return }
         indicator = controller.indicator
         problem = controller.problem
@@ -100,13 +114,9 @@ struct NearbyTab: View {
                 Section { Text(problemText(problem)).foregroundColor(.red) }
             }
             Section {
-                Text("""
-                    In this test version, other phones cannot find you yet. While you are visible, your phone \
-                    only announces that a Lumos phone is near, with nothing about you. Finding people and \
-                    matching come in a coming update.
-                    """)
-                    .font(.callout)
-                    .foregroundColor(.secondary)
+                PeopleNearby(feed: model.feed) { model.hide($0) }
+            } header: {
+                Text("People nearby")
             }
         }
         .navigationTitle("Nearby")
@@ -220,5 +230,46 @@ struct ChooseTimeSheet: View {
         formatter.allowedUnits = [.hour, .minute]
         formatter.unitsStyle = .full
         return formatter.string(from: TimeInterval(minutes * secondsPerMinute)) ?? ""
+    }
+}
+
+/// The people-nearby section: one message or the cards, never a spinner
+/// (SRS-NBY-014), in Android's words.
+struct PeopleNearby: View {
+    let feed: FeedState
+    let hide: (String) -> Void
+
+    var body: some View {
+        switch feed {
+        case .cards(let cards):
+            ForEach(cards, id: \.peerKey) { card in
+                HStack {
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text("Someone nearby").font(.headline)
+                        Text("Here right now").font(.callout).foregroundColor(.secondary)
+                    }
+                    Spacer()
+                    Button("Hide") { hide(card.peerKey) }
+                        .buttonStyle(.bordered)
+                }
+                .frame(minHeight: 44)
+            }
+        case .notVisible:
+            note("You see people nearby only while they can see you too. Turn on Visible Nearby above to start.")
+        case .scanningEmpty:
+            note("Looking around. No one nearby yet — people appear here the moment Lumos is sure they are real.")
+        case .radioOff:
+            note("Bluetooth is off. Turn it on to see people nearby.")
+        case .permissionNeeded:
+            note("Lumos needs Bluetooth permission to find people near you. You can grant it in Settings.")
+        case .radioUnavailable:
+            note("Nearby is not available on this phone right now.")
+        case .radioBusy:
+            note("The radio is catching its breath. Nearby will continue in a moment.")
+        }
+    }
+
+    private func note(_ text: String) -> some View {
+        Text(text).font(.callout).foregroundColor(.secondary)
     }
 }
