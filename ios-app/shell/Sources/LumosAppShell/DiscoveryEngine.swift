@@ -82,6 +82,10 @@ public final class DiscoveryEngine {
     /// The authenticated cards.
     public var cards: [PresenceTable.Card] { presence.all() }
 
+    /// Hears about every peer a link verified, on the engine's queue (the
+    /// app's feed copies it onto its own). Set before start.
+    public var onFound: ((HelloExchange.Peer, Int64) -> Void)?
+
     /// Starts discovery.
     public func start() {
         running = true
@@ -193,6 +197,7 @@ public final class DiscoveryEngine {
     private func settle(_ handle: String, _ link: LinkSession, _ nowMillis: Int64) {
         if let peer = link.peer {
             let card = presence.record(peer, nowMillis: nowMillis)
+            onFound?(peer, nowMillis)
             if let candidate = candidateByLink[handle] {
                 peerByCandidate[candidate] = card.peerKey
             }
