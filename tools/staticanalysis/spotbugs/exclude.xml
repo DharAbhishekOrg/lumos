@@ -432,4 +432,52 @@
     <Method name="&lt;init&gt;"/>
     <Bug pattern="EI_EXPOSE_REP2"/>
   </Match>
+  <!--
+    CS4d profile photos: AppHost hands out its one ProfilePhotos (the
+    visibleNearby rationale); HomeActivity keeps the test override and hands
+    the instrumented test its strip (the setSource rationale); ProfilePanel
+    keeps the strip it draws and ProfilePhotoStrip keeps its root view and
+    panel (the NearbyPanel root-view case); ProfilePhotos keeps its injected
+    vault (constructor injection). ProfilePanel.draw and ProfilePhotoStrip.draw
+    cast findViewById results, the lifecycle-class case of HomeActivity.
+  -->
+  <Match>
+    <Class name="com.lumos.app.AppHost"/>
+    <Method name="photos"/>
+    <Bug pattern="EI_EXPOSE_REP"/>
+  </Match>
+  <Match>
+    <Class name="com.lumos.app.home.HomeActivity"/>
+    <Or>
+      <And>
+        <Method name="photoStrip"/>
+        <Bug pattern="EI_EXPOSE_REP"/>
+      </And>
+      <And>
+        <Method name="setProfilePhotos"/>
+        <Bug pattern="EI_EXPOSE_STATIC_REP2"/>
+      </And>
+    </Or>
+  </Match>
+  <Match>
+    <Class name="com.lumos.app.profile.ProfilePanel"/>
+    <Method name="attachPhotos"/>
+    <Bug pattern="EI_EXPOSE_REP2"/>
+  </Match>
+  <Match>
+    <Or>
+      <Class name="com.lumos.app.profile.ProfilePhotoStrip"/>
+      <Class name="com.lumos.app.profile.ProfilePhotos"/>
+    </Or>
+    <Method name="&lt;init&gt;"/>
+    <Bug pattern="EI_EXPOSE_REP2"/>
+  </Match>
+  <Match>
+    <Or>
+      <Class name="com.lumos.app.profile.ProfilePanel"/>
+      <Class name="com.lumos.app.profile.ProfilePhotoStrip"/>
+    </Or>
+    <Method name="draw"/>
+    <Bug pattern="BC_UNCONFIRMED_CAST_OF_RETURN_VALUE"/>
+  </Match>
 </FindBugsFilter>

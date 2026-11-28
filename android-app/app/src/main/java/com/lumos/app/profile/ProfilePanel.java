@@ -5,9 +5,8 @@
  *             SRS-PRO-012, SRS-NFR-A11Y-001
  * ADRs: ADR-003
  * Threading: main for the views; every read and write on the store's executor
- * Notes: One line per field, in the order SRS-PRO-001 lists them (photos join
- * with the media slice, which must strip metadata and validate images first,
- * SRS-PRO-005/006). Tapping a field edits it: free words for everything but
+ * Notes: Photos first (ProfilePhotoStrip, when the media store is open), then
+ * one line per field, in the order SRS-PRO-001 lists them. Tapping a field edits it: free words for everything but
  * age, which is a band; every optional field also offers "Prefer not to say",
  * which counts as answered and is never shown as a value to anyone else
  * (SRS-PRO-002). Each field's "Who can see this" line opens the three
@@ -42,7 +41,7 @@ import java.util.concurrent.Executor;
 /** Binds the Profile tab's views to a ProfileSource. */
 public final class ProfilePanel {
 
-    /** The fields this tab edits, in SRS-PRO-001 order (media joins later). */
+    /** The fields this tab edits as words, in SRS-PRO-001 order (photos have their own strip). */
     static final List<ProfileField> EDITED = List.of(ProfileField.ALIAS, ProfileField.AGE_BAND,
             ProfileField.PRONOUNS, ProfileField.GENDER_IDENTITY, ProfileField.ORIENTATION,
             ProfileField.RELATIONSHIP_INTENT, ProfileField.INTERESTS, ProfileField.BIO);
@@ -62,6 +61,7 @@ public final class ProfilePanel {
     private final Executor worker;
     private final Handler main = new Handler(Looper.getMainLooper());
     private volatile ProfileSource.Editing current;
+    private ProfilePhotoStrip photos;
 
     /**
      * @param root the panel_profile view
@@ -100,8 +100,33 @@ public final class ProfilePanel {
         return current;
     }
 
+    /**
+     * Shows the photo strip, drawn with every profile from now on. Main thread.
+     *
+     * @param strip the strip over the media store
+     */
+    public void attachPhotos(final ProfilePhotoStrip strip) {
+        photos = strip;
+        root.findViewById(R.id.profile_photos_section).setVisibility(View.VISIBLE);
+        if (current != null) {
+            strip.draw(current);
+        }
+    }
+
+    /**
+     * Puts a stored profile on screen; what the photo strip does after a change.
+     *
+     * @param editing the stored profile and policy
+     */
+    void show(final ProfileSource.Editing editing) {
+        draw(editing);
+    }
+
     private void draw(final ProfileSource.Editing editing) {
         current = editing;
+        if (photos != null) {
+            photos.draw(editing);
+        }
         final LinearLayout fields = root.findViewById(R.id.profile_fields);
         fields.removeAllViews();
         final LayoutInflater inflater = LayoutInflater.from(context);
@@ -126,7 +151,12 @@ public final class ProfilePanel {
         }
     }
 
-    private void status(final int text) {
+    /**
+     * Shows one sentence above the fields.
+     *
+     * @param text the sentence
+     */
+    void status(final int text) {
         final TextView status = root.findViewById(R.id.profile_status);
         status.setText(text);
         status.setVisibility(View.VISIBLE);
@@ -194,7 +224,12 @@ public final class ProfilePanel {
                 .show();
     }
 
-    private void chooseAudience(final ProfileField field) {
+    /**
+     * Opens the audience dialog for one field.
+     *
+     * @param field the field
+     */
+    void chooseAudience(final ProfileField field) {
         if (current == null) {
             return;
         }
@@ -288,6 +323,9 @@ public final class ProfilePanel {
                 text.append(context.getString(labelOf(field))).append(": ").append(value.text()).append('\n');
             }
         }
+        if (ProfilePreview.derive(current.profile(), current.policy(), audience).primaryMediaObjectId() != null) {
+            text.append(context.getString(R.string.profile_preview_photo)).append('\n');
+        }
         return text.length() == 0 ? context.getString(R.string.profile_preview_nothing) : text.toString().trim();
     }
 
@@ -307,6 +345,8 @@ public final class ProfilePanel {
                 return R.string.profile_field_relationship_intent;
             case INTERESTS:
                 return R.string.profile_field_interests;
+            case MEDIA:
+                return R.string.profile_field_media;
             default:
                 return R.string.profile_field_bio;
         }

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Lumos - android-app/app / The Profile tab's sizes.
+  Author: dhar.abhishek.email@gmail.com
+  Implements: SRS-PRO-009, SRS-NFR-A11Y-001
+  ADRs: -
+  Threading: n/a
+  Notes: A photo thumbnail is well above the 48 dp touch target.
+-->
+<resources>
+    <dimen name="profile_photo_thumb">96dp</dimen>
+</resources>

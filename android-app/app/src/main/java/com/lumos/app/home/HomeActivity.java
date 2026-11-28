@@ -29,6 +29,7 @@ import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.TextView;
 import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.PickVisualMediaRequest;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
@@ -47,6 +48,8 @@ import com.lumos.app.nearby.NearbyHost;
 import com.lumos.app.nearby.NearbyPanel;
 import com.lumos.app.onboarding.AppSurface;
 import com.lumos.app.profile.ProfilePanel;
+import com.lumos.app.profile.ProfilePhotoStrip;
+import com.lumos.app.profile.ProfilePhotos;
 import com.lumos.app.profile.ProfileSource;
 import com.lumos.app.safety.RecentsRedaction;
 import java.time.Duration;
@@ -56,6 +59,7 @@ import java.util.Locale;
 import java.util.Optional;
 import java.util.concurrent.Executor;
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 /** The home shell. */
 public final class HomeActivity extends AppCompatActivity {
@@ -66,6 +70,7 @@ public final class HomeActivity extends AppCompatActivity {
     private static final String STATE_TAB = "tab";
     private static volatile HomeSource sourceOverride;
     private static volatile ProfileSource profileOverride;
+    private static volatile ProfilePhotos photosOverride;
 
     private final Handler main = new Handler(Looper.getMainLooper());
     private final Runnable refresh = this::refreshLoop;
@@ -74,6 +79,8 @@ public final class HomeActivity extends AppCompatActivity {
     private NearbyPanel nearby;
     private ProfilePanel profile;
     private ActivityResultLauncher<String[]> permissions;
+    private ActivityResultLauncher<PickVisualMediaRequest> photoPicker;
+    private ProfilePhotoStrip photoStrip;
     private Consumer<Boolean> pendingPermission;
     private HomeAdapters.Matches matches;
     private HomeAdapters.Chats chats;
@@ -101,6 +108,24 @@ public final class HomeActivity extends AppCompatActivity {
         profileOverride = source;
     }
 
+    /**
+     * Replaces the profile photos with scripted ones, for the instrumented test.
+     *
+     * @param photos the photos, or null for the real ones
+     */
+    public static void setProfilePhotos(final ProfilePhotos photos) {
+        photosOverride = photos;
+    }
+
+    /**
+     * The photo strip, for the instrumented test.
+     *
+     * @return the strip, or null without a profile
+     */
+    public ProfilePhotoStrip photoStrip() {
+        return photoStrip;
+    }
+
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -119,6 +144,19 @@ public final class HomeActivity extends AppCompatActivity {
         final ProfileSource profiles = profileOverride != null ? profileOverride : app.host().profiles();
         if (profiles != null) {
             profile = new ProfilePanel(findViewById(R.id.profile_page), profiles, worker);
+            // The media store opens after boot; the strip asks for it each time.
+            final Supplier<ProfilePhotos> photos = profileOverride != null
+                    ? () -> photosOverride : () -> app.host().photos();
+            photoStrip = new ProfilePhotoStrip(findViewById(R.id.profile_page), photos, worker, profile);
+            // The system photo picker: one picture handed over, no storage permission.
+            photoPicker = registerForActivityResult(new ActivityResultContracts.PickVisualMedia(), uri -> {
+                if (uri != null) {
+                    photoStrip.picked(uri);
+                }
+            });
+            photoStrip.setPicker(() -> photoPicker.launch(new PickVisualMediaRequest.Builder()
+                    .setMediaType(ActivityResultContracts.PickVisualMedia.ImageOnly.INSTANCE).build()));
+            profile.attachPhotos(photoStrip);
         }
         // SRS-ONB-004: the Bluetooth permission is asked when the person turns
         // Visible Nearby on, and only then.
