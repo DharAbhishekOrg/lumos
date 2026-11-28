@@ -104,6 +104,26 @@ public enum AppBoot {
         return store
     }
 
+    /// Opens the encrypted media store (profile photos) beside the database,
+    /// under the key root's MEDIA_STORE key, excluded from OS backups like
+    /// the database (SRS-PRO-004, SRS-DAT-012).
+    /// - Parameters:
+    ///   - root: the install's key root
+    ///   - config: the database location (the media directory sits beside it)
+    /// - Returns: the opened store
+    /// - Throws: a KEK error or ``MediaObjectStore/Failure``
+    public static func openMediaStore(_ root: KeyRoot, _ config: BootConfig) throws -> MediaObjectStore {
+        try MediaObjectStore(directory: mediaDirectory(config),
+                             mediaDomainKey: try root.hierarchy.deriveKey(for: .mediaStore))
+    }
+
+    /// The media directory: "media" beside the database file.
+    /// - Parameter config: the install's configuration
+    /// - Returns: the directory URL
+    public static func mediaDirectory(_ config: BootConfig) -> URL {
+        config.databaseURL.deletingLastPathComponent().appendingPathComponent("media", isDirectory: true)
+    }
+
     /// Whether this install has finished onboarding: a key root, and an
     /// identity in the store it opens. Asks nothing of the relay, so it
     /// answers the same with the relay unconfigured.

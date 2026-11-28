@@ -153,6 +153,14 @@ public struct WipeCoverage: Sendable {
     /// What no application can reach, and why that is survivable here.
     public let beyondReach: [WipeCoverageItem]
 
+    /// This statement with the profile photos among what is destroyed.
+    public var withProfilePhotos: WipeCoverage {
+        WipeCoverage(covered: covered + [WipeCoverageItem(
+                        what: "profile photos",
+                        status: "the key is destroyed first, then every encrypted photo file is deleted")],
+                     notYetBuilt: notYetBuilt, beyondReach: beyondReach)
+    }
+
     /// The coverage of the stores that exist after WP-02 slice S4c.
     public static let forWpTwo = WipeCoverage(
         covered: [
@@ -199,6 +207,8 @@ public struct EmergencyWipe {
     public static let stageStoreKeys = "local store derived keys"
     /// The stage name for clearing every record table.
     public static let stageLocalRecords = "local records"
+    /// The stage name for deleting every encrypted media file (profile photos).
+    public static let stageMediaObjects = "media objects"
 
     /// Report of one executed wipe, with the coverage it actually had.
     public struct Outcome: Sendable {
@@ -216,18 +226,26 @@ public struct EmergencyWipe {
 
     private let kek: KekStore
     private let store: LocalStore
+    private let media: MediaObjectStore?
 
     /// Assembles the wipe from the stores it must clear.
+    ///
+    /// Photos are unreadable once the KEK is gone (their key derives from the
+    /// root it wraps); deleting their files afterwards is the content pass.
     /// - Parameters:
     ///   - kek: the key-encryption key, destroyed first
     ///   - store: the encrypted record store
-    public init(kek: KekStore, store: LocalStore) {
+    ///   - media: the encrypted media store, or nil when none is open
+    public init(kek: KekStore, store: LocalStore, media: MediaObjectStore? = nil) {
         self.kek = kek
         self.store = store
+        self.media = media
     }
 
     /// The consequences a user must be shown before confirming (SRS-SAF-009).
-    public var coverage: WipeCoverage { WipeCoverage.forWpTwo }
+    public var coverage: WipeCoverage {
+        media == nil ? WipeCoverage.forWpTwo : WipeCoverage.forWpTwo.withProfilePhotos
+    }
 
     /// Runs the wipe (SRS-SAF-010).
     ///
@@ -244,11 +262,14 @@ public struct EmergencyWipe {
         guard confirmation.action == .emergencyWipe else {
             throw NotConfirmed.malformedChallenge
         }
-        let report = KeysFirstWipe()
+        var wipe = KeysFirstWipe()
             .registerKeyMaterial(Self.stageKek) { kek.destroy() }
             .registerKeyMaterial(Self.stageStoreKeys) { store.destroyKeys() }
             .registerContent(Self.stageLocalRecords) { try store.deleteEverything() }
-            .execute()
+        if let media {
+            wipe = wipe.registerContent(Self.stageMediaObjects) { _ = try media.wipeAll() }
+        }
+        let report = wipe.execute()
         return Outcome(report: report, coverage: coverage)
     }
 }

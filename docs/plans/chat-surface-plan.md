@@ -259,8 +259,12 @@
     sanitiser, and kept encrypted in the no-backup media store before the
     profile references it. First photo is the main one; make main, move,
     remove (asks first). Private to matches by default. The emergency wipe
-    deletes the photo files after the keys. Still to do: the same on iPhone
-    (a Swift twin of the media store first).
+    deletes the photo files after the keys.
+  - Done (2026-11-29), photos on iPhone: the same rules and words. The
+    system photo picker (iOS 16 and later, no photo-library permission);
+    ImageIO draws each picture again upright (HEIC included) at 1600 px;
+    the sanitiser strips it; a Swift twin of the media store (same file
+    format) keeps it encrypted and out of backups. The wipe covers photos.
   - Done (2026-11-28), Android: Visible Nearby refuses to turn on for an
     empty, incomplete or paused profile, says "Add your name and age in
     Profile first", and fails closed if the profile cannot be read
