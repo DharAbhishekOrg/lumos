@@ -240,6 +240,10 @@
   SRS-PRO-001 fields with per-field visibility (SRS-PRO-003) and "see what
   others see" (SRS-PRO-008); Visible Nearby stays off for an incomplete
   profile (SRS-PRO-010).
+  - Done (2026-11-28), iPhone: the same Profile tab (copy word for word),
+    the profile store byte-compatible with Android (a golden payload
+    pinned in both test suites), and Visible Nearby refusing an
+    incomplete profile.
   - Done (2026-11-28), the Profile tab on Android: the eight SRS-PRO-001
     fields except photos (media needs metadata stripping and image checks
     first, SRS-PRO-005/006), free words for gender and sexuality with
