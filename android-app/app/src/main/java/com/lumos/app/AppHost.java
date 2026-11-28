@@ -36,6 +36,8 @@ import com.lumos.app.ble.AndroidBleScanner;
 import com.lumos.app.ble.AndroidGattLink;
 import com.lumos.app.ble.NearbyIdentity;
 import com.lumos.app.ble.TaskScheduler;
+import com.lumos.app.media.BitmapReencoder;
+import com.lumos.app.media.MediaObjectStore;
 import com.lumos.app.nearby.DiscoveringAdvertiser;
 import com.lumos.app.nearby.FeedState;
 import com.lumos.app.nearby.NearbyDiscovery;
@@ -43,6 +45,7 @@ import com.lumos.app.nearby.NearbyHost;
 import com.lumos.app.nearby.VisibleNearbyController;
 import com.lumos.app.onboarding.DiscoveryVisibility;
 import com.lumos.app.profile.ProfileRepository;
+import com.lumos.app.profile.ProfilePhotos;
 import com.lumos.app.profile.ProfileSource;
 import com.lumos.app.store.LocalStore;
 import com.lumos.app.store.StoreException;
@@ -63,6 +66,7 @@ public final class AppHost implements NearbyHost {
     private volatile VisibleNearbyController visibleNearby;
     private volatile NearbyDiscovery discovery;
     private volatile ProfileSource profiles;
+    private volatile ProfilePhotos photos;
     private volatile Executor storage;
     private boolean attached;
     private volatile Runnable visibilityChanged;
@@ -112,6 +116,7 @@ public final class AppHost implements NearbyHost {
                 visibleNearby = controller;
                 changed();
             });
+            openPhotos(context);
             final Optional<NearbyIdentity> identity = unlock(context, store);
             if (identity.isPresent()) {
                 final ScheduledExecutorService links = Executors.newSingleThreadScheduledExecutor();
@@ -162,6 +167,32 @@ public final class AppHost implements NearbyHost {
      */
     public ProfileSource profiles() {
         return profiles;
+    }
+
+    /**
+     * The person's profile photos; use them on the storage executor only.
+     *
+     * @return the photos, or null until the media store is open (or when it cannot open)
+     */
+    public ProfilePhotos photos() {
+        return photos;
+    }
+
+    private void openPhotos(final Context context) {
+        try {
+            final Optional<MediaObjectStore> media = AppBoot.openMediaStore(context);
+            if (media.isPresent()) {
+                final ProfilePhotos opened = new ProfilePhotos(new BitmapReencoder(),
+                        ProfilePhotos.vaultOf(media.get()), profiles);
+                // A crash between a photo's two steps can leave an encrypted
+                // object nobody references; clear it before the tab shows.
+                opened.sweep();
+                photos = opened;
+            }
+        } catch (final IOException | GeneralSecurityException closed) {
+            // No photos this run; the Profile tab says so.
+            photos = null;
+        }
     }
 
     @Override

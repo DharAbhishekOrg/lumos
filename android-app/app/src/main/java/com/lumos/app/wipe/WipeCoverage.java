@@ -29,6 +29,7 @@
 
 package com.lumos.app.wipe;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -107,6 +108,19 @@ public final class WipeCoverage {
                         new Item("flash blocks the storage controller has not yet erased",
                                 "the same: unreadable, not absent, and outside any app's "
                                         + "control")));
+    }
+
+    /**
+     * This statement with the profile photos among what is destroyed: the
+     * key goes first, then every encrypted photo file is deleted.
+     *
+     * @return a new statement
+     */
+    public WipeCoverage withProfilePhotos() {
+        final List<Item> more = new ArrayList<>(covered);
+        more.add(new Item("profile photos",
+                "the key is destroyed first, then every encrypted photo file is deleted"));
+        return new WipeCoverage(more, notYetBuilt, beyondReach);
     }
 
     /**

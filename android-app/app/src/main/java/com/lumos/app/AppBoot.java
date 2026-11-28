@@ -27,6 +27,7 @@ import com.lumos.app.identity.IdentityRepository;
 import com.lumos.app.identity.LibsodiumIdentityCrypto;
 import com.lumos.app.keystore.AndroidKekStore;
 import com.lumos.app.keystore.KekStore;
+import com.lumos.app.media.MediaObjectStore;
 import com.lumos.app.relay.ChatRuntime;
 import com.lumos.app.relay.UrlConnectionTransport;
 import com.lumos.app.store.LocalStore;
@@ -38,6 +39,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.security.GeneralSecurityException;
 import java.security.SecureRandom;
+import java.util.Arrays;
 import java.util.Optional;
 
 /** Boots the chat runtime of an onboarded install. */
@@ -45,6 +47,9 @@ public final class AppBoot {
 
     /** The keystore alias of the app's KEK; onboarding creates it under this name (ADR-012). */
     public static final String KEK_ALIAS = "lumos.kek.v1";
+
+    /** The encrypted media store's directory, under the no-backup files directory. */
+    static final String MEDIA_DIRECTORY = "media";
 
     private AppBoot() { }
 
@@ -128,6 +133,33 @@ public final class AppBoot {
         final LocalStore store = openStore(context, DataKeyHierarchy.restore(kek, root.get().wrappedRoot()),
                 System::currentTimeMillis);
         return new IdentityRepository(store).exists() ? Optional.of(store) : Optional.empty();
+    }
+
+    /**
+     * Opens the encrypted media store (profile photos) under the install's
+     * MEDIA_STORE data key. It lives in the no-backup directory, like the
+     * key root, so a cloud backup never carries photos (SRS-PRO-004).
+     *
+     * @param context any context of the app
+     * @return the store, or empty when this install has no key root yet
+     * @throws IOException if the key root file or the directory fails
+     * @throws GeneralSecurityException if the KEK or the data key fails
+     */
+    public static Optional<MediaObjectStore> openMediaStore(final Context context)
+            throws IOException, GeneralSecurityException {
+        final Optional<KeyRootFile.Root> root = KeyRootFile.read(keyRootFile(context));
+        if (!root.isPresent()) {
+            return Optional.empty();
+        }
+        final KekStore kek = AndroidKekStore.open(KEK_ALIAS, root.get().protection());
+        final byte[] key = DataKeyHierarchy.restore(kek, root.get().wrappedRoot())
+                .deriveKey(DataKeyHierarchy.DataDomain.MEDIA_STORE);
+        try {
+            return Optional.of(new MediaObjectStore(
+                    new File(context.getNoBackupFilesDir(), MEDIA_DIRECTORY).toPath(), key));
+        } finally {
+            Arrays.fill(key, (byte) 0);
+        }
     }
 
     /**

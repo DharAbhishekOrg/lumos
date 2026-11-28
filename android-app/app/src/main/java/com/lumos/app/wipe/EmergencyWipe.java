@@ -32,8 +32,11 @@
 package com.lumos.app.wipe;
 
 import com.lumos.app.keystore.KekStore;
+import com.lumos.app.media.MediaObjectStore;
 import com.lumos.app.safety.DeliberateConfirmation;
 import com.lumos.app.store.LocalStore;
+import com.lumos.app.store.StoreException;
+import java.io.IOException;
 
 /** Wires every store that exists into a keys-first wipe, behind a confirmation. */
 public final class EmergencyWipe {
@@ -89,8 +92,12 @@ public final class EmergencyWipe {
     /** The stage name for clearing every record table. */
     public static final String STAGE_LOCAL_RECORDS = "local records";
 
+    /** The stage name for deleting every encrypted media file (profile photos). */
+    public static final String STAGE_MEDIA_OBJECTS = "media objects";
+
     private final KekStore kek;
     private final LocalStore store;
+    private final MediaObjectStore media;
 
     /**
      * Assembles the wipe from the stores it must clear.
@@ -99,8 +106,25 @@ public final class EmergencyWipe {
      * @param store the encrypted record store
      */
     public EmergencyWipe(final KekStore kek, final LocalStore store) {
+        this(kek, store, null);
+    }
+
+    /**
+     * Assembles the wipe with the encrypted media store too.
+     *
+     * <p>The photos are already unreadable once the KEK is gone (their key
+     * derives from the root it wraps); deleting the files afterwards is the
+     * content pass, so nothing is left even as ciphertext where the app can
+     * reach it.
+     *
+     * @param kek the key-encryption key, destroyed first
+     * @param store the encrypted record store
+     * @param media the encrypted media store, or null when none is open
+     */
+    public EmergencyWipe(final KekStore kek, final LocalStore store, final MediaObjectStore media) {
         this.kek = kek;
         this.store = store;
+        this.media = media;
     }
 
     /**
@@ -113,7 +137,7 @@ public final class EmergencyWipe {
      * @return the coverage statement
      */
     public WipeCoverage coverage() {
-        return WipeCoverage.forWpTwo();
+        return media == null ? WipeCoverage.forWpTwo() : WipeCoverage.forWpTwo().withProfilePhotos();
     }
 
     /**
@@ -138,6 +162,16 @@ public final class EmergencyWipe {
                 .registerKeyMaterial(STAGE_KEK, kek::destroy)
                 .registerKeyMaterial(STAGE_STORE_KEYS, store::destroyKeys)
                 .registerContent(STAGE_LOCAL_RECORDS, store::deleteEverything);
+        if (media != null) {
+            wipe.registerContent(STAGE_MEDIA_OBJECTS, () -> {
+                try {
+                    media.wipeAll();
+                } catch (final IOException notDeleted) {
+                    throw new StoreException(StoreException.Reason.ENGINE,
+                            "media files not all deleted", notDeleted);
+                }
+            });
+        }
         return new Outcome(wipe.execute(), coverage());
     }
 }

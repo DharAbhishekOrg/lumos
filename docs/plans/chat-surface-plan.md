@@ -253,6 +253,14 @@
     can see this" per field (private to matches by default), "See what
     others see" for three audiences, and a note while name or age is
     missing.
+  - Done (2026-11-28), photos on Android: up to six, through the system
+    photo picker (no storage permission). Each picture is drawn again as a
+    fresh JPEG (long edge 1600 px, upright), checked and stripped by the
+    sanitiser, and kept encrypted in the no-backup media store before the
+    profile references it. First photo is the main one; make main, move,
+    remove (asks first). Private to matches by default. The emergency wipe
+    deletes the photo files after the keys. Still to do: the same on iPhone
+    (a Swift twin of the media store first).
   - Done (2026-11-28), Android: Visible Nearby refuses to turn on for an
     empty, incomplete or paused profile, says "Add your name and age in
     Profile first", and fails closed if the profile cannot be read

@@ -23,13 +23,16 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.lumos.app.Fixtures;
+import com.lumos.app.media.MediaObjectStore;
 import com.lumos.app.safety.DeliberateConfirmation;
 import com.lumos.app.store.RecordKind;
 import com.lumos.app.store.StoreException;
+import java.nio.file.Path;
 import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 import java.util.List;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
 /** The wipe a person in trouble actually runs. */
 final class EmergencyWipeTest {
@@ -75,6 +78,28 @@ final class EmergencyWipeTest {
                         kind + " survived the wipe; a record kind added to the store must be "
                                 + "cleared by it, and this table is how that is noticed");
             }
+        }
+    }
+
+    @Test
+    void profilePhotosAreDeletedAfterTheKeysAndNamedInTheCoverage(@TempDir final Path dir) throws Exception {
+        try (Fixtures.Stack stack = Fixtures.openInMemory()) {
+            final MediaObjectStore media = new MediaObjectStore(dir, new byte[32]);
+            media.put("a photo".getBytes(java.nio.charset.StandardCharsets.UTF_8));
+            media.put("another".getBytes(java.nio.charset.StandardCharsets.UTF_8));
+            final EmergencyWipe wipe = new EmergencyWipe(stack.kek(), stack.store(), media);
+            assertTrue(render(wipe.coverage().covered()).contains("profile photos"));
+
+            final EmergencyWipe.Outcome outcome = wipe.execute(wipeConfirmation());
+
+            assertTrue(outcome.report().fullyClean());
+            assertTrue(media.list().isEmpty(), "every photo file is gone");
+            final List<String> order = new ArrayList<>();
+            for (final KeysFirstWipe.StageResult result : outcome.report().results()) {
+                order.add(result.name());
+            }
+            assertEquals(List.of(EmergencyWipe.STAGE_KEK, EmergencyWipe.STAGE_STORE_KEYS,
+                    EmergencyWipe.STAGE_LOCAL_RECORDS, EmergencyWipe.STAGE_MEDIA_OBJECTS), order);
         }
     }
 

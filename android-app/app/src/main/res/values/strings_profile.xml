@@ -26,6 +26,7 @@
     <string name="profile_field_relationship_intent">Looking for</string>
     <string name="profile_field_interests">Interests</string>
     <string name="profile_field_bio">About you</string>
+    <string name="profile_field_media">Photos</string>
 
     <string name="profile_hint_alias">The name people see, like a first name or nickname</string>
     <string name="profile_hint_pronouns">For example: she/her, he/him, they/them</string>
@@ -56,6 +57,22 @@
     <string name="profile_preview_as_match">As a match</string>
     <string name="profile_preview_nothing">They see nothing from your profile yet.</string>
     <string name="profile_preview_close">Close</string>
+
+    <string name="profile_photo_add">Add a photo</string>
+    <string name="profile_photos_none">No photos yet. Your first photo is your main one.</string>
+    <string name="profile_photos_hint">Your first photo is your main one. Tap a photo to change the order or remove it.</string>
+    <string name="profile_photos_full">You have the most photos a profile can hold. Remove one to add another.</string>
+    <string name="profile_photos_unavailable">Photos cannot be opened just now. Nothing was changed.</string>
+    <string name="profile_photo_rejected">That picture could not be used. Please choose another photo.</string>
+    <string name="profile_photo_description">Photo %1$d of %2$d</string>
+    <string name="profile_photo_main_description">Photo %1$d of %2$d, your main photo</string>
+    <string name="profile_photo_make_main">Make this my main photo</string>
+    <string name="profile_photo_move_earlier">Move earlier</string>
+    <string name="profile_photo_move_later">Move later</string>
+    <string name="profile_photo_remove">Remove photo</string>
+    <string name="profile_photo_remove_title">Remove this photo?</string>
+    <string name="profile_photo_remove_message">It is deleted from this phone.</string>
+    <string name="profile_preview_photo">Your main photo</string>
 
     <string-array name="profile_age_bands">
         <item>18–24</item>
