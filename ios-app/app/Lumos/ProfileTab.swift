@@ -161,8 +161,10 @@ private struct FieldEditor: View {
             .navigationTitle(ProfileEditor.label(field))
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) { Button("Cancel") { dismiss() } }
-                if field != .ageBand {
-                    ToolbarItem(placement: .confirmationAction) {
+                // The condition sits inside the item: a conditional toolbar
+                // item itself needs iOS 16, and the floor is iOS 15.
+                ToolbarItem(placement: .confirmationAction) {
+                    if field != .ageBand {
                         Button("Save") { save(.statement(text)); dismiss() }
                     }
                 }
