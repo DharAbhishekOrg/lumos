@@ -19,6 +19,7 @@ onward are raised during implementation per TRS-AI-006 and captured here.
 | [012](ADR-012-app-boot-and-key-root.md) | **Accepted** | App boot order; the wrapped data root lives in a no-backup file with the KEK tier, outside the database it unlocks |
 | [013](ADR-013-gatt-link-layout.md) | **Accepted** | The GATT link: LINK_IN (write) and LINK_OUT (notify) under the Lumos service; both sides say HELLO; bounded handshake (CR-010) |
 | [014](ADR-014-hello-disclosure-order.md) | **Decided (A)** | Who says HELLO first: the owner kept both sides speaking on open; the residual "blocked person can tell she is near" risk is recorded |
+| [015](ADR-015-local-link-encryption.md) | Proposed | Encrypt the local link after HELLO before any preview or interest: recommend ephemeral X25519 in HELLO v2, ChaCha20-Poly1305 per link (needs the owner, a CR and G-07) |
 
 **ADR-008 was ratified** with two binding conditions (Ed25519 as sole root of
 trust; signature verification fails closed before any DH), both enforced by test.
