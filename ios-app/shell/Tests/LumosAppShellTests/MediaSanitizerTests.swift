@@ -164,6 +164,53 @@ final class MediaSanitizerTests: XCTestCase {
         }
     }
 
+    func testThePhotoReencoderStandsASidewaysCameraPhotoUpAndDropsItsMetadata() throws {
+        // A camera-sized picture saved sideways (EXIF orientation 6) with a
+        // location, a device and a time, all written by ImageIO itself.
+        let width = 3200
+        let height = 2400
+        let context = try XCTUnwrap(CGContext(data: nil, width: width, height: height, bitsPerComponent: 8,
+                                              bytesPerRow: 0, space: CGColorSpaceCreateDeviceRGB(),
+                                              bitmapInfo: CGImageAlphaInfo.noneSkipLast.rawValue))
+        context.setFillColor(CGColor(red: 0.8, green: 0.5, blue: 0.3, alpha: 1))
+        context.fill(CGRect(x: 0, y: 0, width: width, height: height))
+        let image = try XCTUnwrap(context.makeImage())
+        let out = NSMutableData()
+        let destination = try XCTUnwrap(CGImageDestinationCreateWithData(
+            out as CFMutableData, UTType.jpeg.identifier as CFString, 1, nil))
+        let planted: [CFString: Any] = [
+            kCGImagePropertyOrientation: 6,
+            kCGImagePropertyGPSDictionary: [kCGImagePropertyGPSLatitude: 51.5, kCGImagePropertyGPSLatitudeRef: "N"],
+            kCGImagePropertyTIFFDictionary: [kCGImagePropertyTIFFMake: "SECRET-MAKE",
+                                             kCGImagePropertyTIFFModel: "SECRET-MODEL",
+                                             kCGImagePropertyTIFFDateTime: "2026:08:14 09:15:00"]
+        ]
+        CGImageDestinationAddImage(destination, image, planted as CFDictionary)
+        XCTAssertTrue(CGImageDestinationFinalize(destination))
+        let sideways = out as Data
+        XCTAssertNotNil(sideways.range(of: Data("SECRET-MAKE".utf8)), "the source must be genuinely dirty")
+
+        let redrawn = try ImageIOPhotoReencoder().reencode(sideways)
+
+        let source = try XCTUnwrap(CGImageSourceCreateWithData(redrawn as CFData, nil))
+        let properties = CGImageSourceCopyPropertiesAtIndex(source, 0, nil) as? [CFString: Any] ?? [:]
+        XCTAssertEqual(properties[kCGImagePropertyPixelWidth] as? Int, 1200, "stood up: portrait")
+        XCTAssertEqual(properties[kCGImagePropertyPixelHeight] as? Int, ImageIOPhotoReencoder.longEdgePixels)
+        XCTAssertNil(properties[kCGImagePropertyGPSDictionary])
+        let tiff = properties[kCGImagePropertyTIFFDictionary] as? [CFString: Any] ?? [:]
+        XCTAssertNil(tiff[kCGImagePropertyTIFFMake])
+        XCTAssertNil(tiff[kCGImagePropertyTIFFModel])
+        XCTAssertNil(tiff[kCGImagePropertyTIFFDateTime])
+        XCTAssertNil(redrawn.range(of: Data("SECRET-MAKE".utf8)))
+        let clean = try MediaSanitizer.sanitize(redrawn)
+        XCTAssertEqual(clean.type, .jpeg)
+        XCTAssertEqual(clean.width, 1200)
+    }
+
+    func testThePhotoReencoderRefusesBytesThatAreNoPicture() {
+        XCTAssertThrowsError(try ImageIOPhotoReencoder().reencode(Data("<svg onload=alert(1)>".utf8)))
+    }
+
     /// Encodes a real, decodable JPEG using the platform codec.
     private func realJpeg(width: Int, height: Int) throws -> Data {
         let context = CGContext(data: nil, width: width, height: height, bitsPerComponent: 8,
