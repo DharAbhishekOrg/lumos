@@ -54,6 +54,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Consumer;
 
 /** The app as a NearbyHost. */
 public final class AppHost implements NearbyHost {
@@ -62,6 +63,7 @@ public final class AppHost implements NearbyHost {
     private volatile VisibleNearbyController visibleNearby;
     private volatile NearbyDiscovery discovery;
     private volatile ProfileSource profiles;
+    private volatile Executor storage;
     private boolean attached;
     private volatile Runnable visibilityChanged;
     private final Handler main = new Handler(Looper.getMainLooper());
@@ -103,6 +105,7 @@ public final class AppHost implements NearbyHost {
                     }
                 }), storage);
         profiles = new ProfileSource.Stored(new ProfileRepository(store));
+        this.storage = storage;
         storage.execute(() -> {
             controller.load();
             main.post(() -> {
@@ -159,6 +162,21 @@ public final class AppHost implements NearbyHost {
      */
     public ProfileSource profiles() {
         return profiles;
+    }
+
+    @Override
+    public void checkProfileShowable(final Consumer<Boolean> answer) {
+        final ProfileSource source = profiles;
+        final Executor store = storage;
+        if (source == null || store == null) {
+            answer.accept(Boolean.FALSE);
+            return;
+        }
+        store.execute(() -> {
+            // Unreadable reads as not showable: fail closed (SRS-PRO-010).
+            final boolean showable = source.load().map(e -> e.profile().isShowable()).orElse(false);
+            main.post(() -> answer.accept(showable));
+        });
     }
 
     private static Optional<NearbyIdentity> unlock(final Context context, final LocalStore store) {

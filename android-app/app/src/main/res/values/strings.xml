@@ -223,6 +223,8 @@
         continue in a moment.</string>
     <string name="nearby_state_not_yet">Finding people nearby arrives in a coming update.
         Nothing is being sent or looked for right now.</string>
+    <string name="visible_nearby_profile_needed">Add your name and age in Profile first, so people
+        nearby can see who you are.</string>
     <string name="nearby_state_not_visible">You see people nearby only while they can see you
         too. Turn on Visible Nearby above to start.</string>
     <string name="nearby_state_empty">Looking around. No one nearby yet — people appear here

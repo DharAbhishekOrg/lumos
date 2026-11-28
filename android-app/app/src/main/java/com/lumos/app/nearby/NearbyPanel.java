@@ -54,6 +54,7 @@ public final class NearbyPanel {
     private final NearbyHost host;
     private final NearbyCardAdapter adapter;
     private PermissionAsker asker;
+    private boolean profileNeeded;
 
     /**
      * Binds the panel.
@@ -111,6 +112,22 @@ public final class NearbyPanel {
     }
 
     private void turnOn(final DiscoveryVisibility.Selection selection) {
+        if (host.visibleNearby() == null) {
+            return;
+        }
+        // SRS-PRO-010: an empty, incomplete or paused profile never becomes
+        // visible. The check reads the store off the main thread and fails closed.
+        host.checkProfileShowable(showable -> {
+            profileNeeded = !showable;
+            if (showable) {
+                turnOnWithPermissions(selection);
+            } else {
+                render();
+            }
+        });
+    }
+
+    private void turnOnWithPermissions(final DiscoveryVisibility.Selection selection) {
         final VisibleNearbyController vn = host.visibleNearby();
         if (vn == null) {
             return;
@@ -192,7 +209,13 @@ public final class NearbyPanel {
         root.findViewById(R.id.vn_custom).setVisibility(vn.visible() ? View.GONE : View.VISIBLE);
         root.findViewById(R.id.vn_off).setVisibility(vn.visible() ? View.VISIBLE : View.GONE);
         final TextView problem = root.findViewById(R.id.vn_problem);
-        if (vn.problem() == null) {
+        if (vn.visible()) {
+            profileNeeded = false;
+        }
+        if (profileNeeded && vn.problem() == null) {
+            problem.setVisibility(View.VISIBLE);
+            problem.setText(R.string.visible_nearby_profile_needed);
+        } else if (vn.problem() == null) {
             problem.setVisibility(View.GONE);
         } else {
             problem.setVisibility(View.VISIBLE);
