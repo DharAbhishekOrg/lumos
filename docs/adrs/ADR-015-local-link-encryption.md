@@ -1,6 +1,6 @@
 # ADR-015: Encrypt the local link after HELLO, before any preview or interest
 
-- **Status:** Proposed (agent, 2026-11-28, raised before CS4). Needs the owner's decision. If accepted, it also needs a CR for its register values and the G-07 cryptographic review before it ships.
+- **Status:** **Accepted: option C** (owner, 2026-11-28). Raised by the agent the same day, before CS4. Its register values are proposed in [CR-011](../change-requests/CR-011.md), which needs the owner's acceptance before any register edit (TRS-CONST-003). The G-07 cryptographic review is still required before a build carrying previews goes beyond the owner's own phones.
 - **Relates to:** ADR-001 (the crypto suite), ADR-002 (trust only at the authenticated HELLO), ADR-008 (identity-DH key), ADR-013 (GATT link), TRS-PROTO-003, TRS-PROTO-017, TRS-CRY-001, TRS-CRY-011, SRS-PRO-002/003/007, SRS-MAT-001/004, SRS-NFR-PRI-002, G-07
 
 ## Context
@@ -36,8 +36,12 @@ TRS-PROTO-003 already says the complete frame header is authenticated as AEAD as
 
 Until C is in, CS4 builds the preview, Interested / Not now and match screens against a test link only. No real preview leaves a phone in the clear.
 
-## Consequences if C is accepted
+## Consequences (C accepted)
 
 - `LinkSession` (both apps) derives the link key when the handshake finishes and hands it to the frame layer; HELLO and HELLO_ACK stay as the only plaintext frames.
 - Every later frame on a link is ChaCha20-Poly1305 with the full header as associated data (TRS-PROTO-003), and a counter nonce per direction that never repeats (TRS-CRY-011).
 - An older phone speaking HELLO v1 can still be discovered (a card), but it is never sent a preview or an interest request.
+
+## Decision
+
+The owner chose **option C** on 2026-11-28. The exact layout, labels and nonce rule are in CR-011. Build order stays as recommended: CR-011, then the Go reference with known-answer vectors, then Java and Swift checked against those vectors, then G-07.
