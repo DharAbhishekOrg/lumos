@@ -233,6 +233,13 @@
   rotating-hint advertisement after that.
 
 ### CS4 (Android) and CS5 (iOS): from Nearby to a match
+- **Before any preview crosses a radio:** the local link must be encrypted
+  after HELLO (ADR-015, proposed 2026-11-28, needs the owner). Until it is
+  decided and built, CS4 screens run against a test link only.
+- **First, the profile itself:** a Profile tab to create and edit the
+  SRS-PRO-001 fields with per-field visibility (SRS-PRO-003) and "see what
+  others see" (SRS-PRO-008); Visible Nearby stays off for an incomplete
+  profile (SRS-PRO-010).
 - **Profile preview, Interested / Not now, and the match moment,** with the
   verification code (SRS-MAT-008) and the three-moment motion and haptics
   (SRS-UX-009).
