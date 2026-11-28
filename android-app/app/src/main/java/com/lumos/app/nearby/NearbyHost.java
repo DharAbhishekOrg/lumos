@@ -18,6 +18,8 @@
 
 package com.lumos.app.nearby;
 
+import java.util.function.Consumer;
+
 /** The running app, as the Nearby screen sees it. */
 public interface NearbyHost {
 
@@ -74,5 +76,16 @@ public interface NearbyHost {
      */
     default void setOnVisibilityChanged(final Runnable listener) {
         // Hosts without Visible Nearby never change.
+    }
+
+    /**
+     * Answers whether the person's profile may be shown at all - active, with
+     * a name and an age (SRS-PRO-010) - before Visible Nearby turns on.
+     *
+     * @param answer called on the main thread; true to go ahead
+     */
+    default void checkProfileShowable(final Consumer<Boolean> answer) {
+        // Hosts without a profile store (the state demos) have nothing to check.
+        answer.accept(Boolean.TRUE);
     }
 }

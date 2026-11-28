@@ -1,7 +1,7 @@
 /*
  * Lumos - android-app/app / Visible Nearby's buttons, tapped on a real screen.
  * Author: dhar.abhishek.email@gmail.com
- * Implements: SRS-NBY-001, SRS-NBY-002, SRS-NBY-003, SRS-NBY-017
+ * Implements: SRS-NBY-001, SRS-NBY-002, SRS-NBY-003, SRS-NBY-017, SRS-PRO-010
  * ADRs: ADR-002
  * Threading: any
  * Notes: The Nearby panel over a real VisibleNearbyController and a real
@@ -68,9 +68,16 @@ public final class VisibleNearbyInstrumentedTest {
     /** A host with a real Visible Nearby controller. */
     private static final class Host implements NearbyHost {
         private final VisibleNearbyController controller;
+        private final boolean profileShowable;
 
-        Host(final VisibleNearbyController controller) {
+        Host(final VisibleNearbyController controller, final boolean profileShowable) {
             this.controller = controller;
+            this.profileShowable = profileShowable;
+        }
+
+        @Override
+        public void checkProfileShowable(final java.util.function.Consumer<Boolean> answer) {
+            answer.accept(profileShowable);
         }
 
         @Override
@@ -108,6 +115,7 @@ public final class VisibleNearbyInstrumentedTest {
     private final ScriptedAdvertiser radio = new ScriptedAdvertiser();
     private final ExecutorService storage = Executors.newSingleThreadExecutor();
     private LumosRoomDatabase room;
+    private VisibleNearbyController controller;
 
     @Before
     public void open() throws Exception {
@@ -118,10 +126,10 @@ public final class VisibleNearbyInstrumentedTest {
                 () -> Long.MAX_VALUE, System::currentTimeMillis);
         // The store is touched only on this single-thread executor, as in the
         // app: Room refuses the main thread, which is where the taps land.
-        final VisibleNearbyController controller = new VisibleNearbyController(new DiscoveryVisibility(store), radio,
+        controller = new VisibleNearbyController(new DiscoveryVisibility(store), radio,
                 System::currentTimeMillis, failure -> { }, storage);
         controller.load();
-        NearbyActivity.setHost(new Host(controller));
+        NearbyActivity.setHost(new Host(controller, true));
     }
 
     @After
@@ -170,6 +178,19 @@ public final class VisibleNearbyInstrumentedTest {
             scenario.onActivity(a -> a.findViewById(R.id.stop_nearby).performClick());
             assertFalse("the one-action stop ends it too (SRS-NBY-017)", radio.running);
             assertFalse(shown(scenario, R.id.visibility_indicator));
+        }
+    }
+
+    @Test
+    public void anIncompleteProfileCannotBecomeVisibleAndTheScreenSaysWhy() {
+        NearbyActivity.setHost(new Host(controller, false));
+        try (ActivityScenario<NearbyActivity> scenario = ActivityScenario.launch(NearbyActivity.class)) {
+            scenario.onActivity(a -> a.findViewById(R.id.vn_hour).performClick());
+            assertFalse("no radio for a profile nobody could be shown (SRS-PRO-010)", radio.running);
+            assertFalse(shown(scenario, R.id.visibility_indicator));
+            assertTrue("and the screen says what to do", shown(scenario, R.id.vn_problem));
+            assertEquals(context.getString(R.string.visible_nearby_profile_needed),
+                    text(scenario, R.id.vn_problem));
         }
     }
 }
