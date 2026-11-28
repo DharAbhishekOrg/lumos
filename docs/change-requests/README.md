@@ -18,6 +18,7 @@ frozen*, and names the slice that executes it.
 | [008](CR-008.md) | **Accepted** | The chat surface, slice CS1 first | The design language: Midnight Aurora token values in two themes (Midnight and Daylight), glass on navigation only, M3 Expressive on Android, safety one tap away, Sora (OFL 1.1) for display text |
 | [009](CR-009.md) | **Accepted** | After CS2c | Quoted replies: a fifth AMD-005 event kind REPLY (0x04), target + body like EDIT; the quote is drawn locally, never sent |
 | [010](CR-010.md) | **Accepted** | NB-1 step 2f (done) | The GATT link's two characteristic UUIDs and `HELLO_HANDSHAKE_TIMEOUT_SEC` (default 10, 5–30), per ADR-013 |
+| [011](CR-011.md) | Proposed | ADR-015 slice (after acceptance) | HELLO v2 with a signed ephemeral X25519 key; the link-key and transcript labels; the per-direction AEAD nonce from the frame sequence |
 
 A CR is applied in exactly one slice. Applying one that moves `constants_hash`
 also regenerates every golden vector that embeds it and reruns the full
