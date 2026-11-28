@@ -46,6 +46,8 @@ import com.lumos.app.nearby.NearbyActivity;
 import com.lumos.app.nearby.NearbyHost;
 import com.lumos.app.nearby.NearbyPanel;
 import com.lumos.app.onboarding.AppSurface;
+import com.lumos.app.profile.ProfilePanel;
+import com.lumos.app.profile.ProfileSource;
 import com.lumos.app.safety.RecentsRedaction;
 import java.time.Duration;
 import java.time.ZoneId;
@@ -63,12 +65,14 @@ public final class HomeActivity extends AppCompatActivity {
 
     private static final String STATE_TAB = "tab";
     private static volatile HomeSource sourceOverride;
+    private static volatile ProfileSource profileOverride;
 
     private final Handler main = new Handler(Looper.getMainLooper());
     private final Runnable refresh = this::refreshLoop;
     private HomeSource source;
     private Executor worker;
     private NearbyPanel nearby;
+    private ProfilePanel profile;
     private ActivityResultLauncher<String[]> permissions;
     private Consumer<Boolean> pendingPermission;
     private HomeAdapters.Matches matches;
@@ -88,6 +92,15 @@ public final class HomeActivity extends AppCompatActivity {
         sourceOverride = source;
     }
 
+    /**
+     * Replaces the profile store with a scripted one, for the instrumented test.
+     *
+     * @param source the source, or null for the real one
+     */
+    public static void setProfileSource(final ProfileSource source) {
+        profileOverride = source;
+    }
+
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -103,6 +116,10 @@ public final class HomeActivity extends AppCompatActivity {
         setContentView(R.layout.activity_home);
         applyInsets();
         nearby = new NearbyPanel(findViewById(R.id.nearby_panel), host);
+        final ProfileSource profiles = profileOverride != null ? profileOverride : app.host().profiles();
+        if (profiles != null) {
+            profile = new ProfilePanel(findViewById(R.id.profile_page), profiles, worker);
+        }
         // SRS-ONB-004: the Bluetooth permission is asked when the person turns
         // Visible Nearby on, and only then.
         permissions = registerForActivityResult(new ActivityResultContracts.RequestMultiplePermissions(), result -> {
@@ -155,8 +172,14 @@ public final class HomeActivity extends AppCompatActivity {
         findViewById(R.id.nearby_panel).setVisibility(tab == R.id.tab_nearby ? View.VISIBLE : View.GONE);
         findViewById(R.id.matches_page).setVisibility(tab == R.id.tab_matches ? View.VISIBLE : View.GONE);
         findViewById(R.id.chats_page).setVisibility(tab == R.id.tab_chats ? View.VISIBLE : View.GONE);
+        findViewById(R.id.profile_page).setVisibility(tab == R.id.tab_profile ? View.VISIBLE : View.GONE);
         final int title;
-        if (tab == R.id.tab_matches) {
+        if (tab == R.id.tab_profile) {
+            title = R.string.home_tab_profile;
+            if (profile != null) {
+                profile.load();
+            }
+        } else if (tab == R.id.tab_matches) {
             title = R.string.home_tab_matches;
         } else if (tab == R.id.tab_chats) {
             title = R.string.home_tab_chats;

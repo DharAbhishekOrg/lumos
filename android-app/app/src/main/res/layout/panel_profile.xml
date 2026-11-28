@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Lumos - android-app/app / The Profile tab: the person's own profile, field by field.
+  Author: dhar.abhishek.email@gmail.com
+  Implements: SRS-PRO-001, SRS-PRO-003, SRS-PRO-008, SRS-PRO-010, SRS-UX-008
+  ADRs: -
+  Threading: n/a
+  Notes: One line per field (ProfilePanel inflates item_profile_field for each),
+  a note while the profile is incomplete, and "See what others see" at the
+  bottom. Photos join with the media slice (SRS-PRO-005/006 first).
+-->
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/profile_page"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:visibility="gone">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingStart="@dimen/lumos_space_4"
+        android:paddingEnd="@dimen/lumos_space_4"
+        android:paddingBottom="@dimen/lumos_space_6">
+
+        <TextView
+            android:id="@+id/profile_intro"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="@dimen/lumos_space_2"
+            android:paddingBottom="@dimen/lumos_space_2"
+            android:text="@string/profile_intro"
+            android:textAppearance="?attr/textAppearanceBodyMedium"
+            android:textColor="@color/lumos_ink_muted" />
+
+        <TextView
+            android:id="@+id/profile_status"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingBottom="@dimen/lumos_space_2"
+            android:textAppearance="?attr/textAppearanceBodyLarge"
+            android:textColor="@color/lumos_ink"
+            android:visibility="gone" />
+
+        <LinearLayout
+            android:id="@+id/profile_fields"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" />
+
+        <TextView
+            android:id="@+id/profile_preview_heading"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="@dimen/lumos_space_4"
+            android:paddingBottom="@dimen/lumos_space_1"
+            android:text="@string/profile_preview_heading"
+            android:textAppearance="?attr/textAppearanceTitleMedium"
+            android:textColor="@color/lumos_ink" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/profile_preview_nearby"
+            style="@style/Widget.Material3.Button.TextButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:minHeight="48dp"
+            android:text="@string/profile_preview_as_nearby" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/profile_preview_requester"
+            style="@style/Widget.Material3.Button.TextButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:minHeight="48dp"
+            android:text="@string/profile_preview_as_requester" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/profile_preview_match"
+            style="@style/Widget.Material3.Button.TextButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:minHeight="48dp"
+            android:text="@string/profile_preview_as_match" />
+    </LinearLayout>
+</ScrollView>

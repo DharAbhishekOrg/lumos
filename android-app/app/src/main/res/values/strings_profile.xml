@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Lumos - android-app/app / The Profile tab's words.
+  Author: dhar.abhishek.email@gmail.com
+  Implements: SRS-PRO-001, SRS-PRO-002, SRS-PRO-003, SRS-PRO-008, SRS-PRO-012
+  ADRs: -
+  Threading: n/a
+  Notes: Respectful, plain and non-objectifying (SRS-PRO-012). Gender and
+  sexuality are the person's own words, with examples that do not assume a
+  binary or a straight default, and every optional field can be declined
+  outright (SRS-PRO-002). "Who can see this" names people, not mechanisms.
+-->
+<resources>
+    <string name="home_tab_profile">Profile</string>
+
+    <string name="profile_intro">Only you see this page. Each line says who else can see it, and you choose.</string>
+    <string name="profile_incomplete">Add your name and age so people nearby can see you.</string>
+    <string name="profile_unreadable">Your profile could not be opened just now. Nothing was changed.</string>
+    <string name="profile_not_saved">That change was not saved. Please try again.</string>
+
+    <string name="profile_field_alias">Name</string>
+    <string name="profile_field_age_band">Age</string>
+    <string name="profile_field_pronouns">Pronouns</string>
+    <string name="profile_field_gender_identity">Gender</string>
+    <string name="profile_field_orientation">Sexuality</string>
+    <string name="profile_field_relationship_intent">Looking for</string>
+    <string name="profile_field_interests">Interests</string>
+    <string name="profile_field_bio">About you</string>
+
+    <string name="profile_hint_alias">The name people see, like a first name or nickname</string>
+    <string name="profile_hint_pronouns">For example: she/her, he/him, they/them</string>
+    <string name="profile_hint_gender_identity">In your own words, for example: woman, man, non-binary, trans, genderqueer</string>
+    <string name="profile_hint_orientation">In your own words, for example: gay, lesbian, bi, pan, queer, asexual, straight</string>
+    <string name="profile_hint_relationship_intent">For example: friends, dating, something long-term</string>
+    <string name="profile_hint_interests">A few things you enjoy</string>
+    <string name="profile_hint_bio">A few lines about you</string>
+
+    <string name="profile_value_unset">Not added</string>
+    <string name="profile_value_declined">Prefer not to say</string>
+
+    <string name="profile_save">Save</string>
+    <string name="profile_cancel">Cancel</string>
+    <string name="profile_decline">Prefer not to say</string>
+
+    <string name="profile_audience_label">Who can see this: %1$s</string>
+    <string name="profile_audience_title">Who can see your %1$s?</string>
+    <string name="profile_audience_nearby">Anyone near you on Lumos</string>
+    <string name="profile_audience_requester">People you show interest in</string>
+    <string name="profile_audience_venue">People in a venue room</string>
+    <string name="profile_audience_match">Only your matches</string>
+    <string name="profile_audience_change">Change who can see your %1$s</string>
+
+    <string name="profile_preview_heading">See what others see</string>
+    <string name="profile_preview_as_nearby">As someone nearby</string>
+    <string name="profile_preview_as_requester">As someone you show interest in</string>
+    <string name="profile_preview_as_match">As a match</string>
+    <string name="profile_preview_nothing">They see nothing from your profile yet.</string>
+    <string name="profile_preview_close">Close</string>
+
+    <string-array name="profile_age_bands">
+        <item>18–24</item>
+        <item>25–34</item>
+        <item>35–44</item>
+        <item>45–54</item>
+        <item>55–64</item>
+        <item>65 or over</item>
+    </string-array>
+</resources>

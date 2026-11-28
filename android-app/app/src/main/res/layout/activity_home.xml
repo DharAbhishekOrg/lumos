@@ -119,6 +119,8 @@
                     android:visibility="gone" />
             </FrameLayout>
         </LinearLayout>
+
+        <include layout="@layout/panel_profile" />
     </FrameLayout>
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
