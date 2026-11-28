@@ -42,6 +42,8 @@ import com.lumos.app.nearby.NearbyDiscovery;
 import com.lumos.app.nearby.NearbyHost;
 import com.lumos.app.nearby.VisibleNearbyController;
 import com.lumos.app.onboarding.DiscoveryVisibility;
+import com.lumos.app.profile.ProfileRepository;
+import com.lumos.app.profile.ProfileSource;
 import com.lumos.app.store.LocalStore;
 import com.lumos.app.store.StoreException;
 import java.io.IOException;
@@ -59,6 +61,7 @@ public final class AppHost implements NearbyHost {
     private volatile boolean onboarded;
     private volatile VisibleNearbyController visibleNearby;
     private volatile NearbyDiscovery discovery;
+    private volatile ProfileSource profiles;
     private boolean attached;
     private volatile Runnable visibilityChanged;
     private final Handler main = new Handler(Looper.getMainLooper());
@@ -99,6 +102,7 @@ public final class AppHost implements NearbyHost {
                         changed();
                     }
                 }), storage);
+        profiles = new ProfileSource.Stored(new ProfileRepository(store));
         storage.execute(() -> {
             controller.load();
             main.post(() -> {
@@ -145,6 +149,16 @@ public final class AppHost implements NearbyHost {
     @Override
     public boolean entryAllowed() {
         return onboarded;
+    }
+
+    /**
+     * The person's profile, through the install's store; use it on the
+     * storage executor only.
+     *
+     * @return the source, or null before the store is attached
+     */
+    public ProfileSource profiles() {
+        return profiles;
     }
 
     private static Optional<NearbyIdentity> unlock(final Context context, final LocalStore store) {

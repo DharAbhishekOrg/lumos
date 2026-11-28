@@ -419,4 +419,17 @@
     <Method name="&lt;init&gt;"/>
     <Bug pattern="EI_EXPOSE_REP2"/>
   </Match>
+  <!--
+    CS4 Profile tab: ProfilePanel keeps the panel's root view (the NearbyPanel
+    case above), and ProfileSource.Stored keeps the repository over the
+    install's one store (the S4c long-lived-service rationale).
+  -->
+  <Match>
+    <Or>
+      <Class name="com.lumos.app.profile.ProfilePanel"/>
+      <Class name="com.lumos.app.profile.ProfileSource$Stored"/>
+    </Or>
+    <Method name="&lt;init&gt;"/>
+    <Bug pattern="EI_EXPOSE_REP2"/>
+  </Match>
 </FindBugsFilter>

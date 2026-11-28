@@ -240,6 +240,14 @@
   SRS-PRO-001 fields with per-field visibility (SRS-PRO-003) and "see what
   others see" (SRS-PRO-008); Visible Nearby stays off for an incomplete
   profile (SRS-PRO-010).
+  - Done (2026-11-28), the Profile tab on Android: the eight SRS-PRO-001
+    fields except photos (media needs metadata stripping and image checks
+    first, SRS-PRO-005/006), free words for gender and sexuality with
+    inclusive examples, "Prefer not to say" on every optional field, "Who
+    can see this" per field (private to matches by default), "See what
+    others see" for three audiences, and a note while name or age is
+    missing. Next: Visible Nearby refuses to turn on for an incomplete
+    profile (SRS-PRO-010), then the same on iPhone.
 - **Profile preview, Interested / Not now, and the match moment,** with the
   verification code (SRS-MAT-008) and the three-moment motion and haptics
   (SRS-UX-009).

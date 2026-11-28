@@ -6,9 +6,9 @@
   ADRs: -
   Threading: n/a
   Notes: The CR-008 bar is Nearby, Matches, Chat, Discover and Profile.
-  Discover (venues) and Profile join when those features exist: a tab that
-  opens onto nothing would be a placeholder, which the implementation
-  contract rules out.
+  Profile joined with the profile editor (CS4); Discover (venues) joins when
+  venues exist: a tab that opens onto nothing would be a placeholder, which
+  the implementation contract rules out.
 -->
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
@@ -23,4 +23,8 @@
         android:id="@+id/tab_chats"
         android:icon="@drawable/ic_tab_chats"
         android:title="@string/home_tab_chats" />
+    <item
+        android:id="@+id/tab_profile"
+        android:icon="@drawable/ic_tab_profile"
+        android:title="@string/home_tab_profile" />
 </menu>
