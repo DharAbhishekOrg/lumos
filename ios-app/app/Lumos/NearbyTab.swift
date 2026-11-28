@@ -41,16 +41,22 @@ final class VisibilityModel: ObservableObject {
     @Published private(set) var endedOnItsOwn = false
 
     @Published private(set) var feed = FeedState.notVisible
+    /// True after a turn-on was refused because the profile cannot be shown (SRS-PRO-010).
+    @Published private(set) var profileNeeded = false
 
     private var controller: VisibleNearbyController?
     private let discovery: NearbyDiscovery?
+    private let profiles: ProfileRepository?
 
     /// - Parameters:
     ///   - visibility: the persisted state; nil when the store did not open
     ///   - advertiser: the radio
     ///   - discovery: live discovery, or nil when the identity could not be unlocked
-    init(visibility: DiscoveryVisibility?, advertiser: BleAdvertising, discovery: NearbyDiscovery?) {
+    ///   - profiles: the profile store; a missing or unreadable profile keeps Visible Nearby off
+    init(visibility: DiscoveryVisibility?, advertiser: BleAdvertising, discovery: NearbyDiscovery?,
+         profiles: ProfileRepository?) {
         self.discovery = discovery
+        self.profiles = profiles
         guard let visibility else { return }
         // The failure arrives on the radio's queue: a Sendable, non-isolated
         // closure hops it to the main actor, where the controller lives.
@@ -71,7 +77,15 @@ final class VisibilityModel: ObservableObject {
     var available: Bool { controller != nil }
 
     func refresh() { controller?.refresh(); publish() }
-    func turnOn(_ selection: DiscoveryVisibility.Selection) { controller?.turnOn(selection); publish() }
+    /// Turns visibility on - only for a profile that can be shown (SRS-PRO-010),
+    /// failing closed when it cannot be read.
+    func turnOn(_ selection: DiscoveryVisibility.Selection) {
+        profileNeeded = !(profiles?.isShowable ?? false)
+        if !profileNeeded {
+            _ = controller?.turnOn(selection)
+        }
+        publish()
+    }
     func turnOff() { controller?.turnOff(); publish() }
     func setForeground(_ active: Bool) { controller?.setForeground(active); publish() }
     func hide(_ peerKey: String) { discovery?.hideCard(peerKey: peerKey) }
@@ -145,6 +159,10 @@ struct NearbyTab: View {
         Label("Visible Nearby is off", systemImage: "eye.slash").font(.headline)
         Text("You are not visible to anyone right now. Nothing is being broadcast from your phone.")
             .font(.body)
+        if model.profileNeeded {
+            Text("Add your name and age in Profile first, so people nearby can see who you are.")
+                .font(.callout)
+        }
         if model.endedOnItsOwn {
             Text("Visible Nearby turned itself off. Turn it on again any time.")
                 .font(.callout)

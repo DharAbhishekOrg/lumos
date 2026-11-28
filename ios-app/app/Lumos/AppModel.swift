@@ -33,6 +33,8 @@ final class AppModel: ObservableObject {
     private(set) var home: HomeModel?
     /// Visible Nearby, made with the home tabs.
     private(set) var nearby: VisibilityModel?
+    /// The Profile tab, made with the home tabs.
+    private(set) var profile: ProfileModel?
 
     private let config: BootConfig
     private let onboarding: OnboardingService
@@ -109,6 +111,7 @@ final class AppModel: ObservableObject {
         home = HomeModel(runtime: runtime)
         let root = try? KeyRoot.open(from: config.vault)
         let store = root.flatMap { try? AppBoot.openStore($0, config) }
+        let profiles = store.map { ProfileRepository(store: $0) }
         let relay = FeedRelay()
         var discovery: NearbyDiscovery?
         if let root, let store, let identity = try? AppBoot.nearbyIdentity(root, store: store) {
@@ -129,7 +132,8 @@ final class AppModel: ObservableObject {
             advertiser: DiscoveringAdvertiser(
                 advertiser: CoreBluetoothAdvertiser(queue: DispatchQueue(label: "lumos.ble.advertise")),
                 discovery: discovery),
-            discovery: discovery)
+            discovery: discovery, profiles: profiles)
+        profile = ProfileModel(repository: profiles)
         relay.model = model
         nearby = model
         phase = .ready

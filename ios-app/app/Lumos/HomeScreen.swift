@@ -90,6 +90,7 @@ struct HomeScreen: View {
 
     @ObservedObject var model: HomeModel
     let nearby: VisibilityModel
+    let profile: ProfileModel
     private let ticks = Timer.publish(every: 5, on: .main, in: .common).autoconnect()
 
     var body: some View {
@@ -104,6 +105,9 @@ struct HomeScreen: View {
                 .navigationViewStyle(.stack)
                 .tabItem { Label("Chats", systemImage: "bubble.left.and.bubble.right") }
                 .badge(model.unreadTotal)
+            NavigationView { ProfileTab(model: profile) }
+                .navigationViewStyle(.stack)
+                .tabItem { Label("Profile", systemImage: "person.crop.circle") }
         }
         .onAppear { model.refresh() }
         .onReceive(ticks) { _ in model.refresh() }
