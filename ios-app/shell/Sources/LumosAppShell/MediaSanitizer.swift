@@ -9,8 +9,9 @@
 /// pixel - which makes the whole strip pure and testable everywhere.
 ///
 /// iOS gets one thing Android's JVM tests cannot: ImageIO is available on
-/// macOS, so `reencode` below performs a REAL decode-and-re-encode and CI
-/// executes it. That is the second half of the WP-02 brief's pipeline, and it
+/// macOS, so `reencode` (in MediaReencoder.swift, which keeps this file free
+/// of ImageIO so it builds and tests everywhere) performs a REAL
+/// decode-and-re-encode and CI executes it. That is the second half of the WP-02 brief's pipeline, and it
 /// adds what a segment strip cannot - it destroys anything hidden in the
 /// entropy-coded data itself, and it normalises a file whose structure was
 /// unusual. The Android equivalent runs on the emulator job.
@@ -18,11 +19,8 @@
 /// Size limits come from the Sec. 23 register via the generated constants
 /// (ADR-004); no literal byte count appears in this file.
 
-import CoreGraphics
 import Foundation
-import ImageIO
 import LumosProtocolGenerated
-import UniformTypeIdentifiers
 
 /// Strips metadata from and validates profile images.
 public enum MediaSanitizer {
@@ -204,40 +202,6 @@ public enum MediaSanitizer {
             throw Rejection.malformed("no IHDR chunk")
         }
         return (readInt(bytes, 16), readInt(bytes, 20))
-    }
-
-    /// Decodes and re-encodes an image, discarding every container property.
-    ///
-    /// The second half of the pipeline, and the half a segment strip cannot do:
-    /// re-encoding destroys anything hidden in the entropy-coded data and
-    /// normalises an unusual container. ImageIO is asked for a destination with
-    /// NO metadata, so the output carries only what the encoder writes.
-    ///
-    /// Available on macOS as well as iOS, which is why CI executes it.
-    /// - Parameters:
-    ///   - image: an already-stripped image
-    ///   - quality: JPEG quality, ignored for PNG
-    /// - Returns: the re-encoded bytes
-    /// - Throws: ``Rejection/malformed(_:)`` when the platform cannot decode it
-    public static func reencode(_ image: SanitizedImage, quality: Double = 0.9) throws -> Data {
-        guard let source = CGImageSourceCreateWithData(image.bytes as CFData, nil),
-              let decoded = CGImageSourceCreateImageAtIndex(source, 0, nil) else {
-            throw Rejection.malformed("the platform decoder rejected the image")
-        }
-        let output = NSMutableData()
-        let type = image.type == .jpeg ? UTType.jpeg.identifier : UTType.png.identifier
-        guard let destination = CGImageDestinationCreateWithData(
-            output as CFMutableData, type as CFString, 1, nil) else {
-            throw Rejection.malformed("no encoder for this type")
-        }
-        // Only the compression setting; no metadata dictionary is supplied, so
-        // nothing from the source can be carried across.
-        let properties: [CFString: Any] = [kCGImageDestinationLossyCompressionQuality: quality]
-        CGImageDestinationAddImage(destination, decoded, properties as CFDictionary)
-        guard CGImageDestinationFinalize(destination) else {
-            throw Rejection.malformed("the platform encoder failed")
-        }
-        return output as Data
     }
 
     /// Reads a big-endian 32-bit integer.

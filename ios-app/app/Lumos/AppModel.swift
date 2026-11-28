@@ -133,7 +133,16 @@ final class AppModel: ObservableObject {
                 advertiser: CoreBluetoothAdvertiser(queue: DispatchQueue(label: "lumos.ble.advertise")),
                 discovery: discovery),
             discovery: discovery, profiles: profiles)
-        profile = ProfileModel(repository: profiles)
+        // Photos: the encrypted media store beside the database. A crash
+        // between a photo's two steps can leave an unreferenced object; the
+        // sweep clears it before the tab shows.
+        let photos: ProfilePhotos? = { () -> ProfilePhotos? in
+            guard let root, let profiles, let media = try? AppBoot.openMediaStore(root, config) else { return nil }
+            let opened = ProfilePhotos(reencoder: ImageIOPhotoReencoder(), vault: media, repository: profiles)
+            opened.sweep()
+            return opened
+        }()
+        profile = ProfileModel(repository: profiles, photos: photos)
         relay.model = model
         nearby = model
         phase = .ready
